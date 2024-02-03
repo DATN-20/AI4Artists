@@ -156,7 +156,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               </Form.Item>
 
               {/* Divider and Social Media Buttons */}
-              <Divider plain>Or</Divider>
+              <Divider plain style={{ borderTopColor: "#cfccd2" }}>
+                Or
+              </Divider>
               <Button
                 block
                 icon={<GoogleOutlined />}
