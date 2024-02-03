@@ -1,4 +1,4 @@
-import { Footer, Navbar } from '@/components/layout';
+import { Footer, Navbar, AuthProvider } from '@/components/layout';
 
 export default function RootLayout({
   children,
@@ -7,8 +7,11 @@ export default function RootLayout({
 }>) {
   return (
     <>
+      <AuthProvider>
       <Navbar />
       {children}
+      </AuthProvider>
+
     </>
   );
 }
