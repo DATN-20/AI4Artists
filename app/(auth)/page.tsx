@@ -1,3 +1,5 @@
+"use client"
+
 import { Flex } from "antd"
 import Image from "next/image"
 import InputPrompt from "../../components/landing-page/InputPrompt"
