@@ -1,19 +1,17 @@
-import { Footer, Navbar, AuthProvider } from "@/components/layout"
-
+import { Footer, Navbar } from "@/components/layout"
+import { StoreProvider } from "../../store/StoreProvider"
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <>
-      <AuthProvider>
-        <div className="flex min-h-screen flex-col">
-          <Navbar />
-          {children}
-        </div>
-        <Footer />
-      </AuthProvider>
-    </>
+    <StoreProvider>
+      <div className="flex min-h-screen flex-col">
+        <Navbar />
+        {children}
+      </div>
+      <Footer />
+    </StoreProvider>
   )
 }
