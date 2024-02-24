@@ -14,7 +14,7 @@ export default function Home() {
       <div className="flex flex-col justify-center gap-4 text-center text-white">
         <h1 className="text-5xl font-bold">Create your own AI Art Gallery</h1>
         <h3 className="text-3xl font-semibold text-[#E0E0E1]">
-          Making stunning AI generated art and manage your own gallery
+          Making stunning AI generated art and manage your own gallery 
         </h3>
       </div>
       <InputPrompt />
