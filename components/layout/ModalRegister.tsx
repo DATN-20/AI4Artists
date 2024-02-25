@@ -1,9 +1,11 @@
 "use client"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Modal, Form, Input, Button, Divider, Row, Col } from "antd"
 import { Store } from "antd/lib/form/interface"
 import { CheckCircleOutlined } from "@ant-design/icons"
 import NextImage from "next/image"
+import { useRegisterUserMutation } from "@/services/authApi"
+import { toast } from "react-toastify"
 
 interface ModalRegisterProps {
   open: boolean
@@ -22,6 +24,17 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({
     password: "",
     confirmPassword: "",
   })
+
+  const [
+    registerUser,
+    {
+      data: registerData,
+      isSuccess: isRegisterSuccess,
+      isError: isRegisterError,
+      error: registerError,
+    },
+  ] = useRegisterUserMutation()
+
   const [isSubmitting, setIsSubmitting] = useState(false)
   const handleSignInClick = () => {
     onClose()
@@ -37,10 +50,16 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({
     try {
       // Simulate registration API call (replace with your actual API)
       if (values.password === values.confirmPassword) {
-        // Register successfully
-        onClose()
+        if (values.email && values.password && values.username) {
+          await registerUser({
+            email: values.email,
+            username: values.username,
+            password: values.password,
+          })
+          onClose()
+        }
       } else {
-        throw new Error("Passwords do not match")
+        toast.error("Password do not match")
       }
     } catch (error) {
       console.error("Registration error:", error)
@@ -49,6 +68,12 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({
       setIsSubmitting(false)
     }
   }
+
+  // useEffect(() => {
+  //   if (isRegisterError) {
+  //     toast.error((registerError as any).data.message)
+  //   }
+  // }, [isRegisterError])
 
   return (
     <Modal
@@ -60,6 +85,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({
       destroyOnClose
       footer={null}
       className="modal-login"
+      centered={true}
     >
       <Row gutter={16}>
         <Col
@@ -102,7 +128,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({
         </Col>
 
         <Col span={8} push={2} className="pt-10">
-          <Form onFinish={(values: Store) => handleSubmit(values)}>
+          <Form onFinish={(values: Store) => handleSubmit(values)} size="large">
             <h1 className="mb-5 text-3xl font-bold">Sign Up</h1>
             <Form.Item
               label="Email"

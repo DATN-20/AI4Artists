@@ -25,11 +25,7 @@ const NavBar: React.FC = () => {
             onClick={() => setOpenLogin(true)}
             className="mr-10 flex min-w-[150px] items-center justify-center rounded-full border-[2px] border-white bg-white py-1"
           >
-            {!name ? (
-              <h1 className="text-xl font-semibold">Sign in </h1>
-            ) : (
-              `Welcome, ${name}`
-            )}
+            <h1 className="text-xl font-semibold">Sign in </h1>
           </button>
         </div>
 

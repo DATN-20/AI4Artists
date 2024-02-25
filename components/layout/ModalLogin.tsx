@@ -13,6 +13,8 @@ import { useLoginUserMutation } from "@/services/authApi"
 import { toast } from "react-toastify"
 import { useAppDispatch } from "@/store/hooks"
 import { setUser } from "@/features/authSlice"
+import { useNavigate } from "react-router-dom"
+import { useRouter } from "next/navigation"
 
 interface ModalLoginProps {
   open: boolean
@@ -39,6 +41,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({
     onClose()
     setOpenRegister(true)
   }
+  const router = useRouter()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -47,8 +50,14 @@ const ModalLogin: React.FC<ModalLoginProps> = ({
     setFormData({ ...formData, [event.target.name]: event.target.value })
   }
   const handleSubmit = async (values: Store) => {
-    if (formData.email && formData.password) {
-      await loginUser({ email: formData.email, password: formData.password })
+    console.log(values)
+    const { email, password } = values
+    if (email && password) {
+      // dispatch(setUser({ token: "loginData.token", name: "loginData.name" }))
+      // localStorage.setItem("test", "true")
+      // router.push("/dashboard")
+      // console.log(localStorage.getItem("test"))
+      await loginUser({ email, password })
     } else {
       toast.error("Please fill all Input field")
     }
@@ -57,9 +66,18 @@ const ModalLogin: React.FC<ModalLoginProps> = ({
   useEffect(() => {
     if (isLoginSuccess) {
       toast.success("User login successfully")
-      dispatch(setUser({ token: loginData.token, name: loginData.name }))
+      dispatch(
+        setUser({ token: loginData.access_token, name: "loginData.name" }),
+      )
+      router.push("/dashboard")
     }
   }, [isLoginSuccess])
+
+  // useEffect(()=>{
+  //   if(isLoginError){
+  //     toast.error((loginError as any).data.message);
+  //   }
+  // }, [isLoginError])
 
   return (
     <Modal
@@ -71,6 +89,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({
       destroyOnClose
       footer={null}
       className="modal-login"
+      centered={true}
     >
       <Row gutter={16}>
         <Col
@@ -113,7 +132,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({
         </Col>
 
         <Col span={8} push={2} className="pt-10">
-          <Form onFinish={(values: Store) => handleSubmit(values)}>
+          <Form onFinish={(values: Store) => handleSubmit(values)} size="large">
             <h1 className="mb-5 text-3xl font-bold">Welcome Back</h1>
             <Form.Item
               label="Email"
