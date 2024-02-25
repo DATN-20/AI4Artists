@@ -1,11 +1,8 @@
 import Image from "next/image"
 import React from "react"
-import {
-  FacebookFilled,
-  InstagramFilled,
-  TwitterSquareFilled,
-  DiscordFilled,
-} from "@ant-design/icons"
+import { Facebook, Instagram, Twitter } from "lucide-react"
+import { FaDiscord } from "react-icons/fa"
+
 import Link from "next/link"
 
 const Footer = () => {
@@ -24,16 +21,16 @@ const Footer = () => {
           </div>
           <div className="mt-4 flex ">
             <Link href="#" className="mr-6 text-white hover:text-gray-300">
-              <FacebookFilled style={{ fontSize: "36px" }} />
+              <Facebook color="white" size={36} />
             </Link>
             <Link href="#" className="mr-6 text-white hover:text-gray-300">
-              <InstagramFilled style={{ fontSize: "36px" }} />
+              <Instagram color="white" size={36} />
             </Link>
             <Link href="#" className="mr-6 text-white hover:text-gray-300">
-              <TwitterSquareFilled style={{ fontSize: "36px" }} />
+              <Twitter color="white" size={36} />
             </Link>
             <Link href="#" className="text-white hover:text-gray-300">
-              <DiscordFilled style={{ fontSize: "36px" }} />
+              <FaDiscord color="white" size={36} />
             </Link>
           </div>
         </div>

@@ -3,8 +3,6 @@
 import React, { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Button, Modal, Form, Input, Row, Col } from "antd"
-import { Store } from "antd/lib/form/interface"
 import { ModalLogin, ModalRegister } from "@/components/layout"
 import { useAppSelector } from "@/store/hooks"
 import { selectAuth } from "@/features/authSlice"
@@ -33,7 +31,7 @@ const NavBar: React.FC = () => {
           </button>
         </div>
 
-        <ModalLogin
+        {/* <ModalLogin
           open={openLogin}
           setOpenRegister={setOpenRegister}
           onClose={() => setOpenLogin(false)}
@@ -42,7 +40,7 @@ const NavBar: React.FC = () => {
           open={openRegister}
           setOpenLogin={setOpenLogin}
           onClose={() => setOpenRegister(false)}
-        />
+        /> */}
       </nav>
     </header>
   )
