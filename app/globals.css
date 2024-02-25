@@ -73,7 +73,7 @@
 
 @layer base {
   body {
-    @apply bg-background;
+    @apply text-text bg-background;
   }
 }
 

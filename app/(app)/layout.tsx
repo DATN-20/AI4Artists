@@ -8,24 +8,22 @@ export default function AppLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const { defaultAlgorithm, darkAlgorithm } = theme
-  const [isDarkMode, setIsDarkMode] = useState(false)
-  const handleClick = () => {
-    setIsDarkMode((previousValue) => {
-      // Toggle dark mode for Tailwind
-      if (!previousValue) {
-        document.documentElement.classList.add("dark")
-      } else {
-        document.documentElement.classList.remove("dark")
-      }
+  // const { defaultAlgorithm, darkAlgorithm } = theme
+  // const [isDarkMode, setIsDarkMode] = useState(false)
+  // const handleClick = () => {
+  //   setIsDarkMode((previousValue) => {
+  //     if (!previousValue) {
+  //       document.documentElement.classList.add("dark")
+  //     } else {
+  //       document.documentElement.classList.remove("dark")
+  //     }
 
-      // Toggle dark mode state for React component
-      return !previousValue
-    })
-  }
+  //     return !previousValue
+  //   })
+  // }
   return (
     <>
-      <ConfigProvider
+      {/* <ConfigProvider
         theme={{
           algorithm: isDarkMode ? darkAlgorithm : defaultAlgorithm,
         }}
@@ -34,7 +32,8 @@ export default function AppLayout({
           Change Theme to {isDarkMode ? "Light" : "Dark"}
         </Button>
         {children}
-      </ConfigProvider>
+      </ConfigProvider> */}
+      {children}
     </>
   )
 }

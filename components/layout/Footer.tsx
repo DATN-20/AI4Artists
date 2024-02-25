@@ -24,16 +24,16 @@ const Footer = () => {
           </div>
           <div className="mt-4 flex ">
             <Link href="#" className="mr-6 text-white hover:text-gray-300">
-              <FacebookFilled style={{ fontSize: "42px" }} />
+              <FacebookFilled style={{ fontSize: "36px" }} />
             </Link>
             <Link href="#" className="mr-6 text-white hover:text-gray-300">
-              <InstagramFilled style={{ fontSize: "42px" }} />
+              <InstagramFilled style={{ fontSize: "36px" }} />
             </Link>
             <Link href="#" className="mr-6 text-white hover:text-gray-300">
-              <TwitterSquareFilled style={{ fontSize: "42px" }} />
+              <TwitterSquareFilled style={{ fontSize: "36px" }} />
             </Link>
             <Link href="#" className="text-white hover:text-gray-300">
-              <DiscordFilled style={{ fontSize: "42px" }} />
+              <DiscordFilled style={{ fontSize: "36px" }} />
             </Link>
           </div>
         </div>
@@ -42,22 +42,22 @@ const Footer = () => {
           <div className="px-4">
             <ul className="grid gap-3">
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Image
                 </a>
               </li>
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Blogs
                 </a>
               </li>
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Community
                 </a>
               </li>
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Tools
                 </a>
               </li>
@@ -66,17 +66,17 @@ const Footer = () => {
           <div className="px-4">
             <ul className="grid gap-3">
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Docs
                 </a>
               </li>
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Open Source
                 </a>
               </li>
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Contact us
                 </a>
               </li>
@@ -85,17 +85,17 @@ const Footer = () => {
           <div className="px-4">
             <ul className="grid gap-3">
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Legal
                 </a>
               </li>
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Terms & Condition
                 </a>
               </li>

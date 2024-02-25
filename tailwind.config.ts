@@ -7,6 +7,10 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  important: true,
+  // corePlugins: {
+  //   preflight: false,
+  // },
   theme: {
     extend: {
       backgroundImage: {
@@ -45,6 +49,15 @@ const config: Config = {
           core: "#d35cff",
         },
         background: "hsl(var(--background))",
+        text: "hsl(var(--text))",
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        foreground: "hsl(var(--foreground))",
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
       },
     },
   },

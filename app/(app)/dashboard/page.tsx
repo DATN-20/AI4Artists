@@ -1,20 +1,15 @@
-async function fetchData() {
-  // Simulate a delay
-  await new Promise((resolve) => setTimeout(resolve, 3000))
-
-  const response = await fetch("https://jsonplaceholder.typicode.com/users")
-  const data = await response.json()
-  return data
-}
+import LeftSideBar from "@/components/sidebar/LeftSideBar"
+import { Row, Col } from "antd"
 
 export default async function Dashboard() {
-  const users = await fetchData()
-
   return (
-    <ul>
-      {users.map((user: any) => (
-        <li key={user.id}>{user.name}</li>
-      ))}
-    </ul>
+    <Row className="p-4">
+      <Col span={6}>
+        <LeftSideBar />
+      </Col>
+      <Col span={18} className="">
+        <div className="ml-4 h-full w-full">ahaha</div>
+      </Col>
+    </Row>
   )
 }
