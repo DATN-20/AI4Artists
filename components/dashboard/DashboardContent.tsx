@@ -24,7 +24,7 @@ export default function DashboardContent() {
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              className="bg-primary rounded-xl px-4 py-3 text-lg font-bold text-white hover:bg-primary-800"
+              className="bg-primary hover:bg-primary-800 rounded-xl px-4 py-3 text-lg font-bold text-white"
             >
               {currentSelection}
               <ChevronDown className="ml-2" />
@@ -54,7 +54,7 @@ export default function DashboardContent() {
         </div>
       </div>
       <div className="flex">
-        <button
+        <button></button>
       </div>
     </div>
   )
