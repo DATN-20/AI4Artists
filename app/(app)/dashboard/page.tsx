@@ -1,4 +1,5 @@
-import LeftSideBar from "@/components/sidebar/LeftSideBar"
+import LeftSideBar from "@/components/sidebar/NavigationSideBar"
+import DashboardContent from "@/components/dashboard/DashboardContent"
 
 export default async function Dashboard() {
   return (
@@ -7,7 +8,7 @@ export default async function Dashboard() {
         <LeftSideBar />
       </div>
       <div className="col-span-6 ml-4 h-full w-full">
-        <div>ahaha</div>
+        <DashboardContent />
       </div>
     </div>
   )

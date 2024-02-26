@@ -6,7 +6,7 @@ import { Facebook, Home, Instagram, Twitter } from "lucide-react"
 import { FaDiscord } from "react-icons/fa"
 import { ThemeToggle } from "../ThemeToggle"
 
-export default function LeftSideBar() {
+export default function NavigationSideBar() {
   return (
     <div className="flex flex-col gap-4">
       <NavigationCard />
