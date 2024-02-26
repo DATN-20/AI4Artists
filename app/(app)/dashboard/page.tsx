@@ -14,11 +14,11 @@ import { toast } from "react-toastify"
 //   return data
 // }
 
-export default async function Dashboard() {
+export default function Dashboard() {
   // const users = await fetchData()
   const router = useRouter()
 
-  const { name } = useAppSelector(selectAuth)
+  // const { name } = useAppSelector(selectAuth)
   const dispatch = useAppDispatch()
   const handleLogout = () => {
     dispatch(logout())
@@ -26,7 +26,7 @@ export default async function Dashboard() {
     router.push("/")
   }
   return (
-    <div>{name}</div>
+    <div>Welcome, Hao</div>
     // <ul>
     //   {users.map((user: any) => (
     //     <li key={user.id}>{user.name}</li>
