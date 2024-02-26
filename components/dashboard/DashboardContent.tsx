@@ -8,7 +8,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
 } from "../ui/dropdown-menu"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export default function DashboardContent() {
   const [currentSelection, setCurrentSelection] = useState("Trending")
@@ -17,14 +17,18 @@ export default function DashboardContent() {
   const handleSelection = (selection: string) => {
     setCurrentSelection(selection)
   }
+
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(false)
+
   return (
-    <div>
-      <div className="flex justify-between p-2">
+    <div className="flex flex-col p-2">
+      <div className="flex justify-between">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              className="bg-primary rounded-xl px-4 py-3 text-lg font-bold text-white hover:bg-primary-800"
+              className="hover:bg-primary-800 rounded-xl bg-primary px-4 py-3 text-lg font-bold text-white"
             >
               {currentSelection}
               <ChevronDown className="ml-2" />
@@ -44,7 +48,7 @@ export default function DashboardContent() {
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-        <div className="bg-card flex items-center justify-center rounded-full px-4 ">
+        <div className="flex items-center justify-center rounded-full bg-card px-4 ">
           <input
             type="text"
             placeholder="search"
@@ -53,8 +57,28 @@ export default function DashboardContent() {
           <Search />
         </div>
       </div>
-      <div className="flex">
-        <button
+      <div className="mt-4 flex gap-4">
+        <Button className="bg-primary-600 rounded-xl px-6 py-2 font-bold text-white">
+          All
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold text-white">
+          Photography
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold text-white">
+          Animals
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold text-white">
+          Anime
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold text-white">
+          Architecture
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold text-white">
+          Food
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold text-white">
+          Sci-fi
+        </Button>
       </div>
     </div>
   )
