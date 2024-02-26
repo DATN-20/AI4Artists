@@ -1,12 +1,11 @@
 "use client"
 
-import { Flex } from "antd"
 import Image from "next/image"
 import InputPrompt from "../../components/landing-page/InputPrompt"
 
 export default function Home() {
   return (
-    <div className="flex flex-grow flex-col items-center gap-14  ">
+    <div className="flex flex-grow flex-col items-center gap-14">
       <div className="absolute left-0 top-0 -z-10 h-full w-full">
         <Image src="/linear-gradient.png" alt="gradient" fill={true} />
         <Image src="/star.png" alt="star" fill={true} objectFit="cover" />

@@ -1,11 +1,8 @@
 import Image from "next/image"
 import React from "react"
-import {
-  FacebookFilled,
-  InstagramFilled,
-  TwitterSquareFilled,
-  DiscordFilled,
-} from "@ant-design/icons"
+import { Facebook, Instagram, Twitter } from "lucide-react"
+import { FaDiscord } from "react-icons/fa"
+
 import Link from "next/link"
 
 const Footer = () => {
@@ -24,16 +21,16 @@ const Footer = () => {
           </div>
           <div className="mt-4 flex ">
             <Link href="#" className="mr-6 text-white hover:text-gray-300">
-              <FacebookFilled style={{ fontSize: "42px" }} />
+              <Facebook color="white" size={36} />
             </Link>
             <Link href="#" className="mr-6 text-white hover:text-gray-300">
-              <InstagramFilled style={{ fontSize: "42px" }} />
+              <Instagram color="white" size={36} />
             </Link>
             <Link href="#" className="mr-6 text-white hover:text-gray-300">
-              <TwitterSquareFilled style={{ fontSize: "42px" }} />
+              <Twitter color="white" size={36} />
             </Link>
             <Link href="#" className="text-white hover:text-gray-300">
-              <DiscordFilled style={{ fontSize: "42px" }} />
+              <FaDiscord color="white" size={36} />
             </Link>
           </div>
         </div>
@@ -42,22 +39,22 @@ const Footer = () => {
           <div className="px-4">
             <ul className="grid gap-3">
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Image
                 </a>
               </li>
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Blogs
                 </a>
               </li>
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Community
                 </a>
               </li>
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Tools
                 </a>
               </li>
@@ -66,17 +63,17 @@ const Footer = () => {
           <div className="px-4">
             <ul className="grid gap-3">
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Docs
                 </a>
               </li>
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Open Source
                 </a>
               </li>
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Contact us
                 </a>
               </li>
@@ -85,17 +82,17 @@ const Footer = () => {
           <div className="px-4">
             <ul className="grid gap-3">
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Legal
                 </a>
               </li>
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="text-xl hover:text-gray-300 ">
+                <a href="#" className="text-lg hover:text-gray-300 ">
                   Terms & Condition
                 </a>
               </li>
