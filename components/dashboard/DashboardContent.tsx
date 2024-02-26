@@ -18,9 +18,6 @@ export default function DashboardContent() {
     setCurrentSelection(selection)
   }
 
-  const [items, setItems] = useState([])
-  const [loading, setLoading] = useState(false)
-
   return (
     <div className="flex flex-col p-2">
       <div className="flex justify-between">
@@ -52,31 +49,31 @@ export default function DashboardContent() {
           <input
             type="text"
             placeholder="search"
-            className="flex-grow bg-transparent text-black placeholder-white outline-none"
+            className="flex-grow bg-transparent  placeholder-white outline-none"
           />
           <Search />
         </div>
       </div>
       <div className="mt-4 flex gap-4">
-        <Button className="bg-primary-600 rounded-xl px-6 py-2 font-bold text-white">
+        <Button className="bg-primary-600 rounded-xl px-6 py-2 font-bold ">
           All
         </Button>
-        <Button className="rounded-xl bg-card px-6 py-2 font-bold text-white">
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
           Photography
         </Button>
-        <Button className="rounded-xl bg-card px-6 py-2 font-bold text-white">
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
           Animals
         </Button>
-        <Button className="rounded-xl bg-card px-6 py-2 font-bold text-white">
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
           Anime
         </Button>
-        <Button className="rounded-xl bg-card px-6 py-2 font-bold text-white">
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
           Architecture
         </Button>
-        <Button className="rounded-xl bg-card px-6 py-2 font-bold text-white">
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
           Food
         </Button>
-        <Button className="rounded-xl bg-card px-6 py-2 font-bold text-white">
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
           Sci-fi
         </Button>
       </div>

@@ -8,7 +8,7 @@ const MainInputCard = () => {
     <Card>
       <CardHeader className="flex flex-row items-center gap-6">
         <Image src="/logo.png" alt="logo" width={70} height={70} />
-        <h1 className="text-4xl font-bold text-white">AIArtist</h1>
+        <h1 className="text-4xl font-bold ">AIArtist</h1>
       </CardHeader>
       <CardContent className="px-4 pb-2">
         <ul className=" flex flex-col gap-3">

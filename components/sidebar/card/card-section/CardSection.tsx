@@ -18,7 +18,7 @@ const CardSection = ({
   return (
     <div
       className={clsx("rounded-lg p-2 pl-3 font-semibold ", {
-        "bg-[#2C2D31]": isOpen,
+        "bg-card-highlight": isOpen,
         "bg-card": !isOpen,
       })}
     >
