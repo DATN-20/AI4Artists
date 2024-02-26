@@ -9,13 +9,15 @@ import React, { useEffect, useState } from "react"
 // } from "@ant-design/icons"
 import NextImage from "next/image"
 import { useLoginUserMutation } from "@/services/authApi"
-import { toast } from "react-toastify"
 import { useAppDispatch } from "@/store/hooks"
 import { setUser } from "@/features/authSlice"
 import { Dialog, DialogContent } from "../ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-
+import { useRouter } from "next/navigation"
+import { ToastContainer, toast } from "react-toastify"
+import { ErrorObject } from "@/types"
+import "react-toastify/dist/ReactToastify.css"
 import {
   Form,
   FormControl,
@@ -39,16 +41,13 @@ const formSchema = z.object({
 })
 
 interface ModalLoginProps {
-  open: boolean
   onClose: () => void
-  setOpenRegister: (open: boolean) => void
 }
 
-const ModalLogin: React.FC<ModalLoginProps> = ({
-  onClose,
-  setOpenRegister,
-}) => {
+const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
   const dispatch = useAppDispatch()
+  const router = useRouter()
+
   const [
     loginUser,
     {
@@ -67,10 +66,6 @@ const ModalLogin: React.FC<ModalLoginProps> = ({
     },
   })
 
-  const handleSignUpClick = () => {
-    onClose()
-    setOpenRegister(true)
-  }
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -79,19 +74,28 @@ const ModalLogin: React.FC<ModalLoginProps> = ({
     setFormData({ ...formData, [event.target.name]: event.target.value })
   }
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (formData.email && formData.password) {
-      await loginUser({ email: formData.email, password: formData.password })
+    const { email, password } = values
+
+    if (email && password) {
+      const response = await loginUser({ email, password })
+
+      if ((response as ErrorObject).error) {
+        toast.error((response as ErrorObject).error.data.message)
+      }
     } else {
       toast.error("Please fill all Input field")
     }
   }
 
-  // useEffect(() => {
-  //   if (isLoginSuccess) {
-  //     toast.success("User login successfully")
-  //     dispatch(setUser({ token: loginData.token, name: loginData.name }))
-  //   }
-  // }, [isLoginSuccess])
+  useEffect(() => {
+    if (isLoginSuccess) {
+      toast.success("User login successfully")
+      dispatch(setUser({ token: loginData.access_token, name: "Hao" }))
+      setTimeout(() => {
+        router.push("/dashboard")
+      }, 1000)
+    }
+  }, [isLoginSuccess])
 
   return (
     <DialogContent className="min-w-[950px] p-0">
@@ -149,8 +153,6 @@ const ModalLogin: React.FC<ModalLoginProps> = ({
                         type="email"
                         placeholder="Email"
                         {...field}
-                        value={formData.email}
-                        onChange={handleChange}
                         className="w-full"
                       />
                     </FormControl>
@@ -169,8 +171,6 @@ const ModalLogin: React.FC<ModalLoginProps> = ({
                         placeholder="Password"
                         {...field}
                         type="password"
-                        value={formData.password}
-                        onChange={handleChange}
                       />
                     </FormControl>
                     <FormMessage />
@@ -200,11 +200,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({
               </Button>
               <div className="mb-10 text-center">
                 Don't you have an account?{" "}
-                <a
-                  href="#"
-                  className="text-primary-blue"
-                  onClick={handleSignUpClick}
-                >
+                <a href="#" className="text-primary-blue" onClick={onClose}>
                   Sign up
                 </a>
               </div>

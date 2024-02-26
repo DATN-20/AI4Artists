@@ -1,6 +1,7 @@
 "use client"
-import React, { useState } from "react"
-
+import React, { useState, useEffect } from "react"
+import { useRegisterUserMutation } from "@/services/authApi"
+import { toast } from "react-toastify"
 // import { CheckCircleOutlined } from "@ant-design/icons"
 import NextImage from "next/image"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -34,16 +35,19 @@ const formSchema = z.object({
 })
 
 interface ModalRegisterProps {
-  open: boolean
   onClose: () => void
-  setOpenLogin: (open: boolean) => void
 }
 
-const ModalRegister: React.FC<ModalRegisterProps> = ({
-  open,
-  onClose,
-  setOpenLogin,
-}) => {
+const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
+  const [
+    registerUser,
+    {
+      data: registerData,
+      isSuccess: isRegisterSuccess,
+      isError: isRegisterError,
+      error: registerError,
+    },
+  ] = useRegisterUserMutation()
   const [formData, setFormData] = useState({
     email: "",
     username: "",
@@ -51,10 +55,6 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({
     confirmPassword: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const handleSignInClick = () => {
-    onClose()
-    setOpenLogin(true)
-  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -75,11 +75,15 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({
 
     try {
       // Simulate registration API call (replace with your actual API)
-      if (formData.password === formData.confirmPassword) {
-        // Register successfully
+      if (values.email && values.password && values.username) {
+        await registerUser({
+          email: values.email,
+          username: values.username,
+          password: values.password,
+        })
         onClose()
       } else {
-        throw new Error("Passwords do not match")
+        toast.error("Password do not match")
       }
     } catch (error) {
       console.error("Registration error:", error)
@@ -88,6 +92,12 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({
       setIsSubmitting(false)
     }
   }
+
+  // useEffect(() => {
+  //   if (isRegisterError) {
+  //     toast.error((registerError as any).data.message)
+  //   }
+  // }, [isRegisterError])
 
   return (
     <DialogContent className="min-w-[950px] p-0">
@@ -218,11 +228,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({
 
               <p className="mb-10 text-center">
                 Already have an account?{" "}
-                <a
-                  href="#"
-                  className="text-primary-blue"
-                  onClick={handleSignInClick}
-                >
+                <a href="#" className="text-primary-blue" onClick={onClose}>
                   Sign in
                 </a>
               </p>
