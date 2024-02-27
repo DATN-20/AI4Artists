@@ -1,6 +1,6 @@
 "use client"
 
-import LeftSideBar from "@/components/sidebar/NavigationSideBar"
+import NavigationSideBar from "@/components/sidebar/NavigationSideBar"
 import DashboardContent from "@/components/dashboard/DashboardContent"
 import { selectAuth, logout } from "@/features/authSlice"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
@@ -20,7 +20,7 @@ export default function Dashboard() {
   return (
     <div className="grid grid-cols-10 gap-4 p-4">
       <div className="col-span-2">
-        <LeftSideBar />
+        <NavigationSideBar />
       </div>
       <div className="col-span-8 ml-4 h-full w-full">
         <DashboardContent />
