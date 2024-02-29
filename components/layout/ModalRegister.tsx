@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from "react"
-import { useRegisterUserMutation } from "@/services/authApi"
+import { useRegisterUserMutation } from "@/services/auth/authApi"
 import { toast } from "react-toastify"
 // import { CheckCircleOutlined } from "@ant-design/icons"
 import NextImage from "next/image"

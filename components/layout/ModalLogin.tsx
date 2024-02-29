@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react"
 //   CheckCircleOutlined,
 // } from "@ant-design/icons"
 import NextImage from "next/image"
-import { useLoginUserMutation } from "@/services/authApi"
+import { useLoginUserMutation } from "@/services/auth/authApi"
 import { useAppDispatch } from "@/store/hooks"
 import { setUser } from "@/features/authSlice"
 import { Dialog, DialogContent } from "../ui/dialog"
@@ -30,6 +30,7 @@ import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { FaFacebook, FaGoogle } from "react-icons/fa"
 
 const formSchema = z.object({
   email: z.string().min(2, {
@@ -190,12 +191,14 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
                 // icon={<GoogleOutlined />}
                 className="h-10 w-full bg-red-600 text-white"
               >
+                <FaGoogle className="mr-3" />
                 Sign in with Google
               </Button>
               <Button
                 // icon={<FacebookFilled />}
                 className="h-10 w-full bg-blue-800 text-white"
               >
+                <FaFacebook className="mr-3" />
                 Sign in with Facebook
               </Button>
               <div className="mb-10 text-center">
