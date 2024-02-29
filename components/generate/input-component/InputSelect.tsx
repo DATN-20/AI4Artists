@@ -27,7 +27,7 @@ const InputSelect = ({ data, onSelect }: InputSelectProps) => {
   }
   return (
     <Select>
-      <SelectTrigger className="w-full">
+      <SelectTrigger className="bg-card-highlight">
         <SelectValue placeholder={data[0].label} />
       </SelectTrigger>
       <SelectContent>

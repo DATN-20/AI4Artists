@@ -35,7 +35,7 @@ const ShortInputSelect = ({
     <div className="flex w-full items-center justify-between">
       <p className="text-lg font-semibold">{content}</p>
       <Select>
-        <SelectTrigger className=" w-[150px]">
+        <SelectTrigger className=" w-[150px] bg-card-highlight">
           <SelectValue placeholder={data[0].label} />
         </SelectTrigger>
         <SelectContent>
