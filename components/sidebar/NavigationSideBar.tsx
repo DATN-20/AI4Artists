@@ -8,7 +8,7 @@ import { ThemeToggle } from "../ThemeToggle"
 
 export default function NavigationSideBar() {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="fixed left-0 top-0 flex h-screen min-h-screen flex-col gap-4 overflow-y-scroll no-scrollbar p-4 ">
       <NavigationCard />
       <OtherInputCard />
       <Card>

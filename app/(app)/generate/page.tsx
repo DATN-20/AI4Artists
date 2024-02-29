@@ -23,6 +23,8 @@ import {
 import { Search } from "lucide-react"
 import { FaSort, FaFilter, FaImage } from "react-icons/fa"
 
+import GenerateSideBar from "@/components/sidebar/GenerateSideBar"
+
 export default function Generate() {
   const [useNegativePrompt, setUseNegativePrompt] = useState(false)
 
@@ -56,7 +58,9 @@ export default function Generate() {
 
   return (
     <div className="grid grid-cols-10 gap-4 p-4">
-      <div className="col-span-2">component Left side bar here</div>
+      <div className="col-span-2">
+        <GenerateSideBar />
+      </div>
       <div className="col-span-8 ml-4 h-full w-full">
         <div className="flex max-w-[1050px]">
           <input

@@ -8,7 +8,8 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
 } from "../ui/dropdown-menu"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
+import MansoryGrid from "./MansoryGrid"
 
 export default function DashboardContent() {
   const [currentSelection, setCurrentSelection] = useState("Trending")
@@ -25,7 +26,7 @@ export default function DashboardContent() {
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              className="hover:bg-primary-800 rounded-xl bg-primary px-4 py-3 text-lg font-bold text-white"
+              className="rounded-xl bg-primary px-4 py-3 text-lg font-bold text-white hover:bg-primary-800"
             >
               {currentSelection}
               <ChevronDown className="ml-2" />
@@ -55,7 +56,7 @@ export default function DashboardContent() {
         </div>
       </div>
       <div className="mt-4 flex gap-4">
-        <Button className="bg-primary-600 rounded-xl px-6 py-2 font-bold ">
+        <Button className="rounded-xl bg-primary-600 px-6 py-2 font-bold ">
           All
         </Button>
         <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
@@ -77,6 +78,8 @@ export default function DashboardContent() {
           Sci-fi
         </Button>
       </div>
+
+      <MansoryGrid />
     </div>
   )
 }
