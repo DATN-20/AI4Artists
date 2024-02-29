@@ -25,15 +25,16 @@ const ChooseInput = ({
   return (
     <div className="-mx-2 flex flex-wrap items-center">
       {options.map((option, index) => (
-        <div key={index} className="w-1/2 px-2 mb-2">
+        <div key={index} className="mb-2 w-1/2 px-2">
           <Button
+            variant={"outline"}
             className={clsx(
-              "w-full rounded-lg border px-4 py-2 transition-colors",
-              "focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500",
+              "w-full rounded-lg border px-4 py-2 text-text transition-colors",
               {
-                "bg-lightblue-500 border-blue-500 text-primary":
+                "bg-accent text-accent-foreground":
                   selectedValue === option.value,
-                "border-gray-300 bg-white": selectedValue !== option.value,
+                "border-card-hightlight border-none":
+                  selectedValue !== option.value,
               },
             )}
             onClick={() => handleSelect(option.value)}

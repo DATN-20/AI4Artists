@@ -8,7 +8,7 @@ const CollapsibleSection = ({
   title: string
   children: React.ReactNode
 }) => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(true)
 
   return (
     <div className="w-full p-4 pb-0">

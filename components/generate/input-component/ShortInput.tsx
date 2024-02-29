@@ -17,16 +17,14 @@ const ShortInput = ({
   }
 
   return (
-    <div className="flex items-center space-x-2 rounded bg-gray-700 p-2">
-      <label htmlFor="currentInput" className="text-white">
-        {title}
-      </label>
+    <div className="flex justify-between gap-2 py-2">
+      <label htmlFor="currentInput">{title}</label>
       <input
         id="currentInput"
         type="text"
         value={current}
         onChange={handleInputChange}
-        className="rounded bg-gray-600 px-2 text-white"
+        className="w-[150px] rounded px-2"
       />
     </div>
   )

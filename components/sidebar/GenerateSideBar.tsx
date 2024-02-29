@@ -47,47 +47,49 @@ export default function GenerateSideBar() {
   }
 
   return (
-    <Card className="no-scrollbar flex h-full min-h-screen flex-col overflow-y-scroll">
-      <CollapsibleSection title={"Input Select"}>
-        <InputSelect
-          data={dropdownData}
-          onSelect={handleInputDropDownSelection}
-        />
-      </CollapsibleSection>
-      <CollapsibleSection title={"Choose Input"}>
-        <ChooseInput
-          options={chooseInputOptions}
-          onSelect={handleChooseInputSelection}
-        />
-      </CollapsibleSection>
-      <CollapsibleSection title="title">
-        <SliderInput min={1} max={10} step={1} />
-      </CollapsibleSection>
-      <CollapsibleSection title={"Short Input Select"}>
-        <ShortInputSelect
-          data={dropdownData}
-          onSelect={handleInputDropDownSelection}
-          content={"Content"}
-        />
-      </CollapsibleSection>
-      <CollapsibleSection title={"Short Input"}>
-        <ShortInput
-          title="Current"
-          onValueChange={handleShortInputValueChange}
-        />
-      </CollapsibleSection>
-      <CollapsibleSection title={"Style"}>
-        <ShortInput
-          title="Current"
-          onValueChange={handleShortInputValueChange}
-        />
-      </CollapsibleSection>
-      <CollapsibleSection title={"Choose Input"}>
-        <ChooseThreeInput
-          options={chooseThreeInputOptions}
-          onSelect={handleChooseThreeInputSelection}
-        />
-      </CollapsibleSection>
-    </Card>
+    <div className="fixed left-0 top-0 w-1/5 p-4">
+      <Card className="no-scrollbar flex h-screen min-h-screen w-full flex-col overflow-y-scroll">
+        <CollapsibleSection title={"Input Select"}>
+          <InputSelect
+            data={dropdownData}
+            onSelect={handleInputDropDownSelection}
+          />
+        </CollapsibleSection>
+        <CollapsibleSection title={"Choose Input"}>
+          <ChooseInput
+            options={chooseInputOptions}
+            onSelect={handleChooseInputSelection}
+          />
+        </CollapsibleSection>
+        <CollapsibleSection title="Slider Input">
+          <SliderInput min={1} max={10} step={1} />
+        </CollapsibleSection>
+        <CollapsibleSection title={"Short Input Select"}>
+          <ShortInputSelect
+            data={dropdownData}
+            onSelect={handleInputDropDownSelection}
+            content={"Content"}
+          />
+        </CollapsibleSection>
+        <CollapsibleSection title={"Short Input"}>
+          <ShortInput
+            title="Current"
+            onValueChange={handleShortInputValueChange}
+          />
+        </CollapsibleSection>
+        <CollapsibleSection title={"Short Input"}>
+          <ShortInput
+            title="Current"
+            onValueChange={handleShortInputValueChange}
+          />
+        </CollapsibleSection>
+        <CollapsibleSection title={"Choose Input"}>
+          <ChooseThreeInput
+            options={chooseThreeInputOptions}
+            onSelect={handleChooseThreeInputSelection}
+          />
+        </CollapsibleSection>
+      </Card>
+    </div>
   )
 }
