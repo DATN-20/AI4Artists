@@ -22,12 +22,16 @@ import {
 } from "@/components/ui/carousel"
 import { Search } from "lucide-react"
 import { FaSort, FaFilter, FaImage } from "react-icons/fa"
-
+import ImageInput from "@/components/generate/input-component/ImageInput"
 import GenerateSideBar from "@/components/sidebar/GenerateSideBar"
 
 export default function Generate() {
   const [useNegativePrompt, setUseNegativePrompt] = useState(false)
-
+  const [useImg2Img, setUseImg2Img] = useState(false)
+  const handleImageChange = (image: File) => {
+    // Do something with the selected image file
+    console.log("Selected image:", image)
+  }
   // Dữ liệu mẫu cho carousel
   const imageData = [
     {
@@ -66,7 +70,7 @@ export default function Generate() {
           <input
             type="text"
             placeholder="Type prompt here..."
-            className="flex-grow rounded-2xl p-3 text-black placeholder-black outline-none dark:placeholder-white"
+            className="flex-grow rounded-2xl p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
           />
           <button
             type="button"
@@ -75,6 +79,14 @@ export default function Generate() {
             <span className="mr-2">✨</span>
             Generate
           </button>
+        </div>
+        <div className="mt-5 flex items-center space-x-2">
+          <Switch
+            id="negative-mode"
+            className="bg-black"
+            onClick={() => setUseNegativePrompt(!useNegativePrompt)}
+          />
+          <Label htmlFor="negative-mode">Use Negative Prompt</Label>
         </div>
         {useNegativePrompt && (
           <input
@@ -85,14 +97,16 @@ export default function Generate() {
         )}
         <div className="mt-5 flex items-center space-x-2">
           <Switch
-            id="negative-mode"
+            id="image-mode"
             className="bg-black"
-            onClick={() => setUseNegativePrompt(!useNegativePrompt)}
+            onClick={() => setUseImg2Img(!useImg2Img)}
           />
-          <Label htmlFor="negative-mode">Use Negative Prompt</Label>
+          <Label htmlFor="image-mode">Use Image Generation</Label>
         </div>
+        {useImg2Img && <ImageInput onImageChange={handleImageChange} />}
+
         <h1 className="mt-5 text-3xl font-bold">Generated Images</h1>
-        <div className="mt-5 flex">
+        <div className="ml-10 mt-5 flex">
           <div className="flex items-center justify-center rounded-full bg-card px-4 ">
             <input
               type="text"
@@ -131,7 +145,7 @@ export default function Generate() {
           </Select>
         </div>
         <Carousel className="ml-10 mt-5 w-full max-w-5xl">
-          <div className="mb-2 ml-5 flex justify-between	">
+          <div className="mb-2 ml-1 flex justify-between	">
             <div>An anime girl </div>
             <div className="flex">
               <div>Stable Diffusion 1.5</div>
@@ -159,7 +173,7 @@ export default function Generate() {
           <CarouselNext />
         </Carousel>
         <Carousel className="ml-10 mt-5 w-full max-w-5xl">
-          <div className="mb-2 ml-5 flex justify-between	">
+          <div className="mb-2 ml-1 flex justify-between	">
             <div>An anime girl </div>
             <div className="flex">
               <div>Stable Diffusion 1.5</div>
