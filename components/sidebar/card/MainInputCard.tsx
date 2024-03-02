@@ -2,6 +2,12 @@ import { Card, CardContent, CardHeader } from "../../ui/card"
 import CardSection from "./card-section/CardSection"
 import Image from "next/image"
 import { Home } from "lucide-react"
+import { IoIosPeople } from "react-icons/io"
+import { FaHome } from "react-icons/fa"
+import { BsPeopleFill } from "react-icons/bs"
+import { IoPerson } from "react-icons/io5"
+import { MdModelTraining } from "react-icons/md";
+import { TbBoxModel2 } from "react-icons/tb";
 
 const MainInputCard = () => {
   return (
@@ -13,14 +19,19 @@ const MainInputCard = () => {
       <CardContent className="px-4 pb-2">
         <ul className=" flex flex-col gap-3">
           <li>
-            <CardSection title="Home" href="#" isOpen={true} icon={<Home />} />
+            <CardSection
+              title="Home"
+              href="#"
+              isOpen={true}
+              icon={<FaHome />}
+            />
           </li>
           <li>
             <CardSection
               title="Commmunity"
               href="#"
               isOpen={false}
-              icon={<Home />}
+              icon={<BsPeopleFill />}
             />
           </li>
           <li>
@@ -28,7 +39,7 @@ const MainInputCard = () => {
               title="Personal Feed"
               href="#"
               isOpen={false}
-              icon={<Home />}
+              icon={<IoPerson />}
             />
           </li>
           <li>
@@ -36,7 +47,7 @@ const MainInputCard = () => {
               title="Trainning & Dataset"
               href="#"
               isOpen={false}
-              icon={<Home />}
+              icon={<MdModelTraining />}
             />
           </li>
           <li>
@@ -44,7 +55,7 @@ const MainInputCard = () => {
               title="Models"
               href="#"
               isOpen={false}
-              icon={<Home />}
+              icon={<TbBoxModel2 />}
             />
           </li>
         </ul>

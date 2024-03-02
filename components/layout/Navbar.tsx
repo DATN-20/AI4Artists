@@ -26,9 +26,9 @@ const NavBar: React.FC = () => {
             <DialogTrigger asChild>
               <button
                 type="button"
-                className="mr-10 flex min-w-[150px] items-center justify-center rounded-full border-[2px] border-white bg-white py-1"
+                className="mr-10 flex min-w-[150px] items-center justify-center rounded-full border-[2px] border-white py-1"
               >
-                <h1 className="text-xl font-semibold">Sign in </h1>
+                <h1 className="text-xl font-semibold text-white">Sign in </h1>
               </button>
             </DialogTrigger>
           </div>

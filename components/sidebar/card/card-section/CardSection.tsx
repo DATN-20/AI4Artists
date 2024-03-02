@@ -13,7 +13,7 @@ const CardSection = ({
   icon: React.ReactElement
 }) => {
   const iconWithProps = React.cloneElement(icon, {
-    size: 18,
+    size: 20,
   })
   return (
     <div

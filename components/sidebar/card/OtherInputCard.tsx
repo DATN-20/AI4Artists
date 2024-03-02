@@ -1,6 +1,10 @@
 import { Home } from "lucide-react"
 import { Card, CardContent } from "../../ui/card"
 import CardSection from "./card-section/CardSection"
+import { FaImages } from "react-icons/fa6";
+import { Palette } from 'lucide-react';
+import { FaClipboardCheck } from "react-icons/fa";
+import { FaTag } from "react-icons/fa";
 
 const OtherInputCard = () => {
   return (
@@ -12,7 +16,7 @@ const OtherInputCard = () => {
               title="Image Generation"
               href="#"
               isOpen={true}
-              icon={<Home />}
+              icon={<FaImages />}
             />
           </li>
           <li>
@@ -20,7 +24,7 @@ const OtherInputCard = () => {
               title="Realtime Canvas"
               href="#"
               isOpen={false}
-              icon={<Home />}
+              icon={<Palette />}
             />
           </li>
           <li>
@@ -28,7 +32,7 @@ const OtherInputCard = () => {
               title="Image Copyright"
               href="#"
               isOpen={false}
-              icon={<Home />}
+              icon={<FaClipboardCheck />}
             />
           </li>
           <li>
@@ -36,7 +40,7 @@ const OtherInputCard = () => {
               title="Image Tag"
               href="#"
               isOpen={false}
-              icon={<Home />}
+              icon={<FaTag />}
             />
           </li>
         </ul>
