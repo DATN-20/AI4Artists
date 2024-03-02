@@ -11,11 +11,9 @@ import {
 import { useState } from "react"
 
 type InputSelectProps = {
-  data: Array<{
-    label: string
-    value: string
-  }>
+  data: Record<string, string>
   onSelect: (value: string) => void
+  type: string
 }
 
 const InputSelect = ({ data, onSelect }: InputSelectProps) => {
@@ -25,20 +23,25 @@ const InputSelect = ({ data, onSelect }: InputSelectProps) => {
     setSelected(value)
     onSelect(value)
   }
+
+  const dataArray = Object.entries(data)
+
   return (
     <Select>
       <SelectTrigger className="bg-card-highlight">
-        <SelectValue placeholder={data[0].label} />
+        <SelectValue
+          placeholder={dataArray.length > 0 ? dataArray[0][1] : ""}
+        />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {data.map((item, index) => (
+          {dataArray.map(([key, value], index) => (
             <SelectItem
               key={index}
-              value={item.value}
-              onSelect={() => handleSelect(item.value)}
+              value={value}
+              onSelect={() => handleSelect(value)}
             >
-              {item.label}
+              {value}
             </SelectItem>
           ))}
         </SelectGroup>

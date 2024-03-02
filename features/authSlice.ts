@@ -3,12 +3,10 @@ import { RootState } from "@/store/store";
 import { Root } from "react-dom/client";
 
 export interface AuthState{
-  name: string | null;
   token: string | null;
 }
 
 const initialState:AuthState ={
-  name: null,
   token: null
 
 }
@@ -20,19 +18,14 @@ export const authSlice = createSlice({
       state, action: PayloadAction<{name:string; token:string}>
     ) => {
       localStorage.setItem(
-    "user",
-    JSON.stringify({
-      name:action.payload.name,
-      token: action.payload.token,
-    })
-    
+    "token",
+      action.payload.token,
   );
-    state.name = action.payload.name;
+  
     state.token = action.payload.token;
   },
   logout: (state) => {
     localStorage.clear();
-    state.name = null;
     state.token = null;
   }
   }
