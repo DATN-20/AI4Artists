@@ -181,7 +181,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
               <a href="#" className="text-primary-blue float-right">
                 Forget Password?
               </a>
-              <Button type="submit" className="h-10 w-full bg-black">
+              <Button type="submit" className="h-10 w-full bg-black text-white">
                 Sign In
               </Button>
 

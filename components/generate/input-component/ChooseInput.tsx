@@ -10,11 +10,13 @@ type Option = {
 const ChooseInput = ({
   options,
   onSelect,
+  type,
 }: {
   options: Option[]
+  type: string
   onSelect: (value: string) => void
 }) => {
-  const [selectedValue, setSelectedValue] = useState<string>("")
+  const [selectedValue, setSelectedValue] = useState<string>(options[0].value)
 
   const handleSelect = (value: string) => {
     setSelectedValue(value)

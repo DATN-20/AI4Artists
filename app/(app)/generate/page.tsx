@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 import {
   Select,
   SelectContent,
@@ -24,14 +24,51 @@ import { Search } from "lucide-react"
 import { FaSort, FaFilter, FaImage } from "react-icons/fa"
 import ImageInput from "@/components/generate/input-component/ImageInput"
 import GenerateSideBar from "@/components/sidebar/GenerateSideBar"
+import { useAiInformationMutation } from "@/services/generate/generateApi"
+import { useAppDispatch } from "@/store/hooks"
+import {
+  selectGenerate,
+  setInputs,
+  setUseImage,
+  setPositivePrompt,
+} from "@/features/generateSlice"
+import { useSelector } from "react-redux"
+
+interface AIField {
+  ai_name: string | null
+  inputs: InputField[]
+}
+
+// Định nghĩa interface cho các trường dữ liệu input
+interface InputField {
+  name: string
+  default: string | number | null
+  typeName: string
+  max?: number
+  min?: number
+  step?: number
+  info?: {
+    choices?: Record<string, string>
+  }
+}
 
 export default function Generate() {
+  const dispatch = useAppDispatch()
+  const generateStates = useSelector(selectGenerate)
   const [useNegativePrompt, setUseNegativePrompt] = useState(false)
   const [useImg2Img, setUseImg2Img] = useState(false)
+  const [promptPos, setPromptPos] = useState("")
   const handleImageChange = (image: File) => {
     // Do something with the selected image file
     console.log("Selected image:", image)
   }
+  const handlePosPromptChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const prompt = event.target.value
+    setPromptPos(prompt)
+
+    dispatch(setPositivePrompt({ value: prompt }))
+  }
+  const [aiInformation, { data: inputData }] = useAiInformationMutation()
   // Dữ liệu mẫu cho carousel
   const imageData = [
     {
@@ -60,6 +97,19 @@ export default function Generate() {
     },
   ]
 
+  useEffect(() => {
+    const fetchData = async () => {
+      await aiInformation(undefined)
+    }
+    fetchData()
+  }, [])
+
+  useEffect(() => {
+    if (inputData) {
+      dispatch(setInputs({ aiInputs: inputData }))
+    }
+  }, [inputData])
+
   return (
     <div className="grid grid-cols-10 gap-4 p-4">
       <div className="col-span-2">
@@ -70,6 +120,7 @@ export default function Generate() {
           <input
             type="text"
             placeholder="Type prompt here..."
+            onChange={handlePosPromptChange}
             className="flex-grow rounded-2xl p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
           />
           <button
@@ -99,7 +150,10 @@ export default function Generate() {
           <Switch
             id="image-mode"
             className="bg-black"
-            onClick={() => setUseImg2Img(!useImg2Img)}
+            onClick={() => {
+              setUseImg2Img(!useImg2Img)
+              dispatch(setUseImage({ useImage: !generateStates.useImage }))
+            }}
           />
           <Label htmlFor="image-mode">Use Image Generation</Label>
         </div>

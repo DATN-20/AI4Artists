@@ -37,24 +37,18 @@ const ImageInput: React.FC<{ onImageChange: (image: File) => void }> = ({
       onClick={handleClick}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      style={{
-        border: "2px dashed #aaa",
-        padding: "20px",
-        textAlign: "center",
-        cursor: "pointer",
-        maxWidth: 800,
-        width: "fit-content",
-        marginTop: 20,
-      }}
+      className="mb-10 ml-10 mr-10 mt-10 max-w-[1020px] cursor-pointer border-2 border-dashed border-black p-20 text-center dark:border-white"
     >
       {selectedImage ? (
         <img
           src={URL.createObjectURL(selectedImage)}
           alt="Selected"
-          style={{ maxWidth: "100%", maxHeight: "200px" }}
+          className="mx-auto max-h-[512px] max-w-[512px]"
         />
       ) : (
-        <p>Drag & drop an image here or click to select one</p>
+        <p className="dark:text-white">
+          Drag & drop an image here or click to select one
+        </p>
       )}
       <input
         type="file"

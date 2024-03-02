@@ -12,7 +12,7 @@ export const store = configureStore({
   generate: generateReducer,
   [generateApi.reducerPath]: generateApi.reducer
   },
-  middleware: (getDefaultMiddleware) =>getDefaultMiddleware().concat(authApi.middleware),
+  middleware: (getDefaultMiddleware) =>getDefaultMiddleware().concat(authApi.middleware, generateApi.middleware),
 });
 
 export type AppDispatch = typeof store.dispatch;
