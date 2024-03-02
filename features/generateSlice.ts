@@ -19,6 +19,7 @@ interface DataInputs {
   sampleMethod: string; // Phương pháp lấy mẫu
   cfg: number; // Cấu hình (không rõ ý nghĩa cụ thể)
   noise: number; // Độ nhiễu
+  image: string
 }
 
 // Định nghĩa interface cho dữ liệu generate state
@@ -55,6 +56,7 @@ const initialState:GenerateState ={
   sampleMethod: "euler", 
   cfg: 8,
   noise: 0.75,
+  image:""
   }
 }
 
@@ -65,9 +67,13 @@ export const generateSlice = createSlice({
     setInputs: (
       state, action: PayloadAction<{aiInputs: AIField[]}>
     ) => {
-     
-  
     state.aiInputs = action.payload.aiInputs;
+    if(state.aiInputs && state.dataInputs && action.payload.aiInputs[0].ai_name){
+      state.dataInputs.aiName = action.payload.aiInputs[0].ai_name;
+    }
+    if(state.aiInputs && state.dataInputs && action.payload.aiInputs[0].inputs[0].default){
+      state.dataInputs.style = (action.payload.aiInputs[0].inputs[0].default).toString();
+    }
   },
     setUseImage: (
       state, action: PayloadAction<{ useImage: boolean}>
@@ -80,11 +86,60 @@ export const generateSlice = createSlice({
       if (state.dataInputs) {
         state.dataInputs.positivePrompt = action.payload.value;
       }  },
+    setNegativePrompt:(
+        state, action: PayloadAction<{ value: string}>
+      ) => {
+        if (state.dataInputs) {
+          state.dataInputs.negativePrompt = action.payload.value;
+        }  },
+    setNumberOfImage: (
+          state, action: PayloadAction<{ numberOfImage: number}>
+        ) => {
+          if (state.dataInputs) {
+            state.dataInputs.numberOfImage = action.payload.numberOfImage;
+          }
+      },
+    setDimension: (
+        state, action: PayloadAction<{ width: number, height: number}>
+      ) => {
+        if (state.dataInputs) {
+          state.dataInputs.width = action.payload.width;
+          state.dataInputs.height = action.payload.height;
+        }
+    },
+    setSteps: (
+      state, action: PayloadAction<{ steps: number}>
+    ) => {
+      if (state.dataInputs) {
+        state.dataInputs.steps = action.payload.steps;
+      }
+  },
+  setCFG: (
+    state, action: PayloadAction<{ cfg: number}>
+  ) => {
+    if (state.dataInputs) {
+      state.dataInputs.cfg = action.payload.cfg;
+    }
+},
+  setNoise: (
+  state, action: PayloadAction<{ noise: number}>
+) => {
+  if (state.dataInputs) {
+    state.dataInputs.noise = action.payload.noise;
+  }
+},
+  setImageGenerate: (
+  state, action: PayloadAction<{ image: string}>
+) => {
+  if (state.dataInputs) {
+    state.dataInputs.image = action.payload.image;
+  }
+},
   }
 })
 
 export const selectGenerate = (state: RootState) => state.generate;
 
-export const {setInputs, setUseImage, setPositivePrompt} = generateSlice.actions;
+export const {setInputs, setUseImage, setPositivePrompt, setNegativePrompt, setNumberOfImage, setDimension, setSteps, setCFG, setNoise, setImageGenerate} = generateSlice.actions;
 
 export default generateSlice.reducer
