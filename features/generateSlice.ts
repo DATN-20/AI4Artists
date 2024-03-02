@@ -57,6 +57,7 @@ const initialState:GenerateState ={
   noise: 0.75,
   }
 }
+
 export const generateSlice = createSlice({
   name:"generate",
   initialState,
