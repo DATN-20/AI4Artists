@@ -31,6 +31,7 @@ import {
   setInputs,
   setUseImage,
   setPositivePrompt,
+  setNegativePrompt,
 } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
 
@@ -58,15 +59,41 @@ export default function Generate() {
   const [useNegativePrompt, setUseNegativePrompt] = useState(false)
   const [useImg2Img, setUseImg2Img] = useState(false)
   const [promptPos, setPromptPos] = useState("")
+  const [promptNeg, setPromptNeg] = useState("")
+
   const handleImageChange = (image: File) => {
     // Do something with the selected image file
-    console.log("Selected image:", image)
   }
   const handlePosPromptChange = (event: ChangeEvent<HTMLInputElement>) => {
     const prompt = event.target.value
     setPromptPos(prompt)
-
     dispatch(setPositivePrompt({ value: prompt }))
+  }
+
+  function base64StringToFile(base64String: string, filename: string): File {
+    const byteString = atob(base64String.split(",")[1])
+    const ab = new ArrayBuffer(byteString.length)
+    const ia = new Uint8Array(ab)
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i)
+    }
+    const blob = new Blob([ab], { type: "image/jpeg" }) // Adjust the type accordingly
+    return new File([blob], filename)
+  }
+
+  const handleGenerate = () => {
+    const base64String = generateStates.dataInputs?.image
+    if (base64String) {
+      const filename = "image.jpg" // Đặt tên cho file
+      const imageFile = base64StringToFile(base64String, filename)
+      console.log(imageFile)
+    }
+  }
+
+  const handleNegPromptChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const prompt = event.target.value
+    setPromptNeg(prompt)
+    dispatch(setNegativePrompt({ value: prompt }))
   }
   const [aiInformation, { data: inputData }] = useAiInformationMutation()
   // Dữ liệu mẫu cho carousel
@@ -125,6 +152,7 @@ export default function Generate() {
           />
           <button
             type="button"
+            onClick={handleGenerate}
             className="ml-4 flex items-center justify-center rounded-full bg-purple-500 px-4 py-3 font-bold text-white hover:bg-purple-700"
           >
             <span className="mr-2">✨</span>
@@ -143,7 +171,8 @@ export default function Generate() {
           <input
             type="text"
             placeholder="Type what you don't want to see in a image (a negative prompt)..."
-            className="mt-5 w-full max-w-[1050px] flex-grow rounded-2xl p-3 text-black placeholder-black outline-none dark:placeholder-white"
+            onChange={handleNegPromptChange}
+            className="mt-5 w-full max-w-[1050px] flex-grow rounded-2xl p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
           />
         )}
         <div className="mt-5 flex items-center space-x-2">

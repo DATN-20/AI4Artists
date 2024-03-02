@@ -1,17 +1,29 @@
+import { selectGenerate, setImageGenerate } from "@/features/generateSlice"
+import { useAppDispatch } from "@/store/hooks"
 import { useState, useRef } from "react"
+import { useSelector } from "react-redux"
 
 const ImageInput: React.FC<{ onImageChange: (image: File) => void }> = ({
   onImageChange,
 }) => {
+  const dispatch = useAppDispatch()
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files
     if (files && files.length > 0) {
-      const image = files[0]
-      setSelectedImage(image)
-      onImageChange(image)
+      const imageGen = files[0]
+      setSelectedImage(imageGen)
+      onImageChange(imageGen)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const base64String = reader.result?.toString()
+        if (base64String) {
+          dispatch(setImageGenerate({ image: base64String }))
+        }
+      }
+      reader.readAsDataURL(imageGen)
     }
   }
 

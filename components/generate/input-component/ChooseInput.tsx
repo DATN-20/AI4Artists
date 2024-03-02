@@ -1,6 +1,8 @@
 import { useState } from "react"
 import clsx from "clsx"
 import { Button } from "../../ui/button"
+import { useAppDispatch } from "@/store/hooks"
+import { setDimension, setNumberOfImage } from "@/features/generateSlice"
 
 type Option = {
   label: string
@@ -17,11 +19,28 @@ const ChooseInput = ({
   onSelect: (value: string) => void
 }) => {
   const [selectedValue, setSelectedValue] = useState<string>(options[0].value)
+  const dispatch = useAppDispatch()
 
-  const handleSelect = (value: string) => {
+  const handleSelect = (value: string, type: string) => {
     setSelectedValue(value)
     onSelect(value)
-    console.log("You selected: ", value)
+    if (type === "numberOfImage") {
+      dispatch(setNumberOfImage({ numberOfImage: Number(value) }))
+    } else if (type === "dimension") {
+      if (value === "1") {
+        dispatch(setDimension({ width: 512, height: 512 }))
+      } else if (value === "2") {
+        dispatch(setDimension({ width: 768, height: 768 }))
+      } else if (value === "3") {
+        dispatch(setDimension({ width: 512, height: 1024 }))
+      } else if (value === "4") {
+        dispatch(setDimension({ width: 768, height: 1024 }))
+      } else if (value === "5") {
+        dispatch(setDimension({ width: 1024, height: 768 }))
+      } else {
+        dispatch(setDimension({ width: 1024, height: 1024 }))
+      }
+    }
   }
 
   return (
@@ -39,7 +58,7 @@ const ChooseInput = ({
                   selectedValue !== option.value,
               },
             )}
-            onClick={() => handleSelect(option.value)}
+            onClick={() => handleSelect(option.value, type)}
           >
             {option.label}
           </Button>

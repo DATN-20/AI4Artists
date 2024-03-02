@@ -81,6 +81,7 @@ export default function GenerateSideBar() {
               max={aiInputs[0]?.inputs[9].max || 1}
               step={aiInputs[0]?.inputs[9].step || 0.01}
               defaultValue={0.75}
+              type="noise"
             />
           </CollapsibleSection>
         )}
@@ -113,6 +114,7 @@ export default function GenerateSideBar() {
                 max={aiInputs[0]?.inputs[6].max || 50}
                 step={1}
                 defaultValue={20}
+                type="steps"
               />
             </CollapsibleSection>
             <CollapsibleSection title={aiInputs[0]?.inputs[7].name}>
@@ -128,6 +130,7 @@ export default function GenerateSideBar() {
                 max={aiInputs[0]?.inputs[8].max || 30}
                 step={1}
                 defaultValue={8}
+                type="cfg"
               />
             </CollapsibleSection>
           </>
