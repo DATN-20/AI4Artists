@@ -31,6 +31,15 @@ import {
 } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
 import { Skeleton } from "../../../components/ui/skeleton"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../../../components/ui/carousel"
+import { Card, CardContent } from "../../../components/ui/card"
+import Image from "next/image"
 
 interface AIField {
   ai_name: string | null
@@ -99,7 +108,7 @@ export default function Generate() {
   const [textToImage] = useTextToImageMutation()
   const [imageToImage] = useImageToImageMutation()
 
-  const [generateImgData, setGenerateImgData] = useState<string | null>(null)
+  const [generateImgData, setGenerateImgData] = useState<string[] | null>(null)
 
   const handleGenerate = async () => {
     setIsLoading(true)
@@ -182,8 +191,8 @@ export default function Generate() {
       <div className="col-span-2">
         <GenerateSideBar />
       </div>
-      <div className="col-span-8 ml-4 h-full w-full">
-        <div className="flex max-w-[1050px]">
+      <div className="col-span-8 mx-4 h-full">
+        <div className="flex ">
           <input
             type="text"
             placeholder="Type prompt here..."
@@ -212,7 +221,7 @@ export default function Generate() {
             type="text"
             placeholder="Type what you don't want to see in a image (a negative prompt)..."
             onChange={handleNegPromptChange}
-            className="mt-5 w-full max-w-[1050px] flex-grow rounded-2xl p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
+            className="mt-5 w-full flex-grow rounded-2xl p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
           />
         )}
         <div className="mt-5 flex items-center space-x-2">
@@ -275,22 +284,42 @@ export default function Generate() {
         ) : (
           generateImgData && (
             <>
-              <div className="mb-2 ml-1 mt-5 flex justify-between	">
-                <div>Lastest Generate Image</div>
-                <div className="flex">
-                  <div>Anime</div>
-                  <div className="ml-10 flex items-center justify-center">
-                    <span>5</span> <FaImage className="ml-2 flex " />
+              <Carousel className="ml-10 mt-5 w-full max-w-5xl">
+                <div className="mb-2 ml-1 flex justify-between	">
+                  <div>An anime girl </div>
+                  <div className="flex">
+                    <div>Stable Diffusion 1.5</div>
+                    <div className="ml-10 flex items-center justify-center">
+                      <span>5</span> <FaImage className="ml-2 flex " />
+                    </div>
+                    <div className="ml-10">27/2/2024</div>
                   </div>
-                  <div className="ml-10">27/2/2024</div>
                 </div>
-              </div>
-              <img
-                src={generateImgData}
-                alt="Generated"
-                style={{ width: width }}
-                className="mt-5 rounded-xl"
-              />
+
+                <CarouselContent>
+                  {generateImgData
+                    .slice()
+                    .reverse()
+                    .map((item: any) => (
+                      <CarouselItem key={item.id} className="lg:basis-1/3">
+                        <div className="p-1">
+                          <Card>
+                            <CardContent className="flex  items-center justify-center p-0">
+                              <Image
+                                alt="generated image"
+                                width={width}
+                                height={height}
+                                src={item}
+                              />
+                            </CardContent>
+                          </Card>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
             </>
           )
         )}

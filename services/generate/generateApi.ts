@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 export const generateApi = createApi({
   reducerPath: "generateApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3001/",
+    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001",
     prepareHeaders(headers) {
       headers.set("Authorization", `Bearer ${localStorage.getItem("token")}`)
       return headers
@@ -22,7 +22,7 @@ export const generateApi = createApi({
     aiInformation: builder.mutation({
       query: () => {
         return {
-          url: "api/v1/generate-image/ai-info",
+          url: "/api/v1/generate-image/ai-info",
           method: "GET",
         }
       },
@@ -41,14 +41,14 @@ export const generateApi = createApi({
         cfg: number | undefined
         noise: number | undefined
       }) => ({
-        url: "api/v1/generate-image/text-to-image",
+        url: "/api/v1/generate-image/text-to-image",
         method: "POST",
         body,
       }),
     }),
     imageToImage: builder.mutation({
       query: (formData) => ({
-        url: "api/v1/generate-image/image-to-image",
+        url: "/api/v1/generate-image/image-to-image",
         method: "POST",
         body: formData,
       }),

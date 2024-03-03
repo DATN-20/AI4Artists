@@ -14,7 +14,7 @@ const OtherInputCard = () => {
           <li>
             <CardSection
               title="Image Generation"
-              href="#"
+              href="/generate"
               isOpen={true}
               icon={<FaImages />}
             />

@@ -42,7 +42,7 @@ const InputSelect = ({ data, onSelect }: InputSelectProps) => {
               value={value}
               onSelect={() => handleSelect(value)}
             >
-              {value}
+              Anime
             </SelectItem>
           ))}
         </SelectGroup>
