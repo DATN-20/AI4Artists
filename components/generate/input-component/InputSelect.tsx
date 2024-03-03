@@ -29,9 +29,10 @@ const InputSelect = ({ data, onSelect }: InputSelectProps) => {
   return (
     <Select>
       <SelectTrigger className="bg-card-highlight">
-        <SelectValue
-          placeholder={dataArray.length > 0 ? dataArray[0][1] : ""}
-        />
+        {/* <SelectValue
+          placeholder={"dataArray.length > 0 ? dataArray[0][1] : """}
+        /> */}
+        <SelectValue placeholder={"Anime"} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>

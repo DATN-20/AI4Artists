@@ -6,25 +6,21 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent } from "@/components/ui/card"
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
+
 import { Search } from "lucide-react"
 import { FaSort, FaFilter, FaImage } from "react-icons/fa"
 import ImageInput from "@/components/generate/input-component/ImageInput"
 import GenerateSideBar from "@/components/sidebar/GenerateSideBar"
-import { useAiInformationMutation } from "@/services/generate/generateApi"
+import {
+  useAiInformationMutation,
+  useImageToImageMutation,
+  useTextToImageMutation,
+} from "@/services/generate/generateApi"
 import { useAppDispatch } from "@/store/hooks"
 import {
   selectGenerate,
@@ -34,6 +30,7 @@ import {
   setNegativePrompt,
 } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
+import { Skeleton } from "../../../components/ui/skeleton"
 
 interface AIField {
   ai_name: string | null
@@ -61,6 +58,21 @@ export default function Generate() {
   const [promptPos, setPromptPos] = useState("")
   const [promptNeg, setPromptNeg] = useState("")
 
+  const {
+    aiName,
+    positivePrompt,
+    negativePrompt,
+    style,
+    width,
+    height,
+    numberOfImage,
+    steps,
+    sampleMethod,
+    cfg,
+    noise,
+    image,
+  } = generateStates.dataInputs || {}
+
   const handleImageChange = (image: File) => {
     // Do something with the selected image file
   }
@@ -77,16 +89,71 @@ export default function Generate() {
     for (let i = 0; i < byteString.length; i++) {
       ia[i] = byteString.charCodeAt(i)
     }
-    const blob = new Blob([ab], { type: "image/jpeg" }) // Adjust the type accordingly
+    const blob = new Blob([ab], { type: "image/jpeg" })
     return new File([blob], filename)
   }
 
-  const handleGenerate = () => {
-    const base64String = generateStates.dataInputs?.image
-    if (base64String) {
-      const filename = "image.jpg" // Đặt tên cho file
-      const imageFile = base64StringToFile(base64String, filename)
-      console.log(imageFile)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
+
+  const [textToImage] = useTextToImageMutation()
+  const [imageToImage] = useImageToImageMutation()
+
+  const [generateImgData, setGenerateImgData] = useState<string | null>(null)
+
+  const handleGenerate = async () => {
+    setIsLoading(true)
+    setIsError(false)
+
+    let formData = new FormData()
+
+    formData.append("aiName", aiName || "")
+    formData.append("positivePrompt", positivePrompt || "")
+    formData.append("negativePrompt", negativePrompt || "")
+    formData.append("style", style || "")
+    formData.append("width", width?.toString() || "")
+    formData.append("height", height?.toString() || "")
+    formData.append("numberOfImage", numberOfImage?.toString() || "")
+    formData.append("steps", steps?.toString() || "")
+    formData.append("sampleMethod", sampleMethod || "")
+    formData.append("cfg", cfg?.toString() || "")
+    formData.append("noise", noise?.toString() || "")
+
+    if (useImg2Img) {
+      const base64String = generateStates.dataInputs?.image
+      if (base64String) {
+        const filename = "image.jpg"
+        const imageFile = base64StringToFile(base64String, filename)
+        formData.append("image", imageFile)
+      }
+    }
+    const requestBody = {
+      aiName,
+      positivePrompt,
+      negativePrompt,
+      style,
+      width: width,
+      height: height,
+      numberOfImage: numberOfImage,
+      steps: steps,
+      sampleMethod,
+      cfg: cfg,
+      noise: noise,
+    }
+
+    try {
+      let result
+      if (useImg2Img) {
+        result = await imageToImage(formData).unwrap()
+      } else {
+        result = await textToImage(requestBody).unwrap()
+      }
+      setGenerateImgData(result)
+    } catch (error) {
+      console.error("Error generating image:", error)
+      setIsError(true)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -96,33 +163,6 @@ export default function Generate() {
     dispatch(setNegativePrompt({ value: prompt }))
   }
   const [aiInformation, { data: inputData }] = useAiInformationMutation()
-  // Dữ liệu mẫu cho carousel
-  const imageData = [
-    {
-      id: 1,
-      imageUrl:
-        "https://app-cdn.acelitchi.com/prod/app/6/29/438054761093351838.webp",
-    },
-    {
-      id: 2,
-      imageUrl: "https://avatarfiles.alphacoders.com/367/367848.png",
-    },
-    {
-      id: 3,
-      imageUrl:
-        "https://img.getimg.ai/generated/img-RqUYqXaUnRy2xfYjyI5ep.jpeg",
-    },
-    {
-      id: 4,
-      imageUrl:
-        "https://pics.janitorai.com/bot-avatars/8e200160-5b85-428f-b436-1a3a179d75e1.webp",
-    },
-    {
-      id: 5,
-      imageUrl:
-        "https://i.pinimg.com/564x/b4/cc/27/b4cc2795a633d57ac5eed6327ec01b3c.jpg",
-    },
-  ]
 
   useEffect(() => {
     const fetchData = async () => {
@@ -189,7 +229,7 @@ export default function Generate() {
         {useImg2Img && <ImageInput onImageChange={handleImageChange} />}
 
         <h1 className="mt-5 text-3xl font-bold">Generated Images</h1>
-        <div className="ml-10 mt-5 flex">
+        <div className="mt-5 flex">
           <div className="flex items-center justify-center rounded-full bg-card px-4 ">
             <input
               type="text"
@@ -227,65 +267,33 @@ export default function Generate() {
             </SelectContent>
           </Select>
         </div>
-        <Carousel className="ml-10 mt-5 w-full max-w-5xl">
-          <div className="mb-2 ml-1 flex justify-between	">
-            <div>An anime girl </div>
-            <div className="flex">
-              <div>Stable Diffusion 1.5</div>
-              <div className="ml-10 flex items-center justify-center">
-                <span>5</span> <FaImage className="ml-2 flex " />
-              </div>
-              <div className="ml-10">27/2/2024</div>
-            </div>
-          </div>
-
-          <CarouselContent>
-            {imageData.map((item) => (
-              <CarouselItem key={item.id} className="lg:basis-1/3">
-                <div className="p-1">
-                  <Card>
-                    <CardContent className="flex  items-center justify-center p-0">
-                      <img width={512} height={512} src={item.imageUrl} />
-                    </CardContent>
-                  </Card>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
-        <Carousel className="ml-10 mt-5 w-full max-w-5xl">
-          <div className="mb-2 ml-1 flex justify-between	">
-            <div>An anime girl </div>
-            <div className="flex">
-              <div>Stable Diffusion 1.5</div>
-              <div className="ml-10 flex items-center justify-center">
-                <span>5</span> <FaImage className="ml-2 flex " />
-              </div>
-              <div className="ml-10">27/2/2024</div>
-            </div>
-          </div>
-
-          <CarouselContent>
-            {imageData
-              .slice()
-              .reverse()
-              .map((item) => (
-                <CarouselItem key={item.id} className="lg:basis-1/3">
-                  <div className="p-1">
-                    <Card>
-                      <CardContent className="flex  items-center justify-center p-0">
-                        <img width={512} height={512} src={item.imageUrl} />
-                      </CardContent>
-                    </Card>
+        {isLoading ? (
+          <Skeleton
+            className="mt-5 rounded-xl"
+            style={{ width: width, height: height }}
+          />
+        ) : (
+          generateImgData && (
+            <>
+              <div className="mb-2 ml-1 mt-5 flex justify-between	">
+                <div>Lastest Generate Image</div>
+                <div className="flex">
+                  <div>Anime</div>
+                  <div className="ml-10 flex items-center justify-center">
+                    <span>5</span> <FaImage className="ml-2 flex " />
                   </div>
-                </CarouselItem>
-              ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+                  <div className="ml-10">27/2/2024</div>
+                </div>
+              </div>
+              <img
+                src={generateImgData}
+                alt="Generated"
+                style={{ width: width }}
+                className="mt-5 rounded-xl"
+              />
+            </>
+          )
+        )}
       </div>
     </div>
   )
