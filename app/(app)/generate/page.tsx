@@ -31,15 +31,10 @@ import {
 } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
 import { Skeleton } from "../../../components/ui/skeleton"
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "../../../components/ui/carousel"
+import Carousel from "@/components/generate/Carousel"
 import { Card, CardContent } from "../../../components/ui/card"
 import Image from "next/image"
+import GenerateControls from "@/components/generate/GenerateControls"
 
 interface AIField {
   ai_name: string | null
@@ -192,90 +187,16 @@ export default function Generate() {
         <GenerateSideBar />
       </div>
       <div className="col-span-8 mx-4 h-full">
-        <div className="flex ">
-          <input
-            type="text"
-            placeholder="Type prompt here..."
-            onChange={handlePosPromptChange}
-            className="flex-grow rounded-2xl p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
-          />
-          <button
-            type="button"
-            onClick={handleGenerate}
-            className="ml-4 flex items-center justify-center rounded-full bg-purple-500 px-4 py-3 font-bold text-white hover:bg-purple-700"
-          >
-            <span className="mr-2">✨</span>
-            Generate
-          </button>
-        </div>
-        <div className="mt-5 flex items-center space-x-2">
-          <Switch
-            id="negative-mode"
-            className="bg-black"
-            onClick={() => setUseNegativePrompt(!useNegativePrompt)}
-          />
-          <Label htmlFor="negative-mode">Use Negative Prompt</Label>
-        </div>
-        {useNegativePrompt && (
-          <input
-            type="text"
-            placeholder="Type what you don't want to see in a image (a negative prompt)..."
-            onChange={handleNegPromptChange}
-            className="mt-5 w-full flex-grow rounded-2xl p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
-          />
-        )}
-        <div className="mt-5 flex items-center space-x-2">
-          <Switch
-            id="image-mode"
-            className="bg-black"
-            onClick={() => {
-              setUseImg2Img(!useImg2Img)
-              dispatch(setUseImage({ useImage: !generateStates.useImage }))
-            }}
-          />
-          <Label htmlFor="image-mode">Use Image Generation</Label>
-        </div>
-        {useImg2Img && <ImageInput onImageChange={handleImageChange} />}
-
-        <h1 className="mt-5 text-3xl font-bold">Generated Images</h1>
-        <div className="mt-5 flex">
-          <div className="flex items-center justify-center rounded-full bg-card px-4 ">
-            <input
-              type="text"
-              placeholder="Prompt"
-              className="flex-grow bg-transparent  p-2 placeholder-black outline-none dark:placeholder-white"
-            />
-            <Search className="dark:text-white" />
-          </div>
-          <Select>
-            <SelectTrigger className=" ml-5 w-[180px] bg-white dark:bg-zinc-800">
-              <FaFilter />
-              <SelectValue placeholder="Filter" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="alphabet">Alphabet</SelectItem>
-                <SelectItem value="newest">Newest</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Select>
-            <SelectTrigger className="ml-5 w-[180px] bg-white dark:bg-zinc-800">
-              <FaSort />
-              <SelectValue placeholder="Sort By" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="descending">
-                  Time Created: Descending
-                </SelectItem>
-                <SelectItem value="ascending">
-                  Time Created: Ascending
-                </SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
+        <GenerateControls
+          handlePosPromptChange={handlePosPromptChange}
+          handleNegPromptChange={handleNegPromptChange}
+          handleImageChange={handleImageChange}
+          handleGenerate={handleGenerate}
+          setUseNegativePrompt={setUseNegativePrompt}
+          setUseImg2Img={setUseImg2Img}
+          useNegativePrompt={useNegativePrompt}
+          useImg2Img={useImg2Img}
+        />
         {isLoading ? (
           <Skeleton
             className="mt-5 rounded-xl"
@@ -283,44 +204,11 @@ export default function Generate() {
           />
         ) : (
           generateImgData && (
-            <>
-              <Carousel className="ml-10 mt-5 w-full max-w-5xl">
-                <div className="mb-2 ml-1 flex justify-between	">
-                  <div>An anime girl </div>
-                  <div className="flex">
-                    <div>Stable Diffusion 1.5</div>
-                    <div className="ml-10 flex items-center justify-center">
-                      <span>5</span> <FaImage className="ml-2 flex " />
-                    </div>
-                    <div className="ml-10">27/2/2024</div>
-                  </div>
-                </div>
-
-                <CarouselContent>
-                  {generateImgData
-                    .slice()
-                    .reverse()
-                    .map((item: any) => (
-                      <CarouselItem key={item.id} className="lg:basis-1/3">
-                        <div className="p-1">
-                          <Card>
-                            <CardContent className="flex  items-center justify-center p-0">
-                              <Image
-                                alt="generated image"
-                                width={width}
-                                height={height}
-                                src={item}
-                              />
-                            </CardContent>
-                          </Card>
-                        </div>
-                      </CarouselItem>
-                    ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-              </Carousel>
-            </>
+            <Carousel
+              generateImgData={generateImgData}
+              width={width}
+              height={height}
+            />
           )
         )}
       </div>

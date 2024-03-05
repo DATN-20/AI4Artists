@@ -18,7 +18,7 @@ import {
 } from "../ui/form"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
-
+import BgImage from "../../public/bg-image.png"
 const formSchema = z.object({
   email: z.string().min(2, {
     message: "Email must be at least 2 characters.",
@@ -100,13 +100,32 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
   // }, [isRegisterError])
 
   return (
-    <DialogContent className="min-w-[950px] p-0">
+    <DialogContent
+      className="min-w-[950px] p-0"
+      style={{
+        borderRadius: 50,
+      }}
+    >
       <div className="flex ">
-        <div className=" mr-10 rounded-l-md bg-gradient-to-r from-fuchsia-900 to-fuchsia-400">
-          <div
-            className="flex flex-col items-center"
-            style={{ padding: "30px" }}
-          >
+        <div
+          className=" mr-10 rounded-l-md bg-gradient-to-r from-purple-500 to-indigo-900"
+          style={{
+            padding: "30px",
+            borderTopLeftRadius: 50,
+            borderBottomLeftRadius: 50,
+          }}
+        >
+          <NextImage
+            alt="background image"
+            src={BgImage}
+            className="absolute left-0 top-0 "
+            width={523}
+            style={{
+              borderTopLeftRadius: 30,
+              borderBottomLeftRadius: 30,
+            }}
+          />
+          <div className="relative z-10 flex flex-col items-center">
             <NextImage
               alt="logo"
               width={200}
@@ -138,7 +157,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
           </div>
         </div>
 
-        <div className="w-80 pt-10">
+        <div className="w-80 pb-5 pt-10">
           <Form {...form}>
             <h1 className="mb-5 text-center text-3xl font-bold">Sign Up</h1>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -155,7 +174,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
                         type="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="w-full"
+                        className="w-full border-slate-400"
                       />
                     </FormControl>
                     <FormMessage />
@@ -174,7 +193,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
                         {...field}
                         value={formData.username}
                         onChange={handleChange}
-                        className="w-full"
+                        className="w-full border-slate-400"
                       />
                     </FormControl>
                     <FormMessage />
@@ -194,7 +213,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
                         type="password"
                         value={formData.password}
                         onChange={handleChange}
-                        className="w-full"
+                        className="w-full border-slate-400"
                       />
                     </FormControl>
                     <FormMessage />
@@ -214,7 +233,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
                         type="password"
                         value={formData.confirmPassword}
                         onChange={handleChange}
-                        className="w-full"
+                        className="w-full border-slate-400"
                       />
                     </FormControl>
                     <FormMessage />
@@ -222,7 +241,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
                 )}
               />
 
-              <Button type="submit" className="h-10 w-full bg-black">
+              <Button type="submit" className="h-10 w-full bg-black text-white">
                 Sign Up
               </Button>
 
