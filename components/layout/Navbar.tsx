@@ -4,11 +4,8 @@ import React, { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { ModalLogin, ModalRegister } from "@/components/layout"
-import { useAppSelector } from "@/store/hooks"
-import { selectAuth } from "@/features/authSlice"
 import { Dialog, DialogTrigger } from "../ui/dialog"
 const NavBar: React.FC = () => {
-  const { name } = useAppSelector(selectAuth)
   const [showLoginModal, setShowLoginModal] = useState(true)
 
   const toggleModal = () => {

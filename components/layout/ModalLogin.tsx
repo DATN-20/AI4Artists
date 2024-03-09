@@ -17,6 +17,7 @@ import { Separator } from "@/components/ui/separator"
 import { useRouter } from "next/navigation"
 import { ToastContainer, toast } from "react-toastify"
 import { ErrorObject } from "@/types"
+import BgImage from "../../public/bg-image.png"
 import "react-toastify/dist/ReactToastify.css"
 import {
   Form,
@@ -60,7 +61,6 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
   ] = useLoginUserMutation()
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -92,20 +92,32 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
     if (isLoginSuccess) {
       toast.success("User login successfully")
       dispatch(setUser({ token: loginData.access_token, name: "Hao" }))
-      setTimeout(() => {
-        router.push("/dashboard")
-      }, 1000)
+      router.push("/dashboard")
     }
   }, [isLoginSuccess])
 
   return (
-    <DialogContent className="min-w-[950px] p-0">
+    <DialogContent className="min-w-[950px] p-0" style={{ borderRadius: 50 }}>
       <div className="flex ">
-        <div className=" mr-10 rounded-l-md bg-gradient-to-r from-fuchsia-900 to-fuchsia-400">
-          <div
-            className="flex flex-col items-center"
-            style={{ padding: "30px" }}
-          >
+        <div
+          className=" mr-10 rounded-l-md bg-gradient-to-r from-purple-500 to-indigo-900"
+          style={{
+            padding: "30px",
+            borderTopLeftRadius: 50,
+            borderBottomLeftRadius: 50,
+          }}
+        >
+          <NextImage
+            alt="background image"
+            src={BgImage}
+            className="absolute left-0 top-0 h-screen"
+            width={523}
+            style={{
+              borderTopLeftRadius: 30,
+              borderBottomLeftRadius: 30,
+            }}
+          />
+          <div className="relative z-10 flex flex-col items-center">
             <NextImage
               alt="logo"
               width={200}
@@ -113,23 +125,23 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
               src="/logo-login.png"
             ></NextImage>
             <div className="mt-5 text-2xl font-bold text-white ">
-              <div className="mt-5 flex">
+              <div className="mt-5 flex ">
                 {/* <CheckCircleOutlined />{" "} */}
                 <p className="ml-5">Over 50 Free Image Generations Daily</p>
               </div>
 
               <br />
-              <div className="mt-5 flex">
+              <div className="mt-5 flex ">
                 {/* <CheckCircleOutlined />{" "} */}
                 <p className="ml-5">Over 50 Free Image Generations Daily</p>
               </div>
               <br />
-              <div className="mt-5 flex">
+              <div className="mt-5 flex ">
                 {/* <CheckCircleOutlined />{" "} */}
                 <p className="ml-5">Over 50 Free Image Generations Daily</p>
               </div>
               <br />
-              <div className="mt-5 flex">
+              <div className="mt-5 flex ">
                 {/* <CheckCircleOutlined />{" "} */}
                 <p className="ml-5">Over 50 Free Image Generations Daily</p>
               </div>
@@ -137,7 +149,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
           </div>
         </div>
 
-        <div className="w-80 pt-5">
+        <div className="w-80 pb-5 pt-5">
           <Form {...form}>
             <h1 className="mb-5 text-center text-3xl font-bold">
               Welcome Back
@@ -154,7 +166,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
                         type="email"
                         placeholder="Email"
                         {...field}
-                        className="w-full"
+                        className="w-full border-slate-400"
                       />
                     </FormControl>
                     <FormMessage />
@@ -172,6 +184,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
                         placeholder="Password"
                         {...field}
                         type="password"
+                        className="w-full border-slate-400"
                       />
                     </FormControl>
                     <FormMessage />
@@ -179,17 +192,20 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
                 )}
               />
               <a href="#" className="text-primary-blue float-right">
-                Forget Password?
+                Forgot Password?
               </a>
               <Button type="submit" className="h-10 w-full bg-black text-white">
                 Sign In
               </Button>
-
               {/* Divider and Social Media Buttons */}
-              <Separator style={{ borderTopColor: "#cfccd2" }}></Separator>
+              <div className="flex items-center justify-center">
+                <div className="flex-grow border-t border-gray-400"></div>
+                <div className="px-3">Or</div>
+                <div className="flex-grow border-t border-gray-400"></div>
+              </div>{" "}
               <Button
                 // icon={<GoogleOutlined />}
-                className="h-10 w-full bg-red-600 text-white"
+                className="h-10 w-full bg-red-600 text-white "
               >
                 <FaGoogle className="mr-3" />
                 Sign in with Google

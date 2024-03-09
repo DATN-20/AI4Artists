@@ -18,18 +18,19 @@ import {
 } from "../ui/form"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
-
+import BgImage from "../../public/bg-image.png"
+import { ErrorObject } from "@/types"
 const formSchema = z.object({
   email: z.string().min(2, {
     message: "Email must be at least 2 characters.",
   }),
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+  firstName: z.string().min(1, {
+    message: "First Name must be at least 1 characters.",
+  }),
+  lastName: z.string().min(1, {
+    message: "Last Name must be at least 1 characters.",
   }),
   password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
-  }),
-  confirmPassword: z.string().min(8, {
     message: "Password must be at least 8 characters.",
   }),
 })
@@ -50,19 +51,18 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
   ] = useRegisterUserMutation()
   const [formData, setFormData] = useState({
     email: "",
-    username: "",
+    firstName: "",
+    lastName: "",
     password: "",
-    confirmPassword: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      username: "",
+      firstName: "",
+      lastName: "",
       password: "",
-      confirmPassword: "",
     },
   })
 
@@ -72,26 +72,29 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true)
-
-    try {
-      // Simulate registration API call (replace with your actual API)
-      if (values.email && values.password && values.username) {
-        await registerUser({
-          email: values.email,
-          username: values.username,
-          password: values.password,
-        })
-        onClose()
-      } else {
-        toast.error("Password do not match")
+    const { email, firstName, lastName, password } = values
+    // Simulate registration API call (replace with your actual API)
+    if (email && password && firstName && lastName) {
+      const response = await registerUser({
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        password: password,
+      })
+      if ((response as ErrorObject).error) {
+        toast.error((response as ErrorObject).error.data.message)
       }
-    } catch (error) {
-      console.error("Registration error:", error)
-      // Handle errors gracefully, e.g., display appropriate error message
-    } finally {
-      setIsSubmitting(false)
+    } else {
+      toast.error("Please fill all fields!")
     }
   }
+
+  useEffect(() => {
+    if (isRegisterSuccess) {
+      toast.success(registerData)
+      onClose()
+    }
+  }, [isRegisterSuccess])
 
   // useEffect(() => {
   //   if (isRegisterError) {
@@ -100,13 +103,32 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
   // }, [isRegisterError])
 
   return (
-    <DialogContent className="min-w-[950px] p-0">
+    <DialogContent
+      className="min-w-[950px] p-0"
+      style={{
+        borderRadius: 50,
+      }}
+    >
       <div className="flex ">
-        <div className=" mr-10 rounded-l-md bg-gradient-to-r from-fuchsia-900 to-fuchsia-400">
-          <div
-            className="flex flex-col items-center"
-            style={{ padding: "30px" }}
-          >
+        <div
+          className=" mr-10 rounded-l-md bg-gradient-to-r from-purple-500 to-indigo-900"
+          style={{
+            padding: "30px",
+            borderTopLeftRadius: 50,
+            borderBottomLeftRadius: 50,
+          }}
+        >
+          <NextImage
+            alt="background image"
+            src={BgImage}
+            className="absolute left-0 top-0 "
+            width={523}
+            style={{
+              borderTopLeftRadius: 30,
+              borderBottomLeftRadius: 30,
+            }}
+          />
+          <div className="relative z-10 flex flex-col items-center">
             <NextImage
               alt="logo"
               width={200}
@@ -138,7 +160,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
           </div>
         </div>
 
-        <div className="w-80 pt-10">
+        <div className="w-80 pb-5 pt-10">
           <Form {...form}>
             <h1 className="mb-5 text-center text-3xl font-bold">Sign Up</h1>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -153,9 +175,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
                         placeholder="Email"
                         {...field}
                         type="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full"
+                        className="w-full border-slate-400"
                       />
                     </FormControl>
                     <FormMessage />
@@ -164,17 +184,32 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
               />
               <FormField
                 control={form.control}
-                name="username"
+                name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>First Name</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Username"
+                        placeholder="First Name"
                         {...field}
-                        value={formData.username}
-                        onChange={handleChange}
-                        className="w-full"
+                        className="w-full border-slate-400"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Last Name"
+                        {...field}
+                        className="w-full border-slate-400"
                       />
                     </FormControl>
                     <FormMessage />
@@ -192,29 +227,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
                         placeholder="Password"
                         {...field}
                         type="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        className="w-full"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Confirm Password"
-                        {...field}
-                        type="password"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        className="w-full"
+                        className="w-full border-slate-400"
                       />
                     </FormControl>
                     <FormMessage />
@@ -222,7 +235,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
                 )}
               />
 
-              <Button type="submit" className="h-10 w-full bg-black">
+              <Button type="submit" className="h-10 w-full bg-black text-white">
                 Sign Up
               </Button>
 
