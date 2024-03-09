@@ -61,7 +61,6 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
   ] = useLoginUserMutation()
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
