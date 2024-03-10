@@ -13,7 +13,7 @@ const NavBar: React.FC = () => {
   }
   return (
     <header className="sticky z-10 w-full">
-      <nav className=" mx-auto flex items-center justify-between bg-[#0e1217] px-6 py-6 sm:px-12">
+      <nav className=" mx-auto flex items-center justify-between bg-[#0e1217] px-4 py-4 md:px-6 md:py-6">
         <Dialog>
           <Link href="/" className="flex items-center justify-center gap-4">
             <Image src="/logo.png" alt="logo" width={60} height={60} />
@@ -23,7 +23,7 @@ const NavBar: React.FC = () => {
             <DialogTrigger asChild>
               <button
                 type="button"
-                className="mr-10 flex min-w-[150px] items-center justify-center rounded-full border-[2px] border-white py-1"
+                className="flex min-w-[150px] items-center justify-center rounded-full border-[2px] border-white py-1"
               >
                 <h1 className="text-xl font-semibold text-white">Sign in </h1>
               </button>

@@ -5,17 +5,22 @@ import CardSection from "./card/card-section/CardSection"
 import { Facebook, Home, Instagram, Twitter } from "lucide-react"
 import { FaDiscord } from "react-icons/fa"
 import { ThemeToggle } from "../ThemeToggle"
-import { IoPersonCircleSharp } from "react-icons/io5";
-import { MdLogout } from "react-icons/md";
+import { IoPersonCircleSharp } from "react-icons/io5"
+import { MdLogout } from "react-icons/md"
 
 export default function NavigationSideBar() {
   return (
-    <div className="fixed left-0 top-0 flex h-screen min-h-screen flex-col gap-4 overflow-y-scroll no-scrollbar p-4 ">
+    <div className="no-scrollbar fixed left-0 top-0 flex h-screen min-h-screen flex-col gap-4 overflow-y-scroll p-4 ">
       <NavigationCard />
       <OtherInputCard />
       <Card>
         <div className="flex flex-col gap-3 px-4 py-3">
-          <CardSection title="Log out" href="#" isOpen={true} icon={<MdLogout />} />
+          <CardSection
+            title="Log out"
+            href="#"
+            isOpen={true}
+            icon={<MdLogout />}
+          />
           <CardSection
             title="username"
             href="#"

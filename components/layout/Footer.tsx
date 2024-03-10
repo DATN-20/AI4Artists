@@ -35,69 +35,63 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap lg:mt-0">
-          <div className="px-4">
-            <ul className="grid gap-3">
-              <li>
-                <a href="#" className="text-lg hover:text-gray-300 ">
-                  Image
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-lg hover:text-gray-300 ">
-                  Blogs
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-lg hover:text-gray-300 ">
-                  Community
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-lg hover:text-gray-300 ">
-                  Tools
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div className="px-4">
-            <ul className="grid gap-3">
-              <li>
-                <a href="#" className="text-lg hover:text-gray-300 ">
-                  Docs
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-lg hover:text-gray-300 ">
-                  Open Source
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-lg hover:text-gray-300 ">
-                  Contact us
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div className="px-4">
-            <ul className="grid gap-3">
-              <li>
-                <a href="#" className="text-lg hover:text-gray-300 ">
-                  Legal
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-lg hover:text-gray-300 ">
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-lg hover:text-gray-300 ">
-                  Terms & Condition
-                </a>
-              </li>
-            </ul>
-          </div>
+        <div className="mt-4 flex flex-col gap-4 md:flex-row lg:mt-0">
+          <ul className="grid gap-3 px-0 md:px-4">
+            <li>
+              <a href="#" className="text-lg hover:text-gray-300 ">
+                Image
+              </a>
+            </li>
+            <li>
+              <a href="#" className="text-lg hover:text-gray-300 ">
+                Blogs
+              </a>
+            </li>
+            <li>
+              <a href="#" className="text-lg hover:text-gray-300 ">
+                Community
+              </a>
+            </li>
+            <li>
+              <a href="#" className="text-lg hover:text-gray-300 ">
+                Tools
+              </a>
+            </li>
+          </ul>
+          <ul className="grid gap-3 px-0 md:px-4">
+            <li>
+              <a href="#" className="text-lg hover:text-gray-300 ">
+                Docs
+              </a>
+            </li>
+            <li>
+              <a href="#" className="text-lg hover:text-gray-300 ">
+                Open Source
+              </a>
+            </li>
+            <li>
+              <a href="#" className="text-lg hover:text-gray-300 ">
+                Contact us
+              </a>
+            </li>
+          </ul>
+          <ul className="grid gap-3 px-0 md:px-4">
+            <li>
+              <a href="#" className="text-lg hover:text-gray-300 ">
+                Legal
+              </a>
+            </li>
+            <li>
+              <a href="#" className="text-lg hover:text-gray-300 ">
+                Privacy Policy
+              </a>
+            </li>
+            <li>
+              <a href="#" className="text-lg hover:text-gray-300 ">
+                Terms & Condition
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
     </footer>

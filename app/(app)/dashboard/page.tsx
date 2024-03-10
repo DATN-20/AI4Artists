@@ -18,11 +18,11 @@ export default function Dashboard() {
     router.push("/")
   }
   return (
-    <div className="grid grid-cols-10 gap-4 p-4">
-      <div className="col-span-2">
+    <div className="flex gap-4 p-4 lg:grid lg:grid-cols-10">
+      <div className="hidden lg:col-span-2 lg:block">
         <NavigationSideBar />
       </div>
-      <div className="col-span-8 ml-4 h-full w-full">
+      <div className="h-full w-full lg:col-span-8 lg:ml-4">
         <DashboardContent />
       </div>
     </div>
