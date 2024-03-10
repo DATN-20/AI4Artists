@@ -97,10 +97,13 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
   }, [isLoginSuccess])
 
   return (
-    <DialogContent className="min-w-[950px] p-0" style={{ borderRadius: 50 }}>
+    <DialogContent
+      className="p-0 lg:min-w-[950px]"
+      style={{ borderRadius: 50 }}
+    >
       <div className="flex ">
         <div
-          className=" mr-10 rounded-l-md bg-gradient-to-r from-purple-500 to-indigo-900"
+          className="mr-10 hidden rounded-l-md bg-gradient-to-r from-purple-500 to-indigo-900 lg:block"
           style={{
             padding: "30px",
             borderTopLeftRadius: 50,
@@ -149,7 +152,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
           </div>
         </div>
 
-        <div className="w-80 pb-5 pt-5">
+        <div className="mx-auto w-80 pb-5 pt-5 ">
           <Form {...form}>
             <h1 className="mb-5 text-center text-3xl font-bold">
               Welcome Back
