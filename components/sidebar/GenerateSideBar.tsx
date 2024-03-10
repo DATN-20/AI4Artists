@@ -72,105 +72,68 @@ export default function GenerateSideBar() {
   }
 
   return (
-    <div className="fixed left-0 top-0 w-1/5 p-4">
-      <Card className="no-scrollbar flex h-screen min-h-screen w-full flex-col overflow-y-scroll">
-        {aiInputs && generateStates.useImage && (
-          <CollapsibleSection title={"Noise"}>
-            <SliderInput
-              min={aiInputs[0]?.inputs[9].min || 0}
-              max={aiInputs[0]?.inputs[9].max || 1}
-              step={aiInputs[0]?.inputs[9].step || 0.01}
-              defaultValue={0.75}
-              type="noise"
+    <Card className="no-scrollbar flex w-full flex-col overflow-y-scroll border-none lg:border">
+      {aiInputs && generateStates.useImage && (
+        <CollapsibleSection title={"Noise"}>
+          <SliderInput
+            min={aiInputs[0]?.inputs[9].min || 0}
+            max={aiInputs[0]?.inputs[9].max || 1}
+            step={aiInputs[0]?.inputs[9].step || 0.01}
+            defaultValue={0.75}
+            type="noise"
+          />
+        </CollapsibleSection>
+      )}
+      {aiInputs && (
+        <Card className="border-none lg:border">
+          <CollapsibleSection title={aiInputs[0]?.inputs[0].name}>
+            <InputSelect
+              data={aiInputs[0]?.inputs[0]?.info?.choices || {}}
+              onSelect={handleInputDropDownSelection}
+              type="style"
             />
           </CollapsibleSection>
-        )}
-        {aiInputs && (
-          <>
-            <CollapsibleSection title={aiInputs[0]?.inputs[0].name}>
-              <InputSelect
-                data={aiInputs[0]?.inputs[0]?.info?.choices || {}}
-                onSelect={handleInputDropDownSelection}
-                type="style"
-              />
-            </CollapsibleSection>
-            <CollapsibleSection title={"Image Dimensions"}>
-              <ChooseInput
-                options={dimensionOptions}
-                onSelect={handleChooseInputSelection}
-                type="dimension"
-              />
-            </CollapsibleSection>
-            <CollapsibleSection title={"Number of Image"}>
-              <ChooseInput
-                options={numberImageOptions}
-                onSelect={handleChooseInputSelection}
-                type="numberOfImage"
-              />
-            </CollapsibleSection>
-            <CollapsibleSection title={"Steps"}>
-              <SliderInput
-                min={aiInputs[0]?.inputs[6].min || 1}
-                max={aiInputs[0]?.inputs[6].max || 50}
-                step={1}
-                defaultValue={20}
-                type="steps"
-              />
-            </CollapsibleSection>
-            <CollapsibleSection title={aiInputs[0]?.inputs[7].name}>
-              <InputSelect
-                data={aiInputs[0]?.inputs[7]?.info?.choices || {}}
-                onSelect={handleInputDropDownSelection}
-                type="sampling"
-              />
-            </CollapsibleSection>
-            <CollapsibleSection title={"CFG"}>
-              <SliderInput
-                min={aiInputs[0]?.inputs[8].min || 1}
-                max={aiInputs[0]?.inputs[8].max || 30}
-                step={1}
-                defaultValue={8}
-                type="cfg"
-              />
-            </CollapsibleSection>
-          </>
-        )}
-
-        {/* <CollapsibleSection title={"Choose Input"}>
-          <ChooseInput
-            options={chooseInputOptions}
-            onSelect={handleChooseInputSelection}
-          />
-        </CollapsibleSection>
-        <CollapsibleSection title="Slider Input">
-          <SliderInput min={1} max={10} step={1} />
-        </CollapsibleSection>
-        <CollapsibleSection title={"Short Input Select"}>
-          <ShortInputSelect
-            data={dropdownData}
-            onSelect={handleInputDropDownSelection}
-            content={"Content"}
-          />
-        </CollapsibleSection>
-        <CollapsibleSection title={"Short Input"}>
-          <ShortInput
-            title="Current"
-            onValueChange={handleShortInputValueChange}
-          />
-        </CollapsibleSection>
-        <CollapsibleSection title={"Short Input"}>
-          <ShortInput
-            title="Current"
-            onValueChange={handleShortInputValueChange}
-          />
-        </CollapsibleSection>
-        <CollapsibleSection title={"Choose Input"}>
-          <ChooseThreeInput
-            options={chooseThreeInputOptions}
-            onSelect={handleChooseThreeInputSelection}
-          />
-        </CollapsibleSection> */}
-      </Card>
-    </div>
+          <CollapsibleSection title={"Image Dimensions"}>
+            <ChooseInput
+              options={dimensionOptions}
+              onSelect={handleChooseInputSelection}
+              type="dimension"
+            />
+          </CollapsibleSection>
+          <CollapsibleSection title={"Number of Image"}>
+            <ChooseInput
+              options={numberImageOptions}
+              onSelect={handleChooseInputSelection}
+              type="numberOfImage"
+            />
+          </CollapsibleSection>
+          <CollapsibleSection title={"Steps"}>
+            <SliderInput
+              min={aiInputs[0]?.inputs[6].min || 1}
+              max={aiInputs[0]?.inputs[6].max || 50}
+              step={1}
+              defaultValue={20}
+              type="steps"
+            />
+          </CollapsibleSection>
+          <CollapsibleSection title={aiInputs[0]?.inputs[7].name}>
+            <InputSelect
+              data={aiInputs[0]?.inputs[7]?.info?.choices || {}}
+              onSelect={handleInputDropDownSelection}
+              type="sampling"
+            />
+          </CollapsibleSection>
+          <CollapsibleSection title={"CFG"}>
+            <SliderInput
+              min={aiInputs[0]?.inputs[8].min || 1}
+              max={aiInputs[0]?.inputs[8].max || 30}
+              step={1}
+              defaultValue={8}
+              type="cfg"
+            />
+          </CollapsibleSection>
+        </Card>
+      )}
+    </Card>
   )
 }
