@@ -10,7 +10,7 @@ import { MdLogout } from "react-icons/md"
 
 export default function NavigationSideBar() {
   return (
-    <div className="no-scrollbar fixed left-0 top-0 flex h-screen min-h-screen flex-col gap-4 overflow-y-scroll p-4 ">
+    <div className="no-scrollbar fixed left-0 top-0 flex h-screen min-h-screen w-[300px] flex-col gap-4 overflow-y-scroll p-4 ">
       <NavigationCard />
       <OtherInputCard />
       <Card>
