@@ -1,20 +1,6 @@
 "use client"
 
 import { ChangeEvent, useEffect, useState } from "react"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
-
-import { Search } from "lucide-react"
-import { FaSort, FaFilter, FaImage } from "react-icons/fa"
-import ImageInput from "@/components/generate/input-component/ImageInput"
 import GenerateSideBar from "@/components/sidebar/GenerateSideBar"
 import {
   useAiInformationMutation,
@@ -32,8 +18,6 @@ import {
 import { useSelector } from "react-redux"
 import { Skeleton } from "../../../components/ui/skeleton"
 import Carousel from "@/components/generate/Carousel"
-import { Card, CardContent } from "../../../components/ui/card"
-import Image from "next/image"
 import GenerateControls from "@/components/generate/GenerateControls"
 
 interface AIField {
@@ -182,11 +166,14 @@ export default function Generate() {
   }, [inputData])
 
   return (
-    <div className="grid grid-cols-10 gap-4 p-4">
-      <div className="col-span-2">
-        <GenerateSideBar />
+    <div className="block gap-4 p-4 lg:grid lg:grid-cols-10">
+      <div className="hidden lg:col-span-2 lg:block">
+        <div className="fixed left-0 top-0 w-1/5 p-4 h-screen min-h-screen">
+          
+            <GenerateSideBar />
+        </div>
       </div>
-      <div className="col-span-8 mx-4 h-full">
+      <div className="h-full w-full lg:col-span-8">
         <GenerateControls
           handlePosPromptChange={handlePosPromptChange}
           handleNegPromptChange={handleNegPromptChange}

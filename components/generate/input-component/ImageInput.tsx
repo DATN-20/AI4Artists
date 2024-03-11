@@ -66,8 +66,9 @@ const ImageInput: React.FC<{ onImageChange: (image: File) => void }> = ({
         type="file"
         accept="image/*"
         onChange={handleImageChange}
-        style={{ display: "none" }}
+        className="hidden"
         ref={fileInputRef}
+        placeholder="Upload an image"
       />
     </div>
   )

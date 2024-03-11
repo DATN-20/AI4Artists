@@ -43,7 +43,7 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
 
   return (
     <>
-      <div className="flex ">
+      <div className="flex">
         <input
           type="text"
           placeholder="Type prompt here..."
@@ -53,7 +53,7 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
         <button
           type="button"
           onClick={handleGenerate}
-          className="ml-4 flex items-center justify-center rounded-full bg-purple-500 px-4 py-3 font-bold text-white hover:bg-purple-700"
+          className="ml-4 hidden items-center justify-center rounded-full bg-purple-500 px-4 py-3 font-bold text-white hover:bg-purple-700 lg:flex"
         >
           <span className="mr-2">✨</span>
           Generate
@@ -87,42 +87,54 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
         <Label htmlFor="image-mode">Use Image Generation</Label>
       </div>
       {useImg2Img && <ImageInput onImageChange={handleImageChange} />}
+      <button
+        type="button"
+        onClick={handleGenerate}
+        className="mt-4 flex items-center justify-center rounded-full bg-purple-500 px-4 py-3 font-bold text-white hover:bg-purple-700 lg:hidden "
+      >
+        <span className="mr-2">✨</span>
+        Generate
+      </button>
       <h1 className="mt-5 text-3xl font-bold">Generated Images</h1>
-      <div className="mt-5 flex">
-        <div className="flex items-center justify-center rounded-full bg-card px-4 ">
+      <div className="mt-5 flex flex-col lg:flex-row">
+        <div className="flex items-center justify-center rounded-full bg-card px-4">
           <input
             type="text"
             placeholder="Prompt"
-            className="flex-grow bg-transparent  p-2 placeholder-black outline-none dark:placeholder-white"
+            className="flex-grow bg-transparent p-2 placeholder-black outline-none dark:placeholder-white"
           />
           <Search className="dark:text-white" />
         </div>
-        <Select>
-          <SelectTrigger className=" ml-5 w-[180px] bg-white dark:bg-zinc-800">
-            <FaFilter />
-            <SelectValue placeholder="Filter" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="alphabet">Alphabet</SelectItem>
-              <SelectItem value="newest">Newest</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <Select>
-          <SelectTrigger className="ml-5 w-[180px] bg-white dark:bg-zinc-800">
-            <FaSort />
-            <SelectValue placeholder="Sort By" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="descending">
-                Time Created: Descending
-              </SelectItem>
-              <SelectItem value="ascending">Time Created: Ascending</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <div className="mt-4 flex gap-4 lg:mt-0">
+          <Select>
+            <SelectTrigger className=" w-[180px] bg-white dark:bg-zinc-800 lg:ml-5">
+              <FaFilter />
+              <SelectValue placeholder="Filter" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="alphabet">Alphabet</SelectItem>
+                <SelectItem value="newest">Newest</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Select>
+            <SelectTrigger className="w-[180px] bg-white dark:bg-zinc-800 lg:ml-5">
+              <FaSort />
+              <SelectValue placeholder="Sort By" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="descending">
+                  Time Created: Descending
+                </SelectItem>
+                <SelectItem value="ascending">
+                  Time Created: Ascending
+                </SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </>
   )
