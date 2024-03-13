@@ -26,6 +26,7 @@
     "lucide-react": "^0.340.0",
     "next": "14.1.0",
     "next-themes": "^0.2.1",
+    "painterro": "^1.2.87",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.50.1",
