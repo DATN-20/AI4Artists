@@ -1,8 +1,10 @@
 import Footer from "./Footer";
 import Navbar from "./Navbar";
-import { AuthProvider } from "./AuthProvider";
+import ModalLogin  from "./ModalLogin";
+import ModalRegister from "./ModalRegister";
 export {
   Footer,
   Navbar,
-  AuthProvider
+  ModalLogin,
+  ModalRegister
 };
