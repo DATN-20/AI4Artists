@@ -1,3 +1,5 @@
+"use client"
+
 import NavigationSideBar from "@/components/sidebar/NavigationSideBar"
 import { Facebook, Home, Instagram, Twitter } from "lucide-react"
 import { FaDiscord } from "react-icons/fa"
@@ -9,11 +11,28 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../../components/ui/tabs"
+import ProfileCarousel from "@/components/dashboard/ProfileCarousel"
+import { useState } from "react"
+import { useAppDispatch } from "@/store/hooks"
+import { useSelector } from "react-redux"
+import { selectGenerate } from "@/features/generateSlice"
+import { Card, CardContent } from "@/components/ui/card"
+import Image from "next/image"
 
 const Profile = () => {
+  const dispatch = useAppDispatch()
+  const generateStates = useSelector(selectGenerate)
+  const [generateImgData, setGenerateImgData] = useState<string[] | null>([
+    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
+    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
+    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
+    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
+    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
+  ])
+  const { width, height } = generateStates.dataInputs || {}
   return (
     <div className="flex gap-4 py-4 ">
-      <div className="hidden lg:block lg:w-[300px]">
+      <div className="hidden lg:block lg:min-w-[300px]">
         <NavigationSideBar />
       </div>
       <div className="mr-8 h-full flex-grow">
@@ -45,6 +64,82 @@ const Profile = () => {
           <TabsContent value="introduction">Introduction</TabsContent>
           <TabsContent value="profile">Profile here</TabsContent>
         </Tabs>
+        <h1 className="mt-10 text-2xl font-bold">Popular Images</h1>
+        <ProfileCarousel
+          generateImgData={generateImgData}
+          width={512}
+          height={512}
+        />
+
+        <h1 className="mb-5 mt-10 text-2xl font-bold">Your Albums</h1>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <Card className="relative flex justify-center">
+            <div className="relative grid h-full w-full grid-cols-2 grid-rows-2 gap-1">
+              {generateImgData && generateImgData.length > 0 ? (
+                generateImgData.slice(0, 4).map((imageUrl, index) => (
+                  <div key={index} className="relative h-40">
+                    <Image
+                      src={imageUrl}
+                      alt={`Image ${index + 1}`}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-md"
+                    />
+                  </div>
+                ))
+              ) : (
+                <p>No images available</p>
+              )}
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">
+                <p className="text-center text-white">Image Overlay</p>
+              </div>
+            </div>
+          </Card>
+          <Card className="relative flex justify-center">
+            <div className="relative grid h-full w-full grid-cols-2 grid-rows-2 gap-1">
+              {generateImgData && generateImgData.length > 0 ? (
+                generateImgData.slice(0, 4).map((imageUrl, index) => (
+                  <div key={index} className="relative h-40">
+                    <Image
+                      src={imageUrl}
+                      alt={`Image ${index + 1}`}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-md"
+                    />
+                  </div>
+                ))
+              ) : (
+                <p>No images available</p>
+              )}
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">
+                <p className="text-center text-white">Image Overlay</p>
+              </div>
+            </div>
+          </Card>
+          <Card className="relative flex justify-center">
+            <div className="relative grid h-full w-full grid-cols-2 grid-rows-2 gap-1">
+              {generateImgData && generateImgData.length > 0 ? (
+                generateImgData.slice(0, 4).map((imageUrl, index) => (
+                  <div key={index} className="relative h-40">
+                    <Image
+                      src={imageUrl}
+                      alt={`Image ${index + 1}`}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-md"
+                    />
+                  </div>
+                ))
+              ) : (
+                <p>No images available</p>
+              )}
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">
+                <p className="text-center text-white">Image Overlay</p>
+              </div>
+            </div>
+          </Card>
+        </div>
       </div>
     </div>
   )
