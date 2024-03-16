@@ -5,9 +5,22 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'images.nightcafe.studio',
+
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.deepai.org',
+
       },
     ],
+
   },
 
 };
-export default nextConfig;
+
+export default nextConfig
