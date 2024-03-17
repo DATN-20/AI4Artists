@@ -393,9 +393,9 @@ const Canvas: React.FC = () => {
             </Button>
           </div>
         </div>
-        <div className="mt-4 flex items-center rounded-lg bg-card p-4">
+        <div className="flex items-center mt-4 rounded-lg bg-card p-4">
           {mode === BRUSH_MODE && (
-            <div className="flex ">
+            <div className="flex items-center gap-2">
               <ColorButton
                 color="black"
                 onClick={() => handleColorChange("black")}
@@ -408,7 +408,7 @@ const Canvas: React.FC = () => {
                 color="green"
                 onClick={() => handleColorChange("green")}
               />
-              <div>
+              <div className="flex items-center gap-2">
                 <label htmlFor="brushSize" className="text-sm text-gray-600">
                   Brush Size: {brushSize}
                 </label>
@@ -444,13 +444,13 @@ const Canvas: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex w-1/12 flex-col gap-4">
-        <div className="mr-16 flex h-[700px] items-center justify-center rounded-lg bg-card px-4">
-          <div className="flex flex-col items-center">
+      <div className="flex w-1/12 items-center gap-4">
+        <div className="mr-16 flex items-center justify-center rounded-lg bg-card px-4">
+          <div className="my-4 flex flex-col items-center gap-4">
             {tools.map((tool) => (
               <Button
                 key={tool.mode}
-                className={`rounded-xl ${mode !== tool.mode ? "bg-card" : ""} mb-4 py-6 font-bold`}
+                className={`rounded-xl ${mode !== tool.mode ? "bg-card" : ""} py-6 font-bold`}
                 onClick={() => {
                   if (tool.mode === CROP_MODE) {
                     setMode(tool.mode)
