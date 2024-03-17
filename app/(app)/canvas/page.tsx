@@ -65,12 +65,12 @@ const Canvas: React.FC = () => {
   )
 
   const tools = [
-    { icon: <IoIosBrush />, mode: BRUSH_MODE },
-    { icon: <LuMousePointer2 />, mode: DRAG_MODE },
-    { icon: <FaRegHandPaper />, mode: SELECT_MODE },
-    { icon: <FaShapes />, mode: SHAPE_MODE },
-    { icon: <LuEraser />, mode: ERASE_MODE },
-    { icon: <FaCropSimple />, mode: CROP_MODE },
+    { icon: <IoIosBrush size={25} />, mode: BRUSH_MODE },
+    { icon: <LuMousePointer2 size={25} />, mode: DRAG_MODE },
+    { icon: <FaRegHandPaper size={25} />, mode: SELECT_MODE },
+    { icon: <FaShapes size={25} />, mode: SHAPE_MODE },
+    { icon: <LuEraser size={25} />, mode: ERASE_MODE },
+    { icon: <FaCropSimple size={25} />, mode: CROP_MODE },
   ]
 
   // Handle magnifier tool click
@@ -339,29 +339,25 @@ const Canvas: React.FC = () => {
 
   return (
     <div className="flex w-full lg:p-2">
-      <div
-        className="w-8/12"
-        style={{ marginRight: "16px", marginLeft: "40px" }}
-      >
-        <div
-          className="flex-none overflow-hidden rounded-lg border"
-          style={{ height: "700px", width: "1000px" }}
-        >
-          <div className="h-full w-full bg-gray-200">
-            <canvas
-              ref={canvasRef}
-              width={1000}
-              height={700}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseDown={(e) => {
-                handleMouseDown(e)
-                if (isZooming) {
-                  updateMagnifiedCanvas(e)
-                }
-                // updateMagnifiedCanvas(e) // Gọi hàm để cập nhật hình ảnh phóng to
-              }}
-            ></canvas>
+      <div className="ml-40 mr-16 w-10/12">
+        <div className="flex items-center justify-center">
+          <div className=" h-[700px] w-[1000px] overflow-hidden rounded-lg border">
+            <div className="h-full w-full bg-gray-200">
+              <canvas
+                ref={canvasRef}
+                width={1000}
+                height={700}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseDown={(e) => {
+                  handleMouseDown(e)
+                  if (isZooming) {
+                    updateMagnifiedCanvas(e)
+                  }
+                  // updateMagnifiedCanvas(e) // Gọi hàm để cập nhật hình ảnh phóng to
+                }}
+              ></canvas>
+            </div>
           </div>
         </div>
         <div className="mt-4 flex justify-between">
@@ -448,18 +444,13 @@ const Canvas: React.FC = () => {
         </div>
       </div>
 
-      <div className="w-1/12 flex-none"></div>
-
-      <div className="flex w-2/12 flex-none flex-col gap-4">
-        <div
-          className="flex items-center justify-center rounded-lg bg-card px-4 "
-          style={{ height: "700px", marginRight: "16px" }}
-        >
+      <div className="flex w-1/12 flex-col gap-4">
+        <div className="mr-16 flex h-[700px] items-center justify-center rounded-lg bg-card px-4">
           <div className="flex flex-col items-center">
             {tools.map((tool) => (
               <Button
                 key={tool.mode}
-                className={`rounded-xl ${mode !== tool.mode ? "bg-card" : ""} mb-4 font-bold`}
+                className={`rounded-xl ${mode !== tool.mode ? "bg-card" : ""} mb-4 py-6 font-bold`}
                 onClick={() => {
                   if (tool.mode === CROP_MODE) {
                     setMode(tool.mode)
