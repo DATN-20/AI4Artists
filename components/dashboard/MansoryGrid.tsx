@@ -2,11 +2,11 @@ import React, { useEffect } from "react"
 import { useGetAllDashboardImageQuery } from "@/services/dashboard/dashboardApi"
 import Loading from "../Loading"
 import { DashboardImage } from "@/types/dashboard"
-const MasonryGrid = () => {
+const MasonryGrid = ({ type }: { type: string }) => {
   const { data, error, isLoading } = useGetAllDashboardImageQuery({
-    type: "RANDOM",
+    type: type,
     page: 1,
-    limit: 10,
+    limit: 100,
   })
 
   useEffect(() => {
@@ -25,13 +25,11 @@ const MasonryGrid = () => {
 
   const renderColumn = (images: DashboardImage[]) => {
     return images.map((item, index) => (
-      <div key={item.image.id}>
-        <img
-          className="h-auto w-full rounded-lg"
-          src={item.image.url}
-          alt={item.image.prompt}
-        />
-      </div>
+      <img
+        className="h-auto w-full rounded-lg"
+        src={item.image.url}
+        alt={item.image.prompt}
+      />
     ))
   }
 
@@ -43,7 +41,7 @@ const MasonryGrid = () => {
   return (
     <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-5">
       {imageColumns.map((column, index) => (
-        <div className="grid gap-4" key={index}>
+        <div className=" flex flex-col gap-4" key={index}>
           {renderColumn(column)}
         </div>
       ))}
