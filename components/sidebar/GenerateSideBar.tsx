@@ -73,7 +73,7 @@ export default function GenerateSideBar() {
   }
 
   return (
-    <Card className="no-scrollbar flex w-full flex-col overflow-y-scroll border-none lg:border">
+    <Card className="no-scrollbar flex w-full flex-col overflow-y-scroll min-h-screen border-none lg:border">
       <CardHeader className="relative flex flex-row items-center justify-center space-y-0 p-0 mt-2">
         <ArrowLeftFromLine
           className="absolute left-3 top-5 h-[42px] w-[42px]"

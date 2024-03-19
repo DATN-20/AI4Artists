@@ -38,8 +38,8 @@ const MasonryGrid = ({ type }: { type: string }) => {
       <img
         key={index} // Add a key here for React to handle re-renders efficiently
         className="h-auto w-full rounded-lg"
-        src={item.image.url}
-        alt={item.image.prompt}
+        src={item.url}
+        alt={item.promp}
       />
     ))
   }
