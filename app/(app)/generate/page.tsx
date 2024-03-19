@@ -4,6 +4,7 @@ import { ChangeEvent, useEffect, useState } from "react"
 import GenerateSideBar from "@/components/sidebar/GenerateSideBar"
 import {
   useAiInformationMutation,
+  useGetGenerationHistoryMutation,
   useImageToImageMutation,
   useTextToImageMutation,
 } from "@/services/generate/generateApi"
@@ -19,6 +20,7 @@ import { useSelector } from "react-redux"
 import { Skeleton } from "../../../components/ui/skeleton"
 import Carousel from "@/components/generate/Carousel"
 import GenerateControls from "@/components/generate/GenerateControls"
+import Loading from "@/components/Loading"
 
 interface AIField {
   ai_name: string | null
@@ -45,6 +47,7 @@ export default function Generate() {
   const [useImg2Img, setUseImg2Img] = useState(false)
   const [promptPos, setPromptPos] = useState("")
   const [promptNeg, setPromptNeg] = useState("")
+  const [isLoadingInformation, setIsLoadingInformation] = useState(true)
 
   const {
     aiName,
@@ -60,6 +63,9 @@ export default function Generate() {
     noise,
     image,
   } = generateStates.dataInputs || {}
+
+  const [getGenerationHistory, { data: historyData, error: historyError }] =
+    useGetGenerationHistoryMutation()
 
   const handleImageChange = (image: File) => {
     // Do something with the selected image file
@@ -87,7 +93,13 @@ export default function Generate() {
   const [textToImage] = useTextToImageMutation()
   const [imageToImage] = useImageToImageMutation()
 
-  const [generateImgData, setGenerateImgData] = useState<string[] | null>(null)
+  const [generateImgData, setGenerateImgData] = useState<string[] | null>([
+    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
+    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
+    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
+    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
+    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
+  ])
 
   const handleGenerate = async () => {
     setIsLoading(true)
@@ -153,51 +165,64 @@ export default function Generate() {
   const [aiInformation, { data: inputData }] = useAiInformationMutation()
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAIData = async () => {
       await aiInformation(undefined)
     }
-    fetchData()
+    fetchAIData()
+    const fetchHistoryData = async () => {
+      await getGenerationHistory(undefined)
+    }
+    fetchAIData()
+    fetchHistoryData()
+    console.log(historyData)
   }, [])
 
   useEffect(() => {
     if (inputData) {
       dispatch(setInputs({ aiInputs: inputData }))
+      setIsLoadingInformation(false)
     }
   }, [inputData])
 
   return (
-    <div className="block gap-4 p-4 lg:grid lg:grid-cols-10">
-      <div className="hidden lg:col-span-2 lg:block">
-        <div className="fixed left-0 top-0 w-1/5 p-4 h-screen min-h-screen">
-            <GenerateSideBar />
-        </div>
-      </div>
-      <div className="h-full w-full lg:col-span-8">
-        <GenerateControls
-          handlePosPromptChange={handlePosPromptChange}
-          handleNegPromptChange={handleNegPromptChange}
-          handleImageChange={handleImageChange}
-          handleGenerate={handleGenerate}
-          setUseNegativePrompt={setUseNegativePrompt}
-          setUseImg2Img={setUseImg2Img}
-          useNegativePrompt={useNegativePrompt}
-          useImg2Img={useImg2Img}
-        />
-        {isLoading ? (
-          <Skeleton
-            className="mt-5 rounded-xl"
-            style={{ width: width, height: height }}
-          />
-        ) : (
-          generateImgData && (
-            <Carousel
-              generateImgData={generateImgData}
-              width={width}
-              height={height}
+    <>
+      {isLoadingInformation ? (
+        <Loading />
+      ) : (
+        <div className="block gap-4 p-4 lg:grid lg:grid-cols-10">
+          <div className="hidden lg:col-span-2 lg:block">
+            <div className="fixed left-0 top-0 h-screen min-h-screen w-1/5 p-4">
+              <GenerateSideBar />
+            </div>
+          </div>
+          <div className="h-full w-full lg:col-span-8">
+            <GenerateControls
+              handlePosPromptChange={handlePosPromptChange}
+              handleNegPromptChange={handleNegPromptChange}
+              handleImageChange={handleImageChange}
+              handleGenerate={handleGenerate}
+              setUseNegativePrompt={setUseNegativePrompt}
+              setUseImg2Img={setUseImg2Img}
+              useNegativePrompt={useNegativePrompt}
+              useImg2Img={useImg2Img}
             />
-          )
-        )}
-      </div>
-    </div>
+            {isLoading ? (
+              <Skeleton
+                className="mt-5 rounded-xl"
+                style={{ width: width, height: height }}
+              />
+            ) : (
+              generateImgData && (
+                <Carousel
+                  generateImgData={generateImgData}
+                  width={width}
+                  height={height}
+                />
+              )
+            )}
+          </div>
+        </div>
+      )}
+    </>
   )
 }

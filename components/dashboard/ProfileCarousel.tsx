@@ -49,8 +49,8 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
               </CarouselItem>
             ))}
       </CarouselContent>
-      <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 transform" />
-      <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 transform" />
+      <CarouselPrevious className="absolute left-0 top-1/2 h-12 w-12 -translate-y-1/2 transform" />
+      <CarouselNext className="absolute right-0 top-1/2 h-12 w-12 -translate-y-1/2 transform" />
     </BaseCarousel>
   )
 }
