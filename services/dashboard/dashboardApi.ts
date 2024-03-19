@@ -23,7 +23,16 @@ export const dashboardApi = createApi({
         }
       },
     }),
+    getUser: builder.query({
+      query: ({ userID }) => {
+        
+        return {
+          url: `api/v1/users/me`,
+          method: "GET",
+        }
+      },
+    }),
   }),
 })
 
-export const { useGetAllDashboardImageQuery } = dashboardApi
+export const { useGetAllDashboardImageQuery, useGetUserQuery } = dashboardApi
