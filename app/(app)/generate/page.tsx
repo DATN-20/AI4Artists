@@ -20,6 +20,7 @@ import { useSelector } from "react-redux"
 import { Skeleton } from "../../../components/ui/skeleton"
 import Carousel from "@/components/generate/Carousel"
 import GenerateControls from "@/components/generate/GenerateControls"
+import Loading from "../../../components/Loading"
 import Loading from "@/components/Loading"
 
 interface AIField {
