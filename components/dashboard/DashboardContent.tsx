@@ -24,7 +24,7 @@ export default function DashboardContent() {
       <div className="flex w-full justify-between gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="rounded-xl bg-gradient-linear from-sky-300 to-primary-700 px-4 py-3 text-lg font-bold text-white shadow-none hover:bg-primary-800">
+            <Button className="bg-gradient-default rounded-xl px-4 py-3 text-lg font-bold text-white shadow-none hover:bg-primary-800">
               {currentSelection}
               <ChevronDown className="ml-2" />
             </Button>

@@ -4,14 +4,12 @@ import { IoIosBrush } from "react-icons/io"
 import { LuEraser, LuMousePointer2 } from "react-icons/lu"
 import CanvasMode from "@/constants/canvas"
 import { Button } from "../ui/button"
-import { useCanvasState } from "@/store/canvasHooks"
 import { CanvasModeContext } from "@/store/canvasHooks"
 import { useContext } from "react"
 
 const ToolSelect = () => {
-  const { setIsCropping, setIsZooming } = useCanvasState()
   const canvasModeContext = useContext(CanvasModeContext)
-  const { mode, setMode } = canvasModeContext!
+  const { mode, setMode, setIsCropping, setIsZooming } = canvasModeContext!
 
   const tools = [
     { icon: <IoIosBrush size={25} />, mode: CanvasMode.BRUSH_MODE },

@@ -6,7 +6,7 @@ const CardSection = ({
   href,
   isOpen,
   icon,
-  onClick
+  onClick,
 }: {
   title: string
   href: string
@@ -19,12 +19,13 @@ const CardSection = ({
   })
   return (
     <div
+      onClick={onClick}
       className={clsx("rounded-lg p-2 pl-3 font-semibold ", {
         "bg-card-highlight": isOpen,
         "bg-card": !isOpen,
       })}
     >
-      <a href={href} className="flex items-center gap-4" onClick={onClick}>
+      <a href={href} className="flex items-center gap-4">
         {iconWithProps}
         <span>{title}</span>
       </a>

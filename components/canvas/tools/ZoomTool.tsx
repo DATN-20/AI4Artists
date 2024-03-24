@@ -1,9 +1,11 @@
-import { useCanvasState } from "@/store/canvasHooks"
+import { CanvasModeContext } from "@/store/canvasHooks"
 import { Button } from "@/components/ui/button"
 import { RiZoomInLine, RiZoomOutLine } from "react-icons/ri"
+import { useContext } from "react"
 
 const ZoomTool = () => {
-  const { setIsZooming, setMagnifierZoom, magnifierZoom } = useCanvasState()
+  const canvasContext = useContext(CanvasModeContext)
+  const { setIsZooming, setMagnifierZoom, magnifierZoom } = canvasContext!
   const handleMagnifierClick = (action: string) => {
     setIsZooming(true)
     if (action === "zoomIn") {

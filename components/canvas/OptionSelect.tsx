@@ -14,11 +14,11 @@ const OptionSelect = () => {
         <div className="mt-4 flex items-center rounded-lg bg-card p-4">
           {mode === CanvasMode.BRUSH_MODE && (
             <div className="flex ">
-              <ColorPicker></ColorPicker>
-              <BrushSizeInput></BrushSizeInput>
+              <ColorPicker/>
+              <BrushSizeInput/>
             </div>
           )}
-          {mode === CanvasMode.SHAPE_MODE && <ShapeButtons></ShapeButtons>}
+          {mode === CanvasMode.SHAPE_MODE && <ShapeButtons/>}
         </div>
       )}
     </div>

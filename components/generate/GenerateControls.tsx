@@ -53,7 +53,7 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
         <button
           type="button"
           onClick={handleGenerate}
-          className="ml-4 hidden items-center justify-center rounded-full bg-gradient-linear from-sky-300 to-primary-700 px-4 py-3 font-bold text-white hover:bg-purple-700 lg:flex"
+          className="bg-gradient-default ml-4 hidden items-center justify-center rounded-full px-4 py-3 font-bold text-white hover:bg-purple-700 lg:flex"
         >
           <span className="mr-2">✨</span>
           Generate

@@ -1,11 +1,9 @@
 import CanvasMode, { ShapeModeOptions } from "@/constants/canvas"
-import { useCanvasState } from "@/store/canvasHooks"
-import { BrushSizeStateContext } from "@/store/canvasHooks"
-import { ColorStateContext } from "@/store/canvasHooks"
-import { CanvasModeContext, ShapeStateContext } from "@/store/canvasHooks"
+import { CanvasModeContext } from "@/store/canvasHooks"
 import { useContext } from "react"
 
 const Canvas: React.FC = () => {
+  const canvasContext = useContext(CanvasModeContext)
   const {
     canvasRef,
     isZooming,
@@ -17,15 +15,11 @@ const Canvas: React.FC = () => {
     setIsCropping,
     savedCanvasImageDataRef,
     shapeCoordinates,
-  } = useCanvasState()
-  const brushContext = useContext(BrushSizeStateContext)
-  const { brushSettings } = brushContext!
-  const shapeContext = useContext(ShapeStateContext)
-  const { shapeModeRef } = shapeContext!
-  const colorContext = useContext(ColorStateContext)
-  const { color } = colorContext!
-  const canvasModeContext = useContext(CanvasModeContext)
-  const { mode } = canvasModeContext!
+    brushSettings,
+    shapeModeRef,
+    color,
+    mode,
+  } = canvasContext!
 
   const cropImage = () => {
     const canvas = canvasRef.current
@@ -172,10 +166,8 @@ const Canvas: React.FC = () => {
       context.moveTo(x, y)
     } else if (mode === CanvasMode.DRAG_MODE) {
       // Handle DragMode logic
-      console.log("Mouse down in DragMode")
     } else if (mode === CanvasMode.SELECT_MODE) {
       // Handle SelectMode logic
-      console.log("Mouse down in SelectMode")
     } else if (mode === CanvasMode.SHAPE_MODE) {
       setIsDrawing(true)
       updateShapeCoordinates({
@@ -245,20 +237,20 @@ const Canvas: React.FC = () => {
   }
 
   return (
-      <canvas
-        ref={canvasRef}
-        width={1000}
-        height={700}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseDown={(e) => {
-          handleMouseDown(e)
-          if (isZooming) {
-            updateMagnifiedCanvas(e)
-          }
-          // updateMagnifiedCanvas(e) // Gọi hàm để cập nhật hình ảnh phóng to
-        }}
-      ></canvas>
+    <canvas
+      ref={canvasRef}
+      width={1000}
+      height={700}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseDown={(e) => {
+        handleMouseDown(e)
+        if (isZooming) {
+          updateMagnifiedCanvas(e)
+        }
+        // updateMagnifiedCanvas(e) // Gọi hàm để cập nhật hình ảnh phóng to
+      }}
+    ></canvas>
   )
 }
 

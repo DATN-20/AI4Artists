@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button"
 import React from "react"
-import { BrushSizeStateContext } from "@/store/canvasHooks"
+import { CanvasModeContext } from "@/store/canvasHooks"
 import { RxBorderWidth } from "react-icons/rx"
 import * as Slider from "@radix-ui/react-slider"
 
 const BrushSizeInput = () => {
-  const brushContext = React.useContext(BrushSizeStateContext)
+  const brushContext = React.useContext(CanvasModeContext)
   const { brushSettings, setBrushSettings } = brushContext!
 
   const updateBrushSettings = (newSettings: Partial<typeof brushSettings>) => {
@@ -39,7 +39,7 @@ const BrushSizeInput = () => {
               onBlur={() => updateBrushSettings({ showSlider: false })}
             >
               <Slider.Track className="relative h-3 grow rounded-xl bg-slate-200">
-                <Slider.Range className="absolute h-3 rounded-xl bg-gradient-to-r from-sky-300 to-primary-700 to-60%" />
+                <Slider.Range className="bg-gradient-default-to-r absolute h-3 rounded-xl" />
               </Slider.Track>
               <Slider.Thumb className="group relative block h-4 w-4 cursor-pointer rounded-full border-none bg-primary-600 outline-none duration-150 active:scale-125 ">
                 <h1 className="absolute -translate-x-3 whitespace-nowrap rounded-xl bg-primary px-4 py-1 text-center text-xs font-bold text-white opacity-0 duration-150 ease-in-out group-active:-translate-y-8 group-active:opacity-100">

@@ -1,124 +1,126 @@
-import CanvasMode, { ShapeModeOptions } from '@/constants/canvas';
-import { useState, useRef, createContext, useContext, ReactNode } from 'react';
-
-export const useCanvasState = () => {
-    const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const savedCanvasImageDataRef = useRef<ImageData | null>(null);
-    const [shapeCoordinates, setShapeCoordinates] = useState({
-      startX: 0,
-      startY: 0,
-      endX: 0,  
-      endY: 0,
-    });
-
-    const [magnifierZoom, setMagnifierZoom] = useState<number>(1);
-    const [isZooming, setIsZooming] = useState<boolean>(false);
-    const [isDrawing, setIsDrawing] = useState<boolean>(false);
-    const [isCropping, setIsCropping] = useState<boolean>(false);
-
-    const updateShapeCoordinates = (
-        newCoordinates: Partial<typeof shapeCoordinates>,
-      ) => {
-        setShapeCoordinates((prevCoordinates) => ({
-          ...prevCoordinates,
-          ...newCoordinates,
-        }))
-      }
-  
-    return {
-        canvasRef,
-        savedCanvasImageDataRef,
-        isDrawing,
-        setIsDrawing,
-        shapeCoordinates,
-        updateShapeCoordinates,
-        isCropping,
-        setIsCropping,
-        magnifierZoom,
-        setMagnifierZoom,
-        isZooming,
-        setIsZooming
-    };
-};
+import CanvasMode, { ShapeModeOptions } from "@/constants/canvas"
+import {
+  useState,
+  useRef,
+  createContext,
+  ReactNode,
+  Dispatch,
+  SetStateAction,
+} from "react"
 
 type CanvasModeContextType = {
-  mode: CanvasMode;
-  setMode: React.Dispatch<React.SetStateAction<CanvasMode>>;
-};
-
-export const CanvasModeContext = createContext<CanvasModeContextType | undefined>(undefined);
-
-export const CanvasModeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [mode, setMode] = useState(CanvasMode.DRAG_MODE);
-
-  return (
-    <CanvasModeContext.Provider value={{ mode, setMode }}>
-      {children}
-    </CanvasModeContext.Provider>
-  );
-};
-
-type ColorStateContextType = {
-  color: string;
-  setColor: (color: string) => void;
-  showColorPicker: boolean;
-  setShowColorPicker: (show: boolean) => void;
-};
-
-export const ColorStateContext = createContext<ColorStateContextType | undefined>(undefined);
-
-export const ColorStateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [color, setColor] = useState("black");
-  const [showColorPicker, setShowColorPicker] = useState(false);
-
-  return (
-    <ColorStateContext.Provider value={{ color, setColor, showColorPicker, setShowColorPicker }}>
-      {children}
-    </ColorStateContext.Provider>
-  );
-};
-
-type BrushSizeStateContextType = {
+  mode: CanvasMode
+  setMode: Dispatch<SetStateAction<CanvasMode>>
+  color: string
+  setColor: Dispatch<SetStateAction<string>>
+  showColorPicker: boolean
+  setShowColorPicker: Dispatch<SetStateAction<boolean>>
   brushSettings: {
-    size: number;
-    showSlider: boolean;
-  };
-  setBrushSettings: React.Dispatch<React.SetStateAction<{
-    size: number;
-    showSlider: boolean;
-  }>>;
-};
+    size: number
+    showSlider: boolean
+  }
+  setBrushSettings: Dispatch<
+    SetStateAction<{ size: number; showSlider: boolean }>
+  >
+  shapeMode: ShapeModeOptions
+  setShapeMode: Dispatch<SetStateAction<ShapeModeOptions>>
+  shapeModeRef: React.MutableRefObject<ShapeModeOptions>
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | null>
+  savedCanvasImageDataRef: React.MutableRefObject<ImageData | null>
+  isDrawing: boolean
+  setIsDrawing: Dispatch<SetStateAction<boolean>>
+  shapeCoordinates: {
+    startX: number
+    startY: number
+    endX: number
+    endY: number
+  }
+  updateShapeCoordinates: (
+    newCoordinates: Partial<{
+      startX: number
+      startY: number
+      endX: number
+      endY: number
+    }>,
+  ) => void
+  isCropping: boolean
+  setIsCropping: Dispatch<SetStateAction<boolean>>
+  magnifierZoom: number
+  setMagnifierZoom: Dispatch<SetStateAction<number>>
+  isZooming: boolean
+  setIsZooming: Dispatch<SetStateAction<boolean>>
+}
 
-export const BrushSizeStateContext = createContext<BrushSizeStateContextType | undefined>(undefined);
+export const CanvasModeContext = createContext<
+  CanvasModeContextType | undefined
+>(undefined)
 
-export const BrushSizeStateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [mode, setMode] = useState(CanvasMode.DRAG_MODE)
+  const [color, setColor] = useState("black")
+  const [showColorPicker, setShowColorPicker] = useState(false)
   const [brushSettings, setBrushSettings] = useState({
     size: 5,
-    showSlider: false
-  });
+    showSlider: false,
+  })
+  const [shapeMode, setShapeMode] = useState<ShapeModeOptions>(
+    ShapeModeOptions.RECTANGLE_SHAPE,
+  )
+  const shapeModeRef = useRef<ShapeModeOptions>(shapeMode)
+
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const savedCanvasImageDataRef = useRef<ImageData | null>(null)
+  const [isDrawing, setIsDrawing] = useState(false)
+  const [shapeCoordinates, setShapeCoordinates] = useState({
+    startX: 0,
+    startY: 0,
+    endX: 0,
+    endY: 0,
+  })
+  const [isCropping, setIsCropping] = useState(false)
+  const [magnifierZoom, setMagnifierZoom] = useState(1)
+  const [isZooming, setIsZooming] = useState(false)
+
+  const updateShapeCoordinates = (
+    newCoordinates: Partial<typeof shapeCoordinates>,
+  ) => {
+    setShapeCoordinates((prevCoordinates) => ({
+      ...prevCoordinates,
+      ...newCoordinates,
+    }))
+  }
+
+  const contextValue: CanvasModeContextType = {
+    mode,
+    setMode,
+    color,
+    setColor,
+    showColorPicker,
+    setShowColorPicker,
+    brushSettings,
+    setBrushSettings,
+    shapeMode,
+    setShapeMode,
+    shapeModeRef,
+    canvasRef,
+    savedCanvasImageDataRef,
+    isDrawing,
+    setIsDrawing,
+    shapeCoordinates,
+    updateShapeCoordinates,
+    isCropping,
+    setIsCropping,
+    magnifierZoom,
+    setMagnifierZoom,
+    isZooming,
+    setIsZooming,
+  }
 
   return (
-    <BrushSizeStateContext.Provider value={{ brushSettings, setBrushSettings }}>
+    <CanvasModeContext.Provider value={contextValue}>
       {children}
-    </BrushSizeStateContext.Provider>
-  );
-};
-
-type ShapeStateContextType = {
-  shapeMode: ShapeModeOptions;
-  setShapeMode: React.Dispatch<React.SetStateAction<ShapeModeOptions>>;
-  shapeModeRef: React.MutableRefObject<ShapeModeOptions>;
-};
-
-export const ShapeStateContext = createContext<ShapeStateContextType | undefined>(undefined);
-
-export const ShapeStateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [shapeMode, setShapeMode] = useState<ShapeModeOptions>(ShapeModeOptions.RECTANGLE_SHAPE);
-  const shapeModeRef = useRef<ShapeModeOptions>(shapeMode);
-
-  return (
-    <ShapeStateContext.Provider value={{ shapeMode, setShapeMode, shapeModeRef }}>
-      {children}
-    </ShapeStateContext.Provider>
-  );
-};
+    </CanvasModeContext.Provider>
+  )
+}

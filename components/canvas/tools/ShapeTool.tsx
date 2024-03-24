@@ -1,5 +1,5 @@
 import { ShapeModeOptions } from "@/constants/canvas"
-import { ShapeStateContext } from "@/store/canvasHooks"
+import { CanvasModeContext } from "@/store/canvasHooks"
 import ShapeButton from "../options/ShapeButton"
 import { RiRectangleLine } from "react-icons/ri"
 import { FaRegCircle } from "react-icons/fa"
@@ -7,7 +7,7 @@ import { useContext, useEffect } from "react"
 import ColorPicker from "../options/ColorPicker"
 
 const ShapeButtons: React.FC = () => {
-  const shapeContext = useContext(ShapeStateContext)
+  const shapeContext = useContext(CanvasModeContext)
   const { shapeModeRef, shapeMode, setShapeMode } = shapeContext!
   useEffect(() => {
     shapeModeRef.current = shapeMode
