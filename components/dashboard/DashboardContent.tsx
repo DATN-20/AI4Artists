@@ -26,7 +26,7 @@ export default function DashboardContent() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="bg-gradient-default rounded-xl px-4 py-3 text-lg font-bold text-white shadow-none hover:bg-primary-800">
-              {currentSelection}
+              {currentSelection.label}
               <ChevronDown className="ml-2" />
             </Button>
           </DropdownMenuTrigger>
