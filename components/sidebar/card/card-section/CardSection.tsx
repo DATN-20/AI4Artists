@@ -6,11 +6,13 @@ const CardSection = ({
   href,
   isOpen,
   icon,
+  onClick
 }: {
   title: string
   href: string
   isOpen: boolean
   icon: React.ReactElement
+  onClick: () => void
 }) => {
   const iconWithProps = React.cloneElement(icon, {
     size: 20,
@@ -22,7 +24,7 @@ const CardSection = ({
         "bg-card": !isOpen,
       })}
     >
-      <a href={href} className="flex items-center gap-4">
+      <a href={href} className="flex items-center gap-4" onClick={onClick}>
         {iconWithProps}
         <span>{title}</span>
       </a>

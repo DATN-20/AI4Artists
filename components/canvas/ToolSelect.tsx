@@ -5,9 +5,13 @@ import { LuEraser, LuMousePointer2 } from "react-icons/lu"
 import CanvasMode from "@/constants/canvas"
 import { Button } from "../ui/button"
 import { useCanvasState } from "@/store/canvasHooks"
+import { CanvasModeContext } from "@/store/canvasHooks"
+import { useContext } from "react"
 
 const ToolSelect = () => {
-  const { mode, setMode, setIsCropping, setIsZooming } = useCanvasState()
+  const { setIsCropping, setIsZooming } = useCanvasState()
+  const canvasModeContext = useContext(CanvasModeContext)
+  const { mode, setMode } = canvasModeContext!
 
   const tools = [
     { icon: <IoIosBrush size={25} />, mode: CanvasMode.BRUSH_MODE },
@@ -22,6 +26,7 @@ const ToolSelect = () => {
     <div className="my-4 flex flex-col items-center gap-4">
       {tools.map((tool) => (
         <Button
+          key={tool.mode}
           className={`rounded-xl ${mode !== tool.mode ? "bg-card" : ""} py-6 font-bold`}
           onClick={() => {
             setMode(tool.mode)

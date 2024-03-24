@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button"
-import React, { useState } from "react"
+import React, { useContext, useEffect } from "react"
 import { SketchPicker } from "react-color"
-import { useColorState } from "@/store/canvasHooks"
+import { ColorStateContext, CanvasModeProvider } from "@/store/canvasHooks"
 
-const ColorPicker = () => {
-  const { color, setColor, showColorPicker, setShowColorPicker } =
-    useColorState()
+const ColorPicker : React.FC = () => {
+  const colorContext = useContext(ColorStateContext)
+  const { color, setColor, showColorPicker, setShowColorPicker } = colorContext!;
   const handleColorChange = (newColor: string) => {
     setColor(newColor)
   }

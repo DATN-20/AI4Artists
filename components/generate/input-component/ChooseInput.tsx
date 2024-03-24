@@ -50,10 +50,9 @@ const ChooseInput = ({
           <Button
             variant={"outline"}
             className={clsx(
-              "w-full rounded-lg border px-4 py-2 text-text transition-colors",
+              "w-full rounded-lg border-2 border-primary-700 px-4 py-2 text-primary-700 text-text transition-colors",
               {
-                "bg-accent text-accent-foreground":
-                  selectedValue === option.value,
+                "bg-accent text-primary-700": selectedValue === option.value,
                 "border-card-hightlight border-none":
                   selectedValue !== option.value,
               },

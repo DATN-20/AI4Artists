@@ -168,9 +168,8 @@ export default function Generate() {
   return (
     <div className="block gap-4 p-4 lg:grid lg:grid-cols-10">
       <div className="hidden lg:col-span-2 lg:block">
-        <div className="fixed left-0 top-0 w-1/5 p-4 h-screen min-h-screen">
-          
-            <GenerateSideBar />
+        <div className="fixed left-0 top-0 h-screen min-h-screen w-1/5 p-4">
+          <GenerateSideBar />
         </div>
       </div>
       <div className="h-full w-full lg:col-span-8">

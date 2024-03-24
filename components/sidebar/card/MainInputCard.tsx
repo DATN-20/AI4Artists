@@ -6,8 +6,8 @@ import { IoIosPeople } from "react-icons/io"
 import { FaHome } from "react-icons/fa"
 import { BsPeopleFill } from "react-icons/bs"
 import { IoPerson } from "react-icons/io5"
-import { MdModelTraining } from "react-icons/md";
-import { TbBoxModel2 } from "react-icons/tb";
+import { MdModelTraining } from "react-icons/md"
+import { TbBoxModel2 } from "react-icons/tb"
 
 const MainInputCard = () => {
   return (
@@ -28,7 +28,7 @@ const MainInputCard = () => {
           </li>
           <li>
             <CardSection
-              title="Commmunity"
+              title="Community"
               href="#"
               isOpen={false}
               icon={<BsPeopleFill />}
@@ -44,7 +44,7 @@ const MainInputCard = () => {
           </li>
           <li>
             <CardSection
-              title="Trainning & Dataset"
+              title="Training & Dataset"
               href="#"
               isOpen={false}
               icon={<MdModelTraining />}
