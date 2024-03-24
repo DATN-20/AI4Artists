@@ -22,7 +22,7 @@ const OtherInputCard = () => {
           <li>
             <CardSection
               title="Realtime Canvas"
-              href="#"
+              href="/canvas"
               isOpen={false}
               icon={<Palette />}
             />

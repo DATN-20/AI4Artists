@@ -18,7 +18,7 @@ import {
 } from "../ui/form"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
-import BgImage from "../../public/bg-image.png"
+import BgImage from "../../public/bg-left.png"
 import { ErrorObject } from "@/types"
 const formSchema = z.object({
   email: z.string().min(2, {
@@ -104,57 +104,57 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
 
   return (
     <DialogContent
-      className="p-0 lg:min-w-[950px]"
+      className="border-none p-0 lg:min-w-[950px]"
       style={{
         borderRadius: 50,
       }}
     >
-      <div className="flex ">
+      <div className="flex h-full w-full">
         <div
-          className="mr-10 hidden rounded-l-md bg-gradient-to-r from-purple-500 to-indigo-900 lg:block"
+          className=" hidden h-full w-1/2 rounded-l-md bg-gradient-to-r from-purple-500 to-indigo-900 lg:block"
           style={{
-            padding: "30px",
             borderTopLeftRadius: 50,
             borderBottomLeftRadius: 50,
           }}
         >
-          <NextImage
-            alt="background image"
-            src={BgImage}
-            className="absolute left-0 top-0 "
-            width={523}
-            style={{
-              borderTopLeftRadius: 30,
-              borderBottomLeftRadius: 30,
-            }}
-          />
-          <div className="relative z-10 flex flex-col items-center">
+          <div className="relative flex h-full w-full ">
             <NextImage
-              alt="logo"
-              width={200}
-              height={200}
-              src="/logo-login.png"
-            ></NextImage>
-            <div className="mt-5 text-2xl font-bold text-white ">
-              <div className="mt-5 flex ">
-                {/* <CheckCircleOutlined />{" "} */}
-                <p className="ml-5">Over 50 Free Image Generations Daily</p>
-              </div>
+              alt="background image"
+              src={BgImage}
+              className="absolute z-10 h-full w-full"
+              style={{
+                borderTopLeftRadius: 30,
+                borderBottomLeftRadius: 30,
+              }}
+            />
+            <div className="relative z-20 flex flex-col items-center justify-center p-[16px] ">
+              <NextImage
+                alt="logo"
+                width={200}
+                height={200}
+                src="/logo-login.png"
+              ></NextImage>
+              <div className="mt-5 text-2xl font-bold text-white ">
+                <div className="mt-5 flex text-center ">
+                  {/* <CheckCircleOutlined />{" "} */}
+                  <p className="">Over 50 Free Image Generations Daily</p>
+                </div>
 
-              <br />
-              <div className="mt-5 flex ">
-                {/* <CheckCircleOutlined />{" "} */}
-                <p className="ml-5">Over 50 Free Image Generations Daily</p>
-              </div>
-              <br />
-              <div className="mt-5 flex ">
-                {/* <CheckCircleOutlined />{" "} */}
-                <p className="ml-5">Over 50 Free Image Generations Daily</p>
-              </div>
-              <br />
-              <div className="mt-5 flex ">
-                {/* <CheckCircleOutlined />{" "} */}
-                <p className="ml-5">Over 50 Free Image Generations Daily</p>
+                <br />
+                <div className="mt-5 flex text-center ">
+                  {/* <CheckCircleOutlined />{" "} */}
+                  <p className="">Over 50 Free Image Generations Daily</p>
+                </div>
+                <br />
+                <div className="mt-5 flex text-center ">
+                  {/* <CheckCircleOutlined />{" "} */}
+                  <p className="">Over 50 Free Image Generations Daily</p>
+                </div>
+                <br />
+                <div className="mt-5 flex  text-center">
+                  {/* <CheckCircleOutlined />{" "} */}
+                  <p className="">Over 50 Free Image Generations Daily</p>
+                </div>
               </div>
             </div>
           </div>
