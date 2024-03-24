@@ -12,7 +12,7 @@ import { TbBoxModel2 } from "react-icons/tb"
 const MainInputCard = () => {
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center gap-6">
+      <CardHeader className="flex flex-row items-center gap-4">
         <Image src="/logo.png" alt="logo" width={70} height={70} />
         <h1 className="text-4xl font-bold ">AIArtist</h1>
       </CardHeader>
@@ -21,7 +21,7 @@ const MainInputCard = () => {
           <li>
             <CardSection
               title="Home"
-              href="#"
+              href="/dashboard"
               isOpen={true}
               icon={<FaHome />}
             />
@@ -37,7 +37,7 @@ const MainInputCard = () => {
           <li>
             <CardSection
               title="Personal Feed"
-              href="#"
+              href="/profile"
               isOpen={false}
               icon={<IoPerson />}
             />

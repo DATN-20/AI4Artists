@@ -1,4 +1,3 @@
-"use client"
 import { ChevronDown, Search } from "lucide-react"
 import { Button } from "../ui/button"
 import {
@@ -8,14 +7,16 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
 } from "../ui/dropdown-menu"
-import { useCallback, useEffect, useState } from "react"
+import { useState } from "react"
 import MansoryGrid from "./MansoryGrid"
 
 export default function DashboardContent() {
-  const [currentSelection, setCurrentSelection] = useState("Trending")
+  const [currentSelection, setCurrentSelection] = useState({
+    label: "Latest",
+    value: "LATEST",
+  })
 
-  // Function to handle selection
-  const handleSelection = (selection: string) => {
+  const handleSelection = (selection: { label: string; value: string }) => {
     setCurrentSelection(selection)
   }
 
@@ -25,20 +26,39 @@ export default function DashboardContent() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="rounded-xl bg-gradient-linear from-sky-300 to-primary-700 px-4 py-3 text-lg font-bold text-white shadow-none hover:bg-primary-800">
-              {currentSelection}
+              {currentSelection.label}
               <ChevronDown className="ml-2" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-24">
             <DropdownMenuGroup>
-              <DropdownMenuItem onSelect={() => handleSelection("Trending")}>
+              <DropdownMenuItem
+                onSelect={() =>
+                  handleSelection({ label: "Random", value: "RANDOM" })
+                }
+              >
+                Random
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() =>
+                  handleSelection({ label: "Latest", value: "LATEST" })
+                }
+              >
+                Latest
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() =>
+                  handleSelection({ label: "Top Liked", value: "TOPLIKED" })
+                }
+              >
+                Top Liked
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() =>
+                  handleSelection({ label: "Trending", value: "TRENDING" })
+                }
+              >
                 Trending
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => handleSelection("New")}>
-                New
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => handleSelection("Top")}>
-                Top
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
@@ -47,7 +67,7 @@ export default function DashboardContent() {
           <input
             type="text"
             placeholder="search"
-            className="flex-grow bg-transparent  placeholder-white outline-none"
+            className="flex-grow bg-transparent placeholder-white outline-none"
           />
           <Search />
         </div>
@@ -78,8 +98,7 @@ export default function DashboardContent() {
           Sci-fi
         </Button>
       </div>
-
-      <MansoryGrid />
+      <MansoryGrid type={currentSelection.value} />
     </div>
   )
 }
