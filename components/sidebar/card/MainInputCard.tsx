@@ -28,7 +28,7 @@ const MainInputCard = () => {
           </li>
           <li>
             <CardSection
-              title="Commmunity"
+              title="Community"
               href="#"
               isOpen={false}
               icon={<BsPeopleFill />}
@@ -44,7 +44,7 @@ const MainInputCard = () => {
           </li>
           <li>
             <CardSection
-              title="Trainning & Dataset"
+              title="Training & Dataset"
               href="#"
               isOpen={false}
               icon={<MdModelTraining />}

@@ -8,7 +8,7 @@ export default function InputPrompt() {
       />
       <button
         type="button"
-        className="ml-4 flex items-center justify-center rounded-full bg-purple-500 px-4 py-3 font-bold text-white hover:bg-purple-700"
+        className="bg-gradient-default ml-4 flex items-center justify-center rounded-full px-4 py-3 font-bold text-black hover:bg-purple-700"
       >
         <span className="mr-2">✨</span>
         Generate

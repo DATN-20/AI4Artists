@@ -6,17 +6,20 @@ const CardSection = ({
   href,
   isOpen,
   icon,
+  onClick,
 }: {
   title: string
   href: string
   isOpen: boolean
   icon: React.ReactElement
+  onClick: () => void
 }) => {
   const iconWithProps = React.cloneElement(icon, {
     size: 20,
   })
   return (
     <div
+      onClick={onClick}
       className={clsx("rounded-lg p-2 pl-3 font-semibold ", {
         "bg-card-highlight": isOpen,
         "bg-card": !isOpen,

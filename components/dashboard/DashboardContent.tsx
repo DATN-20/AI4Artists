@@ -25,7 +25,7 @@ export default function DashboardContent() {
       <div className="flex w-full justify-between gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="rounded-xl px-4 py-3 text-lg font-bold text-white hover:bg-primary-800">
+            <Button className="bg-gradient-default rounded-xl px-4 py-3 text-lg font-bold text-white shadow-none hover:bg-primary-800">
               {currentSelection.label}
               <ChevronDown className="ml-2" />
             </Button>
@@ -73,7 +73,30 @@ export default function DashboardContent() {
         </div>
       </div>
       <div className="no-scrollbar mt-4 flex gap-4 overflow-x-scroll">
-        {/* Buttons here remain unchanged */}
+        <Button
+          className="rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+          variant={"outline"}
+        >
+          All
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
+          Photography
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
+          Animals
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
+          Anime
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
+          Architecture
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
+          Food
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
+          Sci-fi
+        </Button>
       </div>
       <MansoryGrid type={currentSelection.value} />
     </div>

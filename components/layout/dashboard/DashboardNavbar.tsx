@@ -1,3 +1,4 @@
+"use client"
 import { AlignJustify } from "lucide-react"
 import NextImage from "next/image"
 import {
@@ -15,8 +16,23 @@ import { ThemeToggle } from "@/components/ThemeToggle"
 import MainInputCard from "@/components/sidebar/card/MainInputCard"
 import OtherInputCard from "@/components/sidebar/card/OtherInputCard"
 import CardSection from "@/components/sidebar/card/card-section/CardSection"
+import { useLogoutUserMutation } from "@/services/auth/authApi"
+import { ErrorObject } from "@/types"
+import { toast } from "react-toastify"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { useAppDispatch } from "@/store/hooks"
+import { logout } from "@/features/authSlice"
 
 const DashboardNavbar = () => {
+  const dispatch = useAppDispatch()
+  const router = useRouter()
+  const handleLogout = async () => {
+    dispatch(logout())
+    router.push("/")
+    toast.success("Logged out successfully")
+  }
+
   return (
     <nav className="block md:hidden">
       <div className="flex w-full items-center justify-between px-6 pt-4">
@@ -37,10 +53,12 @@ const DashboardNavbar = () => {
                     <CardSection
                       title="Log out"
                       href="#"
+                      onClick={handleLogout}
                       isOpen={true}
                       icon={<MdLogout />}
                     />
                     <CardSection
+                      onClick={() => {}}
                       title="username"
                       href="#"
                       isOpen={false}
