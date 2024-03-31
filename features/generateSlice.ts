@@ -27,6 +27,7 @@ export interface GenerateState {
   aiInputs: AIField[] | null
   useImage: boolean
   dataInputs: DataInputs | null
+  history: ImageGroup[] | null
 }
 
 // Định nghĩa interface cho các trường dữ liệu input
@@ -59,6 +60,7 @@ const initialState: GenerateState = {
     noise: 0.75,
     image: "",
   },
+  history: []
 }
 
 export const generateSlice = createSlice({
@@ -82,6 +84,9 @@ export const generateSlice = createSlice({
         state.dataInputs.style =
           action.payload.aiInputs[0].inputs[0].default.toString()
       }
+    },
+    setHistory: (state, action: PayloadAction<{ history: ImageGroup[] }>) => {
+      state.history = action.payload.history
     },
     setUseImage: (state, action: PayloadAction<{ useImage: boolean }>) => {
       state.useImage = action.payload.useImage
@@ -149,6 +154,7 @@ export const {
   setCFG,
   setNoise,
   setImageGenerate,
+  setHistory
 } = generateSlice.actions
 
 export default generateSlice.reducer
