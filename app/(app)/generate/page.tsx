@@ -15,12 +15,14 @@ import {
   setUseImage,
   setPositivePrompt,
   setNegativePrompt,
+  setHistory,
 } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
 import { Skeleton } from "../../../components/ui/skeleton"
 import Carousel from "@/components/generate/Carousel"
 import GenerateControls from "@/components/generate/GenerateControls"
 import Loading from "@/components/Loading"
+import HistoryCarousel from "@/components/generate/HistoryCarousel"
 
 interface AIField {
   ai_name: string | null
@@ -64,8 +66,14 @@ export default function Generate() {
     image,
   } = generateStates.dataInputs || {}
 
-  const [getGenerationHistory, { data: historyData, error: historyError }] =
-    useGetGenerationHistoryMutation()
+  const [
+    getGenerationHistory,
+    { data: historyData, error: historyError, isSuccess: getHistorySuccess },
+  ] = useGetGenerationHistoryMutation()
+
+  const fetchHistoryData = async () => {
+    await getGenerationHistory(undefined)
+  }
 
   const handleImageChange = (image: File) => {
     // Do something with the selected image file
@@ -93,15 +101,10 @@ export default function Generate() {
   const [textToImage] = useTextToImageMutation()
   const [imageToImage] = useImageToImageMutation()
 
-  const [generateImgData, setGenerateImgData] = useState<string[] | null>([
-    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
-    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
-    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
-    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
-    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
-  ])
+  const [generateImgData, setGenerateImgData] = useState<string[] | null>(null)
 
   const handleGenerate = async () => {
+    fetchHistoryData()
     setIsLoading(true)
     setIsError(false)
 
@@ -174,7 +177,6 @@ export default function Generate() {
     }
     fetchAIData()
     fetchHistoryData()
-    console.log(historyData)
   }, [])
 
   useEffect(() => {
@@ -183,6 +185,12 @@ export default function Generate() {
       setIsLoadingInformation(false)
     }
   }, [inputData])
+
+  useEffect(() => {
+    if (historyData) {
+      dispatch(setHistory({ history: historyData }))
+    }
+  }, [historyData])
 
   return (
     <>
@@ -220,6 +228,17 @@ export default function Generate() {
                 />
               )
             )}
+            {historyData &&
+              historyData.map((item: any, index: number) => (
+                <HistoryCarousel
+                  key={index}
+                  generateImgData={item.images}
+                  width={width}
+                  height={height}
+                  styleAlbum={item.style}
+                  prompt={item.prompt}
+                />
+              ))}
           </div>
         </div>
       )}
