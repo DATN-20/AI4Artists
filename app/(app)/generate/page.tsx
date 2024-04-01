@@ -175,7 +175,6 @@ export default function Generate() {
     const fetchHistoryData = async () => {
       await getGenerationHistory(undefined)
     }
-    fetchAIData()
     fetchHistoryData()
   }, [])
 
