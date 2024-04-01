@@ -36,12 +36,18 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
                         alt="generated image"
                         width={width}
                         height={height}
-                        src={item}
+                        src={item.url}
                       />
                     </CardContent>
-                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">
-                      <p className="text-center text-white">
-                        Your text overlay
+                    <div className="absolute inset-0 flex-col  items-center justify-center bg-black bg-opacity-50 pt-20 opacity-0 transition-opacity duration-300 hover:opacity-100">
+                      <p className="mb-5 text-center text-white">
+                        Prompt: {item.prompt}
+                      </p>
+                      <p className="mb-5 text-center text-white">
+                        Style: {item.style}
+                      </p>
+                      <p className="mb-5 text-center text-white">
+                        AI: {item.aiName}
                       </p>
                     </div>
                   </Card>

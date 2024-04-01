@@ -17,6 +17,16 @@ const nextConfig = {
         hostname: 'images.deepai.org',
 
       },
+      {
+        protocol: 'https',
+        hostname: '4kwallpapers.com'
+
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.freepik.com'
+
+      }
     ],
 
   },
