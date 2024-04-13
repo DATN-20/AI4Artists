@@ -115,13 +115,7 @@ const Profile = () => {
 
                   <TabsList className="mb-5 bg-transparent">
                     <TabsTrigger value="album" className="text-white">
-                      <div
-                        className="text-white"
-                        onClick={() => {
-                          console.log("Clicked!") // Check if this message appears in the console
-                          window.scrollTo({ top: 0, behavior: "smooth" })
-                        }}
-                      >
+                      <div className="text-white">
                         <h1 className="text-2xl font-bold">Your Albums</h1>
                       </div>
                     </TabsTrigger>
