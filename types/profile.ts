@@ -13,7 +13,7 @@ export interface Person {
   socials: Social[];
 }
 
-interface ImageAlbum {
+export interface ImageAlbum {
   id: number;
   userId: number;
   url: string;
