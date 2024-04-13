@@ -1,4 +1,4 @@
-import CanvasMode, { ShapeModeOptions } from "@/constants/canvas"
+import CanvasMode, { CanvasState, ShapeModeOptions } from "@/constants/canvas"
 import {
   useState,
   useRef,
@@ -11,6 +11,8 @@ import {
 type CanvasModeContextType = {
   mode: CanvasMode
   setMode: Dispatch<SetStateAction<CanvasMode>>
+  prevMode: CanvasMode
+  setPrevMode: Dispatch<SetStateAction<CanvasMode>>
   color: string
   setColor: Dispatch<SetStateAction<string>>
   showColorPicker: boolean
@@ -24,11 +26,18 @@ type CanvasModeContextType = {
   >
   shapeMode: ShapeModeOptions
   setShapeMode: Dispatch<SetStateAction<ShapeModeOptions>>
+  state: CanvasState
+  setState: Dispatch<SetStateAction<CanvasState>>
   shapeModeRef: React.MutableRefObject<ShapeModeOptions>
   canvasRef: React.MutableRefObject<HTMLCanvasElement | null>
-  savedCanvasImageDataRef: React.MutableRefObject<ImageData | null>
-  isDrawing: boolean
-  setIsDrawing: Dispatch<SetStateAction<boolean>>
+  _history: any[]
+  setHistory: Dispatch<SetStateAction<any[]>>
+  initialRect: {
+    x: number
+    y: number
+    w: number
+    h: number
+  }
   shapeCoordinates: {
     startX: number
     startY: number
@@ -43,12 +52,18 @@ type CanvasModeContextType = {
       endY: number
     }>,
   ) => void
-  isCropping: boolean
-  setIsCropping: Dispatch<SetStateAction<boolean>>
+  panOffset: { x: number; y: number }
+  setPanOffset: Dispatch<SetStateAction<{ x: number; y: number }>>
+  startPanMousePosition: { x: number; y: number }
+  setStartPanMousePosition: Dispatch<SetStateAction<{ x: number; y: number }>>
+  currentHistoryIndex: number
+  setCurrentHistoryIndex: Dispatch<SetStateAction<number>>
   magnifierZoom: number
   setMagnifierZoom: Dispatch<SetStateAction<number>>
-  isZooming: boolean
-  setIsZooming: Dispatch<SetStateAction<boolean>>
+  _shapes: any[]
+  setShapes: Dispatch<SetStateAction<any[]>>
+  currentShape: any
+  setCurrentShape: Dispatch<SetStateAction<any>>
 }
 
 export const CanvasModeContext = createContext<
@@ -58,7 +73,8 @@ export const CanvasModeContext = createContext<
 export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [mode, setMode] = useState(CanvasMode.DRAG_MODE)
+  const [mode, setMode] = useState(CanvasMode.SELECT_MODE)
+  const [prevMode, setPrevMode] = useState(CanvasMode.SELECT_MODE)
   const [color, setColor] = useState("black")
   const [showColorPicker, setShowColorPicker] = useState(false)
   const [brushSettings, setBrushSettings] = useState({
@@ -68,20 +84,32 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
   const [shapeMode, setShapeMode] = useState<ShapeModeOptions>(
     ShapeModeOptions.RECTANGLE_SHAPE,
   )
+  const [state, setState] = useState<CanvasState>(CanvasState.IDLE)
   const shapeModeRef = useRef<ShapeModeOptions>(shapeMode)
+  const [_shapes, setShapes] = useState<any[]>([])
+  const [currentShape, setCurrentShape] = useState<any>(null)
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const savedCanvasImageDataRef = useRef<ImageData | null>(null)
-  const [isDrawing, setIsDrawing] = useState(false)
+  const [_history, setHistory] = useState<any[]>([])
+  const [initialRect, setInitialRect] = useState({
+    x: 200,
+    y: 50,
+    w: 1000,
+    h: 600,
+  })
   const [shapeCoordinates, setShapeCoordinates] = useState({
     startX: 0,
     startY: 0,
     endX: 0,
     endY: 0,
   })
-  const [isCropping, setIsCropping] = useState(false)
+  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 })
+  const [currentHistoryIndex, setCurrentHistoryIndex] = useState(-1)
+  const [startPanMousePosition, setStartPanMousePosition] = useState({
+    x: 0,
+    y: 0,
+  })
   const [magnifierZoom, setMagnifierZoom] = useState(1)
-  const [isZooming, setIsZooming] = useState(false)
 
   const updateShapeCoordinates = (
     newCoordinates: Partial<typeof shapeCoordinates>,
@@ -105,17 +133,27 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
     setShapeMode,
     shapeModeRef,
     canvasRef,
-    savedCanvasImageDataRef,
-    isDrawing,
-    setIsDrawing,
+    _history,
+    setHistory,
     shapeCoordinates,
     updateShapeCoordinates,
-    isCropping,
-    setIsCropping,
     magnifierZoom,
     setMagnifierZoom,
-    isZooming,
-    setIsZooming,
+    _shapes,
+    setShapes,
+    currentShape,
+    setCurrentShape,
+    state,
+    setState,
+    initialRect,
+    prevMode,
+    setPrevMode,
+    panOffset,
+    setPanOffset,
+    startPanMousePosition,
+    setStartPanMousePosition,
+    currentHistoryIndex,
+    setCurrentHistoryIndex,
   }
 
   return (
