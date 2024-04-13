@@ -8,31 +8,26 @@ import ColorPicker from "../options/ColorPicker"
 
 const ShapeButtons: React.FC = () => {
   const shapeContext = useContext(CanvasModeContext)
-  const { shapeModeRef, shapeMode, setShapeMode } = shapeContext!
-  useEffect(() => {
-    shapeModeRef.current = shapeMode
-  }, [shapeMode])
+  const { shapeMode, setShapeMode } = shapeContext!
 
   const handleShapeChange = (shapeType: number) => {
     setShapeMode(shapeType)
   }
 
   return (
-    <div className="flex">
-      <ColorPicker></ColorPicker>
+    <div className="z-10 flex">
+      <ColorPicker />
       <ShapeButton
         icon={<RiRectangleLine />}
         onClick={() => handleShapeChange(ShapeModeOptions.RECTANGLE_SHAPE)}
         isActive={shapeMode === ShapeModeOptions.RECTANGLE_SHAPE}
       />
 
-      <div>
-        <ShapeButton
-          icon={<FaRegCircle />}
-          onClick={() => handleShapeChange(ShapeModeOptions.CIRCLE_SHAPE)}
-          isActive={shapeMode === ShapeModeOptions.CIRCLE_SHAPE}
-        />
-      </div>
+      <ShapeButton
+        icon={<FaRegCircle />}
+        onClick={() => handleShapeChange(ShapeModeOptions.CIRCLE_SHAPE)}
+        isActive={shapeMode === ShapeModeOptions.CIRCLE_SHAPE}
+      />
     </div>
   )
 }
