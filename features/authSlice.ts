@@ -6,7 +6,7 @@ import { AlbumWithImages, ImageTotal, Person } from "@/types/profile";
 export interface AuthState{
   token: string | null;
   userData: Person | null
-  totalAlbum: AlbumWithImages | null
+  totalAlbum: AlbumWithImages[] | null
   totalImages: ImageTotal[] | null
 }
 
@@ -40,8 +40,9 @@ export const authSlice = createSlice({
     state.userData = action.payload.userData
 
 },
+
 setTotalAlbum:(
-  state, action: PayloadAction<{totalAlbum: AlbumWithImages}>
+  state, action: PayloadAction<{totalAlbum: AlbumWithImages[]}>
 ) => {
   state.totalAlbum = action.payload.totalAlbum
   

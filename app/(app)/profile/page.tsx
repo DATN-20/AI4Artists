@@ -4,7 +4,7 @@ import NavigationSideBar from "@/components/sidebar/NavigationSideBar"
 import { Facebook, Home, Instagram, Twitter } from "lucide-react"
 import { FaDiscord } from "react-icons/fa"
 import { CiViewList } from "react-icons/ci"
-import { IoImages } from "react-icons/io5"
+import { IoImages, IoArrowBackOutline } from "react-icons/io5"
 import {
   Tabs,
   TabsContent,
@@ -13,7 +13,7 @@ import {
 } from "../../../components/ui/tabs"
 import NextImage from "next/image"
 import ProfileCarousel from "@/components/dashboard/ProfileCarousel"
-import { useEffect, useState } from "react"
+import { MouseEventHandler, useEffect, useState } from "react"
 import { useAppDispatch } from "@/store/hooks"
 import { useSelector } from "react-redux"
 import { selectGenerate } from "@/features/generateSlice"
@@ -25,12 +25,24 @@ import {
   useGetProfileMutation,
   useGetTotalImageMutation,
 } from "@/services/profile/profileApi"
-import { setTotalAlbum, setTotalImage, setUserData } from "@/features/authSlice"
+import {
+  selectAuth,
+  setTotalAlbum,
+  setTotalImage,
+  setUserData,
+} from "@/features/authSlice"
 import Loading from "@/components/Loading"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { AlbumWithImages } from "@/types/profile"
+import PopupCarousel from "@/components/profile/profile/PopupCarousel"
+import ProfileHeader from "@/components/profile/profile/ProfileHeader"
+import AlbumCard from "@/components/profile/profile/AlbumCard"
 
 const Profile = () => {
   const dispatch = useAppDispatch()
   const generateStates = useSelector(selectGenerate)
+  const authStates = useSelector(selectAuth)
+  const [selectedAlbum, setSelectedAlbum] = useState(-1)
   const [getUser, { data: userData }] = useGetProfileMutation()
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
   const [getTotalImage, { data: imagesData }] = useGetTotalImageMutation()
@@ -78,126 +90,145 @@ const Profile = () => {
       {isLoading ? (
         <Loading />
       ) : (
-        <div className="flex gap-4 py-4 ">
-          <div className="hidden lg:block lg:min-w-[300px]">
-            <NavigationSideBar />
-          </div>
-          <div className="mr-8 h-full flex-1">
-            <Tabs defaultValue="introduction">
-              <div className="relative mb-4 flex flex-col">
-                <div className="h-[164px] rounded-2xl bg-gray-500 bg-[url('https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg')]"></div>
-                <div className=" absolute bottom-0 left-3 h-[128px] w-[128px] rounded-full ">
-                  <NextImage
-                    height={128}
-                    width={128}
-                    className="h-full w-full rounded-full"
-                    alt=""
-                    src="https://4kwallpapers.com/images/wallpapers/viper-valorant-agent-2732x2732-9539.jpg"
-                  ></NextImage>
-                </div>
-                <div className="ml-[140px] flex items-center justify-between px-2 pt-2">
-                  <div className="flex flex-col">
-                    <h1 className="text-3xl font-bold">
-                      {userData?.firstName + " " + userData?.lastName}
-                    </h1>
-                    <p className="text-lg font-light">{userData?.aliasName}</p>
-                  </div>
+        <Dialog>
+          <div className="flex gap-4 py-4 ">
+            <div className="hidden lg:block lg:min-w-[300px]">
+              <NavigationSideBar />
+            </div>
+            <div className="mr-8 h-full flex-1">
+              <Tabs
+                defaultValue="introduction"
+                onValueChange={() => {
+                  window.scrollTo({ top: 0, behavior: "smooth" })
+                }}
+              >
+                <ProfileHeader userData={userData} />
+                <TabsContent value="introduction">
+                  <h1 className=" text-2xl font-bold">Your Images</h1>
+                  {imagesData && (
+                    <ProfileCarousel
+                      generateImgData={imagesData}
+                      width={width}
+                      height={height}
+                    />
+                  )}
 
-                  <div className="flex flex-col justify-end">
+                  <TabsList className="mb-5 bg-transparent">
+                    <TabsTrigger value="album" className="text-white">
+                      <div className="text-white">
+                        <h1 className="text-2xl font-bold">Your Albums</h1>
+                      </div>
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    {albumData?.map((album: any, index: number) => (
+                      <AlbumCard
+                        key={index}
+                        albumData={album}
+                        width={width}
+                        height={height}
+                        setSelectedAlbum={setSelectedAlbum}
+                        selectedAlbum={selectedAlbum}
+                      />
+                    ))}
+                  </div>
+                </TabsContent>
+                <TabsContent value="profile">
+                  <ProfileContent />
+                </TabsContent>
+                <TabsContent value="album">
+                  <div className="min-h-96 rounded-lg bg-zinc-900">
                     <div className="mb-5 flex">
-                      {userData?.socials.map((item: any, index: number) => {
-                        if (item.social_name === "facebook") {
-                          return (
-                            <a
-                              href={item.social_link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <Facebook
-                                key={index}
-                                size={24}
-                                className="ml-4 cursor-pointer"
-                              />
-                            </a>
-                          )
-                        } else if (item.social_name === "instagram") {
-                          return (
-                            <a
-                              href={item.social_link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <Instagram
-                                key={index}
-                                size={24}
-                                className="ml-4 cursor-pointer"
-                              />
-                            </a>
-                          )
-                        }
-                        return null
-                      })}
+                      <div>
+                        <TabsList className=" bg-transparent">
+                          <TabsTrigger
+                            value="introduction"
+                            className="text-white"
+                          >
+                            <h1 className=" text-2xl font-bold">
+                              <IoArrowBackOutline />
+                            </h1>
+                          </TabsTrigger>
+                        </TabsList>
+                      </div>
+                      <div className=" flex items-center justify-center text-2xl font-bold">
+                        Albums
+                      </div>
                     </div>
+                    {albumData?.map((item: any, index: number) => (
+                      <div
+                        key={index}
+                        className="mb-10 "
+                        onClick={() => {
+                          setSelectedAlbum(item.album.id - 1)
+                        }}
+                      >
+                        <div className="mb-5 ml-5">
+                          Album: {item.album.name}
+                        </div>
+                        <div className="grid grid-cols-1 gap-2 bg-zinc-900 pl-5 pr-5 md:grid-cols-4">
+                          {item.images && item.images.length > 0 ? (
+                            <>
+                              {item.images
+                                .slice(0, 3)
+                                .map((image: any, imageIndex: number) => (
+                                  <div className="relative" key={imageIndex}>
+                                    <div className="flex justify-center bg-zinc-900">
+                                      <Image
+                                        src={image.image.url}
+                                        alt={`Image ${imageIndex + 1}`}
+                                        width={width}
+                                        height={height}
+                                        className="max-h-full rounded-md"
+                                      />
+                                    </div>
+                                  </div>
+                                ))}
+                              <div className="relative">
+                                {item.images.length > 4 && (
+                                  <div className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black bg-opacity-75 text-white">
+                                    <DialogTrigger asChild>
+                                      <p className="text-lg">See all</p>
+                                    </DialogTrigger>
+                                    <DialogContent className=" lg:min-w-[950px]">
+                                      {authStates.totalAlbum &&
+                                        selectedAlbum !== -1 && (
+                                          <PopupCarousel
+                                            generateImgData={
+                                              (
+                                                authStates.totalAlbum as AlbumWithImages[]
+                                              )[selectedAlbum]?.images
+                                            }
+                                            width={width}
+                                            height={height}
+                                          />
+                                        )}
+                                    </DialogContent>
+                                  </div>
+                                )}
 
-                    <TabsList className="flex justify-end gap-2 bg-inherit">
-                      <TabsTrigger value="introduction" className="px-0 py-0">
-                        <IoImages size={24} />
-                      </TabsTrigger>
-                      <TabsTrigger value="profile" className="ml-3 px-0 py-0">
-                        <CiViewList size={26} />
-                      </TabsTrigger>
-                    </TabsList>
-                  </div>
-                </div>
-              </div>
-              <TabsContent value="introduction">
-                <h1 className=" text-2xl font-bold">Your Images</h1>
-                {imagesData && (
-                  <ProfileCarousel
-                    generateImgData={imagesData}
-                    width={width}
-                    height={height}
-                  />
-                )}
-
-                <h1 className="mb-5 mt-10 text-2xl font-bold">Your Albums</h1>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                  {albumData?.map((item: any, index: number) => (
-                    <Card key={index} className="relative flex justify-center">
-                      <div className="relative grid h-full w-full grid-cols-2 grid-rows-2 gap-1">
-                        {item.images && item.images.length > 0 ? (
-                          item.images
-                            .slice(0, 4)
-                            .map((image: any, imageIndex: number) => (
-                              <div key={imageIndex} className="relative h-40">
                                 <Image
-                                  src={image.image.url}
-                                  alt={`Image ${imageIndex + 1}`}
-                                  layout="fill"
-                                  objectFit="cover"
-                                  className="rounded-md"
+                                  src={item.images[3].image.url}
+                                  alt=""
+                                  width={width}
+                                  height={height}
+                                  className="max-h-full rounded-md"
                                 />
                               </div>
-                            ))
-                        ) : (
-                          <p>No images available</p>
-                        )}
-                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">
-                          <p className="text-center text-white">
-                            Album: {item.album.name}
-                          </p>
+                            </>
+                          ) : (
+                            <p>No images available</p>
+                          )}
                         </div>
                       </div>
-                    </Card>
-                  ))}
-                </div>
-              </TabsContent>
-              <TabsContent value="profile">
-                <ProfileContent />
-              </TabsContent>
-            </Tabs>
+                    ))}
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
-        </div>
+        </Dialog>
       )}
     </>
   )
