@@ -20,6 +20,7 @@ import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import BgImage from "../../public/bg-left.png"
 import { ErrorObject } from "@/types"
+
 const formSchema = z.object({
   email: z.string().min(2, {
     message: "Email must be at least 2 characters.",

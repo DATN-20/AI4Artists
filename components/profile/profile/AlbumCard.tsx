@@ -29,36 +29,47 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
     setSelectedAlbum(albumData.album.id - 1)
   }
   return (
-    <Card
-      className="relative flex cursor-pointer justify-center"
-      onClick={handleClick}
-    >
-      <DialogTrigger asChild>
-        <div className="relative grid h-full w-full grid-cols-2 grid-rows-2 gap-1">
-          {albumData.images && albumData.images.length > 0 ? (
-            albumData.images
-              .slice(0, 4)
-              .map((image: any, imageIndex: number) => (
-                <div key={imageIndex} className="relative h-40">
-                  <Image
-                    src={image.image.url}
-                    alt={`Image ${imageIndex + 1}`}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-md"
-                  />
-                </div>
-              ))
-          ) : (
-            <p>No images available</p>
-          )}
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">
-            <p className="text-center text-white">
-              Album: {albumData.album.name}
-            </p>
+    <>
+      <Card
+        className="relative flex min-h-[300px] cursor-pointer justify-center"
+        onClick={handleClick}
+      >
+        <DialogTrigger asChild>
+          <div
+            className={`relative grid h-full w-full gap-1 ${
+              albumData.images && albumData.images.length === 0
+                ? "grid-cols-1 grid-rows-1"
+                : "grid-cols-2 grid-rows-2"
+            }`}
+          >
+            {albumData.images &&
+              albumData.images.length > 0 &&
+              albumData.images
+                .slice(0, 4)
+                .map((image: any, imageIndex: number) => (
+                  <div key={imageIndex} className="relative h-40">
+                    <Image
+                      src={image.image.url}
+                      alt={`Image ${imageIndex + 1}`}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-md"
+                    />
+                  </div>
+                ))}
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">
+              <p className="text-center text-white">
+                Album: {albumData.album.name}
+              </p>
+            </div>
+            {albumData.images && albumData.images.length === 0 && (
+              <div className="mt-20 flex max-h-full max-w-full justify-center">
+                No images available
+              </div>
+            )}
           </div>
-        </div>
-      </DialogTrigger>
+        </DialogTrigger>
+      </Card>
       <DialogContent className="lg:min-w-[950px]">
         {authStates.totalAlbum && selectedAlbum !== -1 && (
           <PopupCarousel
@@ -68,10 +79,12 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
             }
             width={width}
             height={height}
+            setSelectedAlbum={setSelectedAlbum}
+            selectedAlbum={selectedAlbum}
           />
         )}
       </DialogContent>
-    </Card>
+    </>
   )
 }
 
