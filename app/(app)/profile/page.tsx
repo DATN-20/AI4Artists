@@ -4,7 +4,7 @@ import NavigationSideBar from "@/components/sidebar/NavigationSideBar"
 import { Facebook, Home, Instagram, Twitter } from "lucide-react"
 import { FaDiscord } from "react-icons/fa"
 import { CiViewList } from "react-icons/ci"
-import { IoImages, IoArrowBackOutline } from "react-icons/io5"
+import { IoImages, IoArrowBackOutline, IoTrashOutline } from "react-icons/io5"
 import {
   Tabs,
   TabsContent,
@@ -12,7 +12,7 @@ import {
   TabsTrigger,
 } from "../../../components/ui/tabs"
 import NextImage from "next/image"
-import ProfileCarousel from "@/components/dashboard/ProfileCarousel"
+import ProfileCarousel from "@/components/profile/profile/ProfileCarousel"
 import { MouseEventHandler, useEffect, useState } from "react"
 import { useAppDispatch } from "@/store/hooks"
 import { useSelector } from "react-redux"
@@ -21,6 +21,9 @@ import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
 import ProfileContent from "../../../components/profile/profile/ProfileContent"
 import {
+  useAddNewAlbumMutation,
+  useAddToAlbumMutation,
+  useDeleteAlbumMutation,
   useGetProfileAlbumMutation,
   useGetProfileMutation,
   useGetTotalImageMutation,
@@ -37,7 +40,37 @@ import { AlbumWithImages } from "@/types/profile"
 import PopupCarousel from "@/components/profile/profile/PopupCarousel"
 import ProfileHeader from "@/components/profile/profile/ProfileHeader"
 import AlbumCard from "@/components/profile/profile/AlbumCard"
+import { Button } from "@/components/ui/button"
+import { IoAddCircleOutline } from "react-icons/io5"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { Input } from "@/components/ui/input"
+import { toast } from "react-toastify"
 
+const formSchema = z.object({
+  name: z.string().min(1, {
+    message: "Email must be at least 1 characters.",
+  }),
+})
 const Profile = () => {
   const dispatch = useAppDispatch()
   const generateStates = useSelector(selectGenerate)
@@ -46,9 +79,33 @@ const Profile = () => {
   const [getUser, { data: userData }] = useGetProfileMutation()
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
   const [getTotalImage, { data: imagesData }] = useGetTotalImageMutation()
+  const [addNewAlbum] = useAddNewAlbumMutation()
+  const [deleteAlbum] = useDeleteAlbumMutation()
 
+  const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null)
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    defaultValues: {
+      name: "",
+    },
+  })
   const [isLoading, setIsLoading] = useState(true)
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const { name } = values
 
+    if (name) {
+      console.log(name)
+      const result = await addNewAlbum(name)
+      const fetchAlbumData = async () => {
+        await getAlbum(undefined)
+      }
+      toast.success("Add new album successfully!")
+
+      fetchAlbumData()
+    } else {
+      toast.error("Please enter album name!")
+    }
+  }
   useEffect(() => {
     const fetchUserData = async () => {
       await getUser(undefined)
@@ -82,7 +139,27 @@ const Profile = () => {
       dispatch(setTotalImage({ totalImage: imagesData }))
     }
   }, [imagesData])
+  const handleDeleteAlbum = async () => {
+    console.log("album:", selectedAlbumId)
+    if (!selectedAlbumId) {
+      return
+    }
 
+    const albumId = Array.isArray(selectedAlbumId)
+      ? selectedAlbumId
+      : [selectedAlbumId]
+
+    const result = await deleteAlbum({
+      albumId: albumId,
+    })
+    const fetchAlbumData = async () => {
+      await getAlbum(undefined)
+    }
+
+    toast.success("Delete album successfully")
+    setSelectedAlbumId(null)
+    fetchAlbumData()
+  }
   const [generateImgData, setGenerateImgData] = useState<string[] | null>(null)
   const { width, height } = generateStates.dataInputs || {}
   return (
@@ -110,10 +187,11 @@ const Profile = () => {
                       generateImgData={imagesData}
                       width={width}
                       height={height}
+                      album={authStates.totalAlbum}
                     />
                   )}
 
-                  <TabsList className="mb-5 bg-transparent">
+                  <TabsList className="mb-5 mt-5 bg-transparent">
                     <TabsTrigger value="album" className="text-white">
                       <div className="text-white">
                         <h1 className="text-2xl font-bold">Your Albums</h1>
@@ -122,7 +200,7 @@ const Profile = () => {
                   </TabsList>
 
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                    {albumData?.map((album: any, index: number) => (
+                    {authStates.totalAlbum?.map((album: any, index: number) => (
                       <AlbumCard
                         key={index}
                         albumData={album}
@@ -139,9 +217,9 @@ const Profile = () => {
                 </TabsContent>
                 <TabsContent value="album">
                   <div className="min-h-96 rounded-lg bg-zinc-900">
-                    <div className="mb-5 flex">
-                      <div>
-                        <TabsList className=" bg-transparent">
+                    <div className="mb-5 flex justify-between">
+                      <div className="flex">
+                        <TabsList className=" h-full bg-transparent">
                           <TabsTrigger
                             value="introduction"
                             className="text-white"
@@ -151,22 +229,105 @@ const Profile = () => {
                             </h1>
                           </TabsTrigger>
                         </TabsList>
-                      </div>
-                      <div className=" flex items-center justify-center text-2xl font-bold">
-                        Albums
-                      </div>
-                    </div>
-                    {albumData?.map((item: any, index: number) => (
-                      <div
-                        key={index}
-                        className="mb-10 "
-                        onClick={() => {
-                          setSelectedAlbum(item.album.id - 1)
-                        }}
-                      >
-                        <div className="mb-5 ml-5">
-                          Album: {item.album.name}
+                        <div className=" flex items-center justify-center text-2xl font-bold">
+                          Albums
                         </div>
+                      </div>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="default"
+                            className="mr-5 mt-5"
+                          >
+                            <IoAddCircleOutline className="mr-2" size={24} />
+                            Add album
+                          </Button>
+                        </AlertDialogTrigger>
+
+                        <AlertDialogContent>
+                          <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)}>
+                              <AlertDialogHeader className="mb-5">
+                                <AlertDialogTitle>
+                                  Add New Album
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Please enter the name of album.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+
+                              <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Album name:</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        type="name"
+                                        placeholder="Name"
+                                        {...field}
+                                        className="w-full border-slate-400"
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
+                              <AlertDialogFooter className="mt-5">
+                                <AlertDialogCancel>Close</AlertDialogCancel>
+                                <AlertDialogAction>
+                                  <Button type="submit">Save</Button>
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </form>
+                          </Form>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                    {authStates.totalAlbum?.map((item: any, index: number) => (
+                      <div key={index} className="mb-10 ">
+                        <div className="flex justify-between">
+                          <div className="mb-5 ml-5">
+                            Album: {item.album.name}
+                          </div>
+                          <div>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <IoTrashOutline
+                                  className="mr-5 cursor-pointer"
+                                  size={24}
+                                  onClick={() => {
+                                    setSelectedAlbumId(item.album.id)
+                                  }}
+                                />
+                              </AlertDialogTrigger>
+
+                              <AlertDialogContent>
+                                <AlertDialogHeader className="mb-5">
+                                  <AlertDialogTitle>
+                                    Are you sure to delete this album?
+                                  </AlertDialogTitle>
+                                </AlertDialogHeader>
+
+                                <AlertDialogFooter className="mt-5">
+                                  <AlertDialogCancel>Close</AlertDialogCancel>
+                                  <AlertDialogAction>
+                                    <Button
+                                      type="submit"
+                                      onClick={() => handleDeleteAlbum()}
+                                    >
+                                      Save
+                                    </Button>
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </div>
+
                         <div className="grid grid-cols-1 gap-2 bg-zinc-900 pl-5 pr-5 md:grid-cols-4">
                           {item.images && item.images.length > 0 ? (
                             <>
@@ -191,20 +352,6 @@ const Profile = () => {
                                     <DialogTrigger asChild>
                                       <p className="text-lg">See all</p>
                                     </DialogTrigger>
-                                    <DialogContent className=" lg:min-w-[950px]">
-                                      {authStates.totalAlbum &&
-                                        selectedAlbum !== -1 && (
-                                          <PopupCarousel
-                                            generateImgData={
-                                              (
-                                                authStates.totalAlbum as AlbumWithImages[]
-                                              )[selectedAlbum]?.images
-                                            }
-                                            width={width}
-                                            height={height}
-                                          />
-                                        )}
-                                    </DialogContent>
                                   </div>
                                 )}
 
@@ -223,6 +370,21 @@ const Profile = () => {
                         </div>
                       </div>
                     ))}
+                    <DialogContent className=" lg:min-w-[950px]">
+                      {authStates.totalAlbum && selectedAlbum !== -1 && (
+                        <PopupCarousel
+                          generateImgData={
+                            (authStates.totalAlbum as AlbumWithImages[])[
+                              selectedAlbum
+                            ]?.images
+                          }
+                          width={width}
+                          height={height}
+                          setSelectedAlbum={setSelectedAlbum}
+                          selectedAlbum={selectedAlbum}
+                        />
+                      )}
+                    </DialogContent>
                   </div>
                 </TabsContent>
               </Tabs>

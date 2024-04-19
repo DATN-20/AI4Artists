@@ -5,6 +5,7 @@ import { Suspense } from "react"
 import Loading from "@/components/Loading"
 import { StoreProvider } from "@/store/StoreProvider"
 import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -14,7 +15,6 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "AI Artist",
   description: "An AI-powered platform for artists to generate art",
-  
 }
 
 export default function RootLayout({
