@@ -135,7 +135,7 @@ const Profile = () => {
                   </div>
                 </TabsContent>
                 <TabsContent value="profile">
-                  <ProfileContent />
+                  <ProfileContent imagesData={imagesData} />
                 </TabsContent>
                 <TabsContent value="album">
                   <div className="min-h-96 rounded-lg bg-zinc-900">
