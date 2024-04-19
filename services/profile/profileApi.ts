@@ -34,7 +34,35 @@ export const profileApi = createApi({
         }
       },
     }),
+    addToAlbum: builder.mutation<number[], { imageId: number[]; albumId: number }>({
+      query: ({ imageId, albumId }) => ({
+        url: `/api/v1/album/${albumId}`,
+        method: "POST",
+        body: { idImage: imageId },
+      }),
+    }),
+    deleteFromAlbum: builder.mutation<number[], { imageId: number[]; albumId: number }>({
+      query: ({ imageId, albumId }) => ({
+        url: `/api/v1/album/${albumId}`,
+        method: "DELETE",
+        body: { idImage: imageId },
+      }),
+    }),
+    addNewAlbum: builder.mutation({
+      query: ( albumName ) => ({
+        url: "/api/v1/album",
+        method: "POST",
+        body: {name: albumName},
+      }),
+    }),
+    deleteAlbum: builder.mutation<number[], { albumId: number[] }>({
+      query: ({ albumId }) => ({
+        url: `/api/v1/album`,
+        method: "DELETE",
+        body: { albumIds: albumId },
+      }),
+    }),
   }),
 })
 
-export const { useGetProfileMutation, useGetProfileAlbumMutation , useGetTotalImageMutation} = profileApi
+export const { useGetProfileMutation, useGetProfileAlbumMutation , useGetTotalImageMutation, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation} = profileApi

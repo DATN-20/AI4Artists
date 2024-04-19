@@ -23,6 +23,8 @@ import Carousel from "@/components/generate/Carousel"
 import GenerateControls from "@/components/generate/GenerateControls"
 import Loading from "@/components/Loading"
 import HistoryCarousel from "@/components/generate/HistoryCarousel"
+import { useGetProfileAlbumMutation } from "@/services/profile/profileApi"
+import { selectAuth, setTotalAlbum } from "@/features/authSlice"
 
 interface AIField {
   ai_name: string | null
@@ -50,6 +52,7 @@ export default function Generate() {
   const [promptPos, setPromptPos] = useState("")
   const [promptNeg, setPromptNeg] = useState("")
   const [isLoadingInformation, setIsLoadingInformation] = useState(true)
+  const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
 
   const {
     aiName,
@@ -70,6 +73,7 @@ export default function Generate() {
     getGenerationHistory,
     { data: historyData, error: historyError, isSuccess: getHistorySuccess },
   ] = useGetGenerationHistoryMutation()
+  const authStates = useSelector(selectAuth)
 
   const fetchHistoryData = async () => {
     await getGenerationHistory(undefined)
@@ -176,6 +180,10 @@ export default function Generate() {
       await getGenerationHistory(undefined)
     }
     fetchHistoryData()
+    const fetchAlbumData = async () => {
+      await getAlbum(undefined)
+    }
+    fetchAlbumData()
   }, [])
 
   useEffect(() => {
@@ -190,7 +198,11 @@ export default function Generate() {
       dispatch(setHistory({ history: historyData }))
     }
   }, [historyData])
-
+  useEffect(() => {
+    if (albumData) {
+      dispatch(setTotalAlbum({ totalAlbum: albumData }))
+    }
+  }, [albumData])
   return (
     <>
       {isLoadingInformation ? (
@@ -236,6 +248,7 @@ export default function Generate() {
                   height={height}
                   styleAlbum={item.style}
                   prompt={item.prompt}
+                  album={authStates.totalAlbum}
                 />
               ))}
           </div>
