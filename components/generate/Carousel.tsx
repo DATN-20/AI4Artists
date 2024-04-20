@@ -37,6 +37,7 @@ const Carousel: React.FC<CarouselProps> = ({
                         width={width}
                         height={height}
                         src={item}
+                        className = {'rounded-lg'}
                       />
                     </CardContent>
                     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">

@@ -16,4 +16,6 @@ export type DashboardImage = {
   }
   is_liked: boolean
   like_number: number
+  remove_background: string
+  upscale: string
 }

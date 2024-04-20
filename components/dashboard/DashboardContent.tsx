@@ -34,9 +34,6 @@ export default function DashboardContent() {
     }
   }, [error, data])
 
-  useEffect(() => {
-    console.log( data)
-  }, [data])
 
   return (
     <div className="flex w-full flex-col lg:p-2">

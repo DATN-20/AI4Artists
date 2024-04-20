@@ -6,6 +6,7 @@ import { generateApi } from "../services/generate/generateApi"
 import generateReducer from "../features/generateSlice"
 import { dashboardApi } from "../services/dashboard/dashboardApi"
 import { profileApi } from "../services/profile/profileApi"
+import { imageApi } from "../services/image/imageApi"
 
 export const store = configureStore({
   reducer: {
@@ -15,11 +16,16 @@ export const store = configureStore({
     [generateApi.reducerPath]: generateApi.reducer,
     [dashboardApi.reducerPath]: dashboardApi.reducer,
     [profileApi.reducerPath]: profileApi.reducer,
-
-
+    [imageApi.reducerPath]: imageApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware, generateApi.middleware, dashboardApi.middleware, profileApi.middleware),
+    getDefaultMiddleware().concat(
+      authApi.middleware,
+      generateApi.middleware,
+      dashboardApi.middleware,
+      profileApi.middleware,
+      imageApi.middleware,
+    ),
 })
 
 export type AppDispatch = typeof store.dispatch

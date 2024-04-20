@@ -354,14 +354,15 @@ const Profile = () => {
                                     </DialogTrigger>
                                   </div>
                                 )}
-
-                                <Image
-                                  src={item.images[3].image.url}
-                                  alt=""
-                                  width={width}
-                                  height={height}
-                                  className="max-h-full rounded-md"
-                                />
+                                {item.images[3] && (
+                                  <Image
+                                    src={item.images[3].image.url}
+                                    alt=""
+                                    width={width}
+                                    height={height}
+                                    className="max-h-full rounded-md"
+                                  />
+                                )}
                               </div>
                             </>
                           ) : (

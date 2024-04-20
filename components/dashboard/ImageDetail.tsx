@@ -1,9 +1,5 @@
 import { DashboardImage } from "@/types/dashboard"
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import Image from "next/image"
 import { Button } from "../ui/button"
 import {
@@ -11,12 +7,16 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
-  SelectTriggerWithoutChevron,
   SelectValue,
 } from "@/components/ui/select"
-import { FaEllipsisH } from "react-icons/fa"
+import { useEffect, useState } from "react"
+import { useProcessImageMutation } from "@/services/image/imageApi"
+import { ProcessType } from "../../types/Image"
+import { useRouter } from "next/navigation"
+import { set } from "react-hook-form"
+import Loading from "../Loading"
+import { DialogClose } from "@radix-ui/react-dialog"
 
 interface ImageDetailProps {
   image: DashboardImage
@@ -24,59 +24,144 @@ interface ImageDetailProps {
 }
 
 const ImageDetail = ({ image, index }: ImageDetailProps) => {
+  const router = useRouter()
+
+  const [processImage, { isLoading, isError, data }] = useProcessImageMutation()
+  const [processType, setProcessType] = useState("original")
+  const [selectedImage, setSelectedImage] = useState(image.url)
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    if(!open) {
+      setSelectedImage(image.url)
+      setProcessType("original")
+    }
+  },[open])
+
+  const handleSelectValue = (processType: string) => {
+    setProcessType(processType)
+    switch (processType) {
+      case "original":
+        setSelectedImage(image.url)
+        break
+      case ProcessType.UPSCALE:
+        handleOnSelectUpscaleImage()
+        break
+      case ProcessType.REMOVE_BACKGROUND:
+        handleOnSelectRemoveBackground()
+        break
+      case "edit":
+        router.push("/canvas")
+        break
+      case "report":
+        // reportImage()
+        break
+      default:
+        break
+    }
+  }
+
+  const handleOnSelectUpscaleImage = async () => {
+    const isUpscale = image.upscale != null && image.upscale !== ""
+
+    if (isUpscale) {
+      setSelectedImage(image.upscale)
+    } else {
+      const result = await processImage({
+        processType: ProcessType.UPSCALE,
+        imageId: image.id,
+      })
+      if ("data" in result) {
+        setSelectedImage(result?.data.upscale)
+      }
+    }
+  }
+
+  const handleOnSelectRemoveBackground = async () => {
+    const isRemoveBackground =
+      image.remove_background != null && image.remove_background !== ""
+
+    if (isRemoveBackground) {
+      setSelectedImage(image.remove_background)
+    } else {
+      const result = await processImage({
+        processType: ProcessType.REMOVE_BACKGROUND,
+        imageId: image.id,
+      })
+      if ("data" in result) {
+        setSelectedImage(result?.data.remove_background)
+      }
+    }
+  }
+
   return (
-    <Dialog>
-      <DialogTrigger>
-        <Image
+    <Dialog open={open} onOpenChange={setOpen} >
+      <DialogTrigger className="w-full">
+        <img
           key={index}
-          className="h-auto w-full rounded-lg"
+          className="w-full rounded-lg"
           src={image.url}
           alt={image.prompt}
-          width={200}
-          height={200}
         />
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-scroll sm:max-w-[80vw] md:max-w-[60vw]">
         <div className="flex w-full gap-2">
           <div className="flex w-1/2 flex-col gap-2">
-            <Image
-              src={image.url}
-              alt={image.prompt}
-              className="h-auto w-full rounded-lg"
-              width={200}
-              height={200}
-            />
-            <div className="flex gap-2 mt-[8px]">
-              <Select>
+            {isLoading ? (
+              <Loading />
+            ) : isError ? (
+              <p>Error</p>
+            ) : (
+              <img
+                src={selectedImage}
+                alt={image.prompt}
+                className="h-auto w-full rounded-lg"
+              />
+            )}
+            <div className="mt-[8px] flex gap-2">
+              <Select
+                onValueChange={(value) => {
+                  handleSelectValue(value)
+                }}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Original" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Upscale your Image</SelectLabel>
-                    <SelectItem value="512x1024">2X</SelectItem>
-                    <SelectItem value="1024x1024">3X</SelectItem>
-                    <SelectItem value="768x1024">4X</SelectItem>
-                    <SelectItem value="768x768">5X</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-
-              <Select>
-                <SelectTriggerWithoutChevron className='w-fit'>
-                  <FaEllipsisH />
-                </SelectTriggerWithoutChevron>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="removebg">Remove BackGround</SelectItem>
-                    <SelectItem value="edit">Edit in Canvas</SelectItem>
-                    <SelectItem value="report">Report this Image</SelectItem>
+                    <SelectItem
+                      key="original"
+                      value="original"
+                      onSelect={() => {
+                        setSelectedImage(image.url)
+                      }}
+                    >
+                      Original
+                    </SelectItem>
+                    <SelectItem
+                      key={ProcessType.UPSCALE}
+                      value={ProcessType.UPSCALE}
+                    >
+                      Upscale Image
+                    </SelectItem>
+                    <SelectItem
+                      key={ProcessType.REMOVE_BACKGROUND}
+                      value={ProcessType.REMOVE_BACKGROUND}
+                    >
+                      Remove Backround
+                    </SelectItem>
+                    <SelectItem key="edit" value="edit">
+                      Edit in Canvas
+                    </SelectItem>
+                    <SelectItem key="report" value="report">
+                      Report this Image
+                    </SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
           </div>
-          <div className="ml-4 flex flex-col flex-1">
+          <div className="ml-4 flex flex-1 flex-col">
             <div className="flex items-center gap-2">
               <div className="h-[32px] w-[32px] rounded-full bg-white" />
               <h1>
@@ -90,9 +175,7 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
               Prompt Detail
             </h1>
             <div className="mt-[8px] w-full rounded-lg bg-card">
-              <p className="p-4">
-                {image.prompt}
-              </p>
+              <p className="p-4">{image.prompt}</p>
             </div>
             <Button
               variant={"outline"}
