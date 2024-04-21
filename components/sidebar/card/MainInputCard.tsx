@@ -20,6 +20,7 @@ const MainInputCard = () => {
         <ul className=" flex flex-col gap-3">
           <li>
             <CardSection
+              onClick={() => {}}
               title="Home"
               href="/dashboard"
               isOpen={true}
@@ -28,6 +29,7 @@ const MainInputCard = () => {
           </li>
           <li>
             <CardSection
+              onClick={() => {}}
               title="Community"
               href="#"
               isOpen={false}
@@ -36,6 +38,7 @@ const MainInputCard = () => {
           </li>
           <li>
             <CardSection
+              onClick={() => {}}
               title="Personal Feed"
               href="/profile"
               isOpen={false}
@@ -44,6 +47,7 @@ const MainInputCard = () => {
           </li>
           <li>
             <CardSection
+              onClick={() => {}}
               title="Training & Dataset"
               href="#"
               isOpen={false}
@@ -52,6 +56,7 @@ const MainInputCard = () => {
           </li>
           <li>
             <CardSection
+              onClick={() => {}}
               title="Models"
               href="#"
               isOpen={false}
