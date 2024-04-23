@@ -32,11 +32,11 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    if(!open) {
+    if (!open) {
       setSelectedImage(image.url)
       setProcessType("original")
     }
-  },[open])
+  }, [open])
 
   const handleSelectValue = (processType: string) => {
     setProcessType(processType)
@@ -89,13 +89,13 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
         imageId: image.id,
       })
       if ("data" in result) {
-        setSelectedImage(result?.data.remove_background)
+        setSelectedImage(result?.data.removeBackground)
       }
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen} >
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger className="w-full">
         <img
           key={index}
