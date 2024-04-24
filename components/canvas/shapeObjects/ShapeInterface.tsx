@@ -1,12 +1,13 @@
 import { ShapeModeOptions } from "@/constants/canvas"
 
-interface ShapeInterface {
+export default interface ShapeInterface {
   isPointInside(pointX: number, pointY: number): boolean
-  draw(context: CanvasRenderingContext2D): void
+  draw(context: CanvasRenderingContext2D, panOffset: { x: number; y: number }): void
   move(dx: number, dy: number): void
   showBounding(isShow: boolean): void
   getStrokeCoordinates(): void
   shapeType: ShapeModeOptions
+  id : number
 }
 
 export interface Point {
@@ -14,4 +15,4 @@ export interface Point {
   y: number
 }
 
-export default ShapeInterface
+export let idCounter = 0;

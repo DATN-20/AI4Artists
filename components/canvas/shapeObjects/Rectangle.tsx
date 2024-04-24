@@ -1,7 +1,8 @@
 import { ShapeModeOptions } from "@/constants/canvas"
-import ShapeInterface from "./Interface"
+import ShapeInterface from "./ShapeInterface"
 
-function Rectangle(
+export default function Rectangle(
+  id: number,
   startX: number,
   startY: number,
   width: number,
@@ -22,19 +23,22 @@ function Rectangle(
     return pointX >= x && pointX <= x + w && pointY >= y && pointY <= y + h
   }
 
-  const draw = (context: CanvasRenderingContext2D) => {
+  const draw = (
+    context: CanvasRenderingContext2D,
+    panOffset: { x: number; y: number },
+  ) => {
     context.strokeStyle = c
     context.lineWidth = lw
     context.beginPath()
-    context.rect(x, y, w, h)
+    context.rect(x + panOffset.x, y + panOffset.y, w, h)
     context.stroke()
 
     if (showBoundingRect) {
       let strokeCoordianates = getStrokeCoordinates()
       context.setLineDash([5, 5])
       const gradient = context.createLinearGradient(
-        strokeCoordianates.x,
-        strokeCoordianates.y,
+        strokeCoordianates.x + panOffset.x,
+        strokeCoordianates.y + panOffset.y,
         strokeCoordianates.w,
         strokeCoordianates.h,
       )
@@ -44,8 +48,8 @@ function Rectangle(
       context.strokeStyle = gradient
       context.lineWidth = 2
       context.strokeRect(
-        strokeCoordianates.x,
-        strokeCoordianates.y,
+        strokeCoordianates.x + panOffset.x,
+        strokeCoordianates.y + panOffset.y,
         strokeCoordianates.w,
         strokeCoordianates.h,
       )
@@ -71,7 +75,13 @@ function Rectangle(
     showBoundingRect = isShow
   }
 
-  return { isPointInside, draw, move, showBounding, getStrokeCoordinates, shapeType }
+  return {
+    isPointInside,
+    draw,
+    move,
+    showBounding,
+    getStrokeCoordinates,
+    shapeType,
+    id
+  }
 }
-
-export default Rectangle

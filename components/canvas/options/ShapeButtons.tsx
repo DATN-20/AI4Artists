@@ -1,10 +1,9 @@
 import { ShapeModeOptions } from "@/constants/canvas"
 import { CanvasModeContext } from "@/store/canvasHooks"
-import ShapeButton from "../options/ShapeButton"
+import ShapeButton from "./ShapeButton"
 import { RiRectangleLine } from "react-icons/ri"
 import { FaRegCircle } from "react-icons/fa"
-import { useContext, useEffect } from "react"
-import ColorPicker from "../options/ColorPicker"
+import { useContext } from "react"
 
 const ShapeButtons: React.FC = () => {
   const shapeContext = useContext(CanvasModeContext)
@@ -16,7 +15,6 @@ const ShapeButtons: React.FC = () => {
 
   return (
     <div className="z-10 flex">
-      <ColorPicker />
       <ShapeButton
         icon={<RiRectangleLine />}
         onClick={() => handleShapeChange(ShapeModeOptions.RECTANGLE_SHAPE)}

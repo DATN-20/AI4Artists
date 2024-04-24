@@ -1,7 +1,8 @@
 import { ShapeModeOptions } from "@/constants/canvas"
-import ShapeInterface from "./Interface"
+import ShapeInterface from "./ShapeInterface"
 
 function Ellipse(
+  id: number,
   x: number,
   y: number,
   radiusX: number,
@@ -28,19 +29,30 @@ function Ellipse(
     return dx * dx + dy * dy < 1
   }
 
-  const draw = (context: CanvasRenderingContext2D) => {
+  const draw = (
+    context: CanvasRenderingContext2D,
+    panOffset: { x: number; y: number },
+  ) => {
     context.strokeStyle = c
     context.lineWidth = lw
     context.beginPath()
-    context.ellipse(centerX, centerY, rX, rY, rot, startAngle, endAngle)
+    context.ellipse(
+      centerX + panOffset.x,
+      centerY + panOffset.y,
+      rX,
+      rY,
+      rot,
+      startAngle,
+      endAngle,
+    )
     context.stroke()
 
     if (showBoundingRect) {
       let strokeCoordianates = getStrokeCoordinates()
       context.setLineDash([5, 5])
       const gradient = context.createLinearGradient(
-        strokeCoordianates.x,
-        strokeCoordianates.y,
+        strokeCoordianates.x + panOffset.x,
+        strokeCoordianates.y + panOffset.y,
         strokeCoordianates.w,
         strokeCoordianates.h,
       )
@@ -50,8 +62,8 @@ function Ellipse(
       context.strokeStyle = gradient
       context.lineWidth = 1
       context.strokeRect(
-        strokeCoordianates.x,
-        strokeCoordianates.y,
+        strokeCoordianates.x + panOffset.x,
+        strokeCoordianates.y + panOffset.y,
         strokeCoordianates.w,
         strokeCoordianates.h,
       )
@@ -77,7 +89,15 @@ function Ellipse(
     showBoundingRect = isShow
   }
 
-  return { isPointInside, draw, move, showBounding, getStrokeCoordinates, shapeType }
+  return {
+    isPointInside,
+    draw,
+    move,
+    showBounding,
+    getStrokeCoordinates,
+    shapeType,
+    id
+  }
 }
 
 export default Ellipse

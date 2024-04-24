@@ -2,7 +2,7 @@ import CanvasMode from "@/constants/canvas"
 import { CanvasModeContext } from "@/store/canvasHooks"
 import ColorPicker from "./options/ColorPicker"
 import BrushSizeInput from "./options/BrushSizeInput"
-import ShapeButtons from "./tools/ShapeTool"
+import ShapeButtons from "./options/ShapeButtons"
 import { useContext } from "react"
 import AddPoseButton from "./options/AddPoseButton"
 
@@ -22,13 +22,15 @@ const OptionSelect = () => {
 
       {mode === CanvasMode.SHAPE_MODE && (
         <div className="z-10 mt-4 flex items-center rounded-lg bg-card p-4">
+          <ColorPicker />
+          <BrushSizeInput />
           <ShapeButtons />
         </div>
       )}
 
       {mode === CanvasMode.OPENPOSE_MODE && (
         <div className="z-10 mt-4 flex items-center rounded-lg bg-card p-4">
-          <AddPoseButton/>
+          <AddPoseButton />
         </div>
       )}
     </div>
