@@ -92,9 +92,9 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
                     setSelectedImageId(item.image.id)
                   }}
                 >
-                  <div className="relative p-1">
+                  <div className="relative flex h-full items-center justify-center p-1">
                     <Card className="transform transition-transform duration-300 hover:scale-105">
-                      <CardContent className="flex items-center justify-center p-0">
+                      <CardContent className=" p-0">
                         <Image
                           alt="generated image"
                           width={width}
@@ -111,15 +111,17 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
                             />
                           </DialogTrigger>
                         </div>
-                        <div className="flex  flex-col items-center justify-center pt-10">
-                          <p className="mb-5 text-center text-white">
+                        <div className="flex  h-full flex-col justify-end">
+                          <p
+                            className="pb-10 pl-5 pr-5 text-center text-white"
+                            style={{
+                              display: "-webkit-box",
+                              WebkitBoxOrient: "vertical",
+                              overflow: "hidden",
+                              WebkitLineClamp: 3,
+                            }}
+                          >
                             Prompt: {item.image.prompt}
-                          </p>
-                          <p className="mb-5 text-center text-white">
-                            Style: {item.image.style}
-                          </p>
-                          <p className="mb-5 text-center text-white">
-                            AI: {item.image.aiName}
                           </p>
                         </div>
                       </div>

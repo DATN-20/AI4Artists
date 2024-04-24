@@ -26,6 +26,7 @@ interface GenerateControlsProps {
   setUseImg2Img: React.Dispatch<React.SetStateAction<boolean>>
   useNegativePrompt: boolean
   useImg2Img: boolean
+  promptPos: string
 }
 
 const GenerateControls: React.FC<GenerateControlsProps> = ({
@@ -37,6 +38,7 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
   setUseImg2Img,
   useNegativePrompt,
   useImg2Img,
+  promptPos,
 }) => {
   const dispatch = useAppDispatch()
   const generateStates = useSelector(selectGenerate)
@@ -47,13 +49,14 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
         <input
           type="text"
           placeholder="Type prompt here..."
+          value={promptPos}
           onChange={handlePosPromptChange}
           className="flex-grow rounded-2xl p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
         />
         <button
           type="button"
           onClick={handleGenerate}
-          className="bg-gradient-default ml-4 hidden items-center justify-center rounded-full px-4 py-3 font-bold text-white hover:bg-purple-700 lg:flex"
+          className="ml-4 hidden items-center justify-center rounded-full bg-gradient-default px-4 py-3 font-bold text-white hover:bg-purple-700 lg:flex"
         >
           <span className="mr-2">✨</span>
           Generate

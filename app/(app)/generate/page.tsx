@@ -53,7 +53,6 @@ export default function Generate() {
   const [promptNeg, setPromptNeg] = useState("")
   const [isLoadingInformation, setIsLoadingInformation] = useState(true)
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
-
   const {
     aiName,
     positivePrompt,
@@ -172,6 +171,10 @@ export default function Generate() {
   const [aiInformation, { data: inputData }] = useAiInformationMutation()
 
   useEffect(() => {
+    const promptValue = localStorage.getItem("prompt")
+    if (promptValue) {
+      setPromptPos(promptValue)
+    }
     const fetchAIData = async () => {
       await aiInformation(undefined)
     }
@@ -210,7 +213,7 @@ export default function Generate() {
       ) : (
         <div className="block gap-4 p-4 lg:grid lg:grid-cols-10">
           <div className="hidden lg:col-span-2 lg:block">
-            <div className="fixed left-0 top-0 h-screen min-h-screen w-1/5 p-4 no-scrollbar overflow-y-scroll">
+            <div className="no-scrollbar fixed left-0 top-0 h-screen min-h-screen w-1/5 overflow-y-scroll p-4">
               <GenerateSideBar />
             </div>
           </div>
@@ -224,6 +227,7 @@ export default function Generate() {
               setUseImg2Img={setUseImg2Img}
               useNegativePrompt={useNegativePrompt}
               useImg2Img={useImg2Img}
+              promptPos={promptPos}
             />
             {isLoading ? (
               <Skeleton
