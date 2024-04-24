@@ -100,6 +100,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
                           width={width}
                           height={height}
                           src={item.image.url}
+                          className="rounded-lg"
                         />
                       </CardContent>
                       <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
@@ -111,16 +112,8 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
                             />
                           </DialogTrigger>
                         </div>
-                        <div className="flex  h-full flex-col justify-end">
-                          <p
-                            className="pb-10 pl-5 pr-5 text-center text-white"
-                            style={{
-                              display: "-webkit-box",
-                              WebkitBoxOrient: "vertical",
-                              overflow: "hidden",
-                              WebkitLineClamp: 3,
-                            }}
-                          >
+                        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white">
+                          <p className="line-clamp-3">
                             Prompt: {item.image.prompt}
                           </p>
                         </div>

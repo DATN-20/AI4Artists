@@ -76,7 +76,7 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger className="flex w-full min-w-0 justify-start">
-              <p className="truncate font-semibold text-lg">{prompt}</p>
+              <p className="truncate text-lg font-semibold">{prompt}</p>
             </TooltipTrigger>
             <TooltipContent className="max-w-[200px] md:max-w-[400px]">
               {prompt}
@@ -111,6 +111,7 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
                           width={width}
                           height={height}
                           src={item.url}
+                          className="rounded-lg"
                         />
                       </CardContent>
                       <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
@@ -122,16 +123,8 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
                             />
                           </DialogTrigger>
                         </div>
-                        <div className="flex  flex-col items-center justify-center pt-10">
-                          <p className="mb-5 text-center text-white">
-                            Prompt: {item.prompt}
-                          </p>
-                          <p className="mb-5 text-center text-white">
-                            Style: {item.style}
-                          </p>
-                          <p className="mb-5 text-center text-white">
-                            AI: {item.aiName}
-                          </p>
+                        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white">
+                          <p className="line-clamp-3">Prompt: {item.prompt}</p>
                         </div>
                       </div>
                     </Card>
