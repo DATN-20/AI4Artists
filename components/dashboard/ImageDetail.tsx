@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation"
 import { set } from "react-hook-form"
 import Loading from "../Loading"
 import { DialogClose } from "@radix-ui/react-dialog"
+import { Card, CardContent } from "../ui/card"
 
 interface ImageDetailProps {
   image: DashboardImage
@@ -97,12 +98,21 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger className="w-full">
-        <img
-          key={index}
-          className="w-full rounded-lg"
-          src={image.url}
-          alt={image.prompt}
-        />
+        <Card className="transform transition-transform duration-300 hover:scale-105 ">
+          <CardContent className=" p-0">
+            <img
+              key={index}
+              className="w-full rounded-lg"
+              src={image.url}
+              alt={image.promp}
+            />
+          </CardContent>
+          <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
+            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white">
+              <p className="line-clamp-3">Prompt: {image.promp}</p>
+            </div>
+          </div>
+        </Card>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-scroll sm:max-w-[80vw] md:max-w-[60vw]">
         <div className="flex w-full gap-2">
@@ -114,7 +124,7 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
             ) : (
               <img
                 src={selectedImage}
-                alt={image.prompt}
+                alt={image.promp}
                 className="h-auto w-full rounded-lg"
               />
             )}
@@ -175,7 +185,7 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
               Prompt Detail
             </h1>
             <div className="mt-[8px] w-full rounded-lg bg-card">
-              <p className="p-4">{image.prompt}</p>
+              <p className="p-4">{image.promp}</p>
             </div>
             <Button
               variant={"outline"}

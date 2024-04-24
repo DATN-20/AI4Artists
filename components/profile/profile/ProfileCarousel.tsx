@@ -95,14 +95,15 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
                   setSelectedImageId(item.id)
                 }}
               >
-                <div className="relative flex h-full items-center justify-center p-1">
-                  <Card className="transform transition-transform duration-300 hover:scale-105">
-                    <CardContent className="p-0">
+                <div className="relative flex h-full items-center justify-center p-1 ">
+                  <Card className="transform transition-transform duration-300 hover:scale-105 ">
+                    <CardContent className=" p-0">
                       <Image
                         alt="generated image"
                         width={width}
                         height={height}
                         src={item.url}
+                        className="rounded-lg"
                       />
                     </CardContent>
                     <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
@@ -114,18 +115,8 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
                           />
                         </DialogTrigger>
                       </div>
-                      <div className="flex  h-full flex-col justify-end">
-                        <p
-                          className="pb-11 pl-5 pr-5 text-center text-white"
-                          style={{
-                            display: "-webkit-box",
-                            WebkitBoxOrient: "vertical",
-                            overflow: "hidden",
-                            WebkitLineClamp: 3,
-                          }}
-                        >
-                          Prompt: {item.prompt}
-                        </p>
+                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white">
+                        <p className="line-clamp-3">Prompt: {item.prompt}</p>
                       </div>
                     </div>
                   </Card>
@@ -133,44 +124,48 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
               </CarouselItem>
             ))}
           <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Add to Album</DialogTitle>
-              <DialogDescription>
-                Add this image to album. Click save when you're done.
+            <DialogHeader className="pb-2">
+              <DialogTitle className="text-lg font-semibold">
+                Add to Album
+              </DialogTitle>
+              <DialogDescription className="text-sm text-gray-600">
+                Add this image to an album. Click "Save changes" when you're
+                done.
               </DialogDescription>
             </DialogHeader>
-            <div className="">
+            <div className="mt-4 flex flex-wrap gap-3">
               {album?.map((albumItem) => (
                 <button
                   key={albumItem.album.id}
-                  className={`mr-5 rounded-md px-3 py-2 ${
+                  className={`rounded-md px-3 py-2 ${
                     selectedAlbumId === albumItem.album.id
                       ? "bg-blue-500 text-white"
                       : "bg-gray-200 text-gray-700"
-                  } transition-colors hover:bg-blue-600 hover:text-white`}
+                  } transition-colors hover:bg-blue-600 hover:text-white focus:outline-none`}
                   onClick={() => handleAlbumSelect(albumItem.album.id)}
                 >
                   {albumItem.album.name}
                 </button>
               ))}
             </div>
-            <DialogFooter>
-              {/* <DialogClose asChild> */}
+            <DialogFooter className="mt-4 flex justify-between">
               <Button
                 type="submit"
-                className="bg-grey border-inherit	"
+                className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none"
                 onClick={() => {
                   handleAddToAlbum()
                 }}
               >
                 Save changes
               </Button>
-              <DialogClose asChild>
-                <Button type="button" className="bg-grey border-inherit	">
+              <DialogClose>
+                <Button
+                  type="button"
+                  className="rounded-md bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400 focus:outline-none"
+                >
                   Close
                 </Button>
               </DialogClose>
-              {/* </DialogClose> */}
             </DialogFooter>
           </DialogContent>
         </CarouselContent>
