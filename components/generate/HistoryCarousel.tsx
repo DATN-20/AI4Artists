@@ -22,6 +22,12 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useAddToAlbumMutation } from "@/services/profile/profileApi"
 import { AlbumWithImages } from "@/types/profile"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 interface HistoryCarouselProps {
   generateImgData: Image[] | null
   width?: number
@@ -66,9 +72,23 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
   }
   return (
     <>
-      <div className="mt-10 flex justify-between font-bold">
-        <div>Prompt: {prompt}</div>
-        <div>Model: {styleAlbum}</div>
+      <div className="mt-10 flex w-full items-center justify-between gap-6">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger className="flex w-full min-w-0 justify-start">
+              <p className="truncate font-semibold text-lg">{prompt}</p>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-[200px] md:max-w-[400px]">
+              {prompt}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <Button
+          variant={"outline"}
+          className="mt-[8px] min-w-[100px] rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+        >
+          {styleAlbum}
+        </Button>
       </div>
 
       <Dialog>

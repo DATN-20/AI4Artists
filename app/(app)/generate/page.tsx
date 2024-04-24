@@ -81,7 +81,7 @@ export default function Generate() {
   const handleImageChange = (image: File) => {
     // Do something with the selected image file
   }
-  const handlePosPromptChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handlePosPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const prompt = event.target.value
     setPromptPos(prompt)
     dispatch(setPositivePrompt({ value: prompt }))
@@ -163,7 +163,7 @@ export default function Generate() {
     }
   }
 
-  const handleNegPromptChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleNegPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const prompt = event.target.value
     setPromptNeg(prompt)
     dispatch(setNegativePrompt({ value: prompt }))
