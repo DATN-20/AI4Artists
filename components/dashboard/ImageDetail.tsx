@@ -18,6 +18,7 @@ import { set } from "react-hook-form"
 import Loading from "../Loading"
 import { DialogClose } from "@radix-ui/react-dialog"
 import { Card, CardContent } from "../ui/card"
+import { extractCloudinaryId } from "../../lib/cloudinary"
 
 interface ImageDetailProps {
   image: DashboardImage
@@ -52,7 +53,12 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
         handleOnSelectRemoveBackground()
         break
       case "edit":
-        router.push("/canvas")
+        const extractedId = extractCloudinaryId(image.url)
+        if (extractedId) {
+          router.push(`/canvas/${extractedId}`)
+        } else {
+          console.error("Invalid Cloudinary URL")
+        }
         break
       case "report":
         // reportImage()
@@ -104,12 +110,12 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
               key={index}
               className="w-full rounded-lg"
               src={image.url}
-              alt={image.promp}
+              alt={image.prompt}
             />
           </CardContent>
           <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
             <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white">
-              <p className="line-clamp-3">Prompt: {image.promp}</p>
+              <p className="line-clamp-3">Prompt: {image.prompt}</p>
             </div>
           </div>
         </Card>
@@ -124,7 +130,7 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
             ) : (
               <img
                 src={selectedImage}
-                alt={image.promp}
+                alt={image.prompt}
                 className="h-auto w-full rounded-lg"
               />
             )}
@@ -185,7 +191,7 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
               Prompt Detail
             </h1>
             <div className="mt-[8px] w-full rounded-lg bg-card">
-              <p className="p-4">{image.promp}</p>
+              <p className="p-4">{image.prompt}</p>
             </div>
             <Button
               variant={"outline"}

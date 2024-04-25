@@ -16,6 +16,8 @@ import {
 import { useAppDispatch } from "@/store/hooks"
 import { selectGenerate, setUseImage } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
+import { Button } from "../ui/button"
+import StyleDrawer from "./StyleDrawer"
 
 interface GenerateControlsProps {
   handlePosPromptChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
@@ -76,6 +78,7 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
           className="mt-5 w-full  flex-grow resize-none rounded-2xl bg-[#2c2d31] p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
         />
       )}
+
       <div className="mt-5 flex items-center space-x-2">
         <Switch
           id="image-mode"
@@ -87,6 +90,9 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
         />
         <Label htmlFor="image-mode">Use Image Generation</Label>
       </div>
+
+      <StyleDrawer />
+
       {useImg2Img && <ImageInput onImageChange={handleImageChange} />}
       <button
         type="button"

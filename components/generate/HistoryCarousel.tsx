@@ -138,7 +138,7 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
                   Make changes to your image here. Click save when you're done.
                 </DialogDescription>
               </DialogHeader>
-              <div className="">
+              <div className="mt-4 flex flex-wrap gap-3">
                 {album?.map((albumItem) => (
                   <button
                     key={albumItem.album.id}

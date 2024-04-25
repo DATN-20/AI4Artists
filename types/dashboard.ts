@@ -1,7 +1,7 @@
 
 export type DashboardImage = {
   id: number
-  promp: string
+  prompt: string
   type: string
   url: string
   userId: number
