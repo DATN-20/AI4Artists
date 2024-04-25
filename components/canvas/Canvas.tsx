@@ -7,60 +7,15 @@ import { CanvasModeContext } from "@/store/canvasHooks"
 import React, { useContext, useEffect, useLayoutEffect, useState } from "react"
 import Rectangle from "./shapeObjects/Rectangle"
 import Ellipse from "./shapeObjects/Ellipse"
-import ShapeInterface, { Point } from "./shapeObjects/Interface"
+import ShapeInterface, { Point } from "./shapeObjects/ShapeInterface"
 import BrushStroke from "./shapeObjects/BrushStroke"
-
-export const initialRectangle = (
-  context: CanvasRenderingContext2D,
-  initialRect: {
-    x: number
-    y: number
-    w: number
-    h: number
-  },
-  panOffset: { x: number; y: number },
-) => {
-  context.beginPath()
-  context.fillStyle = "white"
-  context.fillRect(
-    initialRect.x + panOffset.x,
-    initialRect.y + panOffset.y,
-    initialRect.w,
-    initialRect.h,
-  )
-  context.stroke()
-}
-
-export const setPreviousHistory = (
-  canvas: HTMLCanvasElement,
-  context: CanvasRenderingContext2D,
-  initialRect: {
-    x: number
-    y: number
-    w: number
-    h: number
-  },
-  _history: any[],
-  index: number,
-  panOffSet: { x: number; y: number },
-) => {
-  context.clearRect(0, 0, canvas.width, canvas.height)
-  initialRectangle(context, initialRect, panOffSet)
-
-  for (var i = 0; i <= index; i++) {
-    var actionType = _history[i].action
-    if (_history[i].value == null) continue
-
-    switch (actionType) {
-      case HistoryAction.CREATE:
-      case HistoryAction.MOVE:
-        _history[i].value.draw(context)
-        break
-      default:
-        break
-    }
-  }
-}
+import {
+  adjustHistoryToIndex,
+  redo,
+  undo,
+  setNewHistory,
+  getShapesFromHistory,
+} from "./HistoryUtilities"
 
 const Canvas: React.FC = () => {
   const canvasContext = useContext(CanvasModeContext)
@@ -68,27 +23,30 @@ const Canvas: React.FC = () => {
     canvasRef,
     state,
     setState,
-    magnifierZoom,
     updateShapeCoordinates,
     shapeCoordinates,
     brushSettings,
     color,
     mode,
-    _shapes,
-    setShapes,
     currentShape,
     setCurrentShape,
     shapeMode,
     _history,
     setHistory,
-    initialRect,
-    setPrevMode,
+    initialRectPosition,
     panOffset,
     setPanOffset,
     startPanMousePosition,
     setStartPanMousePosition,
     currentHistoryIndex,
     setCurrentHistoryIndex,
+    shapeId,
+    setShapeId,
+    scale,
+    scaleOffset,
+    setScaleOffset,
+    setScale,
+    imageFile,
   } = canvasContext!
 
   const [prevMouseX, setPrevMouseX] = useState(0)
@@ -102,58 +60,118 @@ const Canvas: React.FC = () => {
     canvas.height = window.innerHeight
 
     const context = canvas.getContext("2d")
-    context?.clearRect(0, 0, canvas.width, canvas.height)
     if (!context) return
-    initialRectangle(context, initialRect, panOffset)
+    context.clearRect(0, 0, canvas.width, canvas.height)
+
+    const scaledWidth = canvas.width * scale
+    const scaledHeight = canvas.height * scale
+    const scaleOffsetX = (scaledWidth - canvas.width) / 2
+    const scaleOffsetY = (scaledHeight - canvas.height) / 2
+    setScaleOffset({ x: scaleOffsetX, y: scaleOffsetY })
+
     context.save()
-    context.translate(panOffset.x, panOffset.y)
-    setPreviousHistory(
+    context.translate(
+      panOffset.x * scale - scaleOffsetX,
+      panOffset.y * scale - scaleOffsetY,
+    )
+    context.scale(scale, scale)
+    adjustHistoryToIndex(
       canvas,
       context,
-      initialRect,
+      initialRectPosition,
       _history,
       currentHistoryIndex,
       panOffset,
+      true,
+      imageFile,
     )
     context.restore()
-  }, [panOffset])
+  }, [panOffset, _history, currentHistoryIndex, scale, initialRectPosition])
+
+  useEffect(() => {
+    const panFunction = (event: WheelEvent) => {
+      if (event.ctrlKey || event.metaKey) {
+        event.preventDefault()
+        handleCtrlWheelFunction(event)
+      } else {
+        setPanOffset((prevState) => ({
+          x: prevState.x - event.deltaX / 10,
+          y: prevState.y - event.deltaY / 10,
+        }))
+      }
+    }
+
+    const handleCtrlWheelFunction = (event: WheelEvent) => {
+      setScale((prevState) => {
+        let newScale = prevState - event.deltaY / 1000
+        if (newScale < 0.1) newScale = 0.1
+        if (newScale > 3) newScale = 3
+        return newScale
+      })
+    }
+
+    document.addEventListener("wheel", panFunction)
+    return () => {
+      document.removeEventListener("wheel", panFunction)
+    }
+  }, [])
+
+  useEffect(() => {
+    const undoRedoFunction = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === "z") {
+        if (event.shiftKey) {
+          redo(
+            canvasRef.current!,
+            canvasRef.current!.getContext("2d")!,
+            initialRectPosition,
+            _history,
+            currentHistoryIndex,
+            setCurrentHistoryIndex,
+            panOffset,
+            imageFile
+          )
+        } else {
+          undo(
+            canvasRef.current!,
+            canvasRef.current!.getContext("2d")!,
+            initialRectPosition,
+            _history,
+            currentHistoryIndex,
+            setCurrentHistoryIndex,
+            panOffset,
+            imageFile
+          )
+        }
+      }
+    }
+
+    document.addEventListener("keydown", undoRedoFunction)
+    return () => {
+      document.removeEventListener("keydown", undoRedoFunction)
+    }
+  }, [
+    undo,
+    redo,
+    currentHistoryIndex,
+    _history,
+    panOffset,
+    initialRectPosition,
+  ])
 
   const isMouseInsideCanvas = (x: number, y: number) => {
     return (
-      x >= initialRect.x &&
-      x <= initialRect.x + initialRect.w &&
-      y >= initialRect.y &&
-      y <= initialRect.y + initialRect.h
+      x >= initialRectPosition.x &&
+      x <= initialRectPosition.x + initialRectPosition.w &&
+      y >= initialRectPosition.y &&
+      y <= initialRectPosition.y + initialRectPosition.h
     )
   }
 
   const getMouseCoordinates = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const x = e.clientX - panOffset.x
-    const y = e.clientY - panOffset.y
+    const x = (e.clientX - panOffset.x * scale + scaleOffset.x) / scale
+    const y = (e.clientY - panOffset.y * scale + scaleOffset.y) / scale
     return { x, y }
   }
-
-  // const cropImage = () => {
-  //   const canvas = canvasRef.current
-  //   if (!canvas) return
-
-  //   const context = canvas.getContext("2d")
-  //   if (!context) return
-
-  //   const cropWidth = shapeCoordinates.endX - shapeCoordinates.startX
-  //   const cropHeight = shapeCoordinates.endY - shapeCoordinates.startY
-
-  //   const croppedImageData = context.getImageData(
-  //     shapeCoordinates.startX,
-  //     shapeCoordinates.startY,
-  //     cropWidth,
-  //     cropHeight,
-  //   )
-  //   context.clearRect(0, 0, canvas.width, canvas.height)
-  //   canvas.width = cropWidth
-  //   canvas.height = cropHeight
-  //   context.putImageData(croppedImageData, 0, 0)
-  // }
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current
@@ -172,23 +190,25 @@ const Canvas: React.FC = () => {
         break
 
       case CanvasMode.SELECT_MODE:
-        const shapeContainingPoint = _shapes.find((shape) =>
-          shape.isPointInside(x, y),
+        const shapeContainingPoint = getShapesFromHistory(_history).find(
+          (shape) => shape.isPointInside(x, y),
         )
         if (shapeContainingPoint) {
           if (currentShape == null) {
-            setPreviousHistory(
+            adjustHistoryToIndex(
               canvas,
               context,
-              initialRect,
+              initialRectPosition,
               _history,
               currentHistoryIndex,
               panOffset,
+              true,
+              imageFile,
             )
             shapeContainingPoint.showBounding(true)
             setCurrentShape(shapeContainingPoint)
             setState(CanvasState.IDLE)
-            shapeContainingPoint.draw(context)
+            shapeContainingPoint.draw(context, panOffset)
           } else if (
             shapeContainingPoint == currentShape ||
             currentShape.isPointInside(x, y)
@@ -201,44 +221,44 @@ const Canvas: React.FC = () => {
 
         if (currentShape && !currentShape.isPointInside(x, y)) {
           currentShape.showBounding(false)
-          setPreviousHistory(
+          adjustHistoryToIndex(
             canvas,
             context,
-            initialRect,
+            initialRectPosition,
             _history,
             currentHistoryIndex,
             panOffset,
+            true,
+            imageFile,
           )
-          currentShape.draw(context)
+          currentShape.draw(context, panOffset)
           setCurrentShape(null)
           setState(CanvasState.IDLE)
         }
         break
 
       case CanvasMode.SHAPE_MODE:
-      case CanvasMode.CROP_MODE:
-        setState(
-          mode === CanvasMode.SHAPE_MODE
-            ? CanvasState.DRAWING
-            : CanvasState.CROPPING,
-        )
+        setState(CanvasState.DRAWING)
         updateShapeCoordinates({ startX: x, startY: y })
+        console.log(initialRectPosition, panOffset.x, panOffset.y)
         break
 
       case CanvasMode.OPENPOSE_MODE:
-        _shapes.forEach((shape) => {
+        getShapesFromHistory(_history).forEach((shape) => {
           if (
             shape.shapeType === ShapeModeOptions.OPENPOSE_SHAPE &&
             shape.isPointNearby(x, y)
           ) {
             setCurrentShape(shape)
-            setPreviousHistory(
+            adjustHistoryToIndex(
               canvas,
               context,
-              initialRect,
+              initialRectPosition,
               _history,
-              currentHistoryIndex + 1,
+              currentHistoryIndex,
               panOffset,
+              true,
+              imageFile,
             )
             setState(CanvasState.SELECTING)
           }
@@ -269,30 +289,40 @@ const Canvas: React.FC = () => {
     switch (mode) {
       case CanvasMode.BRUSH_MODE:
         setBrushCoordinates((prevCoordinates) => [...prevCoordinates, { x, y }])
-        newShape = BrushStroke(brushCoordinates, color, brushSettings.size)
+        setShapeId(shapeId + 1)
+        newShape = BrushStroke(
+          shapeId,
+          brushCoordinates,
+          color,
+          brushSettings.size,
+        )
         if (!newShape) return
         setCurrentShape(newShape)
-        setPreviousHistory(
+        adjustHistoryToIndex(
           canvas,
           context,
-          initialRect,
+          initialRectPosition,
           _history,
           currentHistoryIndex,
           panOffset,
+          true,
+          imageFile,
         )
-        newShape.draw(context)
+        newShape.draw(context, panOffset)
         break
 
       case CanvasMode.SHAPE_MODE:
         let width = x - shapeCoordinates.startX!
         let height = y - shapeCoordinates.startY!
-        setPreviousHistory(
+        adjustHistoryToIndex(
           canvas,
           context,
-          initialRect,
+          initialRectPosition,
           _history,
           currentHistoryIndex,
           panOffset,
+          true,
+          imageFile,
         )
 
         if (shapeMode === ShapeModeOptions.RECTANGLE_SHAPE) {
@@ -300,8 +330,9 @@ const Canvas: React.FC = () => {
           let newStartY = Math.min(shapeCoordinates.startY!, y)
           let newWidth = Math.abs(width)
           let newHeight = Math.abs(height)
-
+          setShapeId(shapeId + 1)
           newShape = Rectangle(
+            shapeId,
             newStartX,
             newStartY,
             newWidth,
@@ -314,8 +345,9 @@ const Canvas: React.FC = () => {
           const centerY = (y + shapeCoordinates.startY!) / 2
           const radiusX = Math.abs(x - shapeCoordinates.startX!) / 2
           const radiusY = Math.abs(y - shapeCoordinates.startY!) / 2
-
+          setShapeId(shapeId + 1)
           newShape = Ellipse(
+            shapeId,
             centerX,
             centerY,
             radiusX,
@@ -330,7 +362,7 @@ const Canvas: React.FC = () => {
 
         if (!newShape) return
         setCurrentShape(newShape)
-        newShape.draw(context)
+        newShape.draw(context, panOffset)
         context.stroke()
         break
 
@@ -346,10 +378,12 @@ const Canvas: React.FC = () => {
 
         var coordinates = currentShape.getStrokeCoordinates()
         if (
-          coordinates.x + dx < initialRect.x ||
-          coordinates.y + dy < initialRect.y ||
-          coordinates.x + coordinates.w + dx > initialRect.x + initialRect.w ||
-          coordinates.y + coordinates.h + dy > initialRect.y + initialRect.h
+          coordinates.x + dx < initialRectPosition.x ||
+          coordinates.y + dy < initialRectPosition.y ||
+          coordinates.x + coordinates.w + dx >
+            initialRectPosition.x + initialRectPosition.w ||
+          coordinates.y + coordinates.h + dy >
+            initialRectPosition.y + initialRectPosition.h
         ) {
           dx = 0
           dy = 0
@@ -357,15 +391,17 @@ const Canvas: React.FC = () => {
         currentShape.move(dx, dy)
         setPrevMouseX(x)
         setPrevMouseY(y)
-        setPreviousHistory(
+        adjustHistoryToIndex(
           canvas,
           context,
-          initialRect,
+          initialRectPosition,
           _history,
           currentHistoryIndex,
           panOffset,
+          true,
+          imageFile,
         )
-        currentShape.draw(context)
+        currentShape.draw(context, panOffset)
         break
       case CanvasMode.DRAG_MODE:
         if (state !== CanvasState.DRAGGING) return
@@ -381,13 +417,16 @@ const Canvas: React.FC = () => {
       case CanvasMode.OPENPOSE_MODE:
         if (state !== CanvasState.SELECTING) return
         currentShape.moveOnePoint(x, y)
-        setPreviousHistory(
+        console.log(_history, currentHistoryIndex)
+        adjustHistoryToIndex(
           canvas,
           context,
-          initialRect,
+          initialRectPosition,
           _history,
-          currentHistoryIndex + 1,
+          currentHistoryIndex,
           panOffset,
+          true,
+          imageFile,
         )
         break
       default:
@@ -403,46 +442,45 @@ const Canvas: React.FC = () => {
 
     const context = canvas.getContext("2d")
     if (!context) return
-    setPrevMode(mode)
     switch (mode) {
       case CanvasMode.BRUSH_MODE:
       case CanvasMode.SHAPE_MODE:
         setBrushCoordinates([])
-        setShapes([..._shapes, currentShape])
-        setHistory([
-          ..._history,
-          { action: HistoryAction.CREATE, value: currentShape },
-        ])
-        setCurrentHistoryIndex(currentHistoryIndex + 1)
+        setNewHistory(
+          currentHistoryIndex,
+          setCurrentHistoryIndex,
+          _history,
+          setHistory,
+          currentShape,
+          HistoryAction.CREATE,
+        )
         setCurrentShape(null)
         setState(CanvasState.IDLE)
         break
 
-      // case CanvasMode.CROP_MODE:
-      //   if (state === CanvasState.CROPPING) {
-      //     cropImage()
-      //   }
-      //   setState(CanvasState.IDLE)
-      //   break
-
       case CanvasMode.SELECT_MODE:
         if (state !== CanvasState.SELECTING) return
 
-        setPreviousHistory(
+        adjustHistoryToIndex(
           canvas,
           context,
-          initialRect,
+          initialRectPosition,
           _history,
           currentHistoryIndex,
           panOffset,
+          true,
+          imageFile,
         )
-        currentShape.draw(context)
+        currentShape.draw(context, panOffset)
         setState(CanvasState.IDLE)
-        setCurrentHistoryIndex(currentHistoryIndex + 1)
-        setHistory([
-          ..._history,
-          { action: HistoryAction.MOVE, value: currentShape },
-        ])
+        setNewHistory(
+          currentHistoryIndex,
+          setCurrentHistoryIndex,
+          _history,
+          setHistory,
+          currentShape,
+          HistoryAction.MOVE,
+        )
         break
       case CanvasMode.DRAG_MODE:
         setState(CanvasState.IDLE)
@@ -451,11 +489,14 @@ const Canvas: React.FC = () => {
       case CanvasMode.OPENPOSE_MODE:
         if (state !== CanvasState.SELECTING) return
         setState(CanvasState.IDLE)
-        setCurrentHistoryIndex(currentHistoryIndex + 1)
-        setHistory([
-          ..._history,
-          { action: HistoryAction.MOVE, value: currentShape },
-        ])
+        setNewHistory(
+          currentHistoryIndex,
+          setCurrentHistoryIndex,
+          _history,
+          setHistory,
+          currentShape,
+          HistoryAction.MOVE,
+        )
         break
       default:
         return

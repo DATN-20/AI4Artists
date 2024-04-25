@@ -1,23 +1,24 @@
 import { Button } from "@/components/ui/button"
-import React, { useContext, useEffect } from "react"
-import { SketchPicker } from "react-color"
+import React, { useContext } from "react"
 import { CanvasModeContext } from "@/store/canvasHooks"
 import { FaPersonCirclePlus } from "react-icons/fa6"
 import OpenPose from "../shapeObjects/OpenPose"
-import { setPreviousHistory } from "../Canvas"
+import { adjustHistoryToIndex  } from "../HistoryUtilities"
 import { HistoryAction } from "@/constants/canvas"
 
 const AddPoseButton: React.FC = () => {
   const poseContext = useContext(CanvasModeContext)
   const {
     canvasRef,
-    initialRect,
+    initialRectPosition,
     _history,
     currentHistoryIndex,
     panOffset,
-    setShapes,
-    _shapes,
     setHistory,
+    shapeId,
+    setShapeId,
+    setCurrentHistoryIndex,
+    imageFile
   } = poseContext!
 
   const addNewPose = () => {
@@ -26,17 +27,20 @@ const AddPoseButton: React.FC = () => {
     const context = canvas.getContext("2d")
     if (!context) return
 
-    let newShape = OpenPose()
-    setPreviousHistory(
+    setShapeId(shapeId + 1)
+    let newShape = OpenPose(shapeId)
+    adjustHistoryToIndex (
       canvas,
       context,
-      initialRect,
+      initialRectPosition,
       _history,
       currentHistoryIndex,
       panOffset,
+      true,
+      imageFile
     )
-    newShape.draw(context)
-    setShapes([..._shapes, newShape])
+    newShape.draw(context, panOffset)
+    setCurrentHistoryIndex(currentHistoryIndex + 1)
     setHistory([..._history, { action: HistoryAction.CREATE, value: newShape }])
   }
 

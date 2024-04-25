@@ -1,8 +1,8 @@
 import { ShapeModeOptions } from "@/constants/canvas"
-import { Point } from "./Interface"
-import ShapeInterface from "./Interface"
+import ShapeInterface, { Point } from "./ShapeInterface"
 
 function BrushStroke(
+  id: number,
   points: Point[],
   color: string,
   lineWidth: number,
@@ -13,14 +13,17 @@ function BrushStroke(
   let lw = lineWidth
   let showBoundingRect = false
 
-  const draw = (context: CanvasRenderingContext2D) => {
+  const draw = (
+    context: CanvasRenderingContext2D,
+    panOffset: { x: number; y: number },
+  ) => {
     context.strokeStyle = c
     context.lineWidth = lw
     context.lineCap = "round"
     context.beginPath()
-    context.moveTo(pts[0].x, pts[0].y)
+    context.moveTo(pts[0].x + panOffset.x, pts[0].y + panOffset.y)
     for (let i = 1; i < pts.length; i++) {
-      context.lineTo(pts[i].x, pts[i].y)
+      context.lineTo(pts[i].x + panOffset.x, pts[i].y + panOffset.y)
     }
     context.stroke()
 
@@ -28,8 +31,8 @@ function BrushStroke(
       let strokeCoordianates = getStrokeCoordinates()
       context.setLineDash([5, 5])
       const gradient = context.createLinearGradient(
-        strokeCoordianates.x,
-        strokeCoordianates.y,
+        strokeCoordianates.x + panOffset.x,
+        strokeCoordianates.y + panOffset.y,
         strokeCoordianates.w,
         strokeCoordianates.h,
       )
@@ -79,7 +82,15 @@ function BrushStroke(
     pts = pts.map((p) => ({ x: p.x + dx, y: p.y + dy }))
   }
 
-  return { draw, isPointInside, showBounding, move, getStrokeCoordinates, shapeType }
+  return {
+    draw,
+    isPointInside,
+    showBounding,
+    move,
+    getStrokeCoordinates,
+    shapeType,
+    id,
+  }
 }
 
 export default BrushStroke

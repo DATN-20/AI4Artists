@@ -1,12 +1,12 @@
 import { ShapeModeOptions } from "@/constants/canvas"
-import ShapeInterface from "./Interface"
+import ShapeInterface from "./ShapeInterface"
 
 interface OpenPoseInterface extends ShapeInterface {
   isPointNearby(pointX: number, pointY: number): boolean
   moveOnePoint(x: number, y: number): void
 }
 
-export default function OpenPose(): OpenPoseInterface {
+export default function OpenPose(id: number): OpenPoseInterface {
   const shapeType = ShapeModeOptions.OPENPOSE_SHAPE
   let showBoundingRect = false
   let isChoosingPoint = -1
@@ -51,13 +51,22 @@ export default function OpenPose(): OpenPoseInterface {
     [15, 17, "#990066"],
   ]
 
-  const draw = (context: CanvasRenderingContext2D) => {
+  const draw = (
+    context: CanvasRenderingContext2D,
+    panOffset: { x: number; y: number },
+  ) => {
     connections.forEach(([startIndex, endIndex, color]) => {
       context.beginPath()
       context.strokeStyle = color
       context.lineWidth = 8
-      context.moveTo(points[startIndex].x, points[startIndex].y)
-      context.lineTo(points[endIndex].x, points[endIndex].y)
+      context.moveTo(
+        points[startIndex].x + panOffset.x,
+        points[startIndex].y + panOffset.y,
+      )
+      context.lineTo(
+        points[endIndex].x + panOffset.x,
+        points[endIndex].y + panOffset.y,
+      )
       context.stroke()
     })
 
@@ -65,11 +74,23 @@ export default function OpenPose(): OpenPoseInterface {
       const point = points[i]
       context.beginPath()
       context.fillStyle = point.color
-      context.arc(point.x, point.y, 5, 0, Math.PI * 2)
+      context.arc(
+        point.x + panOffset.x,
+        point.y + panOffset.y,
+        5,
+        0,
+        Math.PI * 2,
+      )
       if (isChoosingPoint === i) {
         context.strokeStyle = "yellow"
         context.lineWidth = 3
-        context.arc(point.x, point.y, 7, 0, Math.PI * 2)
+        context.arc(
+          point.x + panOffset.x,
+          point.y + panOffset.y,
+          7,
+          0,
+          Math.PI * 2,
+        )
         context.stroke()
       }
       context.fill()
@@ -79,8 +100,8 @@ export default function OpenPose(): OpenPoseInterface {
       let strokeCoordianates = getStrokeCoordinates()
       context.setLineDash([5, 5])
       const gradient = context.createLinearGradient(
-        strokeCoordianates.x,
-        strokeCoordianates.y,
+        strokeCoordianates.x + panOffset.x,
+        strokeCoordianates.y + panOffset.y,
         strokeCoordianates.w,
         strokeCoordianates.h,
       )
@@ -90,8 +111,8 @@ export default function OpenPose(): OpenPoseInterface {
       context.strokeStyle = gradient
       context.lineWidth = 2
       context.strokeRect(
-        strokeCoordianates.x,
-        strokeCoordianates.y,
+        strokeCoordianates.x + panOffset.x,
+        strokeCoordianates.y + panOffset.y,
         strokeCoordianates.w,
         strokeCoordianates.h,
       )
@@ -110,10 +131,6 @@ export default function OpenPose(): OpenPoseInterface {
       w: maxX - minX,
       h: maxY - minY,
     }
-  }
-
-  const findPointByColor = (color: string) => {
-    return points.find((point) => point.color === color)
   }
 
   const move = (dx: number, dy: number) => {
@@ -165,5 +182,6 @@ export default function OpenPose(): OpenPoseInterface {
     shapeType,
     isPointNearby,
     moveOnePoint,
+    id
   }
 }

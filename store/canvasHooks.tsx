@@ -8,11 +8,9 @@ import {
   SetStateAction,
 } from "react"
 
-type CanvasModeContextType = {
+export type CanvasModeContextType = {
   mode: CanvasMode
   setMode: Dispatch<SetStateAction<CanvasMode>>
-  prevMode: CanvasMode
-  setPrevMode: Dispatch<SetStateAction<CanvasMode>>
   color: string
   setColor: Dispatch<SetStateAction<string>>
   showColorPicker: boolean
@@ -32,12 +30,20 @@ type CanvasModeContextType = {
   canvasRef: React.MutableRefObject<HTMLCanvasElement | null>
   _history: any[]
   setHistory: Dispatch<SetStateAction<any[]>>
-  initialRect: {
+  initialRectPosition: {
     x: number
     y: number
     w: number
     h: number
   }
+  updateInitialRectPosition: (
+    newCoordinates: Partial<{
+      x: number
+      y: number
+      w: number
+      h: number
+    }>,
+  ) => void
   shapeCoordinates: {
     startX: number
     startY: number
@@ -58,12 +64,16 @@ type CanvasModeContextType = {
   setStartPanMousePosition: Dispatch<SetStateAction<{ x: number; y: number }>>
   currentHistoryIndex: number
   setCurrentHistoryIndex: Dispatch<SetStateAction<number>>
-  magnifierZoom: number
-  setMagnifierZoom: Dispatch<SetStateAction<number>>
-  _shapes: any[]
-  setShapes: Dispatch<SetStateAction<any[]>>
+  shapeId: number
+  setShapeId: Dispatch<SetStateAction<number>>
   currentShape: any
   setCurrentShape: Dispatch<SetStateAction<any>>
+  scale: number
+  setScale: Dispatch<SetStateAction<number>>
+  scaleOffset: { x: number; y: number }
+  setScaleOffset: Dispatch<SetStateAction<{ x: number; y: number }>>
+  imageFile: File | null
+  setImageFile: Dispatch<SetStateAction<File | null>>
 }
 
 export const CanvasModeContext = createContext<
@@ -74,7 +84,6 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [mode, setMode] = useState(CanvasMode.SELECT_MODE)
-  const [prevMode, setPrevMode] = useState(CanvasMode.SELECT_MODE)
   const [color, setColor] = useState("black")
   const [showColorPicker, setShowColorPicker] = useState(false)
   const [brushSettings, setBrushSettings] = useState({
@@ -86,12 +95,12 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
   )
   const [state, setState] = useState<CanvasState>(CanvasState.IDLE)
   const shapeModeRef = useRef<ShapeModeOptions>(shapeMode)
-  const [_shapes, setShapes] = useState<any[]>([])
+  const [shapeId, setShapeId] = useState<number>(0)
   const [currentShape, setCurrentShape] = useState<any>(null)
-
+  const [imageFile, setImageFile] = useState<File | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const [_history, setHistory] = useState<any[]>([])
-  const [initialRect, setInitialRect] = useState({
+  const [initialRectPosition, setInitialRect] = useState({
     x: 200,
     y: 50,
     w: 1000,
@@ -109,12 +118,22 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
     x: 0,
     y: 0,
   })
-  const [magnifierZoom, setMagnifierZoom] = useState(1)
+  const [scale, setScale] = useState(1)
+  const [scaleOffset, setScaleOffset] = useState({ x: 0, y: 0 })
 
   const updateShapeCoordinates = (
     newCoordinates: Partial<typeof shapeCoordinates>,
   ) => {
     setShapeCoordinates((prevCoordinates) => ({
+      ...prevCoordinates,
+      ...newCoordinates,
+    }))
+  }
+
+  const updateInitialRectPosition = (
+    newCoordinates: Partial<typeof initialRectPosition>,
+  ) => {
+    setInitialRect((prevCoordinates) => ({
       ...prevCoordinates,
       ...newCoordinates,
     }))
@@ -137,23 +156,26 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
     setHistory,
     shapeCoordinates,
     updateShapeCoordinates,
-    magnifierZoom,
-    setMagnifierZoom,
-    _shapes,
-    setShapes,
+    shapeId,
+    setShapeId,
     currentShape,
     setCurrentShape,
     state,
     setState,
-    initialRect,
-    prevMode,
-    setPrevMode,
+    initialRectPosition,
     panOffset,
     setPanOffset,
     startPanMousePosition,
     setStartPanMousePosition,
     currentHistoryIndex,
     setCurrentHistoryIndex,
+    scale,
+    setScale,
+    scaleOffset,
+    setScaleOffset,
+    imageFile,
+    setImageFile,
+    updateInitialRectPosition
   }
 
   return (

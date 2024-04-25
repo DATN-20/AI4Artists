@@ -30,7 +30,7 @@ const BrushSizeInput = () => {
           <div className="absolute left-0 top-0 z-10 mt-[-30px] flex h-7 w-[200px] items-center rounded bg-stone-600">
             <Slider.Root
               className="relative flex h-5 w-full touch-none select-none items-center px-2"
-              defaultValue={[5]}
+              defaultValue={[brushSettings.size]}
               min={1}
               max={10}
               step={1}
@@ -39,7 +39,7 @@ const BrushSizeInput = () => {
               onBlur={() => updateBrushSettings({ showSlider: false })}
             >
               <Slider.Track className="relative h-3 grow rounded-xl bg-slate-200">
-                <Slider.Range className="bg-gradient-default-to-r absolute h-3 rounded-xl" />
+                <Slider.Range className="absolute h-3 rounded-xl bg-gradient-default-to-r" />
               </Slider.Track>
               <Slider.Thumb className="group relative block h-4 w-4 cursor-pointer rounded-full border-none bg-primary-600 outline-none duration-150 active:scale-125 ">
                 <h1 className="absolute -translate-x-3 whitespace-nowrap rounded-xl bg-primary px-4 py-1 text-center text-xs font-bold text-white opacity-0 duration-150 ease-in-out group-active:-translate-y-8 group-active:opacity-100">
