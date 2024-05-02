@@ -238,8 +238,8 @@ export default function Generate() {
               generateImgData && (
                 <Carousel
                   generateImgData={generateImgData}
-                  width={width}
-                  height={height}
+                  width={512}
+                  height={512}
                 />
               )
             )}
@@ -248,8 +248,8 @@ export default function Generate() {
                 <HistoryCarousel
                   key={index}
                   generateImgData={item.images}
-                  width={width}
-                  height={height}
+                  width={512}
+                  height={512}
                   styleAlbum={item.style}
                   prompt={item.prompt}
                   album={authStates.totalAlbum}

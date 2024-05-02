@@ -140,7 +140,6 @@ const Profile = () => {
     }
   }, [imagesData])
   const handleDeleteAlbum = async () => {
-    console.log("album:", selectedAlbumId)
     if (!selectedAlbumId) {
       return
     }
@@ -160,6 +159,21 @@ const Profile = () => {
     setSelectedAlbumId(null)
     fetchAlbumData()
   }
+  useEffect(() => {
+    if (selectedAlbum !== -1) {
+      const albumTabTrigger = document.querySelector(
+        '.tabs-trigger[value="album"]',
+      )
+      if (albumTabTrigger) {
+        albumTabTrigger.dispatchEvent(
+          new MouseEvent("click", { bubbles: true }),
+        )
+      } else {
+        console.error("Album tab trigger not found!")
+      }
+    }
+  }, [selectedAlbum])
+
   const [generateImgData, setGenerateImgData] = useState<string[] | null>(null)
   const { width, height } = generateStates.dataInputs || {}
   return (
@@ -328,7 +342,7 @@ const Profile = () => {
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-2 bg-zinc-900 pl-5 pr-5 md:grid-cols-4">
+                        <div className="grid h-full grid-cols-1 items-center justify-center gap-2 bg-zinc-900 pl-5 pr-5 md:grid-cols-4">
                           {item.images && item.images.length > 0 ? (
                             <>
                               {item.images
