@@ -8,6 +8,7 @@ import { useSelector } from "react-redux"
 import { selectAuth } from "@/features/authSlice"
 import PopupCarousel from "@/components/profile/profile/PopupCarousel"
 import { DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { TabsList, TabsTrigger } from "@radix-ui/react-tabs"
 
 interface AlbumCardProps {
   albumData: AlbumWithImages
@@ -72,16 +73,20 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
       </Card>
       <DialogContent className="lg:min-w-[950px]">
         {authStates.totalAlbum && selectedAlbum !== -1 && (
-          <PopupCarousel
-            generateImgData={
-              (authStates.totalAlbum as AlbumWithImages[])[selectedAlbum]
-                ?.images
-            }
-            width={width}
-            height={height}
-            setSelectedAlbum={setSelectedAlbum}
-            selectedAlbum={selectedAlbum}
-          />
+          <TabsList>
+            <TabsTrigger value="album">
+              <PopupCarousel
+                generateImgData={
+                  (authStates.totalAlbum as AlbumWithImages[])[selectedAlbum]
+                    ?.images
+                }
+                width={width}
+                height={height}
+                setSelectedAlbum={setSelectedAlbum}
+                selectedAlbum={selectedAlbum}
+              />
+            </TabsTrigger>
+          </TabsList>
         )}
       </DialogContent>
     </>

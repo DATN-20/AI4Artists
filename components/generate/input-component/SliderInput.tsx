@@ -1,7 +1,14 @@
 import { useState, useEffect, useRef } from "react"
 import { Slider } from "../../ui/slider"
 import { useAppDispatch } from "@/store/hooks"
-import { setCFG, setNoise, setSteps } from "@/features/generateSlice"
+import {
+  setCFG,
+  setHeight,
+  setNoise,
+  setNumberOfImage,
+  setSteps,
+  setWidth,
+} from "@/features/generateSlice"
 
 const SliderInput = ({
   min,
@@ -29,6 +36,12 @@ const SliderInput = ({
       dispatch(setCFG({ cfg: valueArray[0] }))
     } else if (type === "noise") {
       dispatch(setNoise({ noise: valueArray[0] }))
+    } else if (type === "height") {
+      dispatch(setHeight({ height: valueArray[0] }))
+    } else if (type === "width") {
+      dispatch(setWidth({ width: valueArray[0] }))
+    } else if (type === "numberOfImage") {
+      dispatch(setNumberOfImage({ numberOfImage: valueArray[0] }))
     }
   }
 
