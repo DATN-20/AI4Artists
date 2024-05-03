@@ -62,7 +62,14 @@ export const profileApi = createApi({
         body: { albumIds: albumId },
       }),
     }),
+    updateAvatar: builder.mutation({
+      query: (formData) => ({
+        url: "/api/v1/users/me/avatar",
+        method: "POST",
+        body: formData,
+      }),
+    }),
   }),
 })
 
-export const { useGetProfileMutation, useGetProfileAlbumMutation , useGetTotalImageMutation, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation} = profileApi
+export const { useGetProfileMutation, useGetProfileAlbumMutation , useGetTotalImageMutation, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation} = profileApi
