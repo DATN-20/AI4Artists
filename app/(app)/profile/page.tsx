@@ -1,28 +1,20 @@
 "use client"
-
-import NavigationSideBar from "@/components/sidebar/NavigationSideBar"
-import { Facebook, Home, Instagram, Twitter } from "lucide-react"
-import { FaDiscord } from "react-icons/fa"
-import { CiViewList } from "react-icons/ci"
-import { IoImages, IoArrowBackOutline, IoTrashOutline } from "react-icons/io5"
+import { IoArrowBackOutline, IoTrashOutline } from "react-icons/io5"
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "../../../components/ui/tabs"
-import NextImage from "next/image"
+} from "@/components/ui/tabs"
 import ProfileCarousel from "@/components/profile/profile/ProfileCarousel"
-import { MouseEventHandler, useEffect, useState } from "react"
+import {  useEffect, useState } from "react"
 import { useAppDispatch } from "@/store/hooks"
 import { useSelector } from "react-redux"
 import { selectGenerate } from "@/features/generateSlice"
-import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
-import ProfileContent from "../../../components/profile/profile/ProfileContent"
+import ProfileContent from "@/components/profile/profile/ProfileContent"
 import {
   useAddNewAlbumMutation,
-  useAddToAlbumMutation,
   useDeleteAlbumMutation,
   useGetProfileAlbumMutation,
   useGetProfileMutation,
@@ -65,6 +57,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Input } from "@/components/ui/input"
 import { toast } from "react-toastify"
+import NavigationSideBarCard from "@/components/sidebar/card/NavigationSideBarCard"
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -184,7 +177,9 @@ const Profile = () => {
         <Dialog>
           <div className="flex gap-4 py-4 ">
             <div className="hidden lg:block lg:min-w-[300px]">
-              <NavigationSideBar />
+              <div className="no-scrollbar fixed left-0 top-0 flex h-screen min-h-screen w-[300px] flex-col gap-4 overflow-y-scroll p-4 ">
+                <NavigationSideBarCard />
+              </div>
             </div>
             <div className="mr-8 h-full flex-1">
               <Tabs

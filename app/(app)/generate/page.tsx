@@ -172,6 +172,7 @@ export default function Generate() {
 
   useEffect(() => {
     const promptValue = localStorage.getItem("prompt")
+    localStorage.removeItem("prompt")
     if (promptValue) {
       setPromptPos(promptValue)
     }

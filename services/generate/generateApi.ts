@@ -43,7 +43,7 @@ export const generateApi = createApi({
       }) => ({
         url: "/api/v1/generate-image/text-to-image",
         method: "POST",
-        body,
+        body: { ...body, aiName:'comfyUI' },
       }),
     }),
     imageToImage: builder.mutation({

@@ -122,7 +122,15 @@ export default function GenerateSideBar() {
             e.currentTarget.style.cursor = "pointer"
           }}
         />
-        <Image src="/logo.png" alt="logo" width={70} height={70} />
+        <Image
+          src="/logo.png"
+          alt="logo"
+          width={70}
+          height={70}
+          onClick={() => {
+            router.push("/dashboard")
+          }}
+        />
       </CardHeader>
       {aiInputs && generateStates.useImage && (
         <CollapsibleSection title={"Noise"}>
