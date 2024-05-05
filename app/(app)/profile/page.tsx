@@ -206,9 +206,11 @@ const Profile = () => {
                   )}
 
                   <TabsList className="mb-5 mt-5 bg-transparent">
-                    <TabsTrigger value="album" className="text-white">
-                      <div className="text-white">
-                        <h1 className="text-2xl font-bold">Your Albums</h1>
+                    <TabsTrigger value="album">
+                      <div>
+                        <h1 className="text-2xl font-bold text-black dark:text-white">
+                          Your Albums
+                        </h1>
                       </div>
                     </TabsTrigger>
                   </TabsList>

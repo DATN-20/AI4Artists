@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { useSelector } from "react-redux"
 import { selectAuth } from "@/features/authSlice"
 import { Facebook, Instagram } from "lucide-react"
@@ -67,6 +67,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
   const handleMouseLeave = () => {
     setIsHovered(false)
   }
+
+  useEffect(() => {
+    setCroppedImageUrl(userData?.avatar)
+  }, [userData])
+
   const handleSave = () => {
     // Lưu ảnh đã cắt
     getCroppedImage()
@@ -141,11 +146,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         onMouseLeave={handleMouseLeave}
       >
         <img
-          className="h-full w-full rounded-full"
-          src={
-            croppedImageUrl ||
-            "https://4kwallpapers.com/images/wallpapers/viper-valorant-agent-2732x2732-9539.jpg"
-          }
+          className="h-full w-full rounded-full object-cover"
+          src={croppedImageUrl || "default.jpg"}
           alt=""
         />
         {isHovered && (
