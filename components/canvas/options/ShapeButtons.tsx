@@ -16,13 +16,13 @@ const ShapeButtons: React.FC = () => {
   return (
     <div className="z-10 flex">
       <ShapeButton
-        icon={<RiRectangleLine />}
+        icon={<RiRectangleLine className="text-black" size={25}/>}
         onClick={() => handleShapeChange(ShapeModeOptions.RECTANGLE_SHAPE)}
         isActive={shapeMode === ShapeModeOptions.RECTANGLE_SHAPE}
       />
 
       <ShapeButton
-        icon={<FaRegCircle />}
+        icon={<FaRegCircle className="text-black" size={25}/>}
         onClick={() => handleShapeChange(ShapeModeOptions.CIRCLE_SHAPE)}
         isActive={shapeMode === ShapeModeOptions.CIRCLE_SHAPE}
       />

@@ -11,86 +11,88 @@ export const drawInitialRectangle = (
   },
   panOffset: { x: number; y: number },
   isInitialBorderExist: boolean = true,
-  imageFile: File | null = null,
-  callback?: () => void
+  image: HTMLImageElement | null,
+  theme: string | undefined,
+  callback: () => void,
 ) => {
-  const offscreenCanvas = document.createElement('canvas');
-  offscreenCanvas.width = context.canvas.width;
-  offscreenCanvas.height = context.canvas.height;
-  const offscreenContext = offscreenCanvas.getContext('2d');
-  if (!offscreenContext) return;
+ context.beginPath();
+  let backgroundColor = "transparent";
+  if (theme === "dark") {
+    backgroundColor = "#ffffff";
+  } 
+  context.fillStyle = backgroundColor;
 
-  const render = () => {
-    offscreenContext.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+  if (isInitialBorderExist) {
+    const gradient = context.createLinearGradient(
+      initialRectPosition.x + panOffset.x,
+      initialRectPosition.y + panOffset.y,
+      initialRectPosition.x + panOffset.x + initialRectPosition.w,
+      initialRectPosition.y + panOffset.y + initialRectPosition.h
+    );
+    gradient.addColorStop(0, "#9cc8fb");
+    gradient.addColorStop(0.6, "#d35bff");
+    context.strokeStyle = gradient;
+    context.fillStyle = backgroundColor;
+    context.lineWidth = 3;
+    context.fillRect(
+      initialRectPosition.x + panOffset.x,
+      initialRectPosition.y + panOffset.y,
+      initialRectPosition.w,
+      initialRectPosition.h
+    );
+    context.strokeRect(
+      initialRectPosition.x + panOffset.x,
+      initialRectPosition.y + panOffset.y,
+      initialRectPosition.w,
+      initialRectPosition.h
+    );
+  }
 
-    offscreenContext.beginPath();
-    offscreenContext.fillStyle = "transparent";
-    
-    if (isInitialBorderExist) {
-      const gradient = offscreenContext.createLinearGradient(
-        initialRectPosition.x + panOffset.x,
-        initialRectPosition.y + panOffset.y,
-        initialRectPosition.x + panOffset.x + initialRectPosition.w,
-        initialRectPosition.y + panOffset.y + initialRectPosition.h
-      );
-      gradient.addColorStop(0, "#9cc8fb");
-      gradient.addColorStop(0.6, "#d35bff");
-      offscreenContext.strokeStyle = gradient;
-      offscreenContext.lineWidth = 3;
-      offscreenContext.strokeRect(
-        initialRectPosition.x + panOffset.x,
-        initialRectPosition.y + panOffset.y,
-        initialRectPosition.w,
-        initialRectPosition.h
-      );
-    }
-
-    if (imageFile) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const image = new Image();
-        image.onload = () => {
-          offscreenContext.drawImage(
-            image,
-            initialRectPosition.x + panOffset.x,
-            initialRectPosition.y + panOffset.y,
-            initialRectPosition.w,
-            initialRectPosition.h
-          );
-          context.drawImage(offscreenCanvas, 0, 0);
-          if (callback) callback();
-        };
-        image.src = event.target?.result as string;
-      };
-      reader.readAsDataURL(imageFile);
-    } else {
-      offscreenContext.fillRect(
+  if (image !== null) {
+    context.drawImage(
+        image,
         initialRectPosition.x + panOffset.x,
         initialRectPosition.y + panOffset.y,
         initialRectPosition.w,
         initialRectPosition.h
       );
-      context.drawImage(offscreenCanvas, 0, 0);
-      if (callback) callback();
-    }
-  };
-
-  requestAnimationFrame(render);
+      callback();
+  } else {
+    callback();
+  }
 };
-
 
 export const getShapesFromHistory = (
 history: Array<{ action: number; value: any }>,
+index: number,
 ) => {
     const uniqueShapesMap: { [key: string]: { action: number; value: any } } = {}
-    for (let i = history.length - 1; i >= 0; i--) {
+    for (let i = 0; i <=index; i++) {
         const { action, value: shape } = history[i]
-        if (!uniqueShapesMap[shape.id] && action !== HistoryAction.DELETE) {
+        if (!uniqueShapesMap[shape.id]) {
         uniqueShapesMap[shape.id] = history[i]
+        }
+
+        if (action === HistoryAction.DELETE) {
+        delete uniqueShapesMap[shape.id]
         }
     }
     const uniqueShapes = Object.values(uniqueShapesMap).map(({ value }) => value)
     return uniqueShapes
+}
+
+const IsShapeDeleted = (
+  id: number,
+  history: Array<{ action: number; value: any }>,
+  index: number,
+) => {
+  console.log(history)
+  for (let i = index; i >= 0; i--) {
+    if (history[i].value.id === id && history[i].action === HistoryAction.DELETE) {
+      return true
+    }
+  }
+  return false
 }
   
 export const adjustHistoryToIndex  = (
@@ -106,25 +108,28 @@ _history: any[],
 index: number,
 panOffset: { x: number; y: number },
 isInitialBorderExist: boolean = true,
-imageFile: File | null = null
+image: HTMLImageElement | null,
+theme: string | undefined
 ) => {
 context.clearRect(0, 0, canvas.width, canvas.height)
-drawInitialRectangle(context, initialRect, panOffset, isInitialBorderExist, imageFile, () => {
+drawInitialRectangle(context, initialRect, panOffset, isInitialBorderExist, image, theme, () => {
   for (var i = 0; i <= index; i++) {
     var actionType = _history[i].action;
     if (_history[i].value == null) continue;
+    let shape = _history[i].value;
 
-    switch (actionType) {
-      case HistoryAction.CREATE:
-      case HistoryAction.MOVE:
-        _history[i].value.draw(context, panOffset);
-        break;
-      default:
-        break;
+    if (actionType === HistoryAction.DELETE && shape === "all") {
+      context.clearRect(0, 0, canvas.width, canvas.height)
+      drawInitialRectangle(context, initialRect, panOffset, isInitialBorderExist, image, theme, () => {})
+      continue
     }
+
+    if (IsShapeDeleted(shape.id, _history, index)) {
+      continue
+    }
+    shape.draw(context, panOffset);
   }
 })
-
 }
 
 export const setNewHistory = (
@@ -162,7 +167,8 @@ export const redo = (
     currentHistoryIndex: number,
     setCurrentHistoryIndex: Dispatch<SetStateAction<number>>,
     panOffset: { x: number; y: number },
-    imageFile: File | null = null
+    image: HTMLImageElement | null,
+    theme: string | undefined
 ) => {
     if (currentHistoryIndex >= _history.length - 1) return
     setCurrentHistoryIndex(currentHistoryIndex + 1)
@@ -173,8 +179,9 @@ export const redo = (
       _history,
       currentHistoryIndex + 1,
       panOffset,
-        true,
-        imageFile
+      true,
+      image,
+      theme
     )
 }
 
@@ -191,7 +198,8 @@ export const undo = (
     currentHistoryIndex: number,
     setCurrentHistoryIndex: Dispatch<SetStateAction<number>>,
     panOffset: { x: number; y: number },
-    imageFile: File | null = null
+    image: HTMLImageElement | null,
+    theme: string | undefined
 ) => {
     if (currentHistoryIndex < 0) return
     
@@ -204,7 +212,8 @@ export const undo = (
       currentHistoryIndex - 1,
       panOffset,
         true,
-        imageFile
+        image,
+        theme
     )
 }
 

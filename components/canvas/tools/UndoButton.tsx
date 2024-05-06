@@ -1,10 +1,11 @@
 import { CanvasModeContext } from "@/store/canvasHooks"
-import { useContext } from "react"
-import { RiArrowGoBackLine, RiRectangleLine } from "react-icons/ri"
+import { useContext, memo } from "react"
+import { RiArrowGoBackLine } from "react-icons/ri"
 import { Button } from "@/components/ui/button"
 import { undo } from "../HistoryUtilities"
+import { useTheme } from "next-themes"
 
-export const UndoButton: React.FC = () => {
+export const UndoButton: React.FC = memo(() => {
   const canvasModeContext = useContext(CanvasModeContext)
   const {
     canvasRef,
@@ -13,12 +14,13 @@ export const UndoButton: React.FC = () => {
     panOffset,
     currentHistoryIndex,
     setCurrentHistoryIndex,
-    imageFile,
+    imageRef,
   } = canvasModeContext!
+  const { resolvedTheme } = useTheme()
 
   return (
     <Button
-      className={`rounded-xl bg-card py-6 font-bold ${currentHistoryIndex < 0 ? "disabled pointer-events-none opacity-50" : ""}`}
+      className={`my-1 rounded-xl bg-card font-bold dark:bg-white dark:text-black dark:hover:bg-primary ${currentHistoryIndex < 0 ? "disabled pointer-events-none opacity-50" : ""}`}
       onClick={() => {
         undo(
           canvasRef.current!,
@@ -28,11 +30,12 @@ export const UndoButton: React.FC = () => {
           currentHistoryIndex,
           setCurrentHistoryIndex,
           panOffset,
-          imageFile,
+          imageRef.current!,
+          resolvedTheme,
         )
       }}
     >
       <RiArrowGoBackLine size={25} />
     </Button>
   )
-}
+})

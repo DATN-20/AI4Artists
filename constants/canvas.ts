@@ -15,6 +15,12 @@ export enum ShapeModeOptions {
     OPENPOSE_SHAPE = 4,
 }
 
+export enum EraseModeOptions {
+    ERASE = 0,
+    ERASE_ALL = 1,
+    ERASE_ALL_IMAGE = 2,
+}
+
 export enum CanvasState {
     IDLE = 0,
     DRAWING = 1,
@@ -22,6 +28,7 @@ export enum CanvasState {
     ZOOMING = 3,
     DRAGGING = 4,
     SELECTING = 5,
+    ERASING = 6,
 }
 
 export enum HistoryAction {
