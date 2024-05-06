@@ -7,7 +7,7 @@ import { ToolButtons } from "./tools/ToolButtons"
 
 const ToolSelect = () => {
   return (
-    <div className="my-4 flex flex-col items-center gap -4">
+    <div className="py-4 flex flex-col items-center dark:bg-white">
       <ToolButtons/>
       <UndoButton/>
       <RedoButton/>

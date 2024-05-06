@@ -1,4 +1,4 @@
-import CanvasMode, { CanvasState, ShapeModeOptions } from "@/constants/canvas"
+import CanvasMode, { CanvasState, EraseModeOptions, ShapeModeOptions } from "@/constants/canvas"
 import {
   useState,
   useRef,
@@ -72,8 +72,13 @@ export type CanvasModeContextType = {
   setScale: Dispatch<SetStateAction<number>>
   scaleOffset: { x: number; y: number }
   setScaleOffset: Dispatch<SetStateAction<{ x: number; y: number }>>
-  imageFile: File | null
-  setImageFile: Dispatch<SetStateAction<File | null>>
+  imageRef: React.MutableRefObject<HTMLImageElement | null>
+  eraseSize: number
+  setEraseSize: Dispatch<SetStateAction<number>>
+  eraseMode: EraseModeOptions
+  setEraseMode: Dispatch<SetStateAction<EraseModeOptions>>
+  cursor: string
+  setCursor: Dispatch<SetStateAction<string>>
 }
 
 export const CanvasModeContext = createContext<
@@ -90,14 +95,19 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
     size: 5,
     showSlider: false,
   })
+  const [eraseSize, setEraseSize] = useState(1)
   const [shapeMode, setShapeMode] = useState<ShapeModeOptions>(
     ShapeModeOptions.RECTANGLE_SHAPE,
   )
+  const [eraseMode, setEraseMode] = useState<EraseModeOptions>(
+    EraseModeOptions.ERASE,
+  )
+  const [cursor, setCursor] = useState<string>('crosshair');
   const [state, setState] = useState<CanvasState>(CanvasState.IDLE)
   const shapeModeRef = useRef<ShapeModeOptions>(shapeMode)
   const [shapeId, setShapeId] = useState<number>(0)
   const [currentShape, setCurrentShape] = useState<any>(null)
-  const [imageFile, setImageFile] = useState<File | null>(null)
+  const imageRef = useRef(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const [_history, setHistory] = useState<any[]>([])
   const [initialRectPosition, setInitialRect] = useState({
@@ -173,9 +183,14 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
     setScale,
     scaleOffset,
     setScaleOffset,
-    imageFile,
-    setImageFile,
-    updateInitialRectPosition
+    imageRef,
+    updateInitialRectPosition,
+    eraseSize,
+    setEraseSize,
+    eraseMode,
+    setEraseMode,
+    cursor,
+    setCursor,
   }
 
   return (

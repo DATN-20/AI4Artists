@@ -3,9 +3,9 @@ import React, { useContext, useEffect } from "react"
 import { SketchPicker } from "react-color"
 import { CanvasModeContext } from "@/store/canvasHooks"
 
-const ColorPicker : React.FC = () => {
+const ColorPicker: React.FC = () => {
   const colorContext = useContext(CanvasModeContext)
-  const { color, setColor, showColorPicker, setShowColorPicker } = colorContext!;
+  const { color, setColor, showColorPicker, setShowColorPicker } = colorContext!
   const handleColorChange = (newColor: string) => {
     setColor(newColor)
   }
@@ -17,7 +17,7 @@ const ColorPicker : React.FC = () => {
   return (
     <div className="relative inline-block">
       <div className="flex flex-col-reverse">
-        <Button className="rounded-xl bg-card">
+        <Button className="mx-1 rounded-xl bg-card dark:bg-white dark:hover:bg-primary">
           <div
             className="h-[25px]  w-[25px] rounded-lg"
             style={{ backgroundColor: color }}

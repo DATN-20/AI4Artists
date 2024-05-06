@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { CanvasModeContext } from "@/store/canvasHooks"
-import React, { ChangeEvent, useContext, useRef } from "react"
+import React, { ChangeEvent, useContext, useRef, memo } from "react"
 import { RiImageAddFill } from "react-icons/ri"
 import { adjustHistoryToIndex } from "../HistoryUtilities"
+import { useTheme } from "next-themes"
 
-export const UploadButton: React.FC = () => {
+export const UploadButton: React.FC = memo(() => {
   const canvasModeContext = useContext(CanvasModeContext)
   const {
     canvasRef,
@@ -12,22 +13,25 @@ export const UploadButton: React.FC = () => {
     _history,
     panOffset,
     currentHistoryIndex,
-    setImageFile
+    imageRef,
   } = canvasModeContext!
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const { resolvedTheme } = useTheme()
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
     const reader = new FileReader()
     reader.onload = () => {
-        const canvas = canvasRef.current
-        if (!canvas) return
-        const context = canvas.getContext("2d")
-        if (!context) return
+      const canvas = canvasRef.current
+      if (!canvas) return
+      const context = canvas.getContext("2d")
+      if (!context) return
 
-        setImageFile(file)
-        context.clearRect(0, 0, canvas.width, canvas.height)
+      const image = new Image()
+      image.src = reader.result as string
+      imageRef.current = image
+      image.onload = () => {
         adjustHistoryToIndex(
           canvas,
           context,
@@ -36,8 +40,10 @@ export const UploadButton: React.FC = () => {
           currentHistoryIndex,
           panOffset,
           true,
-          file,
+          image,
+          resolvedTheme,
         )
+      }
     }
     reader.readAsDataURL(file)
   }
@@ -51,11 +57,11 @@ export const UploadButton: React.FC = () => {
         style={{ display: "none" }}
       />
       <Button
-        className="rounded-xl bg-card py-6 font-bold"
+        className="my-1 rounded-xl bg-card font-bold dark:bg-white dark:text-black dark:hover:bg-primary"
         onClick={() => fileInputRef.current?.click()}
       >
         <RiImageAddFill size={25} />
       </Button>
     </div>
   )
-}
+})

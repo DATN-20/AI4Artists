@@ -19,12 +19,12 @@ const BrushSizeInput = () => {
     <div className="relative inline-block">
       <div className="flex flex-col-reverse">
         <Button
-          className="rounded-xl bg-card"
+          className="mx-1 rounded-xl bg-card dark:bg-white dark:hover:bg-primary"
           onClick={() =>
             updateBrushSettings({ showSlider: !brushSettings.showSlider })
           }
         >
-          <RxBorderWidth className="h-[30px] w-[27px]"></RxBorderWidth>
+          <RxBorderWidth className="h-[30px] w-[27px] dark:text-black"></RxBorderWidth>
         </Button>
         {brushSettings.showSlider && (
           <div className="absolute left-0 top-0 z-10 mt-[-30px] flex h-7 w-[200px] items-center rounded bg-stone-600">

@@ -16,7 +16,7 @@ const CanvasPage: React.FC = () => {
         </div>
 
         <div className="z-10 flex h-[650px] w-1/12 items-center gap-4">
-          <div className="mr-16 flex items-center justify-center rounded-lg bg-card px-4">
+          <div className="mr-16 flex items-center justify-center rounded-lg bg-card px-4 dark:bg-white">
             <ToolSelect />
           </div>
         </div>

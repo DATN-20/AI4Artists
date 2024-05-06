@@ -1,10 +1,11 @@
 import { CanvasModeContext } from "@/store/canvasHooks"
-import { useContext } from "react"
+import { useContext, memo } from "react"
 import { RiArrowGoForwardLine } from "react-icons/ri"
 import { Button } from "@/components/ui/button"
 import { redo } from "../HistoryUtilities"
+import { useTheme } from "next-themes"
 
-export const RedoButton: React.FC = () => {
+export const RedoButton: React.FC = memo(() => {
   const canvasModeContext = useContext(CanvasModeContext)
   const {
     canvasRef,
@@ -13,12 +14,13 @@ export const RedoButton: React.FC = () => {
     panOffset,
     currentHistoryIndex,
     setCurrentHistoryIndex,
-    imageFile,
+    imageRef,
   } = canvasModeContext!
+  const { resolvedTheme } = useTheme()
 
   return (
     <Button
-      className={`rounded-xl bg-card py-6 font-bold ${currentHistoryIndex >= _history.length - 1 ? "disabled pointer-events-none opacity-50" : ""}`}
+      className={`my-1 rounded-xl bg-card font-bold dark:bg-white dark:text-black dark:hover:bg-primary ${currentHistoryIndex >= _history.length - 1 ? "disabled pointer-events-none opacity-50" : ""}`}
       onClick={() => {
         redo(
           canvasRef.current!,
@@ -28,11 +30,12 @@ export const RedoButton: React.FC = () => {
           currentHistoryIndex,
           setCurrentHistoryIndex,
           panOffset,
-          imageFile,
+          imageRef.current!,
+          resolvedTheme,
         )
       }}
     >
       <RiArrowGoForwardLine size={25} />
     </Button>
   )
-}
+});
