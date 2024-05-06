@@ -26,7 +26,9 @@ interface DataInputs {
 export interface GenerateState {
   aiInputs: AIField[] | null
   useImage: boolean
+  useCustomDimension: boolean,
   dataInputs: DataInputs | null
+  history: ImageGroup[] | null
 }
 
 // Định nghĩa interface cho các trường dữ liệu input
@@ -40,11 +42,13 @@ interface InputField {
   info?: {
     choices?: Record<string, string>
   }
+  input_property_name?: string
 }
 
 const initialState: GenerateState = {
   aiInputs: [],
   useImage: false,
+  useCustomDimension: false,
   dataInputs: {
     aiName: "",
     positivePrompt: "",
@@ -59,6 +63,7 @@ const initialState: GenerateState = {
     noise: 0.75,
     image: "",
   },
+  history: []
 }
 
 export const generateSlice = createSlice({
@@ -83,8 +88,14 @@ export const generateSlice = createSlice({
           action.payload.aiInputs[0].inputs[0].default.toString()
       }
     },
+    setHistory: (state, action: PayloadAction<{ history: ImageGroup[] }>) => {
+      state.history = action.payload.history
+    },
     setUseImage: (state, action: PayloadAction<{ useImage: boolean }>) => {
       state.useImage = action.payload.useImage
+    },
+    setUseCustomDimension: (state, action: PayloadAction<{ useCustomDimension: boolean }>) => {
+      state.useCustomDimension = action.payload.useCustomDimension
     },
     setPositivePrompt: (state, action: PayloadAction<{ value: string }>) => {
       if (state.dataInputs) {
@@ -111,6 +122,38 @@ export const generateSlice = createSlice({
       if (state.dataInputs) {
         state.dataInputs.width = action.payload.width
         state.dataInputs.height = action.payload.height
+      }
+    },
+    setHeight: (
+      state,
+      action: PayloadAction<{  height: number }>,
+    ) => {
+      if (state.dataInputs) {
+        state.dataInputs.height = action.payload.height
+      }
+    },
+    setSample: (
+      state,
+      action: PayloadAction<{  sample: string }>,
+    ) => {
+      if (state.dataInputs) {
+        state.dataInputs.sampleMethod = action.payload.sample
+      }
+    },
+    setStyle: (
+      state,
+      action: PayloadAction<{  style: string }>,
+    ) => {
+      if (state.dataInputs) {
+        state.dataInputs.style = action.payload.style
+            }
+    },
+    setWidth: (
+      state,
+      action: PayloadAction<{  width: number }>,
+    ) => {
+      if (state.dataInputs) {
+        state.dataInputs.width = action.payload.width
       }
     },
     setSteps: (state, action: PayloadAction<{ steps: number }>) => {
@@ -149,6 +192,12 @@ export const {
   setCFG,
   setNoise,
   setImageGenerate,
+  setHistory,
+  setUseCustomDimension,
+  setHeight,
+  setWidth,
+  setSample,
+  setStyle
 } = generateSlice.actions
 
 export default generateSlice.reducer

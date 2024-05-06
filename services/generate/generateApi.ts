@@ -43,7 +43,7 @@ export const generateApi = createApi({
       }) => ({
         url: "/api/v1/generate-image/text-to-image",
         method: "POST",
-        body,
+        body: { ...body, aiName:'comfyUI' },
       }),
     }),
     imageToImage: builder.mutation({
@@ -53,6 +53,14 @@ export const generateApi = createApi({
         body: formData,
       }),
     }),
+    getGenerationHistory: builder.mutation({
+        query: () => {
+          return {
+            url: "api/v1/images/generate-history",
+            method: "get",
+          };
+        }
+      }),
   }),
 })
 
@@ -60,4 +68,5 @@ export const {
   useAiInformationMutation,
   useTextToImageMutation,
   useImageToImageMutation,
+  useGetGenerationHistoryMutation
 } = generateApi

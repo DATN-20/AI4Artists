@@ -1,28 +1,17 @@
 "use client"
 
-import NavigationSideBar from "@/components/sidebar/NavigationSideBar"
 import DashboardContent from "@/components/dashboard/DashboardContent"
-import { selectAuth, logout } from "@/features/authSlice"
-import { useAppDispatch, useAppSelector } from "@/store/hooks"
-import { useRouter } from "next/navigation"
-import { toast } from "react-toastify"
-
+import NavigationSideBarCard from "@/components/sidebar/card/NavigationSideBarCard"
 export default function Dashboard() {
-  const router = useRouter()
 
-  // const { name } = useAppSelector(selectAuth)
-  const dispatch = useAppDispatch()
-  const handleLogout = () => {
-    dispatch(logout())
-    toast.success("User logout successfully")
-    router.push("/")
-  }
   return (
-    <div className="flex gap-4 p-4 lg:grid lg:grid-cols-10">
-      <div className="hidden lg:col-span-2 lg:block">
-        <NavigationSideBar />
+    <div className="flex gap-4 py-4">
+      <div className="hidden lg:block lg:min-w-[300px]">
+        <div className="no-scrollbar fixed left-0 top-0 flex h-screen min-h-screen w-[300px] flex-col gap-4 overflow-y-scroll p-4 ">
+          <NavigationSideBarCard />
+        </div>
       </div>
-      <div className="h-full w-full lg:col-span-8 lg:ml-4">
+      <div className="mr-4 h-full flex-1">
         <DashboardContent />
       </div>
     </div>

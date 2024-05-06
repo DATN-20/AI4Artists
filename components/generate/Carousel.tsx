@@ -21,7 +21,7 @@ const Carousel: React.FC<CarouselProps> = ({
   height,
 }) => {
   return (
-    <BaseCarousel className="ml-10 mt-5 w-full max-w-5xl">
+    <BaseCarousel className="relative mt-5 w-full">
       <CarouselContent>
         {generateImgData &&
           generateImgData
@@ -29,23 +29,29 @@ const Carousel: React.FC<CarouselProps> = ({
             .reverse()
             .map((item: any) => (
               <CarouselItem key={item.id} className="lg:basis-1/3">
-                <div className="p-1">
-                  <Card>
-                    <CardContent className="flex  items-center justify-center p-0">
+                <div className="relative p-1">
+                  <Card className="transform transition-transform duration-300 hover:scale-105">
+                    <CardContent className="flex items-center justify-center p-0">
                       <Image
                         alt="generated image"
                         width={width}
                         height={height}
                         src={item}
+                        className = {'rounded-lg'}
                       />
                     </CardContent>
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">
+                      <p className="text-center text-white">
+                        Your text overlay
+                      </p>
+                    </div>
                   </Card>
                 </div>
               </CarouselItem>
             ))}
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
+      <CarouselPrevious className="absolute left-0 top-1/2 h-12 w-12 -translate-y-1/2 transform" />
+      <CarouselNext className="absolute right-0 top-1/2 h-12 w-12 -translate-y-1/2 transform" />
     </BaseCarousel>
   )
 }

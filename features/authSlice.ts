@@ -1,14 +1,20 @@
 import { createSlice, PayloadAction} from "@reduxjs/toolkit";
 import { RootState } from "@/store/store";
 import { Root } from "react-dom/client";
+import { AlbumWithImages, ImageTotal, Person } from "@/types/profile";
 
 export interface AuthState{
   token: string | null;
+  userData: Person | null
+  totalAlbum: AlbumWithImages[] | null
+  totalImages: ImageTotal[] | null
 }
 
 const initialState:AuthState ={
-  token: null
-
+  token: null,
+  userData: null,
+  totalAlbum: null,
+  totalImages: null,
 }
 export const authSlice = createSlice({
   name:"auth",
@@ -27,12 +33,31 @@ export const authSlice = createSlice({
   logout: (state) => {
     localStorage.clear();
     state.token = null;
-  }
+  },
+  setUserData:(
+    state, action: PayloadAction<{userData: Person}>
+  ) => {
+    state.userData = action.payload.userData
+
+},
+
+setTotalAlbum:(
+  state, action: PayloadAction<{totalAlbum: AlbumWithImages[]}>
+) => {
+  state.totalAlbum = action.payload.totalAlbum
+  
+},
+setTotalImage:(
+  state, action: PayloadAction<{totalImage: ImageTotal[]}>
+) => {
+  state.totalImages = action.payload.totalImage
+
+},
   }
 })
 
 export const selectAuth = (state: RootState) => state.auth;
 
-export const {setUser, logout} = authSlice.actions;
+export const {setUser, logout, setUserData, setTotalAlbum, setTotalImage} = authSlice.actions;
 
 export default authSlice.reducer

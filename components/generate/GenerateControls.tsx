@@ -16,16 +16,19 @@ import {
 import { useAppDispatch } from "@/store/hooks"
 import { selectGenerate, setUseImage } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
+import { Button } from "../ui/button"
+import StyleDrawer from "./StyleDrawer"
 
 interface GenerateControlsProps {
-  handlePosPromptChange: (event: React.ChangeEvent<HTMLInputElement>) => void
-  handleNegPromptChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handlePosPromptChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
+  handleNegPromptChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
   handleImageChange: (image: File) => void
   handleGenerate: () => void
   setUseNegativePrompt: React.Dispatch<React.SetStateAction<boolean>>
   setUseImg2Img: React.Dispatch<React.SetStateAction<boolean>>
   useNegativePrompt: boolean
   useImg2Img: boolean
+  promptPos: string
 }
 
 const GenerateControls: React.FC<GenerateControlsProps> = ({
@@ -37,23 +40,24 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
   setUseImg2Img,
   useNegativePrompt,
   useImg2Img,
+  promptPos,
 }) => {
   const dispatch = useAppDispatch()
   const generateStates = useSelector(selectGenerate)
 
   return (
     <>
-      <div className="flex">
-        <input
-          type="text"
+      <div className="flex items-center">
+        <textarea
           placeholder="Type prompt here..."
+          value={promptPos}
           onChange={handlePosPromptChange}
-          className="flex-grow rounded-2xl p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
+          className="flex-grow resize-none rounded-2xl bg-[#2c2d31] p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
         />
         <button
           type="button"
           onClick={handleGenerate}
-          className="ml-4 hidden items-center justify-center rounded-full bg-purple-500 px-4 py-3 font-bold text-white hover:bg-purple-700 lg:flex"
+          className="ml-4 hidden items-center justify-center rounded-full bg-gradient-default px-4 py-3 font-bold text-white hover:bg-purple-700 lg:flex"
         >
           <span className="mr-2">✨</span>
           Generate
@@ -68,13 +72,13 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
         <Label htmlFor="negative-mode">Use Negative Prompt</Label>
       </div>
       {useNegativePrompt && (
-        <input
-          type="text"
+        <textarea
           placeholder="Type what you don't want to see in a image (a negative prompt)..."
           onChange={handleNegPromptChange}
-          className="mt-5 w-full flex-grow rounded-2xl p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
+          className="mt-5 w-full  flex-grow resize-none rounded-2xl bg-[#2c2d31] p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
         />
       )}
+
       <div className="mt-5 flex items-center space-x-2">
         <Switch
           id="image-mode"
@@ -86,6 +90,9 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
         />
         <Label htmlFor="image-mode">Use Image Generation</Label>
       </div>
+
+      <StyleDrawer />
+
       {useImg2Img && <ImageInput onImageChange={handleImageChange} />}
       <button
         type="button"

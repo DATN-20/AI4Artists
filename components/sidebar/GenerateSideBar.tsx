@@ -3,18 +3,19 @@
 import { useEffect } from "react"
 import CollapsibleSection from "../generate/CollapsibleSection"
 import ChooseInput from "../generate/input-component/ChooseInput"
-import ChooseThreeInput from "../generate/input-component/ChooseThreeInput"
 import InputSelect from "../generate/input-component/InputSelect"
-import ShortInput from "../generate/input-component/ShortInput"
-import ShortInputSelect from "../generate/input-component/ShortInputSelect"
 import SliderInput from "../generate/input-component/SliderInput"
-import { Card } from "../ui/card"
+import { Card, CardHeader } from "../ui/card"
 import { useSelector } from "react-redux"
 import { selectGenerate } from "@/features/generateSlice"
+import Image from "next/image"
+import { ArrowLeftFromLine } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export default function GenerateSideBar() {
   const generateStates = useSelector(selectGenerate)
   const aiInputs = generateStates.aiInputs
+  const router = useRouter()
   useEffect(() => {}, [])
 
   const dropdownData = [
@@ -71,8 +72,66 @@ export default function GenerateSideBar() {
     console.log("You selected:", value)
   }
 
+  const renderInput = (input: any) => {
+    const {
+      name,
+      type,
+      default: defaultValue,
+      input_property_name: propertyName,
+      info,
+    } = input
+
+    switch (type) {
+      case "choice":
+        return (
+          <CollapsibleSection title={name} key={propertyName}>
+            <InputSelect
+              data={info.choices}
+              onSelect={(value) => console.log(`Selected ${name}:`, value)}
+              type={propertyName}
+            />
+          </CollapsibleSection>
+        )
+
+      case "slider":
+        return (
+          <CollapsibleSection title={name} key={propertyName}>
+            <SliderInput
+              min={info.min}
+              max={info.max}
+              step={info.step}
+              defaultValue={defaultValue}
+              type={propertyName}
+            />
+          </CollapsibleSection>
+        )
+      default:
+        return null
+    }
+  }
+
   return (
-    <Card className="no-scrollbar flex w-full flex-col overflow-y-scroll border-none lg:border">
+    <Card className="flex w-full flex-col border-none lg:border">
+      <CardHeader className="relative mt-2 flex flex-row items-center justify-center space-y-0 p-0">
+        <ArrowLeftFromLine
+          className="absolute left-3 top-5 h-[42px] w-[42px]"
+          onClick={() => {
+            router.push("/dashboard")
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.cursor = "pointer"
+          }}
+        />
+        <Image
+          src="/logo.png"
+          alt="logo"
+          width={70}
+          height={70}
+          onClick={() => {
+            router.push("/dashboard")
+          }}
+        />
+      </CardHeader>
       {aiInputs && generateStates.useImage && (
         <CollapsibleSection title={"Noise"}>
           <SliderInput
@@ -84,56 +143,39 @@ export default function GenerateSideBar() {
           />
         </CollapsibleSection>
       )}
-      {aiInputs && (
-        <Card className="border-none lg:border">
-          <CollapsibleSection title={aiInputs[0]?.inputs[0].name}>
-            <InputSelect
-              data={aiInputs[0]?.inputs[0]?.info?.choices || {}}
-              onSelect={handleInputDropDownSelection}
-              type="style"
-            />
-          </CollapsibleSection>
-          <CollapsibleSection title={"Image Dimensions"}>
-            <ChooseInput
-              options={dimensionOptions}
-              onSelect={handleChooseInputSelection}
-              type="dimension"
-            />
-          </CollapsibleSection>
-          <CollapsibleSection title={"Number of Image"}>
-            <ChooseInput
-              options={numberImageOptions}
-              onSelect={handleChooseInputSelection}
-              type="numberOfImage"
-            />
-          </CollapsibleSection>
-          <CollapsibleSection title={"Steps"}>
-            <SliderInput
-              min={aiInputs[0]?.inputs[6].min || 1}
-              max={aiInputs[0]?.inputs[6].max || 50}
-              step={1}
-              defaultValue={20}
-              type="steps"
-            />
-          </CollapsibleSection>
-          <CollapsibleSection title={aiInputs[0]?.inputs[7].name}>
-            <InputSelect
-              data={aiInputs[0]?.inputs[7]?.info?.choices || {}}
-              onSelect={handleInputDropDownSelection}
-              type="sampling"
-            />
-          </CollapsibleSection>
-          <CollapsibleSection title={"CFG"}>
-            <SliderInput
-              min={aiInputs[0]?.inputs[8].min || 1}
-              max={aiInputs[0]?.inputs[8].max || 30}
-              step={1}
-              defaultValue={8}
-              type="cfg"
-            />
-          </CollapsibleSection>
-        </Card>
-      )}
+
+      {aiInputs &&
+        aiInputs.map((aiInput) => (
+          <Card key={aiInput.ai_name} className="border-none lg:border">
+            {aiInput.inputs.map((input) => {
+              if (
+                input.input_property_name === "image" ||
+                input.input_property_name === "noise" ||
+                input.input_property_name === "positivePrompt" ||
+                input.input_property_name === "negativePrompt" ||
+                input.input_property_name === "height"
+              ) {
+                return null
+              }
+              if (input.input_property_name === "width") {
+                return (
+                  <CollapsibleSection
+                    title={"Image Dimensions"}
+                    key="image-dimensions"
+                  >
+                    <ChooseInput
+                      options={dimensionOptions}
+                      onSelect={handleChooseInputSelection}
+                      type="dimension"
+                    />
+                  </CollapsibleSection>
+                )
+              }
+
+              return renderInput(input)
+            })}
+          </Card>
+        ))}
     </Card>
   )
 }

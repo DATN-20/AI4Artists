@@ -1,26 +1,39 @@
-import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
-import { authApi } from "../services/auth/authApi";
-import { setupListeners} from "@reduxjs/toolkit/query/react";
+import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit"
+import { authApi } from "../services/auth/authApi"
+import { setupListeners } from "@reduxjs/toolkit/query/react"
 import authReducer from "../features/authSlice"
-import {generateApi} from "../services/generate/generateApi";
+import { generateApi } from "../services/generate/generateApi"
 import generateReducer from "../features/generateSlice"
+import { dashboardApi } from "../services/dashboard/dashboardApi"
+import { profileApi } from "../services/profile/profileApi"
+import { imageApi } from "../services/image/imageApi"
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-  [authApi.reducerPath]:authApi.reducer,
-  generate: generateReducer,
-  [generateApi.reducerPath]: generateApi.reducer
+    [authApi.reducerPath]: authApi.reducer,
+    generate: generateReducer,
+    [generateApi.reducerPath]: generateApi.reducer,
+    [dashboardApi.reducerPath]: dashboardApi.reducer,
+    [profileApi.reducerPath]: profileApi.reducer,
+    [imageApi.reducerPath]: imageApi.reducer,
   },
-  middleware: (getDefaultMiddleware) =>getDefaultMiddleware().concat(authApi.middleware, generateApi.middleware),
-});
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(
+      authApi.middleware,
+      generateApi.middleware,
+      dashboardApi.middleware,
+      profileApi.middleware,
+      imageApi.middleware,
+    ),
+})
 
-export type AppDispatch = typeof store.dispatch;
-export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch
+export type RootState = ReturnType<typeof store.getState>
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,
   RootState,
   unknown,
   Action<string>
->;
-setupListeners(store.dispatch);
+>
+setupListeners(store.dispatch)

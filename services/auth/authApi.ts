@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/",
   }),
   endpoints: (builder) => ({
     loginUser: builder.mutation({
@@ -27,11 +27,8 @@ export const authApi = createApi({
           method: "post",
           body,
           responseHandler: "text"
-
         };
       },
-      
-      
     }),
     verifyUser: builder.mutation({
       query: (body: {
@@ -44,11 +41,33 @@ export const authApi = createApi({
           params:body
         };
       },
-      
-      
+    }),
+    forgetPasswordUser: builder.mutation({
+      query: (body: {
+        email: string;
+      }) => {
+        return {
+          url: "api/v1/auth/forget-password",
+          method: "post",
+          body,
+          responseHandler: "text"
+        };
+      },
+    }),
+    logoutUser: builder.mutation({
+      query: (user: {
+          id: number
+      }) => {
+        return {
+          url: "api/v1/auth/signout",
+          method: "post",
+          responseHandler: "text",
+          params:user
+        };
+      },
     }),
   }),
   
 });
 
-export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation } = authApi;
+export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation, useLogoutUserMutation, useForgetPasswordUserMutation } = authApi;

@@ -75,13 +75,15 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
           highlight: "hsl(var(--card-highlight))",
-        },
+        }
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
         "gradient-linear": "linear-gradient(var(--tw-gradient-stops))",
+        "gradient-default": "var(--linear-default)",
+        "gradient-default-to-r": "var(--linear-default-to-r)",
       },
       borderRadius: {
         lg: "var(--radius)",
