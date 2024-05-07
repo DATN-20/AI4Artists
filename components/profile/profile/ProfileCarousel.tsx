@@ -133,25 +133,26 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
                 done.
               </DialogDescription>
             </DialogHeader>
-            <div className="mt-4 flex flex-wrap gap-3">
+            <div className="mt-4 flex flex-wrap justify-center gap-3">
               {album?.map((albumItem) => (
-                <button
+                <Button
                   key={albumItem.album.id}
+                  type="button"
                   className={`rounded-md px-3 py-2 ${
                     selectedAlbumId === albumItem.album.id
-                      ? "bg-blue-500 text-white"
+                      ? "bg-violet-600 text-white"
                       : "bg-gray-200 text-gray-700"
-                  } transition-colors hover:bg-blue-600 hover:text-white focus:outline-none`}
+                  } transition-colors hover:bg-violet-600 hover:text-white focus:outline-none`}
                   onClick={() => handleAlbumSelect(albumItem.album.id)}
                 >
                   {albumItem.album.name}
-                </button>
+                </Button>
               ))}
             </div>
             <DialogFooter className="mt-4 flex justify-between">
               <Button
                 type="submit"
-                className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none"
+                className="rounded-md px-4 py-2 text-white focus:outline-none"
                 onClick={() => {
                   handleAddToAlbum()
                 }}
@@ -163,7 +164,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
                   type="button"
                   className="rounded-md bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400 focus:outline-none"
                 >
-                  Close
+                  Cancel
                 </Button>
               </DialogClose>
             </DialogFooter>

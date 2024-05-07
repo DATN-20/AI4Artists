@@ -324,7 +324,6 @@ const Profile = () => {
                                 </AlertDialogHeader>
 
                                 <AlertDialogFooter className="mt-5">
-                                  <AlertDialogCancel>Close</AlertDialogCancel>
                                   <AlertDialogAction>
                                     <Button
                                       type="submit"
@@ -333,6 +332,7 @@ const Profile = () => {
                                       Save
                                     </Button>
                                   </AlertDialogAction>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 </AlertDialogFooter>
                               </AlertDialogContent>
                             </AlertDialog>

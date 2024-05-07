@@ -69,7 +69,27 @@ export const profileApi = createApi({
         body: formData,
       }),
     }),
+    updateBackground: builder.mutation({
+      query: (formData) => ({
+        url: "/api/v1/users/me/background",
+        method: "POST",
+        body: formData,
+      }),
+    }),
+    updateProfile: builder.mutation({
+      query: (body: {
+        firstName: string | undefined
+        aliasName: string | undefined
+        lastName: string | undefined
+        socials: { socialName: string; socialLink: string }[] | undefined
+        
+      }) => ({
+        url: "/api/v1/users/me",
+        method: "PUT",
+        body,
+      }),
+    }),
   }),
 })
 
-export const { useGetProfileMutation, useGetProfileAlbumMutation , useGetTotalImageMutation, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation} = profileApi
+export const { useGetProfileMutation, useGetProfileAlbumMutation , useGetTotalImageMutation, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation} = profileApi
