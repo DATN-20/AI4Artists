@@ -127,6 +127,7 @@ export default function GenerateSideBar() {
           alt="logo"
           width={70}
           height={70}
+          className="cursor-pointer"
           onClick={() => {
             router.push("/dashboard")
           }}

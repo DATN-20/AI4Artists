@@ -1,13 +1,8 @@
 "use client"
 import { IoArrowBackOutline, IoTrashOutline } from "react-icons/io5"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import ProfileCarousel from "@/components/profile/profile/ProfileCarousel"
-import {  useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useAppDispatch } from "@/store/hooks"
 import { useSelector } from "react-redux"
 import { selectGenerate } from "@/features/generateSlice"
@@ -31,7 +26,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { AlbumWithImages } from "@/types/profile"
 import PopupCarousel from "@/components/profile/profile/PopupCarousel"
 import ProfileHeader from "@/components/profile/profile/ProfileHeader"
-import AlbumCard from "@/components/profile/profile/AlbumCard"
+import AlbumCard from "@/components/profile/profile/Album/AlbumCard"
 import { Button } from "@/components/ui/button"
 import { IoAddCircleOutline } from "react-icons/io5"
 import {
@@ -190,27 +185,32 @@ const Profile = () => {
               >
                 <ProfileHeader userData={userData} />
                 <TabsContent value="introduction">
-                  <h1 className=" text-2xl font-bold">Your Images</h1>
-                  {imagesData && (
-                    <ProfileCarousel
-                      generateImgData={imagesData}
-                      width={width}
-                      height={height}
-                      album={authStates.totalAlbum}
-                    />
-                  )}
+                  <div className="mt-8">
+                    <span className="bg-gradient-default bg-clip-text text-4xl font-black text-transparent">
+                      Your Images
+                    </span>
+                  </div>
 
-                  <TabsList className="mb-5 mt-5 bg-transparent">
-                    <TabsTrigger value="album">
-                      <div>
-                        <h1 className="text-2xl font-bold text-black dark:text-white">
-                          Your Albums
-                        </h1>
-                      </div>
+                  <div className="mt-3 flex flex-col rounded-xl">
+                    {imagesData && (
+                      <ProfileCarousel
+                        generateImgData={imagesData}
+                        width={width}
+                        height={height}
+                        album={authStates.totalAlbum}
+                      />
+                    )}
+                  </div>
+
+                  <TabsList className="mb-5 mt-8 bg-transparent px-0">
+                    <TabsTrigger value="album" className="px-0">
+                      <span className="bg-gradient-default bg-clip-text text-4xl font-black text-transparent">
+                        Your Album
+                      </span>
                     </TabsTrigger>
                   </TabsList>
 
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  <div className="mt-3 grid grid-cols-1 gap-4 p-1 md:grid-cols-3">
                     {authStates.totalAlbum?.map((album: any, index: number) => (
                       <AlbumCard
                         key={index}
@@ -227,8 +227,8 @@ const Profile = () => {
                   <ProfileContent imagesData={imagesData} />
                 </TabsContent>
                 <TabsContent value="album">
-                  <div className="min-h-96 rounded-lg bg-zinc-900">
-                    <div className="mb-5 flex justify-between">
+                  <div className="min-h-96 rounded-lg">
+                    <div className="mb-5 mt-8 flex justify-between">
                       <div className="flex">
                         <TabsList className=" h-full bg-transparent">
                           <TabsTrigger
@@ -240,17 +240,13 @@ const Profile = () => {
                             </h1>
                           </TabsTrigger>
                         </TabsList>
-                        <div className=" flex items-center justify-center text-2xl font-bold">
+                        <div className=" flex items-center justify-center text-3xl font-bold">
                           Albums
                         </div>
                       </div>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button
-                            type="button"
-                            variant="default"
-                            className="mr-5 mt-5"
-                          >
+                          <Button type="button" variant="default">
                             <IoAddCircleOutline className="mr-2" size={24} />
                             Add album
                           </Button>
@@ -299,16 +295,16 @@ const Profile = () => {
                       </AlertDialog>
                     </div>
                     {authStates.totalAlbum?.map((item: any, index: number) => (
-                      <div key={index} className="mb-10 ">
+                      <div key={index} className="mb-10 rounded-xl bg-card">
                         <div className="flex justify-between">
-                          <div className="mb-5 ml-5">
-                            Album: {item.album.name}
+                          <div className="my-5 ml-5 text-2xl font-semibold">
+                            {item.album.name}
                           </div>
                           <div>
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
                                 <IoTrashOutline
-                                  className="mr-5 cursor-pointer"
+                                  className="mr-5 mt-5 cursor-pointer"
                                   size={24}
                                   onClick={() => {
                                     setSelectedAlbumId(item.album.id)
@@ -339,14 +335,14 @@ const Profile = () => {
                           </div>
                         </div>
 
-                        <div className="grid h-full grid-cols-1 items-center justify-center gap-2 bg-zinc-900 pl-5 pr-5 md:grid-cols-4">
+                        <div className="grid h-full grid-cols-1 items-center justify-center gap-2 pl-5 pr-5 md:grid-cols-4">
                           {item.images && item.images.length > 0 ? (
                             <>
                               {item.images
                                 .slice(0, 3)
                                 .map((image: any, imageIndex: number) => (
                                   <div className="relative" key={imageIndex}>
-                                    <div className="flex justify-center bg-zinc-900">
+                                    <div className="flex justify-center bg-card">
                                       <Image
                                         src={image.image.url}
                                         alt={`Image ${imageIndex + 1}`}

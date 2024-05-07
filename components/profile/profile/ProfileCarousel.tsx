@@ -84,7 +84,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
 
   return (
     <Dialog>
-      <Carousel className="relative mt-5 w-full">
+      <Carousel className="relative mt-3 w-full">
         <CarouselContent>
           {generateImgData &&
             generateImgData.map((item: any) => (
@@ -170,8 +170,8 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
             </DialogFooter>
           </DialogContent>
         </CarouselContent>
-        <CarouselPrevious className="absolute left-0 top-1/2 h-12 w-12 -translate-y-1/2 transform rounded-md	" />
-        <CarouselNext className="absolute right-0 top-1/2 h-12 w-12 -translate-y-1/2 transform rounded-md" />
+        <CarouselPrevious className="absolute left-0 top-1/2 h-12 w-12 -translate-y-1/2 transform rounded-xl" />
+        <CarouselNext className="absolute right-0 top-1/2 h-12 w-12 -translate-y-1/2 transform rounded-xl" />
       </Carousel>
     </Dialog>
   )

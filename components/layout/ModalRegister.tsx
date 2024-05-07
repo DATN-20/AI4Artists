@@ -7,7 +7,7 @@ import NextImage from "next/image"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { DialogContent } from "../ui/dialog"
+import { DialogContent, DialogContentLoginModal } from "../ui/dialog"
 import {
   Form,
   FormControl,
@@ -104,67 +104,48 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
   // }, [isRegisterError])
 
   return (
-    <DialogContent
-      className="border-none p-0 lg:min-w-[950px]"
-      style={{
-        borderRadius: 50,
-      }}
+    <DialogContentLoginModal
+      className="border-none p-0 lg:min-w-[950px] "
+      style={{ borderRadius: 50 }}
     >
       <div className="flex h-full w-full">
-        <div
-          className=" hidden h-full w-1/2 rounded-l-md bg-gradient-to-r from-purple-500 to-indigo-900 lg:block"
-          style={{
-            borderTopLeftRadius: 50,
-            borderBottomLeftRadius: 50,
-          }}
-        >
+        <div className=" hidden h-full w-1/2 rounded-l-md rounded-bl-[50px] rounded-tl-[50px] bg-gradient-to-r from-purple-500 to-indigo-900 lg:block">
           <div className="relative flex h-full w-full ">
             <NextImage
               alt="background image"
               src={BgImage}
-              className="absolute z-10 h-full w-full"
-              style={{
-                borderTopLeftRadius: 30,
-                borderBottomLeftRadius: 30,
-              }}
+              className="border-tl-[30px] border-bl-[30px] absolute z-10 h-full w-full"
             />
-            <div className="relative z-20 flex flex-col items-center justify-center p-[16px] ">
-              <NextImage
-                alt="logo"
-                width={200}
-                height={200}
-                src="/logo-login.png"
-              ></NextImage>
-              <div className="mt-5 text-2xl font-bold text-white ">
-                <div className="mt-5 flex text-center ">
-                  {/* <CheckCircleOutlined />{" "} */}
-                  <p className="">Over 50 Free Image Generations Daily</p>
-                </div>
+            <div className="z-20 mt-6 flex h-full w-full flex-col items-center">
+              <div className="my-6 flex flex-col items-center gap-4">
+                <NextImage
+                  alt="logo"
+                  width={120}
+                  height={120}
+                  src="/logo.png"
+                />
+                <span className="bg-gradient-default bg-clip-text text-5xl font-black text-transparent">
+                  AI Artist
+                </span>
+              </div>
 
-                <br />
-                <div className="mt-5 flex text-center ">
-                  {/* <CheckCircleOutlined />{" "} */}
-                  <p className="">Over 50 Free Image Generations Daily</p>
-                </div>
-                <br />
-                <div className="mt-5 flex text-center ">
-                  {/* <CheckCircleOutlined />{" "} */}
-                  <p className="">Over 50 Free Image Generations Daily</p>
-                </div>
-                <br />
-                <div className="mt-5 flex  text-center">
-                  {/* <CheckCircleOutlined />{" "} */}
-                  <p className="">Over 50 Free Image Generations Daily</p>
-                </div>
+              <div className="mt-5 flex h-full flex-col  gap-12 text-2xl font-bold text-white">
+                <p>✨ 50+ Free Image Generations Daily</p>
+                <p>✨ Generate Image in your own Style</p>
+                <p>✨ Generate characters with pose</p>
+                <p>✨ Manage your own profile space</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mx-auto w-80 pb-5 pt-10">
+        <div className="mx-auto w-full px-8 py-5 md:w-1/2">
           <Form {...form}>
-            <h1 className="mb-5 text-center text-3xl font-bold">Sign Up</h1>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <h1 className="my-5 text-center text-3xl font-bold">Sign Up</h1>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-6"
+            >
               <FormField
                 control={form.control}
                 name="email"
@@ -242,7 +223,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
 
               <p className="mb-10 text-center">
                 Already have an account?{" "}
-                <a href="#" className="text-primary-blue" onClick={onClose}>
+                <a href="#" className="text-secondary" onClick={onClose}>
                   Sign in
                 </a>
               </p>
@@ -250,7 +231,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
           </Form>
         </div>
       </div>
-    </DialogContent>
+    </DialogContentLoginModal>
   )
 }
 

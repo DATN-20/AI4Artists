@@ -37,7 +37,7 @@ const Carousel: React.FC<CarouselProps> = ({
                         width={width}
                         height={height}
                         src={item}
-                        className = {'rounded-lg'}
+                        className={"rounded-lg"}
                       />
                     </CardContent>
                     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">
@@ -50,8 +50,13 @@ const Carousel: React.FC<CarouselProps> = ({
               </CarouselItem>
             ))}
       </CarouselContent>
-      <CarouselPrevious className="absolute left-0 top-1/2 h-12 w-12 -translate-y-1/2 transform" />
-      <CarouselNext className="absolute right-0 top-1/2 h-12 w-12 -translate-y-1/2 transform" />
+
+      {generateImgData && generateImgData.length > 3 && (
+        <>
+          <CarouselPrevious className="absolute left-0 top-1/2 h-12 w-12 -translate-y-1/2 transform rounded-xl" />
+          <CarouselNext className="absolute right-0 top-1/2 h-12 w-12 -translate-y-1/2 transform rounded-xl" />
+        </>
+      )}
     </BaseCarousel>
   )
 }
