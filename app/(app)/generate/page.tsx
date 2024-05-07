@@ -15,12 +15,16 @@ import {
   setUseImage,
   setPositivePrompt,
   setNegativePrompt,
+  setHistory,
 } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
 import { Skeleton } from "../../../components/ui/skeleton"
 import Carousel from "@/components/generate/Carousel"
 import GenerateControls from "@/components/generate/GenerateControls"
 import Loading from "@/components/Loading"
+import HistoryCarousel from "@/components/generate/HistoryCarousel"
+import { useGetProfileAlbumMutation } from "@/services/profile/profileApi"
+import { selectAuth, setTotalAlbum } from "@/features/authSlice"
 
 interface AIField {
   ai_name: string | null
@@ -48,7 +52,7 @@ export default function Generate() {
   const [promptPos, setPromptPos] = useState("")
   const [promptNeg, setPromptNeg] = useState("")
   const [isLoadingInformation, setIsLoadingInformation] = useState(true)
-
+  const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
   const {
     aiName,
     positivePrompt,
@@ -64,13 +68,20 @@ export default function Generate() {
     image,
   } = generateStates.dataInputs || {}
 
-  const [getGenerationHistory, { data: historyData, error: historyError }] =
-    useGetGenerationHistoryMutation()
+  const [
+    getGenerationHistory,
+    { data: historyData, error: historyError, isSuccess: getHistorySuccess },
+  ] = useGetGenerationHistoryMutation()
+  const authStates = useSelector(selectAuth)
+
+  const fetchHistoryData = async () => {
+    await getGenerationHistory(undefined)
+  }
 
   const handleImageChange = (image: File) => {
     // Do something with the selected image file
   }
-  const handlePosPromptChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handlePosPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const prompt = event.target.value
     setPromptPos(prompt)
     dispatch(setPositivePrompt({ value: prompt }))
@@ -93,15 +104,10 @@ export default function Generate() {
   const [textToImage] = useTextToImageMutation()
   const [imageToImage] = useImageToImageMutation()
 
-  const [generateImgData, setGenerateImgData] = useState<string[] | null>([
-    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
-    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
-    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
-    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
-    "https://images.nightcafe.studio/jobs/KT9epXSL64glQXmXwWBK/KT9epXSL64glQXmXwWBK--1--rfvqe.jpg?tr=w-1600,c-at_max",
-  ])
+  const [generateImgData, setGenerateImgData] = useState<string[] | null>(null)
 
   const handleGenerate = async () => {
+    fetchHistoryData()
     setIsLoading(true)
     setIsError(false)
 
@@ -157,7 +163,7 @@ export default function Generate() {
     }
   }
 
-  const handleNegPromptChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleNegPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const prompt = event.target.value
     setPromptNeg(prompt)
     dispatch(setNegativePrompt({ value: prompt }))
@@ -165,6 +171,11 @@ export default function Generate() {
   const [aiInformation, { data: inputData }] = useAiInformationMutation()
 
   useEffect(() => {
+    const promptValue = localStorage.getItem("prompt")
+    localStorage.removeItem("prompt")
+    if (promptValue) {
+      setPromptPos(promptValue)
+    }
     const fetchAIData = async () => {
       await aiInformation(undefined)
     }
@@ -172,9 +183,11 @@ export default function Generate() {
     const fetchHistoryData = async () => {
       await getGenerationHistory(undefined)
     }
-    fetchAIData()
     fetchHistoryData()
-    console.log(historyData)
+    const fetchAlbumData = async () => {
+      await getAlbum(undefined)
+    }
+    fetchAlbumData()
   }, [])
 
   useEffect(() => {
@@ -184,6 +197,16 @@ export default function Generate() {
     }
   }, [inputData])
 
+  useEffect(() => {
+    if (historyData) {
+      dispatch(setHistory({ history: historyData }))
+    }
+  }, [historyData])
+  useEffect(() => {
+    if (albumData) {
+      dispatch(setTotalAlbum({ totalAlbum: albumData }))
+    }
+  }, [albumData])
   return (
     <>
       {isLoadingInformation ? (
@@ -191,7 +214,7 @@ export default function Generate() {
       ) : (
         <div className="block gap-4 p-4 lg:grid lg:grid-cols-10">
           <div className="hidden lg:col-span-2 lg:block">
-            <div className="fixed left-0 top-0 h-screen min-h-screen w-1/5 p-4">
+            <div className="no-scrollbar fixed left-0 top-0 h-screen min-h-screen w-1/5 overflow-y-scroll p-4">
               <GenerateSideBar />
             </div>
           </div>
@@ -205,6 +228,7 @@ export default function Generate() {
               setUseImg2Img={setUseImg2Img}
               useNegativePrompt={useNegativePrompt}
               useImg2Img={useImg2Img}
+              promptPos={promptPos}
             />
             {isLoading ? (
               <Skeleton
@@ -215,11 +239,23 @@ export default function Generate() {
               generateImgData && (
                 <Carousel
                   generateImgData={generateImgData}
-                  width={width}
-                  height={height}
+                  width={512}
+                  height={512}
                 />
               )
             )}
+            {historyData &&
+              historyData.map((item: any, index: number) => (
+                <HistoryCarousel
+                  key={index}
+                  generateImgData={item.images}
+                  width={512}
+                  height={512}
+                  styleAlbum={item.style}
+                  prompt={item.prompt}
+                  album={authStates.totalAlbum}
+                />
+              ))}
           </div>
         </div>
       )}

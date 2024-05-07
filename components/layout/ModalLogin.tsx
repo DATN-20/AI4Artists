@@ -92,13 +92,18 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
     if (isLoginSuccess) {
       toast.success("User login successfully")
       dispatch(setUser({ token: loginData.access_token, name: "Hao" }))
-      router.push("/dashboard")
+      const promptValue = localStorage.getItem("prompt")
+      if (promptValue) {
+        router.push("/generate")
+      } else {
+        router.push("/dashboard")
+      }
     }
   }, [isLoginSuccess])
 
   return (
     <DialogContent
-      className="p-0 lg:min-w-[950px] border-none"
+      className="border-none p-0 lg:min-w-[950px]"
       style={{ borderRadius: 50 }}
     >
       <div className="flex h-full w-full">

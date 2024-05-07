@@ -1,8 +1,7 @@
-import { number } from "zod"
 
 export type DashboardImage = {
   id: number
-  promp: string
+  prompt: string
   type: string
   url: string
   userId: number
@@ -17,4 +16,6 @@ export type DashboardImage = {
   }
   is_liked: boolean
   like_number: number
+  remove_background: string
+  upscale: string
 }
