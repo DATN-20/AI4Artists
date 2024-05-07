@@ -132,7 +132,6 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
               <DialogFooter>
                 <Button
                   type="submit"
-                  className="bg-grey border-inherit	"
                   onClick={() => {
                     handleDeleteFromAlbum()
                   }}
@@ -141,8 +140,11 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
                 </Button>
 
                 <DialogClose asChild>
-                  <Button type="button" className="bg-grey border-inherit	">
-                    Close
+                  <Button
+                    type="button"
+                    className="rounded-md bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400 focus:outline-none"
+                  >
+                    Cancel
                   </Button>
                 </DialogClose>
                 {/* </DialogClose> */}
