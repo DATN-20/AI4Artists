@@ -194,8 +194,8 @@ const Profile = () => {
                     {imagesData && (
                       <ProfileCarousel
                         generateImgData={imagesData}
-                        width={width}
-                        height={height}
+                        width={512}
+                        height={512}
                         album={authStates.totalAlbum}
                       />
                     )}
