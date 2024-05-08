@@ -28,22 +28,12 @@ export const generateApi = createApi({
       },
     }),
     textToImage: builder.mutation({
-      query: (body: {
-        aiName: string | undefined
-        positivePrompt: string | undefined
-        negativePrompt: string | undefined
-        style: string | undefined
-        width: number | undefined
-        height: number | undefined
-        numberOfImage: number | undefined
-        steps: number | undefined
-        sampleMethod: string | undefined
-        cfg: number | undefined
-        noise: number | undefined
-      }) => ({
+      query: (body
+        
+      ) => ({
         url: "/api/v1/generate-image/text-to-image",
         method: "POST",
-        body: { ...body, aiName:'comfyUI' },
+        body: body,
       }),
     }),
     imageToImage: builder.mutation({

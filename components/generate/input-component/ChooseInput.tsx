@@ -1,11 +1,11 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import clsx from "clsx"
 import { Button } from "../../ui/button"
 import { useAppDispatch } from "@/store/hooks"
 import {
   selectGenerate,
   setDimension,
-  setNumberOfImage,
+  setField,
   setUseCustomDimension,
 } from "@/features/generateSlice"
 import ShortInput from "./ShortInput"
@@ -20,12 +20,10 @@ type Option = {
 
 const ChooseInput = ({
   options,
-  onSelect,
   type,
 }: {
   options: Option[]
   type: string
-  onSelect: (value: string) => void
 }) => {
   const [selectedValue, setSelectedValue] = useState<string>(options[0].value)
   const dispatch = useAppDispatch()
@@ -33,9 +31,8 @@ const ChooseInput = ({
 
   const handleSelect = (value: string, type: string) => {
     setSelectedValue(value)
-    onSelect(value)
     if (type === "numberOfImage") {
-      dispatch(setNumberOfImage({ numberOfImage: Number(value) }))
+      dispatch(setField({ field: "numberOfImage", value: Number(value) }))
     } else if (type === "dimension") {
       if (value === "1") {
         dispatch(setDimension({ width: 512, height: 512 }))
@@ -52,6 +49,9 @@ const ChooseInput = ({
       }
     }
   }
+  useEffect(() => {
+    dispatch(setDimension({ width: 512, height: 512 }))
+  }, [])
 
   return (
     <div className="-mx-2 flex flex-wrap items-center">

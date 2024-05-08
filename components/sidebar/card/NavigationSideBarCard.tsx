@@ -161,6 +161,7 @@ const NavigationSideBarCard = () => {
                     width={40}
                     height={40}
                     alt="User Avatar"
+                    className="rounded-full"
                   />
                 ) : (
                   <IoPersonCircleSharp size={40} />

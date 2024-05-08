@@ -1,14 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { Slider } from "../../ui/slider"
 import { useAppDispatch } from "@/store/hooks"
-import {
-  setCFG,
-  setHeight,
-  setNoise,
-  setNumberOfImage,
-  setSteps,
-  setWidth,
-} from "@/features/generateSlice"
+import { setField } from "@/features/generateSlice"
 
 const SliderInput = ({
   min,
@@ -30,21 +23,25 @@ const SliderInput = ({
 
   const handleValueChange = (valueArray: number[], type: string) => {
     setValue(valueArray[0])
-    if (type === "steps") {
-      dispatch(setSteps({ steps: valueArray[0] }))
-    } else if (type === "cfg") {
-      dispatch(setCFG({ cfg: valueArray[0] }))
-    } else if (type === "noise") {
-      dispatch(setNoise({ noise: valueArray[0] }))
-    } else if (type === "height") {
-      dispatch(setHeight({ height: valueArray[0] }))
-    } else if (type === "width") {
-      dispatch(setWidth({ width: valueArray[0] }))
-    } else if (type === "numberOfImage") {
-      dispatch(setNumberOfImage({ numberOfImage: valueArray[0] }))
-    }
-  }
+    dispatch(setField({ field: type, value: valueArray[0] }))
 
+    // if (type === "steps") {
+    //   dispatch(setField({ field:typesteps: valueArray[0] }))
+    // } else if (type === "cfg") {
+    //   dispatch(setCFG({ cfg: valueArray[0] }))
+    // } else if (type === "noise") {
+    //   dispatch(setNoise({ noise: valueArray[0] }))
+    // } else if (type === "height") {
+    //   dispatch(setHeight({ height: valueArray[0] }))
+    // } else if (type === "width") {
+    //   dispatch(setWidth({ width: valueArray[0] }))
+    // } else if (type === "numberOfImage") {
+    //   dispatch(setNumberOfImage({ numberOfImage: valueArray[0] }))
+    // }
+  }
+  useEffect(() => {
+    dispatch(setField({ field: type, value: value }))
+  }, [])
   return (
     <>
       <div className="flex w-full justify-between">
