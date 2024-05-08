@@ -8,9 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { setSample, setStyle } from "@/features/generateSlice"
+import { setField } from "@/features/generateSlice"
 import { useAppDispatch } from "@/store/hooks"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 type InputSelectProps = {
   data: Record<string, string>
@@ -25,12 +25,22 @@ const InputSelect = ({ data, onSelect, type }: InputSelectProps) => {
   const handleSelect = (value: string) => {
     setSelected(value)
     onSelect(value)
-    if (type === "style") {
-      dispatch(setStyle({ style: value }))
-    } else if (type === "sampleMethos") {
-      dispatch(setSample({ sample: value }))
-    }
+    dispatch(setField({ field: type, value: value }))
+
+    // if (type === "style") {
+    //   dispatch(setStyle({ style: value }))
+    // } else if (type === "sampleMethos") {
+    //   dispatch(setSample({ sample: value }))
+    // }
   }
+
+  useEffect(() => {
+    const defaultValue = Object.values(data)[0]
+    if (defaultValue) {
+      dispatch(setField({ field: type, value: defaultValue }))
+      setSelected(defaultValue)
+    }
+  }, [])
 
   const dataArray = Object.entries(data)
 

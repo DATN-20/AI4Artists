@@ -163,7 +163,6 @@ const Profile = () => {
   }, [selectedAlbum])
 
   const [generateImgData, setGenerateImgData] = useState<string[] | null>(null)
-  const { width, height } = generateStates.dataInputs || {}
   return (
     <>
       {isLoading ? (
@@ -195,8 +194,8 @@ const Profile = () => {
                     {imagesData && (
                       <ProfileCarousel
                         generateImgData={imagesData}
-                        width={width}
-                        height={height}
+                        width={512}
+                        height={512}
                         album={authStates.totalAlbum}
                       />
                     )}
@@ -215,8 +214,8 @@ const Profile = () => {
                       <AlbumCard
                         key={index}
                         albumData={album}
-                        width={width}
-                        height={height}
+                        width={512}
+                        height={512}
                         setSelectedAlbum={setSelectedAlbum}
                         selectedAlbum={selectedAlbum}
                       />
@@ -346,8 +345,8 @@ const Profile = () => {
                                       <Image
                                         src={image.image.url}
                                         alt={`Image ${imageIndex + 1}`}
-                                        width={width}
-                                        height={height}
+                                        width={512}
+                                        height={512}
                                         className="max-h-full rounded-md"
                                       />
                                     </div>
@@ -365,8 +364,8 @@ const Profile = () => {
                                   <Image
                                     src={item.images[3].image.url}
                                     alt=""
-                                    width={width}
-                                    height={height}
+                                    width={512}
+                                    height={512}
                                     className="max-h-full rounded-md"
                                   />
                                 )}
@@ -386,8 +385,8 @@ const Profile = () => {
                               selectedAlbum
                             ]?.images
                           }
-                          width={width}
-                          height={height}
+                          width={512}
+                          height={512}
                           setSelectedAlbum={setSelectedAlbum}
                           selectedAlbum={selectedAlbum}
                         />

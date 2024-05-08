@@ -13,9 +13,11 @@ import {
   selectGenerate,
   setInputs,
   setUseImage,
-  setPositivePrompt,
-  setNegativePrompt,
+  // setPositivePrompt,
+  // setNegativePrompt,
   setHistory,
+  setAIName,
+  setField,
 } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
 import { Skeleton } from "../../../components/ui/skeleton"
@@ -53,21 +55,20 @@ export default function Generate() {
   const [promptNeg, setPromptNeg] = useState("")
   const [isLoadingInformation, setIsLoadingInformation] = useState(true)
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
-  const {
-    aiName,
-    positivePrompt,
-    negativePrompt,
-    style,
-    width,
-    height,
-    numberOfImage,
-    steps,
-    sampleMethod,
-    cfg,
-    noise,
-    image,
-  } = generateStates.dataInputs || {}
-
+  // const {
+  //   positivePrompt,
+  //   negativePrompt,
+  //   style,
+  //   width,
+  //   height,
+  //   numberOfImage,
+  //   steps,
+  //   sampleMethod,
+  //   cfg,
+  //   noise,
+  //   image,
+  // } = generateStates.dataInputs || {}
+  const ai_name = generateStates.ai_name || ""
   const [
     getGenerationHistory,
     { data: historyData, error: historyError, isSuccess: getHistorySuccess },
@@ -84,8 +85,73 @@ export default function Generate() {
   const handlePosPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const prompt = event.target.value
     setPromptPos(prompt)
-    dispatch(setPositivePrompt({ value: prompt }))
+    dispatch(setField({ field: "positivePrompt", value: prompt }))
   }
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
+
+  const [textToImage] = useTextToImageMutation()
+  const [imageToImage] = useImageToImageMutation()
+
+  const [generateImgData, setGenerateImgData] = useState<string[] | null>(null)
+
+  // const handleGenerate = async () => {
+  //   fetchHistoryData()
+  //   setIsLoading(true)
+  //   setIsError(false)
+
+  //   let formData = new FormData()
+
+  //   formData.append("aiName", ai_name || "")
+  //   formData.append("positivePrompt", positivePrompt || "")
+  //   formData.append("negativePrompt", negativePrompt || "")
+  //   formData.append("style", style || "")
+  //   formData.append("width", width?.toString() || "")
+  //   formData.append("height", height?.toString() || "")
+  //   formData.append("numberOfImage", numberOfImage?.toString() || "")
+  //   formData.append("steps", steps?.toString() || "")
+  //   formData.append("sampleMethod", sampleMethod || "")
+  //   formData.append("cfg", cfg?.toString() || "")
+  //   formData.append("noise", noise?.toString() || "")
+
+  //   if (useImg2Img) {
+  //     const base64String = generateStates.dataInputs?.image
+  //     if (base64String) {
+  //       const filename = "image.jpg"
+  //       const imageFile = base64StringToFile(base64String, filename)
+  //       formData.append("image", imageFile)
+  //     }
+  //   }
+  //   const requestBody = {
+  //     aiName: ai_name,
+  //     positivePrompt,
+  //     negativePrompt,
+  //     style,
+  //     width: width,
+  //     height: height,
+  //     numberOfImage: numberOfImage,
+  //     steps: steps,
+  //     sampleMethod,
+  //     cfg: cfg,
+  //     noise: noise,
+  //   }
+
+  //   try {
+  //     let result
+  //     if (useImg2Img) {
+  //       result = await imageToImage(formData).unwrap()
+  //     } else {
+  //       result = await textToImage(requestBody).unwrap()
+  //     }
+  //     setGenerateImgData(result)
+  //   } catch (error) {
+  //     console.error("Error generating image:", error)
+  //     setIsError(true)
+  //   } finally {
+  //     setIsLoading(false)
+  //   }
+  // }
 
   function base64StringToFile(base64String: string, filename: string): File {
     const byteString = atob(base64String.split(",")[1])
@@ -98,53 +164,56 @@ export default function Generate() {
     return new File([blob], filename)
   }
 
-  const [isLoading, setIsLoading] = useState(false)
-  const [isError, setIsError] = useState(false)
-
-  const [textToImage] = useTextToImageMutation()
-  const [imageToImage] = useImageToImageMutation()
-
-  const [generateImgData, setGenerateImgData] = useState<string[] | null>(null)
-
   const handleGenerate = async () => {
     fetchHistoryData()
     setIsLoading(true)
     setIsError(false)
 
-    let formData = new FormData()
+    const formData = new FormData()
 
-    formData.append("aiName", aiName || "")
-    formData.append("positivePrompt", positivePrompt || "")
-    formData.append("negativePrompt", negativePrompt || "")
-    formData.append("style", style || "")
-    formData.append("width", width?.toString() || "")
-    formData.append("height", height?.toString() || "")
-    formData.append("numberOfImage", numberOfImage?.toString() || "")
-    formData.append("steps", steps?.toString() || "")
-    formData.append("sampleMethod", sampleMethod || "")
-    formData.append("cfg", cfg?.toString() || "")
-    formData.append("noise", noise?.toString() || "")
-
+    if (generateStates.dataInputs) {
+      generateStates.dataInputs.forEach((input, index) => {
+        const { name, value } = input
+        formData.append(name, (value as any).toString())
+      })
+      formData.append("aiName", generateStates.ai_name as any)
+    }
     if (useImg2Img) {
-      const base64String = generateStates.dataInputs?.image
-      if (base64String) {
-        const filename = "image.jpg"
-        const imageFile = base64StringToFile(base64String, filename)
-        formData.append("image", imageFile)
+      const imageInput = generateStates.dataInputs?.find(
+        (input: any) => input.name === "image",
+      )
+      if (imageInput) {
+        const base64String = (imageInput as any).value
+        if (base64String) {
+          const filename = "image.jpg"
+          const imageFile = base64StringToFile(base64String, filename)
+          formData.append("image", imageFile)
+        }
       }
     }
-    const requestBody = {
-      aiName,
-      positivePrompt,
-      negativePrompt,
-      style,
-      width: width,
-      height: height,
-      numberOfImage: numberOfImage,
-      steps: steps,
-      sampleMethod,
-      cfg: cfg,
-      noise: noise,
+
+    // const requestBody = {
+    //   aiName: ai_name,
+    //   positivePrompt,
+    //   negativePrompt,
+    //   style,
+    //   width: width,
+    //   height: height,
+    //   numberOfImage: numberOfImage,
+    //   steps: steps,
+    //   sampleMethod,
+    //   cfg: cfg,
+    //   noise: noise,
+    // }
+
+    const requestBody: Record<string, any> = {}
+
+    if (generateStates.dataInputs) {
+      generateStates.dataInputs.forEach((input, index) => {
+        const { name, value } = input
+        requestBody[name] = value
+      })
+      requestBody["aiName"] = generateStates.ai_name
     }
 
     try {
@@ -166,7 +235,7 @@ export default function Generate() {
   const handleNegPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const prompt = event.target.value
     setPromptNeg(prompt)
-    dispatch(setNegativePrompt({ value: prompt }))
+    dispatch(setField({ field: "negativePrompt", value: prompt }))
   }
   const [aiInformation, { data: inputData }] = useAiInformationMutation()
 
@@ -192,7 +261,8 @@ export default function Generate() {
 
   useEffect(() => {
     if (inputData) {
-      dispatch(setInputs({ aiInputs: inputData }))
+      dispatch(setAIName({ ai_name: inputData[0].ai_name }))
+      dispatch(setInputs({ aiInputs: inputData[0].inputs }))
       setIsLoadingInformation(false)
     }
   }, [inputData])
@@ -233,7 +303,7 @@ export default function Generate() {
             {isLoading ? (
               <Skeleton
                 className="mt-5 rounded-xl"
-                style={{ width: width, height: height }}
+                style={{ width: 512, height: 512 }}
               />
             ) : (
               generateImgData && (
