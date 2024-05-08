@@ -55,16 +55,13 @@ const NavigationSideBarCard = () => {
   return (
     <>
       <Card>
-        <CardHeader className="flex flex-row items-center gap-4">
-          <Image
-            src="/logo.png"
-            alt="logo"
-            width={70}
-            height={70}
-            onClick={() => {
-              router.push("/dashboard")
-            }}
-          />
+        <CardHeader
+          className="flex flex-row items-center gap-4 cursor-pointer"
+          onClick={() => {
+            router.push("/dashboard")
+          }}
+        >
+          <Image src="/logo.png" alt="logo" width={70} height={70} />
           <h1 className="text-4xl font-bold ">AIArtist</h1>
         </CardHeader>
         <CardContent className="px-4 pb-2">

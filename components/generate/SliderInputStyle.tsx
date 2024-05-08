@@ -20,9 +20,7 @@ const SliderInputStyle = ({
   value: number
   setValue: React.Dispatch<React.SetStateAction<number>>
 }) => {
-  //   const [value, setValue] = useState(
-  //     defaultValue ?? Math.round((min + max) / 2),
-  //   )
+
 
   return (
     <>

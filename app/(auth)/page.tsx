@@ -19,7 +19,7 @@ export default function Home() {
       <InputPrompt />
       {/* TODO : Introduction here */}
       <div className="flex w-full flex-grow lg:w-[auto]">
-        <div className="relative z-20 w-full flex-grow  rounded-tl-2xl rounded-tr-2xl border-l-2 border-r-2 border-t-2 border-white bg-black lg:w-[1024px]"></div>
+        <div className="relative z-20 w-full flex-grow  rounded-2xl border-l-2 border-r-2 border-t-2 border-white bg-black lg:w-[1024px]"></div>
       </div>
     </div>
   )
