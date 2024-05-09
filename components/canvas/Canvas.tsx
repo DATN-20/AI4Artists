@@ -16,7 +16,6 @@ import {
   setNewHistory,
   getShapesFromHistory,
 } from "./HistoryUtilities"
-import { useTheme } from "next-themes"
 
 const Canvas: React.FC = () => {
   const canvasContext = useContext(CanvasModeContext)
@@ -37,25 +36,21 @@ const Canvas: React.FC = () => {
     initialRectPosition,
     panOffset,
     setPanOffset,
-    startPanMousePosition,
-    setStartPanMousePosition,
     currentHistoryIndex,
     setCurrentHistoryIndex,
     shapeId,
     setShapeId,
     scale,
-    scaleOffset,
-    setScaleOffset,
     setScale,
     imageRef,
     eraseMode,
     cursor,
-    setCursor
+    setCursor,
+    updateInitialRectPosition,
   } = canvasContext!
-  const { resolvedTheme } = useTheme()
   const [brushCoordinates, setBrushCoordinates] = useState<Point[]>([])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     canvas.width = window.innerWidth
@@ -63,19 +58,17 @@ const Canvas: React.FC = () => {
 
     const context = canvas.getContext("2d")
     if (!context) return
-    context.clearRect(0, 0, canvas.width, canvas.height)
 
     const scaledWidth = canvas.width * scale
     const scaledHeight = canvas.height * scale
     const scaleOffsetX = (scaledWidth - canvas.width) / 2
     const scaleOffsetY = (scaledHeight - canvas.height) / 2
-    setScaleOffset({ x: scaleOffsetX, y: scaleOffsetY })
-
     context.save()
     context.translate(
       panOffset.x * scale - scaleOffsetX,
       panOffset.y * scale - scaleOffsetY,
     )
+    context.restore()
     context.scale(scale, scale)
     adjustHistoryToIndex(
       canvas,
@@ -86,12 +79,22 @@ const Canvas: React.FC = () => {
       panOffset,
       true,
       imageRef.current!,
-      resolvedTheme,
     )
-    context.restore()
-  }, [panOffset, initialRectPosition, _history, currentHistoryIndex, scale])
+  }, [panOffset, initialRectPosition, scale, currentHistoryIndex])
 
   useEffect(() => {
+    if (localStorage.getItem("imageUrl")) {
+      const imageUrl = localStorage.getItem("imageUrl")
+      const image = new Image()
+      image.src = imageUrl!
+      imageRef.current = image
+      updateInitialRectPosition({
+        w: (600 * image.width) / image.height,
+        h: 600,
+      })
+      localStorage.removeItem("imageUrl")
+    }
+
     const panFunction = (event: WheelEvent) => {
       if (event.ctrlKey || event.metaKey) {
         event.preventDefault()
@@ -106,14 +109,15 @@ const Canvas: React.FC = () => {
 
     const handleCtrlWheelFunction = (event: WheelEvent) => {
       setScale((prevState) => {
-        let newScale = prevState - event.deltaY / 1000
-        if (newScale < 0.1) newScale = 0.1
+        let newScale =
+          Math.round((prevState - event.deltaY / 1000) / 0.25) * 0.25
+        if (newScale < 0.25) newScale = 0.25
         if (newScale > 3) newScale = 3
         return newScale
       })
     }
 
-    document.addEventListener("wheel", panFunction)
+    document.addEventListener("wheel", panFunction, { passive: false })
     return () => {
       document.removeEventListener("wheel", panFunction)
     }
@@ -132,7 +136,6 @@ const Canvas: React.FC = () => {
             setCurrentHistoryIndex,
             panOffset,
             imageRef.current!,
-            resolvedTheme
           )
         } else {
           undo(
@@ -144,7 +147,6 @@ const Canvas: React.FC = () => {
             setCurrentHistoryIndex,
             panOffset,
             imageRef.current!,
-            resolvedTheme
           )
         }
       }
@@ -154,14 +156,7 @@ const Canvas: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", undoRedoFunction)
     }
-  }, [
-    undo,
-    redo,
-    currentHistoryIndex,
-    _history,
-    panOffset,
-    initialRectPosition,
-  ])
+  }, [])
 
   const isMouseInsideCanvas = (x: number, y: number) => {
     return (
@@ -173,8 +168,8 @@ const Canvas: React.FC = () => {
   }
 
   const getMouseCoordinates = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const x = (e.clientX - panOffset.x * scale + scaleOffset.x) / scale
-    const y = (e.clientY - panOffset.y * scale + scaleOffset.y) / scale
+    const x = (e.clientX - panOffset.x * scale) / scale
+    const y = (e.clientY - panOffset.y * scale) / scale
     return { x, y }
   }
 
@@ -190,15 +185,15 @@ const Canvas: React.FC = () => {
 
     switch (mode) {
       case CanvasMode.BRUSH_MODE:
-        console.log(scale, scaleOffset, panOffset)
         setState(CanvasState.DRAWING)
         setBrushCoordinates([{ x: x, y: y }])
         break
 
       case CanvasMode.SELECT_MODE:
-        const shapeContainingPoint = getShapesFromHistory(_history, currentHistoryIndex).find(
-          (shape) => shape.isPointInside(x, y),
-        )
+        const shapeContainingPoint = getShapesFromHistory(
+          _history,
+          currentHistoryIndex,
+        ).find((shape) => shape.isPointInside(x, y))
         if (shapeContainingPoint) {
           if (currentShape == null) {
             adjustHistoryToIndex(
@@ -210,11 +205,10 @@ const Canvas: React.FC = () => {
               panOffset,
               true,
               imageRef.current!,
-              resolvedTheme
             )
             shapeContainingPoint.showBounding(true)
             setCurrentShape(shapeContainingPoint)
-            setState(CanvasState.IDLE)
+            setState(CanvasState.READY)
             shapeContainingPoint.draw(context, panOffset)
           } else if (
             shapeContainingPoint == currentShape ||
@@ -236,8 +230,8 @@ const Canvas: React.FC = () => {
             panOffset,
             true,
             imageRef.current!,
-            resolvedTheme
           )
+          setCursor("pointer.cur")
           currentShape.draw(context, panOffset)
           setCurrentShape(null)
           setState(CanvasState.IDLE)
@@ -265,7 +259,6 @@ const Canvas: React.FC = () => {
               panOffset,
               true,
               imageRef.current!,
-              resolvedTheme
             )
             setState(CanvasState.SELECTING)
           }
@@ -273,15 +266,17 @@ const Canvas: React.FC = () => {
         break
 
       case CanvasMode.DRAG_MODE:
-        setStartPanMousePosition({ x: x, y: y })
+        setCursor("grab_hold.png")
+        updateShapeCoordinates({ startX: x, startY: y })
         setState(CanvasState.DRAGGING)
         break
 
       case CanvasMode.ERASE_MODE:
         if (eraseMode !== 0) return
-        const shapeContainingPoints = getShapesFromHistory(_history, currentHistoryIndex).find(
-          (shape) => shape.isPointInside(x, y),
-        )
+        const shapeContainingPoints = getShapesFromHistory(
+          _history,
+          currentHistoryIndex,
+        ).find((shape) => shape.isPointInside(x, y))
         if (shapeContainingPoints) {
           if (eraseMode === 0) {
             setNewHistory(
@@ -292,7 +287,7 @@ const Canvas: React.FC = () => {
               shapeContainingPoints,
               HistoryAction.DELETE,
             )
-          } 
+          }
         }
 
       default:
@@ -313,7 +308,10 @@ const Canvas: React.FC = () => {
 
     switch (mode) {
       case CanvasMode.BRUSH_MODE:
-        setBrushCoordinates((prevCoordinates) => [...prevCoordinates, { x, y }])
+        setBrushCoordinates((prevCoordinates) => [
+          ...prevCoordinates,
+          { x: x, y: y },
+        ])
         setShapeId(shapeId + 1)
         newShape = BrushStroke(
           shapeId,
@@ -321,8 +319,7 @@ const Canvas: React.FC = () => {
           color,
           brushSettings.size,
         )
-        if (!newShape) return
-        setCurrentShape(newShape)
+        setCurrentShape(() => newShape)
         adjustHistoryToIndex(
           canvas,
           context,
@@ -332,7 +329,6 @@ const Canvas: React.FC = () => {
           panOffset,
           true,
           imageRef.current!,
-          resolvedTheme
         )
         newShape.draw(context, panOffset)
         break
@@ -349,7 +345,6 @@ const Canvas: React.FC = () => {
           panOffset,
           true,
           imageRef.current!,
-          resolvedTheme
         )
 
         if (shapeMode === ShapeModeOptions.RECTANGLE_SHAPE) {
@@ -393,13 +388,16 @@ const Canvas: React.FC = () => {
         context.stroke()
         break
 
-      case CanvasMode.CROP_MODE:
-        if (state !== CanvasState.CROPPING) return
-
-        break
-
       case CanvasMode.SELECT_MODE:
-        if (!currentShape || state !== CanvasState.SELECTING) return
+        if (!currentShape || state.valueOf() === CanvasState.IDLE.valueOf())
+          return
+        if (currentShape.isPointInside(x, y)) {
+          setCursor("move.cur")
+        } else {
+          setCursor("pointer.cur")
+        }
+
+        if (state.valueOf() === CanvasState.READY.valueOf()) return
         let dx = x - shapeCoordinates.startX
         let dy = y - shapeCoordinates.startY
 
@@ -415,6 +413,7 @@ const Canvas: React.FC = () => {
           dx = 0
           dy = 0
         }
+
         currentShape.move(dx, dy)
         updateShapeCoordinates({ startX: x, startY: y })
         adjustHistoryToIndex(
@@ -426,14 +425,13 @@ const Canvas: React.FC = () => {
           panOffset,
           true,
           imageRef.current!,
-          resolvedTheme
         )
         currentShape.draw(context, panOffset)
         break
       case CanvasMode.DRAG_MODE:
         if (state !== CanvasState.DRAGGING) return
-        const dX = x - startPanMousePosition.x
-        const dY = y - startPanMousePosition.y
+        const dX = x - shapeCoordinates.startX
+        const dY = y - shapeCoordinates.startY
         setPanOffset((prevOffset) => ({
           x: prevOffset.x + dX,
           y: prevOffset.y + dY,
@@ -453,7 +451,6 @@ const Canvas: React.FC = () => {
           panOffset,
           true,
           imageRef.current!,
-          resolvedTheme
         )
         break
       default:
@@ -472,7 +469,10 @@ const Canvas: React.FC = () => {
     switch (mode) {
       case CanvasMode.BRUSH_MODE:
       case CanvasMode.SHAPE_MODE:
-        if (currentShape === null) return
+        if (currentShape === null) {
+          setState(CanvasState.IDLE)
+          return
+        }
         setBrushCoordinates([])
         setNewHistory(
           currentHistoryIndex,
@@ -488,7 +488,6 @@ const Canvas: React.FC = () => {
 
       case CanvasMode.SELECT_MODE:
         if (state !== CanvasState.SELECTING) return
-
         adjustHistoryToIndex(
           canvas,
           context,
@@ -498,7 +497,6 @@ const Canvas: React.FC = () => {
           panOffset,
           true,
           imageRef.current!,
-          resolvedTheme
         )
         currentShape.draw(context, panOffset)
         setState(CanvasState.IDLE)
@@ -512,6 +510,7 @@ const Canvas: React.FC = () => {
         )
         break
       case CanvasMode.DRAG_MODE:
+        setCursor("grab_release.png")
         setState(CanvasState.IDLE)
         break
 
@@ -534,20 +533,16 @@ const Canvas: React.FC = () => {
 
   return (
     <>
-    <img
-        ref={imageRef}
-        style={{ display: "none" }}
-      />
+      <img ref={imageRef} style={{ display: "none" }} />
       <canvas
-      ref={canvasRef}
-      className="absolute z-0"
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseDown={handleMouseDown}
-      style={{ cursor: cursor }}
-    ></canvas>
+        ref={canvasRef}
+        className="absolute z-0"
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseDown={handleMouseDown}
+        style={{ cursor: `url(/cursors/${cursor}), auto` }}
+      ></canvas>
     </>
-    
   )
 }
 

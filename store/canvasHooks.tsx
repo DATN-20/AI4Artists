@@ -47,21 +47,15 @@ export type CanvasModeContextType = {
   shapeCoordinates: {
     startX: number
     startY: number
-    endX: number
-    endY: number
   }
   updateShapeCoordinates: (
     newCoordinates: Partial<{
       startX: number
       startY: number
-      endX: number
-      endY: number
     }>,
   ) => void
   panOffset: { x: number; y: number }
   setPanOffset: Dispatch<SetStateAction<{ x: number; y: number }>>
-  startPanMousePosition: { x: number; y: number }
-  setStartPanMousePosition: Dispatch<SetStateAction<{ x: number; y: number }>>
   currentHistoryIndex: number
   setCurrentHistoryIndex: Dispatch<SetStateAction<number>>
   shapeId: number
@@ -102,7 +96,7 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
   const [eraseMode, setEraseMode] = useState<EraseModeOptions>(
     EraseModeOptions.ERASE,
   )
-  const [cursor, setCursor] = useState<string>('crosshair');
+  const [cursor, setCursor] = useState<string>('pointer.cur');
   const [state, setState] = useState<CanvasState>(CanvasState.IDLE)
   const shapeModeRef = useRef<ShapeModeOptions>(shapeMode)
   const [shapeId, setShapeId] = useState<number>(0)
@@ -119,15 +113,9 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
   const [shapeCoordinates, setShapeCoordinates] = useState({
     startX: 0,
     startY: 0,
-    endX: 0,
-    endY: 0,
   })
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 })
   const [currentHistoryIndex, setCurrentHistoryIndex] = useState(-1)
-  const [startPanMousePosition, setStartPanMousePosition] = useState({
-    x: 0,
-    y: 0,
-  })
   const [scale, setScale] = useState(1)
   const [scaleOffset, setScaleOffset] = useState({ x: 0, y: 0 })
 
@@ -175,8 +163,6 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
     initialRectPosition,
     panOffset,
     setPanOffset,
-    startPanMousePosition,
-    setStartPanMousePosition,
     currentHistoryIndex,
     setCurrentHistoryIndex,
     scale,

@@ -3,7 +3,7 @@ import { CanvasModeContext } from "@/store/canvasHooks"
 import React, { ChangeEvent, useContext, useRef, memo } from "react"
 import { RiImageAddFill } from "react-icons/ri"
 import { adjustHistoryToIndex } from "../HistoryUtilities"
-import { useTheme } from "next-themes"
+
 
 export const UploadButton: React.FC = memo(() => {
   const canvasModeContext = useContext(CanvasModeContext)
@@ -14,9 +14,9 @@ export const UploadButton: React.FC = memo(() => {
     panOffset,
     currentHistoryIndex,
     imageRef,
+    updateInitialRectPosition
   } = canvasModeContext!
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { resolvedTheme } = useTheme()
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -32,6 +32,10 @@ export const UploadButton: React.FC = memo(() => {
       image.src = reader.result as string
       imageRef.current = image
       image.onload = () => {
+        updateInitialRectPosition({
+          w: (600 * image.width) / image.height,
+          h: 600,
+        })
         adjustHistoryToIndex(
           canvas,
           context,
@@ -40,8 +44,7 @@ export const UploadButton: React.FC = memo(() => {
           currentHistoryIndex,
           panOffset,
           true,
-          image,
-          resolvedTheme,
+          image
         )
       }
     }

@@ -1,13 +1,7 @@
-import { Button } from "@/components/ui/button"
 import { EraseModeOptions, HistoryAction } from "@/constants/canvas"
 import { CanvasModeContext } from "@/store/canvasHooks"
-import { useTheme } from "next-themes"
 import { useContext } from "react"
-import { FaRegCircle } from "react-icons/fa"
-import { RiRectangleLine } from "react-icons/ri"
 import {
-  drawInitialRectangle,
-  getShapesFromHistory,
   setNewHistory,
 } from "../HistoryUtilities"
 import ShapeButton from "./ShapeButton"
@@ -29,7 +23,6 @@ export const RemoveButton: React.FC = () => {
     setCurrentHistoryIndex,
     setHistory,
   } = eraseContext!
-  const { resolvedTheme } = useTheme()
 
   const handleEraseChange = (eraseType: number) => {
     setEraseMode(eraseType)

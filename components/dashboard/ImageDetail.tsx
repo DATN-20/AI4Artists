@@ -1,6 +1,5 @@
 import { DashboardImage } from "@/types/dashboard"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import Image from "next/image"
 import { Button } from "../ui/button"
 import {
   Select,
@@ -16,7 +15,6 @@ import { ProcessType } from "../../types/Image"
 import { useRouter } from "next/navigation"
 import { set } from "react-hook-form"
 import Loading from "../Loading"
-import { DialogClose } from "@radix-ui/react-dialog"
 import { Card, CardContent } from "../ui/card"
 import { extractCloudinaryId } from "../../lib/cloudinary"
 
@@ -53,12 +51,8 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
         handleOnSelectRemoveBackground()
         break
       case "edit":
-        const extractedId = extractCloudinaryId(image.url)
-        if (extractedId) {
-          router.push(`/canvas/${extractedId}`)
-        } else {
-          console.error("Invalid Cloudinary URL")
-        }
+        localStorage.setItem("imageUrl", image.url)
+        router.push(`/canvas`)
         break
       case "report":
         // reportImage()
@@ -164,13 +158,13 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
                       key={ProcessType.REMOVE_BACKGROUND}
                       value={ProcessType.REMOVE_BACKGROUND}
                     >
-                      Remove Backround
+                      Remove Background
                     </SelectItem>
                     <SelectItem key="edit" value="edit">
-                      Edit in Canvas
+                      Edit In Canvas
                     </SelectItem>
                     <SelectItem key="report" value="report">
-                      Report this Image
+                      Report This Image
                     </SelectItem>
                   </SelectGroup>
                 </SelectContent>

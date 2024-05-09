@@ -12,15 +12,10 @@ export const drawInitialRectangle = (
   panOffset: { x: number; y: number },
   isInitialBorderExist: boolean = true,
   image: HTMLImageElement | null,
-  theme: string | undefined,
-  callback: () => void,
+  callback: () => void
 ) => {
  context.beginPath();
-  let backgroundColor = "transparent";
-  if (theme === "dark") {
-    backgroundColor = "#ffffff";
-  } 
-  context.fillStyle = backgroundColor;
+  context.fillStyle = 'white';
 
   if (isInitialBorderExist) {
     const gradient = context.createLinearGradient(
@@ -32,7 +27,7 @@ export const drawInitialRectangle = (
     gradient.addColorStop(0, "#9cc8fb");
     gradient.addColorStop(0.6, "#d35bff");
     context.strokeStyle = gradient;
-    context.fillStyle = backgroundColor;
+    context.fillStyle = 'white';
     context.lineWidth = 3;
     context.fillRect(
       initialRectPosition.x + panOffset.x,
@@ -108,11 +103,10 @@ _history: any[],
 index: number,
 panOffset: { x: number; y: number },
 isInitialBorderExist: boolean = true,
-image: HTMLImageElement | null,
-theme: string | undefined
+image: HTMLImageElement | null
 ) => {
 context.clearRect(0, 0, canvas.width, canvas.height)
-drawInitialRectangle(context, initialRect, panOffset, isInitialBorderExist, image, theme, () => {
+drawInitialRectangle(context, initialRect, panOffset, isInitialBorderExist, image, () => {
   for (var i = 0; i <= index; i++) {
     var actionType = _history[i].action;
     if (_history[i].value == null) continue;
@@ -120,7 +114,7 @@ drawInitialRectangle(context, initialRect, panOffset, isInitialBorderExist, imag
 
     if (actionType === HistoryAction.DELETE && shape === "all") {
       context.clearRect(0, 0, canvas.width, canvas.height)
-      drawInitialRectangle(context, initialRect, panOffset, isInitialBorderExist, image, theme, () => {})
+      drawInitialRectangle(context, initialRect, panOffset, isInitialBorderExist, image, () => {})
       continue
     }
 
@@ -167,8 +161,7 @@ export const redo = (
     currentHistoryIndex: number,
     setCurrentHistoryIndex: Dispatch<SetStateAction<number>>,
     panOffset: { x: number; y: number },
-    image: HTMLImageElement | null,
-    theme: string | undefined
+    image: HTMLImageElement | null
 ) => {
     if (currentHistoryIndex >= _history.length - 1) return
     setCurrentHistoryIndex(currentHistoryIndex + 1)
@@ -180,8 +173,7 @@ export const redo = (
       currentHistoryIndex + 1,
       panOffset,
       true,
-      image,
-      theme
+      image
     )
 }
 
@@ -198,8 +190,7 @@ export const undo = (
     currentHistoryIndex: number,
     setCurrentHistoryIndex: Dispatch<SetStateAction<number>>,
     panOffset: { x: number; y: number },
-    image: HTMLImageElement | null,
-    theme: string | undefined
+    image: HTMLImageElement | null
 ) => {
     if (currentHistoryIndex < 0) return
     
@@ -212,8 +203,7 @@ export const undo = (
       currentHistoryIndex - 1,
       panOffset,
         true,
-        image,
-        theme
+        image
     )
 }
 

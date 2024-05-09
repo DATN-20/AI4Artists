@@ -7,7 +7,6 @@ import { FaRegHandPaper, FaShapes } from "react-icons/fa"
 import { IoIosBrush } from "react-icons/io"
 import { LuMousePointer2, LuEraser } from "react-icons/lu"
 import { MdEmojiPeople } from "react-icons/md"
-import { useTheme } from "next-themes"
 
 export const ToolButtons: React.FC = memo(() => {
   const canvasModeContext = useContext(CanvasModeContext)
@@ -23,36 +22,34 @@ export const ToolButtons: React.FC = memo(() => {
     setCurrentShape,
     setState,
     setMode,
-    cursor,
     setCursor,
   } = canvasModeContext!
-  const { resolvedTheme } = useTheme()
 
   const tools = [
     {
       icon: <IoIosBrush className="dark:text-black" size={25} />,
       mode: CanvasMode.BRUSH_MODE,
-      cursor: "crosshair",
+      cursor: "handwriting.cur",
     },
     {
       icon: <LuMousePointer2 className="dark:text-black" size={25} />,
       mode: CanvasMode.SELECT_MODE,
-      cursor: "default",
+      cursor: "pointer.cur",
     },
     {
       icon: <FaRegHandPaper className="dark:text-black" size={25} />,
       mode: CanvasMode.DRAG_MODE,
-      cursor: "grab",
+      cursor: "grab_release.png",
     },
     {
       icon: <FaShapes className="dark:text-black" size={25} />,
       mode: CanvasMode.SHAPE_MODE,
-      cursor: "crosshair",
+      cursor: "precision.cur",
     },
     {
       icon: <LuEraser className="dark:text-black" size={25} />,
       mode: CanvasMode.ERASE_MODE,
-      cursor: "crosshair",
+      cursor: "erase.cur",
     },
     {
       icon: <MdEmojiPeople className="dark:text-black" size={25} />,
@@ -83,13 +80,12 @@ export const ToolButtons: React.FC = memo(() => {
                 currentHistoryIndex,
                 panOffset,
                 true,
-                imageRef.current!,
-                resolvedTheme,
+                imageRef.current!
               )
               currentShape.draw(context, panOffset)
               setCurrentShape(null)
-              setState(CanvasState.IDLE)
             }
+            setState(CanvasState.IDLE)
             setMode(tool.mode)
             setCursor(tool.cursor)
           }}

@@ -3,7 +3,6 @@ import { useContext, memo } from "react"
 import { Button } from "@/components/ui/button"
 import { adjustHistoryToIndex } from "../HistoryUtilities"
 import { MdSaveAlt } from "react-icons/md"
-import { useTheme } from "next-themes"
 
 export const SaveImageButton: React.FC = memo(() => {
   const canvasModeContext = useContext(CanvasModeContext)
@@ -15,7 +14,6 @@ export const SaveImageButton: React.FC = memo(() => {
     currentHistoryIndex,
     imageRef,
   } = canvasModeContext!
-  const { resolvedTheme } = useTheme()
 
   return (
     <Button
@@ -39,8 +37,7 @@ export const SaveImageButton: React.FC = memo(() => {
           currentHistoryIndex,
           panOffset,
           false,
-          imageRef.current!,
-          resolvedTheme,
+          imageRef.current!
         )
         tempContext.drawImage(
           canvas,
@@ -68,8 +65,7 @@ export const SaveImageButton: React.FC = memo(() => {
           currentHistoryIndex,
           panOffset,
           true,
-          imageRef.current!,
-          resolvedTheme,
+          imageRef.current!
         )
       }}
     >
