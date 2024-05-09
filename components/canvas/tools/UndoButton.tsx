@@ -3,7 +3,7 @@ import { useContext, memo } from "react"
 import { RiArrowGoBackLine } from "react-icons/ri"
 import { Button } from "@/components/ui/button"
 import { undo } from "../HistoryUtilities"
-import { useTheme } from "next-themes"
+
 
 export const UndoButton: React.FC = memo(() => {
   const canvasModeContext = useContext(CanvasModeContext)
@@ -16,7 +16,6 @@ export const UndoButton: React.FC = memo(() => {
     setCurrentHistoryIndex,
     imageRef,
   } = canvasModeContext!
-  const { resolvedTheme } = useTheme()
 
   return (
     <Button
@@ -30,8 +29,7 @@ export const UndoButton: React.FC = memo(() => {
           currentHistoryIndex,
           setCurrentHistoryIndex,
           panOffset,
-          imageRef.current!,
-          resolvedTheme,
+          imageRef.current!
         )
       }}
     >

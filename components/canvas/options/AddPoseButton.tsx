@@ -5,7 +5,6 @@ import { FaPersonCirclePlus } from "react-icons/fa6"
 import OpenPose from "../shapeObjects/OpenPose"
 import { adjustHistoryToIndex  } from "../HistoryUtilities"
 import { HistoryAction } from "@/constants/canvas"
-import { useTheme } from "next-themes"
 
 const AddPoseButton: React.FC = () => {
   const poseContext = useContext(CanvasModeContext)
@@ -21,7 +20,6 @@ const AddPoseButton: React.FC = () => {
     setCurrentHistoryIndex,
     imageRef
   } = poseContext!
-  const { resolvedTheme } = useTheme()
 
   const addNewPose = () => {
     const canvas = canvasRef.current
@@ -39,8 +37,7 @@ const AddPoseButton: React.FC = () => {
       currentHistoryIndex,
       panOffset,
       true,
-      imageRef.current!,
-      resolvedTheme
+      imageRef.current!
     )
     newShape.draw(context, panOffset)
     setCurrentHistoryIndex(currentHistoryIndex + 1)

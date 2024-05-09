@@ -6,7 +6,7 @@ const ShapeButton: React.FC<{
   isActive: boolean
 }> = ({ icon, onClick, isActive }) => (
   <Button
-    className={`mx-1 rounded-xl ${isActive ? "dark:bg-primary" : "dark:bg-white"} dark:hover:bg-primary`}
+    className={`mx-1 rounded-xl ${isActive ? "dark:bg-primary" : "bg-card dark:bg-white"} dark:hover:bg-primary`}
     onClick={onClick}
   >
     {icon}

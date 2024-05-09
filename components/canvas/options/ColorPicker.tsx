@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import React, { useContext, useEffect } from "react"
+import React, { useContext } from "react"
 import { SketchPicker } from "react-color"
 import { CanvasModeContext } from "@/store/canvasHooks"
 

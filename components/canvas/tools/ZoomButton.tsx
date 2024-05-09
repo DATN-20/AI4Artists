@@ -25,7 +25,7 @@ export const ZoomButton: React.FC = memo(() => {
         <div className="absolute top-1/2 z-10 ms-[-220px] flex h-[25px] w-[200px] -translate-y-1/2 transform items-center rounded bg-stone-600">
           <Slider.Root
             className="relative flex h-5 w-full touch-none select-none items-center px-2"
-            defaultValue={[scale]}
+            value={[scale]}
             min={0.25}
             max={3}
             step={0.25}
