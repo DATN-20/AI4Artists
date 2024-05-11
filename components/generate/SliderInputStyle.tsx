@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react"
 import { useAppDispatch } from "@/store/hooks"
-import { setCFG, setNoise, setSteps } from "@/features/generateSlice"
 import { Slider } from "../ui/slider"
 
 const SliderInputStyle = ({
@@ -20,8 +19,6 @@ const SliderInputStyle = ({
   value: number
   setValue: React.Dispatch<React.SetStateAction<number>>
 }) => {
-
-
   return (
     <>
       <div className="flex w-full justify-between">
