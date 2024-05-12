@@ -15,12 +15,12 @@ export const ZoomButton: React.FC = memo(() => {
 
   return (
     <div className="relative">
-      <Button
-        className="my-1 rounded-xl bg-card font-bold dark:bg-white dark:text-black dark:hover:bg-primary"
+      <div
+        className="my-1 rounded-xl bg-card p-3 font-bold dark:bg-white dark:text-black dark:hover:bg-primary"
         onClick={toggleSlider}
       >
         <FaMagnifyingGlass size={25} />
-      </Button>
+      </div>
       {isSliderVisible && (
         <div className="absolute top-1/2 z-10 ms-[-220px] flex h-[25px] w-[200px] -translate-y-1/2 transform items-center rounded bg-stone-600">
           <Slider.Root

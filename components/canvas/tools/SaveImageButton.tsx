@@ -1,6 +1,5 @@
 import { CanvasModeContext } from "@/store/canvasHooks"
 import { useContext, memo } from "react"
-import { Button } from "@/components/ui/button"
 import { adjustHistoryToIndex } from "../HistoryUtilities"
 import { MdSaveAlt } from "react-icons/md"
 
@@ -13,12 +12,13 @@ export const SaveImageButton: React.FC = memo(() => {
     panOffset,
     currentHistoryIndex,
     imageRef,
-    setImageFile
+    setImageFile,
+    scale
   } = canvasModeContext!
 
   return (
-    <Button
-      className="my-1 rounded-xl bg-card font-bold dark:bg-white dark:text-black dark:hover:bg-primary"
+    <div
+      className="my-1 rounded-xl bg-card p-3 font-bold dark:bg-white dark:text-black dark:hover:bg-primary"
       onClick={() => {
         const canvas = canvasRef.current
         if (!canvas) return
@@ -38,18 +38,18 @@ export const SaveImageButton: React.FC = memo(() => {
           currentHistoryIndex,
           panOffset,
           false,
-          imageRef.current!
+          imageRef.current!,
         )
         tempContext.drawImage(
           canvas,
-          initialRectPosition.x + panOffset.x,
-          initialRectPosition.y + panOffset.y,
-          initialRectPosition.w,
-          initialRectPosition.h,
+          (initialRectPosition.x + panOffset.x) * scale,
+          (initialRectPosition.y + panOffset.y) * scale,
+          initialRectPosition.w * scale,
+          initialRectPosition.h * scale,
           0,
           0,
-          initialRectPosition.w,
-          initialRectPosition.h,
+          initialRectPosition.w * scale,
+          initialRectPosition.h * scale,
         )
 
         const dataUrl = tempCanvas.toDataURL("image/png")
@@ -67,11 +67,11 @@ export const SaveImageButton: React.FC = memo(() => {
           currentHistoryIndex,
           panOffset,
           true,
-          imageRef.current!
+          imageRef.current!,
         )
       }}
     >
       <MdSaveAlt size={25} />
-    </Button>
+    </div>
   )
-});
+})

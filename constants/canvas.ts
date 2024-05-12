@@ -19,7 +19,7 @@ export enum ShapeModeOptions {
 export enum EraseModeOptions {
     ERASE = 0,
     ERASE_ALL = 1,
-    ERASE_ALL_IMAGE = 2,
+    ERASE_IMAGE = 2,
 }
 
 export enum CanvasState {

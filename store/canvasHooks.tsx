@@ -1,4 +1,9 @@
-import CanvasMode, { CanvasState, EraseModeOptions, ShapeModeOptions } from "@/constants/canvas"
+import { Point } from "@/components/canvas/shapeObjects/ShapeInterface"
+import CanvasMode, {
+  CanvasState,
+  EraseModeOptions,
+  ShapeModeOptions,
+} from "@/constants/canvas"
 import {
   useState,
   useRef,
@@ -13,15 +18,10 @@ export type CanvasModeContextType = {
   setMode: Dispatch<SetStateAction<CanvasMode>>
   color: string
   setColor: Dispatch<SetStateAction<string>>
-  showColorPicker: boolean
-  setShowColorPicker: Dispatch<SetStateAction<boolean>>
-  brushSettings: {
-    size: number
-    showSlider: boolean
-  }
-  setBrushSettings: Dispatch<
-    SetStateAction<{ size: number; showSlider: boolean }>
-  >
+  brushSize: number
+  setBrushSize: Dispatch<SetStateAction<number>>
+  brushCoordinates: Point[]
+  setBrushCoordinates: Dispatch<SetStateAction<Point[]>>
   shapeMode: ShapeModeOptions
   setShapeMode: Dispatch<SetStateAction<ShapeModeOptions>>
   state: CanvasState
@@ -84,21 +84,18 @@ export const CanvasModeContext = createContext<
 export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [mode, setMode] = useState(CanvasMode.SELECT_MODE)
-  const [color, setColor] = useState("black")
-  const [showColorPicker, setShowColorPicker] = useState(false)
-  const [brushSettings, setBrushSettings] = useState({
-    size: 5,
-    showSlider: false,
-  })
-  const [eraseSize, setEraseSize] = useState(1)
+  const [mode, setMode] = useState<CanvasMode>(CanvasMode.SELECT_MODE)
+  const [color, setColor] = useState<string>("black")
+  const [brushSize, setBrushSize] = useState<number>(5)
+  const [brushCoordinates, setBrushCoordinates] = useState<Point[]>([])
+  const [eraseSize, setEraseSize] = useState<number>(1)
   const [shapeMode, setShapeMode] = useState<ShapeModeOptions>(
     ShapeModeOptions.RECTANGLE_SHAPE,
   )
   const [eraseMode, setEraseMode] = useState<EraseModeOptions>(
     EraseModeOptions.ERASE,
   )
-  const [cursor, setCursor] = useState<string>('pointer.cur');
+  const [cursor, setCursor] = useState<string>("pointer.cur")
   const [state, setState] = useState<CanvasState>(CanvasState.IDLE)
   const shapeModeRef = useRef<ShapeModeOptions>(shapeMode)
   const [shapeId, setShapeId] = useState<number>(0)
@@ -145,10 +142,10 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
     setMode,
     color,
     setColor,
-    showColorPicker,
-    setShowColorPicker,
-    brushSettings,
-    setBrushSettings,
+    brushSize,
+    setBrushSize,
+    brushCoordinates,
+    setBrushCoordinates,
     shapeMode,
     setShapeMode,
     shapeModeRef,

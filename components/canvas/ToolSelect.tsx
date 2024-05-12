@@ -4,16 +4,104 @@ import { RedoButton } from "./tools/RedoButton"
 import { SaveImageButton } from "./tools/SaveImageButton"
 import { ZoomButton } from "./tools/ZoomButton"
 import { ToolButtons } from "./tools/ToolButtons"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip"
+import { handleMouseUpCanvas } from "./HistoryUtilities"
+import { CanvasModeContext } from "@/store/canvasHooks"
+import { useContext } from "react"
 
 const ToolSelect = () => {
+  const canvasModeContext = useContext(CanvasModeContext)
+  const {
+    mode,
+    currentShape,
+    setCurrentShape,
+    currentHistoryIndex,
+    setCurrentHistoryIndex,
+    _history,
+    setHistory,
+    panOffset,
+    initialRectPosition,
+    setBrushCoordinates,
+    state,
+    setState,
+    setCursor,
+    imageRef,
+    canvasRef,
+  } = canvasModeContext!
+
+  const tools = [
+    {
+      key: "undo",
+      button: <UndoButton />,
+      tooltip: "Undo",
+    },
+    {
+      key: "redo",
+      button: <RedoButton />,
+      tooltip: "Redo",
+    },
+    {
+      key: "zoom",
+      button: <ZoomButton />,
+      tooltip: "Zoom",
+    },
+    {
+      key: "upload",
+      button: <UploadButton />,
+      tooltip: "Upload",
+    },
+    {
+      key: "save",
+      button: <SaveImageButton />,
+      tooltip: "Save",
+    },
+  ]
+
+  const handleMouseUp = () =>
+    handleMouseUpCanvas(
+      canvasRef,
+      state,
+      setState,
+      mode,
+      currentShape,
+      setCurrentShape,
+      currentHistoryIndex,
+      setCurrentHistoryIndex,
+      _history,
+      setHistory,
+      panOffset,
+      initialRectPosition,
+      setBrushCoordinates,
+      setCursor,
+      imageRef,
+    )
+
   return (
-    <div className="py-4 flex flex-col items-center dark:bg-white">
-      <ToolButtons/>
-      <UndoButton/>
-      <RedoButton/>
-      <ZoomButton/>
-      <UploadButton/>
-      <SaveImageButton/>
+    <div
+      className="flex flex-col items-center py-4 dark:bg-white"
+      onMouseUp={handleMouseUp}
+    >
+      <ToolButtons />
+      {tools.map((tool) => (
+        <TooltipProvider key={tool.key}>
+          <Tooltip>
+            <TooltipTrigger className="flex w-full min-w-0 justify-start">
+              {tool.button}
+            </TooltipTrigger>
+            <TooltipContent
+              className="max-w-[200px] md:max-w-[400px]"
+              side="left"
+            >
+              {tool.tooltip}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ))}
     </div>
   )
 }

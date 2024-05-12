@@ -57,6 +57,7 @@ export default function Generate() {
   const [isLoadingInformation, setIsLoadingInformation] = useState(true)
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
 
+  const canvasModeContext = useContext(CanvasModeContext)
   const [
     getGenerationHistory,
     { data: historyData, error: historyError, isSuccess: getHistorySuccess },
@@ -128,7 +129,6 @@ export default function Generate() {
       }
     }
 
- 
     try {
       let result
       if (useImg2Img) {

@@ -4,7 +4,6 @@ import { RiArrowGoBackLine } from "react-icons/ri"
 import { Button } from "@/components/ui/button"
 import { undo } from "../HistoryUtilities"
 
-
 export const UndoButton: React.FC = memo(() => {
   const canvasModeContext = useContext(CanvasModeContext)
   const {
@@ -18,8 +17,8 @@ export const UndoButton: React.FC = memo(() => {
   } = canvasModeContext!
 
   return (
-    <Button
-      className={`my-1 rounded-xl bg-card font-bold dark:bg-white dark:text-black dark:hover:bg-primary ${currentHistoryIndex < 0 ? "disabled pointer-events-none opacity-50" : ""}`}
+    <div
+      className={`my-1 rounded-xl bg-card p-3 font-bold dark:bg-white dark:text-black dark:hover:bg-primary ${currentHistoryIndex < 0 ? "disabled pointer-events-none opacity-50" : ""}`}
       onClick={() => {
         undo(
           canvasRef.current!,
@@ -29,11 +28,11 @@ export const UndoButton: React.FC = memo(() => {
           currentHistoryIndex,
           setCurrentHistoryIndex,
           panOffset,
-          imageRef.current!
+          imageRef.current!,
         )
       }}
     >
       <RiArrowGoBackLine size={25} />
-    </Button>
+    </div>
   )
 })
