@@ -1,4 +1,3 @@
-import { CanvasContextProvider } from "@/store/canvasHooks"
 import Canvas from "../canvas/Canvas"
 import { Button } from "../ui/button"
 import {
@@ -9,20 +8,33 @@ import {
 } from "../ui/dialog"
 import OptionSelect from "../canvas/OptionSelect"
 import ToolSelect from "../canvas/ToolSelect"
+import { CanvasModeContext } from "@/store/canvasHooks"
+import { useContext } from "react"
 export const ControlnetDialog: React.FC = () => {
+  const canvasModeContext = useContext(CanvasModeContext)
+  const {
+    canvasRef,
+    initialRectPosition,
+    _history,
+    panOffset,
+    currentHistoryIndex,
+    imageRef,
+    scale,
+    setChosenFile
+  } = canvasModeContext!
+
   return (
-    <Dialog>
-      <DialogHeader className="hidden" />
-      <DialogTrigger>
-        <Button
-          variant={"outline"}
-          className="ml-[16px] w-fit  rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
-        >
-          Add Pose Image
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="left-0 top-0 flex max-w-none translate-x-0 translate-y-0 justify-center border-none bg-transparent p-0">
-        <CanvasContextProvider>
+      <Dialog>
+        <DialogHeader className="hidden" />
+        <DialogTrigger>
+          <Button
+            variant={"outline"}
+            className="ml-[16px] w-fit  rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+          >
+            Add Pose Image
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="left-0 top-0 flex h-full max-w-none translate-x-0 translate-y-0 justify-center border-none p-0">
           <Canvas />
           <div className="flex w-full lg:p-2">
             <div className="ml-40 mr-16 w-10/12">
@@ -36,8 +48,7 @@ export const ControlnetDialog: React.FC = () => {
               </div>
             </div>
           </div>
-        </CanvasContextProvider>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
   )
 }

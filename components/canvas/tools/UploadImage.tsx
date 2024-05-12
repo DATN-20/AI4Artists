@@ -57,14 +57,14 @@ export const UploadButton: React.FC = memo(() => {
         type="file"
         ref={fileInputRef}
         onChange={handleFileChange}
-        style={{ display: "none" }}
+        className="hidden"
       />
-      <Button
-        className="my-1 rounded-xl bg-card font-bold dark:bg-white dark:text-black dark:hover:bg-primary"
+      <div
+        className="my-1 p-3 rounded-xl bg-card font-bold dark:bg-white dark:text-black dark:hover:bg-primary"
         onClick={() => fileInputRef.current?.click()}
       >
         <RiImageAddFill size={25} />
-      </Button>
+      </div>
     </div>
   )
 })

@@ -1,4 +1,4 @@
-import CanvasMode from "@/constants/canvas"
+import CanvasMode, { CanvasState, HistoryAction } from "@/constants/canvas"
 import { CanvasModeContext } from "@/store/canvasHooks"
 import ColorPicker from "./options/ColorPicker"
 import BrushSizeInput from "./options/BrushSizeInput"
@@ -6,39 +6,86 @@ import ShapeButtons from "./options/ShapeButtons"
 import { useContext } from "react"
 import AddPoseButton from "./options/AddPoseButton"
 import { RemoveButton } from "./options/RemoveButton"
+import {
+  adjustHistoryToIndex,
+  handleMouseUpCanvas,
+  setNewHistory,
+} from "./HistoryUtilities"
 
 const OptionSelect = () => {
   const canvasModeContext = useContext(CanvasModeContext)
-  const { mode } = canvasModeContext!
+  const {
+    mode,
+    currentShape,
+    setCurrentShape,
+    currentHistoryIndex,
+    setCurrentHistoryIndex,
+    _history,
+    setHistory,
+    panOffset,
+    initialRectPosition,
+    setBrushCoordinates,
+    state,
+    setState,
+    setCursor,
+    imageRef,
+    canvasRef,
+  } = canvasModeContext!
+  const handleMouseUp = () =>
+    handleMouseUpCanvas(
+      canvasRef,
+      state,
+      setState,
+      mode,
+      currentShape,
+      setCurrentShape,
+      currentHistoryIndex,
+      setCurrentHistoryIndex,
+      _history,
+      setHistory,
+      panOffset,
+      initialRectPosition,
+      setBrushCoordinates,
+      setCursor,
+      imageRef,
+    )
+
   return (
-    <div className="mt-10">
+    <div className="relative mt-10" onMouseUp={handleMouseUp}>
       {mode === CanvasMode.BRUSH_MODE && (
-        <div className="z-10 mt-4 flex items-center rounded-lg bg-card dark:bg-white p-4">
-          <div className="flex ">
-            <ColorPicker />
-            <BrushSizeInput />
+        <div className="z-10 mt-4 rounded-lg bg-gradient-to-r from-sky-300 to-primary-700 to-60% p-[0.15rem] ">
+          <div className="flex items-center rounded-lg bg-card p-4 dark:bg-white">
+            <div className="flex ">
+              <ColorPicker />
+              <BrushSizeInput />
+            </div>
           </div>
         </div>
       )}
 
       {mode === CanvasMode.SHAPE_MODE && (
-        <div className="z-10 mt-4 flex items-center rounded-lg bg-card dark:bg-white p-4">
-          <ColorPicker />
-          <BrushSizeInput />
-          <ShapeButtons />
+        <div className="z-10 mt-4 rounded-lg bg-gradient-to-r from-sky-300 to-primary-700 to-60% p-[0.15rem] ">
+          <div className="flex items-center rounded-lg bg-card p-4 dark:bg-white">
+            <ColorPicker />
+            <BrushSizeInput />
+            <ShapeButtons />
+          </div>
         </div>
       )}
 
       {mode === CanvasMode.ERASE_MODE && (
-        <div className="z-10 mt-4 flex items-center rounded-lg bg-card dark:bg-white p-4">
-          <RemoveButton/>
+        <div className="z-10 mt-4 rounded-lg bg-gradient-to-r from-sky-300 to-primary-700 to-60% p-[0.15rem] ">
+          <div className="flex items-center rounded-lg bg-card p-4 dark:bg-white">
+            <RemoveButton />
+          </div>
         </div>
-      
       )}
 
       {mode === CanvasMode.OPENPOSE_MODE && (
-        <div className="z-10 mt-4 flex items-center rounded-lg bg-card dark:bg-white p-4">
-          <AddPoseButton />
+        <div className="z-10 mt-4 rounded-lg bg-gradient-to-r from-sky-300 to-primary-700 to-60% p-[0.15rem] ">
+          <div className="flex items-center rounded-lg bg-card p-4 dark:bg-white">
+            <AddPoseButton />
+          </div>
         </div>
       )}
     </div>

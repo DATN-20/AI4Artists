@@ -20,6 +20,9 @@ interface DataInputs {
   cfg: number // Cấu hình (không rõ ý nghĩa cụ thể)
   noise: number // Độ nhiễu
   image: string
+  controlnets: { //Controlnets
+    image: string
+  }
 }
 
 // Định nghĩa interface cho dữ liệu generate state
@@ -62,6 +65,9 @@ const initialState: GenerateState = {
     cfg: 8,
     noise: 0.75,
     image: "",
+    controlnets: {
+      image: ""
+    }
   },
   history: []
 }

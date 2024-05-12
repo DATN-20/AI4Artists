@@ -42,8 +42,8 @@ function BrushStroke(
       context.strokeStyle = gradient
       context.lineWidth = 1
       context.strokeRect(
-        strokeCoordianates.x,
-        strokeCoordianates.y,
+        strokeCoordianates.x + panOffset.x,
+        strokeCoordianates.y + panOffset.y,
         strokeCoordianates.w,
         strokeCoordianates.h,
       )

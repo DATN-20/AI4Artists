@@ -19,12 +19,14 @@ const ShapeButtons: React.FC = () => {
         icon={<RiRectangleLine className="text-black" size={25}/>}
         onClick={() => handleShapeChange(ShapeModeOptions.RECTANGLE_SHAPE)}
         isActive={shapeMode === ShapeModeOptions.RECTANGLE_SHAPE}
+        tooltip=" Draw rectangle"
       />
 
       <ShapeButton
         icon={<FaRegCircle className="text-black" size={25}/>}
         onClick={() => handleShapeChange(ShapeModeOptions.CIRCLE_SHAPE)}
         isActive={shapeMode === ShapeModeOptions.CIRCLE_SHAPE}
+        tooltip="Draw circle"
       />
     </div>
   )

@@ -1,6 +1,6 @@
 "use client"
 
-import { ChangeEvent, useEffect, useState } from "react"
+import { ChangeEvent, useContext, useEffect, useState } from "react"
 import GenerateSideBar from "@/components/sidebar/GenerateSideBar"
 import {
   useAiInformationMutation,
@@ -25,6 +25,7 @@ import Loading from "@/components/Loading"
 import HistoryCarousel from "@/components/generate/HistoryCarousel"
 import { useGetProfileAlbumMutation } from "@/services/profile/profileApi"
 import { selectAuth, setTotalAlbum } from "@/features/authSlice"
+import { CanvasModeContext } from "@/store/canvasHooks"
 
 interface AIField {
   ai_name: string | null
@@ -66,7 +67,11 @@ export default function Generate() {
     cfg,
     noise,
     image,
+    controlnets,
   } = generateStates.dataInputs || {}
+
+  const canvasModeContext = useContext(CanvasModeContext)
+  const { chosenFile } = canvasModeContext!
 
   const [
     getGenerationHistory,
@@ -124,6 +129,7 @@ export default function Generate() {
     formData.append("sampleMethod", sampleMethod || "")
     formData.append("cfg", cfg?.toString() || "")
     formData.append("noise", noise?.toString() || "")
+    formData.append("controlnets", JSON.stringify({image: chosenFile?.name || ""}))
 
     if (useImg2Img) {
       const base64String = generateStates.dataInputs?.image
@@ -133,6 +139,7 @@ export default function Generate() {
         formData.append("image", imageFile)
       }
     }
+    
     const requestBody = {
       aiName,
       positivePrompt,
@@ -145,6 +152,7 @@ export default function Generate() {
       sampleMethod,
       cfg: cfg,
       noise: noise,
+      controlnets: controlnets,
     }
 
     try {

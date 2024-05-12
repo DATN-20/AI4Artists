@@ -1,5 +1,6 @@
-import { HistoryAction } from "@/constants/canvas"
+import CanvasMode, { CanvasState, HistoryAction } from "@/constants/canvas"
 import { Dispatch, SetStateAction } from "react"
+import { Point } from "./shapeObjects/ShapeInterface";
 
 export const drawInitialRectangle = (
   context: CanvasRenderingContext2D,
@@ -81,7 +82,6 @@ const IsShapeDeleted = (
   history: Array<{ action: number; value: any }>,
   index: number,
 ) => {
-  console.log(history)
   for (let i = index; i >= 0; i--) {
     if (history[i].value.id === id && history[i].action === HistoryAction.DELETE) {
       return true
@@ -207,3 +207,95 @@ export const undo = (
     )
 }
 
+export const handleMouseUpCanvas = (
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
+  state: CanvasState,
+  setState: Dispatch<SetStateAction<CanvasState>>,
+  mode: CanvasMode,
+  currentShape: any,
+  setCurrentShape: Dispatch<SetStateAction<any>>,
+  currentHistoryIndex: number,
+  setCurrentHistoryIndex: Dispatch<SetStateAction<number>>,
+  _history: any[],
+  setHistory: Dispatch<SetStateAction<any[]>>,
+  panOffset: { x: number; y: number },
+  initialRectPosition: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  },
+  setBrushCoordinates: Dispatch<SetStateAction<Point[]>>,
+  setCursor: Dispatch<SetStateAction<string>>,
+  imageRef: React.MutableRefObject<HTMLImageElement | null>
+) => {
+  const canvas = canvasRef.current
+  if (!canvas || state === CanvasState.IDLE) return
+  const context = canvas.getContext("2d")
+  if (!context) return
+
+  switch (mode) {
+    case CanvasMode.BRUSH_MODE:
+    case CanvasMode.SHAPE_MODE:
+      if (currentShape === null) {
+        setState(CanvasState.IDLE)
+        return
+      }
+      setBrushCoordinates([])
+      setNewHistory(
+        currentHistoryIndex,
+        setCurrentHistoryIndex,
+        _history,
+        setHistory,
+        currentShape,
+        HistoryAction.CREATE,
+      )
+      setCurrentShape(null)
+      setState(CanvasState.IDLE)
+      break
+
+    case CanvasMode.SELECT_MODE:
+      if (state !== CanvasState.SELECTING) return
+      adjustHistoryToIndex(
+        canvas,
+        context,
+        initialRectPosition,
+        _history,
+        currentHistoryIndex,
+        panOffset,
+        true,
+        imageRef.current!,
+      )
+      currentShape.showBounding(true)
+      currentShape.draw(context, panOffset)
+      setState(CanvasState.IDLE)
+      setNewHistory(
+        currentHistoryIndex,
+        setCurrentHistoryIndex,
+        _history,
+        setHistory,
+        currentShape,
+        HistoryAction.MOVE,
+      )
+      break
+    case CanvasMode.DRAG_MODE:
+      setCursor("grab_release.png")
+      setState(CanvasState.IDLE)
+      break
+
+    case CanvasMode.OPENPOSE_MODE:
+      if (state !== CanvasState.SELECTING) return
+      setState(CanvasState.IDLE)
+      setNewHistory(
+        currentHistoryIndex,
+        setCurrentHistoryIndex,
+        _history,
+        setHistory,
+        currentShape,
+        HistoryAction.MOVE,
+      )
+      break
+    default:
+      return
+    }
+}

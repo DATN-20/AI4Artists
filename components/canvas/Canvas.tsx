@@ -4,10 +4,10 @@ import CanvasMode, {
   ShapeModeOptions,
 } from "@/constants/canvas"
 import { CanvasModeContext } from "@/store/canvasHooks"
-import React, { useContext, useEffect, useLayoutEffect, useState } from "react"
+import React, { useContext, useEffect, useLayoutEffect } from "react"
 import Rectangle from "./shapeObjects/Rectangle"
 import Ellipse from "./shapeObjects/Ellipse"
-import ShapeInterface, { Point } from "./shapeObjects/ShapeInterface"
+import ShapeInterface from "./shapeObjects/ShapeInterface"
 import BrushStroke from "./shapeObjects/BrushStroke"
 import {
   adjustHistoryToIndex,
@@ -15,6 +15,7 @@ import {
   undo,
   setNewHistory,
   getShapesFromHistory,
+  handleMouseUpCanvas,
 } from "./HistoryUtilities"
 
 const Canvas: React.FC = () => {
@@ -25,7 +26,6 @@ const Canvas: React.FC = () => {
     setState,
     updateShapeCoordinates,
     shapeCoordinates,
-    brushSettings,
     color,
     mode,
     currentShape,
@@ -47,8 +47,10 @@ const Canvas: React.FC = () => {
     cursor,
     setCursor,
     updateInitialRectPosition,
+    brushSize,
+    brushCoordinates,
+    setBrushCoordinates,
   } = canvasContext!
-  const [brushCoordinates, setBrushCoordinates] = useState<Point[]>([])
 
   useLayoutEffect(() => {
     const canvas = canvasRef.current
@@ -158,15 +160,6 @@ const Canvas: React.FC = () => {
     }
   }, [])
 
-  const isMouseInsideCanvas = (x: number, y: number) => {
-    return (
-      x >= initialRectPosition.x &&
-      x <= initialRectPosition.x + initialRectPosition.w &&
-      y >= initialRectPosition.y &&
-      y <= initialRectPosition.y + initialRectPosition.h
-    )
-  }
-
   const getMouseCoordinates = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const x = (e.clientX - panOffset.x * scale) / scale
     const y = (e.clientY - panOffset.y * scale) / scale
@@ -178,8 +171,6 @@ const Canvas: React.FC = () => {
     if (!canvas) return
 
     const { x, y } = getMouseCoordinates(e)
-    if (!isMouseInsideCanvas(x, y) && mode !== CanvasMode.DRAG_MODE) return
-
     const context = canvas.getContext("2d")
     if (!context) return
 
@@ -299,8 +290,6 @@ const Canvas: React.FC = () => {
     const canvas = canvasRef.current
     if (!canvas || state === CanvasState.IDLE) return
     const { x, y } = getMouseCoordinates(e)
-    if (!isMouseInsideCanvas(x, y) && mode !== CanvasMode.DRAG_MODE) return
-
     const context = canvas.getContext("2d")
     if (!context) return
 
@@ -313,12 +302,7 @@ const Canvas: React.FC = () => {
           { x: x, y: y },
         ])
         setShapeId(shapeId + 1)
-        newShape = BrushStroke(
-          shapeId,
-          brushCoordinates,
-          color,
-          brushSettings.size,
-        )
+        newShape = BrushStroke(shapeId, brushCoordinates, color, brushSize)
         setCurrentShape(() => newShape)
         adjustHistoryToIndex(
           canvas,
@@ -360,7 +344,7 @@ const Canvas: React.FC = () => {
             newWidth,
             newHeight,
             color,
-            brushSettings.size,
+            brushSize,
           )
         } else if (shapeMode === ShapeModeOptions.CIRCLE_SHAPE) {
           const centerX = (x + shapeCoordinates.startX!) / 2
@@ -378,7 +362,7 @@ const Canvas: React.FC = () => {
             0,
             2 * Math.PI,
             color,
-            brushSettings.size,
+            brushSize,
           )
         }
 
@@ -401,19 +385,6 @@ const Canvas: React.FC = () => {
         let dx = x - shapeCoordinates.startX
         let dy = y - shapeCoordinates.startY
 
-        var coordinates = currentShape.getStrokeCoordinates()
-        if (
-          coordinates.x + dx < initialRectPosition.x ||
-          coordinates.y + dy < initialRectPosition.y ||
-          coordinates.x + coordinates.w + dx >
-            initialRectPosition.x + initialRectPosition.w ||
-          coordinates.y + coordinates.h + dy >
-            initialRectPosition.y + initialRectPosition.h
-        ) {
-          dx = 0
-          dy = 0
-        }
-
         currentShape.move(dx, dy)
         updateShapeCoordinates({ startX: x, startY: y })
         adjustHistoryToIndex(
@@ -426,6 +397,7 @@ const Canvas: React.FC = () => {
           true,
           imageRef.current!,
         )
+        currentShape.showBounding(false)
         currentShape.draw(context, panOffset)
         break
       case CanvasMode.DRAG_MODE:
@@ -458,78 +430,24 @@ const Canvas: React.FC = () => {
     }
   }
 
-  const handleMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current
-    if (!canvas || state === CanvasState.IDLE) return
-    const { x, y } = getMouseCoordinates(e)
-    if (!isMouseInsideCanvas(x, y) && state !== CanvasState.DRAGGING) return
-
-    const context = canvas.getContext("2d")
-    if (!context) return
-    switch (mode) {
-      case CanvasMode.BRUSH_MODE:
-      case CanvasMode.SHAPE_MODE:
-        if (currentShape === null) {
-          setState(CanvasState.IDLE)
-          return
-        }
-        setBrushCoordinates([])
-        setNewHistory(
-          currentHistoryIndex,
-          setCurrentHistoryIndex,
-          _history,
-          setHistory,
-          currentShape,
-          HistoryAction.CREATE,
-        )
-        setCurrentShape(null)
-        setState(CanvasState.IDLE)
-        break
-
-      case CanvasMode.SELECT_MODE:
-        if (state !== CanvasState.SELECTING) return
-        adjustHistoryToIndex(
-          canvas,
-          context,
-          initialRectPosition,
-          _history,
-          currentHistoryIndex,
-          panOffset,
-          true,
-          imageRef.current!,
-        )
-        currentShape.draw(context, panOffset)
-        setState(CanvasState.IDLE)
-        setNewHistory(
-          currentHistoryIndex,
-          setCurrentHistoryIndex,
-          _history,
-          setHistory,
-          currentShape,
-          HistoryAction.MOVE,
-        )
-        break
-      case CanvasMode.DRAG_MODE:
-        setCursor("grab_release.png")
-        setState(CanvasState.IDLE)
-        break
-
-      case CanvasMode.OPENPOSE_MODE:
-        if (state !== CanvasState.SELECTING) return
-        setState(CanvasState.IDLE)
-        setNewHistory(
-          currentHistoryIndex,
-          setCurrentHistoryIndex,
-          _history,
-          setHistory,
-          currentShape,
-          HistoryAction.MOVE,
-        )
-        break
-      default:
-        return
-    }
-  }
+  const handleMouseUp = () =>
+    handleMouseUpCanvas(
+      canvasRef,
+      state,
+      setState,
+      mode,
+      currentShape,
+      setCurrentShape,
+      currentHistoryIndex,
+      setCurrentHistoryIndex,
+      _history,
+      setHistory,
+      panOffset,
+      initialRectPosition,
+      setBrushCoordinates,
+      setCursor,
+      imageRef,
+    )
 
   return (
     <>
