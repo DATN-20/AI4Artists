@@ -31,8 +31,10 @@ export default function DashboardContent() {
   useEffect(() => {
     if (error) {
       console.error("Failed to fetch images:", error)
+    
     }
   }, [error, data])
+
 
 
   return (

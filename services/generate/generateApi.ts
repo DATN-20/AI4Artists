@@ -28,12 +28,10 @@ export const generateApi = createApi({
       },
     }),
     textToImage: builder.mutation({
-      query: (body
-        
-      ) => ({
+      query: (formData) => ({
         url: "/api/v1/generate-image/text-to-image",
         method: "POST",
-        body: body,
+        body: formData,
       }),
     }),
     imageToImage: builder.mutation({
@@ -44,13 +42,13 @@ export const generateApi = createApi({
       }),
     }),
     getGenerationHistory: builder.mutation({
-        query: () => {
-          return {
-            url: "api/v1/images/generate-history",
-            method: "get",
-          };
+      query: () => {
+        return {
+          url: "api/v1/images/generate-history",
+          method: "get",
         }
-      }),
+      },
+    }),
   }),
 })
 
@@ -58,5 +56,5 @@ export const {
   useAiInformationMutation,
   useTextToImageMutation,
   useImageToImageMutation,
-  useGetGenerationHistoryMutation
+  useGetGenerationHistoryMutation,
 } = generateApi

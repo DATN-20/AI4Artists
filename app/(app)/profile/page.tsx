@@ -82,7 +82,6 @@ const Profile = () => {
     const { name } = values
 
     if (name) {
-      console.log(name)
       const result = await addNewAlbum(name)
       const fetchAlbumData = async () => {
         await getAlbum(undefined)

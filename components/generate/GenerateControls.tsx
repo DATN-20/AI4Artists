@@ -93,7 +93,6 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
       </div>
 
       <StyleDrawer />
-      <ControlnetDialog/>
 
       {useImg2Img && <ImageInput onImageChange={handleImageChange} />}
       <button
