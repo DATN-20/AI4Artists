@@ -50,8 +50,6 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
   const dispatch = useAppDispatch()
 
   const handleDeleteFromAlbum = async () => {
-    console.log("image:", selectedImageId)
-    console.log("album:", selectedAlbum + 1)
 
     if (!selectedImageId || !(selectedAlbum + 1)) {
       return

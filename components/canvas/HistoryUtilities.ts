@@ -81,7 +81,6 @@ const IsShapeDeleted = (
   history: Array<{ action: number; value: any }>,
   index: number,
 ) => {
-  console.log(history)
   for (let i = index; i >= 0; i--) {
     if (history[i].value.id === id && history[i].action === HistoryAction.DELETE) {
       return true

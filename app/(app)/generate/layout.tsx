@@ -1,4 +1,6 @@
+"use client"
 import GenerateNavbar from "@/components/layout/generate/GenerateNavbar"
+import { CanvasContextProvider } from "@/store/canvasHooks"
 
 export default function GenerateLayout({
   children,
@@ -7,8 +9,10 @@ export default function GenerateLayout({
 }) {
   return (
     <>
-      <GenerateNavbar />
-      {children}
+      <CanvasContextProvider>
+        <GenerateNavbar />
+        {children}
+      </CanvasContextProvider>
     </>
   )
 }

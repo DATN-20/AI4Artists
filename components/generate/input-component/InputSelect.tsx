@@ -8,36 +8,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { setField } from "@/features/generateSlice"
+import { selectGenerate, setField } from "@/features/generateSlice"
 import { useAppDispatch } from "@/store/hooks"
 import { useEffect, useState } from "react"
+import { useSelector } from "react-redux"
 
 type InputSelectProps = {
   data: Record<string, string>
   onSelect: (value: string) => void
   type: string
+  arrayType?: string
 }
 
-const InputSelect = ({ data, onSelect, type }: InputSelectProps) => {
+const InputSelect = ({ data, onSelect, type, arrayType }: InputSelectProps) => {
   const [selected, setSelected] = useState("")
   const dispatch = useAppDispatch()
+  const generateStates = useSelector(selectGenerate)
 
   const handleSelect = (value: string) => {
     setSelected(value)
     onSelect(value)
-    dispatch(setField({ field: type, value: value }))
 
-    // if (type === "style") {
-    //   dispatch(setStyle({ style: value }))
-    // } else if (type === "sampleMethos") {
-    //   dispatch(setSample({ sample: value }))
-    // }
+    if (arrayType) {
+      dispatch(setField({ field: `${arrayType}[0].${type}`, value: value }))
+    } else {
+      dispatch(setField({ field: type, value: value }))
+    }
   }
 
   useEffect(() => {
     const defaultValue = Object.values(data)[0]
     if (defaultValue) {
-      dispatch(setField({ field: type, value: defaultValue }))
+      if (arrayType) {
+        dispatch(
+          setField({ field: `${arrayType}[0].${type}`, value: defaultValue }),
+        )
+      } else {
+        dispatch(setField({ field: type, value: defaultValue }))
+      }
       setSelected(defaultValue)
     }
   }, [])

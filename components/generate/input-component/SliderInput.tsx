@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react"
 import { Slider } from "../../ui/slider"
 import { useAppDispatch } from "@/store/hooks"
-import { setField } from "@/features/generateSlice"
+import { selectGenerate, setField } from "@/features/generateSlice"
+import { useSelector } from "react-redux"
 
 const SliderInput = ({
   min,
@@ -9,39 +10,38 @@ const SliderInput = ({
   step,
   defaultValue,
   type,
+  arrayType,
 }: {
   min: number
   max: number
   step: number
   defaultValue?: number
   type: string
+  arrayType?: string
 }) => {
   const dispatch = useAppDispatch()
+  const generateStates = useSelector(selectGenerate)
   const [value, setValue] = useState(
     defaultValue ?? Math.round((min + max) / 2),
   )
 
   const handleValueChange = (valueArray: number[], type: string) => {
     setValue(valueArray[0])
-    dispatch(setField({ field: type, value: valueArray[0] }))
-
-    // if (type === "steps") {
-    //   dispatch(setField({ field:typesteps: valueArray[0] }))
-    // } else if (type === "cfg") {
-    //   dispatch(setCFG({ cfg: valueArray[0] }))
-    // } else if (type === "noise") {
-    //   dispatch(setNoise({ noise: valueArray[0] }))
-    // } else if (type === "height") {
-    //   dispatch(setHeight({ height: valueArray[0] }))
-    // } else if (type === "width") {
-    //   dispatch(setWidth({ width: valueArray[0] }))
-    // } else if (type === "numberOfImage") {
-    //   dispatch(setNumberOfImage({ numberOfImage: valueArray[0] }))
-    // }
+    if (arrayType) {
+      dispatch(setField({ field: `${arrayType}[0].${type}`, value: valueArray[0] }))
+    } else {
+      dispatch(setField({ field: type, value: valueArray[0] }))
+    }
   }
   useEffect(() => {
-    dispatch(setField({ field: type, value: value }))
+    if (arrayType) {
+      dispatch(setField({ field: `${arrayType}[0].${type}`, value: value }))
+    } else {
+      dispatch(setField({ field: type, value: value }))
+    }
   }, [])
+
+
   return (
     <>
       <div className="flex w-full justify-between">

@@ -13,6 +13,7 @@ export const SaveImageButton: React.FC = memo(() => {
     panOffset,
     currentHistoryIndex,
     imageRef,
+    setImageFile
   } = canvasModeContext!
 
   return (
@@ -52,6 +53,7 @@ export const SaveImageButton: React.FC = memo(() => {
         )
 
         const dataUrl = tempCanvas.toDataURL("image/png")
+        setImageFile(new File([dataUrl], "image.png", { type: "image/png" }))
         const fileName = "image.png"
         const a = document.createElement("a")
         a.href = dataUrl

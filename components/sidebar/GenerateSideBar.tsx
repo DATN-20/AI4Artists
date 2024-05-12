@@ -7,12 +7,23 @@ import InputSelect from "../generate/input-component/InputSelect"
 import SliderInput from "../generate/input-component/SliderInput"
 import { Card, CardHeader } from "../ui/card"
 import { useSelector } from "react-redux"
-import { selectGenerate } from "@/features/generateSlice"
+import {
+  selectGenerate,
+  setField,
+  setUseControlnet,
+} from "@/features/generateSlice"
 import Image from "next/image"
 import { ArrowLeftFromLine } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { render } from "react-dom"
+import { ControlnetDialog } from "../generate/ControlnetDialog"
+import { Switch } from "../ui/switch"
+import { Label } from "../ui/label"
+import { useAppDispatch } from "../../store/hooks"
+import TrueFalseInput from "../generate/input-component/TrueFalseInput"
 
 export default function GenerateSideBar() {
+  const dispatch = useAppDispatch()
   const generateStates = useSelector(selectGenerate)
   const aiInputs = generateStates.aiInputs
   const router = useRouter()
@@ -50,7 +61,7 @@ export default function GenerateSideBar() {
     { label: "1024 x 1024", value: "6" },
   ]
 
-  const renderInput = (input: any) => {
+  const renderInput = (input: any, arrayType?: string) => {
     const {
       name,
       type,
@@ -67,6 +78,7 @@ export default function GenerateSideBar() {
               data={info.choices}
               onSelect={(value) => console.log(`Selected ${name}:`, value)}
               type={propertyName}
+              arrayType={arrayType}
             />
           </CollapsibleSection>
         )
@@ -80,9 +92,90 @@ export default function GenerateSideBar() {
               step={info.step}
               defaultValue={defaultValue}
               type={propertyName}
+              arrayType={arrayType}
             />
           </CollapsibleSection>
         )
+
+      case "image":
+        switch (propertyName) {
+          case "image":
+            return null
+
+          case "controlNetImages":
+            return (
+              <CollapsibleSection title={name} key={propertyName}>
+                <ControlnetDialog type={propertyName} />
+              </CollapsibleSection>
+            )
+
+          default:
+            return null
+        }
+
+      case "boolean": {
+        return (
+          <div className="w-full p-4 pb-0">
+            <TrueFalseInput
+              name={name}
+              type={propertyName}
+              defaultValue={defaultValue}
+              arrayType={arrayType}
+            />
+          </div>
+        )
+      }
+
+      case "array": {
+        return (
+          <>
+            <div className="flex justify-between p-4 pb-0">
+              <Label htmlFor="array-mode" className="text-lg font-semibold">
+                {info.element.name}
+              </Label>
+              <Switch
+                id="array-mode"
+                className="bg-black"
+                onClick={() => {
+                  dispatch(
+                    setUseControlnet({
+                      useControlnet: !generateStates.useControlnet,
+                    }),
+                  )
+                }}
+              />
+            </div>
+
+            {info.element.info.inputs.map((nestedInput: any) => {
+              if (!generateStates.useControlnet) {
+                dispatch(
+                  setField({
+                    field: `${info.element.input_property_name}[0].${nestedInput.input_property_name}`,
+                    delete: true,
+                  }),
+                )
+                dispatch(
+                  setField({
+                    field: "controlNetImages",
+                    delete: true,
+                  }),
+                )
+                return null
+              } else {
+                return (
+                  <Card
+                    key={nestedInput.input_property_name}
+                    className="border-none px-0 lg:border"
+                  >
+                    {renderInput(nestedInput, info.element.input_property_name)}
+                  </Card>
+                )
+              }
+            })}
+          </>
+        )
+      }
+
       default:
         return null
     }
@@ -137,7 +230,7 @@ export default function GenerateSideBar() {
           return (
             <Card
               key={aiInput.input_property_name}
-              className="border-none lg:border"
+              className="border-none pb-4 lg:border"
             >
               {renderInput(aiInput)}
             </Card>

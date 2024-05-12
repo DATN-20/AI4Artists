@@ -217,7 +217,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
 
         const croppedImageBase64 = canvas.toDataURL("image/jpeg")
         setCroppedBgUrl(croppedImageBase64)
-        console.log(croppedImageBase64)
         if (croppedImageBase64) {
           let formData = new FormData()
 
@@ -255,7 +254,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
 
         const croppedImageBase64 = canvas.toDataURL("image/jpeg")
         setCroppedImageUrl(croppedImageBase64)
-        console.log(croppedImageBase64)
         if (croppedImageBase64) {
           let formData = new FormData()
 
@@ -307,7 +305,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
 
     try {
       const result = await updateProfile(requestBody).unwrap()
-      console.log(result)
       // setGenerateImgData(result)
     } catch (error) {
       console.error("Error :", error)

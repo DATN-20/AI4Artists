@@ -54,8 +54,6 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
   }
 
   const handleAddToAlbum = async () => {
-    console.log("image:", selectedImageId)
-    console.log("album:", selectedAlbumId)
     if (!selectedImageId || !selectedAlbumId) {
       return
     }
