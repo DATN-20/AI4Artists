@@ -18,7 +18,6 @@ import { selectGenerate, setUseImage } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
 import { Button } from "../ui/button"
 import StyleDrawer from "./StyleDrawer"
-import { ControlnetDialog } from "./ControlnetDialog"
 
 interface GenerateControlsProps {
   handlePosPromptChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
@@ -93,7 +92,6 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
       </div>
 
       <StyleDrawer />
-      <ControlnetDialog/>
 
       {useImg2Img && <ImageInput onImageChange={handleImageChange} />}
       <button

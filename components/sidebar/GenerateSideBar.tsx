@@ -1,36 +1,56 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import CollapsibleSection from "../generate/CollapsibleSection"
 import ChooseInput from "../generate/input-component/ChooseInput"
 import InputSelect from "../generate/input-component/InputSelect"
 import SliderInput from "../generate/input-component/SliderInput"
 import { Card, CardHeader } from "../ui/card"
 import { useSelector } from "react-redux"
-import { selectGenerate } from "@/features/generateSlice"
+import {
+  selectGenerate,
+  setField,
+  setUseControlnet,
+} from "@/features/generateSlice"
 import Image from "next/image"
 import { ArrowLeftFromLine } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { render } from "react-dom"
+import { ControlnetDialog } from "../generate/ControlnetDialog"
+import { Switch } from "../ui/switch"
+import { Label } from "../ui/label"
+import { useAppDispatch } from "../../store/hooks"
+import TrueFalseInput from "../generate/input-component/TrueFalseInput"
 
 export default function GenerateSideBar() {
+  const dispatch = useAppDispatch()
   const generateStates = useSelector(selectGenerate)
   const aiInputs = generateStates.aiInputs
   const router = useRouter()
-  useEffect(() => {}, [])
-
-  const dropdownData = [
-    { label: "Profile", value: "profile" },
-    { label: "Settings", value: "settings" },
-  ]
-
-  const chooseInputOptions = [
-    { label: "Option 1", value: "option1" },
-    { label: "Option 2", value: "option2" },
-    { label: "Option 3", value: "option3" },
-    { label: "Option 4", value: "option4" },
-    { label: "Option 5", value: "option5" },
-    { label: "Option 6", value: "option6" },
-  ]
+  const [noiseElement, setNoiseElement] = useState<JSX.Element | null>(null)
+  useEffect(() => {
+    if (aiInputs && generateStates.useImage) {
+      const noiseInput = aiInputs.find(
+        (aiInput: any) => aiInput.input_property_name === "noise",
+      )
+      if (noiseInput) {
+        const noiseSlider = (
+          <CollapsibleSection title={"Noise"} key="noise">
+            <SliderInput
+              min={(noiseInput as any).min || 0}
+              max={(noiseInput as any).max || 1}
+              step={(noiseInput as any).step || 0.01}
+              defaultValue={0.75}
+              type="noise"
+            />
+          </CollapsibleSection>
+        )
+        setNoiseElement(() => noiseSlider)
+      }
+    } else {
+      setNoiseElement(() => null)
+    }
+  }, [aiInputs, generateStates.useImage])
 
   const dimensionOptions = [
     { label: "512 x 512", value: "1" },
@@ -41,38 +61,7 @@ export default function GenerateSideBar() {
     { label: "1024 x 1024", value: "6" },
   ]
 
-  const numberImageOptions = [
-    { label: "1", value: "1" },
-    { label: "2", value: "2" },
-    { label: "3", value: "3" },
-    { label: "4", value: "4" },
-    { label: "5", value: "5" },
-    { label: "6", value: "6" },
-  ]
-
-  const chooseThreeInputOptions = [
-    { label: "Option 1", value: "option1" },
-    { label: "Option 2", value: "option2" },
-    { label: "Option 3", value: "option3" },
-  ]
-
-  const handleInputDropDownSelection = (value: string) => {
-    console.log("Selected:", value)
-  }
-
-  const handleChooseInputSelection = (value: string) => {
-    console.log("You selected:", value)
-  }
-
-  const handleShortInputValueChange = (value: string) => {
-    console.log("You entered:", value)
-  }
-
-  const handleChooseThreeInputSelection = (value: string) => {
-    console.log("You selected:", value)
-  }
-
-  const renderInput = (input: any) => {
+  const renderInput = (input: any, arrayType?: string) => {
     const {
       name,
       type,
@@ -89,6 +78,7 @@ export default function GenerateSideBar() {
               data={info.choices}
               onSelect={(value) => console.log(`Selected ${name}:`, value)}
               type={propertyName}
+              arrayType={arrayType}
             />
           </CollapsibleSection>
         )
@@ -102,9 +92,90 @@ export default function GenerateSideBar() {
               step={info.step}
               defaultValue={defaultValue}
               type={propertyName}
+              arrayType={arrayType}
             />
           </CollapsibleSection>
         )
+
+      case "image":
+        switch (propertyName) {
+          case "image":
+            return null
+
+          case "controlNetImages":
+            return (
+              <CollapsibleSection title={name} key={propertyName}>
+                <ControlnetDialog type={propertyName} />
+              </CollapsibleSection>
+            )
+
+          default:
+            return null
+        }
+
+      case "boolean": {
+        return (
+          <div className="w-full p-4 pb-0">
+            <TrueFalseInput
+              name={name}
+              type={propertyName}
+              defaultValue={defaultValue}
+              arrayType={arrayType}
+            />
+          </div>
+        )
+      }
+
+      case "array": {
+        return (
+          <>
+            <div className="flex justify-between p-4 pb-0">
+              <Label htmlFor="array-mode" className="text-lg font-semibold">
+                {info.element.name}
+              </Label>
+              <Switch
+                id="array-mode"
+                className="bg-black"
+                onClick={() => {
+                  dispatch(
+                    setUseControlnet({
+                      useControlnet: !generateStates.useControlnet,
+                    }),
+                  )
+                }}
+              />
+            </div>
+
+            {info.element.info.inputs.map((nestedInput: any) => {
+              if (!generateStates.useControlnet) {
+                dispatch(
+                  setField({
+                    field: `${info.element.input_property_name}[0].${nestedInput.input_property_name}`,
+                    delete: true,
+                  }),
+                )
+                dispatch(
+                  setField({
+                    field: "controlNetImages",
+                    delete: true,
+                  }),
+                )
+                return null
+              } else {
+                return (
+                  <Card
+                    key={nestedInput.input_property_name}
+                    className="border-none px-0 lg:border"
+                  >
+                    {renderInput(nestedInput, info.element.input_property_name)}
+                  </Card>
+                )
+              }
+            })}
+          </>
+        )
+      }
+
       default:
         return null
     }
@@ -127,55 +198,44 @@ export default function GenerateSideBar() {
           alt="logo"
           width={70}
           height={70}
+          className="cursor-pointer"
           onClick={() => {
             router.push("/dashboard")
           }}
         />
       </CardHeader>
-      {aiInputs && generateStates.useImage && (
-        <CollapsibleSection title={"Noise"}>
-          <SliderInput
-            min={aiInputs[0]?.inputs[9].min || 0}
-            max={aiInputs[0]?.inputs[9].max || 1}
-            step={aiInputs[0]?.inputs[9].step || 0.01}
-            defaultValue={0.75}
-            type="noise"
-          />
-        </CollapsibleSection>
-      )}
+      {noiseElement}
 
       {aiInputs &&
-        aiInputs.map((aiInput) => (
-          <Card key={aiInput.ai_name} className="border-none lg:border">
-            {aiInput.inputs.map((input) => {
-              if (
-                input.input_property_name === "image" ||
-                input.input_property_name === "noise" ||
-                input.input_property_name === "positivePrompt" ||
-                input.input_property_name === "negativePrompt" ||
-                input.input_property_name === "height"
-              ) {
-                return null
-              }
-              if (input.input_property_name === "width") {
-                return (
-                  <CollapsibleSection
-                    title={"Image Dimensions"}
-                    key="image-dimensions"
-                  >
-                    <ChooseInput
-                      options={dimensionOptions}
-                      onSelect={handleChooseInputSelection}
-                      type="dimension"
-                    />
-                  </CollapsibleSection>
-                )
-              }
-
-              return renderInput(input)
-            })}
-          </Card>
-        ))}
+        aiInputs.map((aiInput: any) => {
+          if (
+            aiInput.input_property_name === "image" ||
+            aiInput.input_property_name === "noise" ||
+            aiInput.input_property_name === "positivePrompt" ||
+            aiInput.input_property_name === "negativePrompt" ||
+            aiInput.input_property_name === "height"
+          ) {
+            return null
+          }
+          if (aiInput.input_property_name === "width") {
+            return (
+              <CollapsibleSection
+                title={"Image Dimensions"}
+                key="image-dimensions"
+              >
+                <ChooseInput options={dimensionOptions} type="dimension" />
+              </CollapsibleSection>
+            )
+          }
+          return (
+            <Card
+              key={aiInput.input_property_name}
+              className="border-none pb-4 lg:border"
+            >
+              {renderInput(aiInput)}
+            </Card>
+          )
+        })}
     </Card>
   )
 }

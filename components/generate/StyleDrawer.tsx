@@ -43,7 +43,6 @@ const StyleDrawer = () => {
 
   const navigateToStep = (step: number, maxSteps: number) => {
     if (step >= 1 && step <= maxSteps) {
-      console.log("Navigating to step:", step)
       setCurrentStep(step)
       const imageData = imagesData[step - 1]
       if (imageData) {

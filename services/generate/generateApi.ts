@@ -28,22 +28,10 @@ export const generateApi = createApi({
       },
     }),
     textToImage: builder.mutation({
-      query: (body: {
-        aiName: string | undefined
-        positivePrompt: string | undefined
-        negativePrompt: string | undefined
-        style: string | undefined
-        width: number | undefined
-        height: number | undefined
-        numberOfImage: number | undefined
-        steps: number | undefined
-        sampleMethod: string | undefined
-        cfg: number | undefined
-        noise: number | undefined
-      }) => ({
+      query: (formData) => ({
         url: "/api/v1/generate-image/text-to-image",
         method: "POST",
-        body: { ...body, aiName:'comfyUI' },
+        body: formData,
       }),
     }),
     imageToImage: builder.mutation({
@@ -54,13 +42,13 @@ export const generateApi = createApi({
       }),
     }),
     getGenerationHistory: builder.mutation({
-        query: () => {
-          return {
-            url: "api/v1/images/generate-history",
-            method: "get",
-          };
+      query: () => {
+        return {
+          url: "api/v1/images/generate-history",
+          method: "get",
         }
-      }),
+      },
+    }),
   }),
 })
 
@@ -68,5 +56,5 @@ export const {
   useAiInformationMutation,
   useTextToImageMutation,
   useImageToImageMutation,
-  useGetGenerationHistoryMutation
+  useGetGenerationHistoryMutation,
 } = generateApi

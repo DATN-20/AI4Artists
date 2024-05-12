@@ -8,9 +8,11 @@ export default function GenerateLayout({
   children: React.ReactNode
 }) {
   return (
-    <CanvasContextProvider>
-      <GenerateNavbar />
-      {children}
-    </CanvasContextProvider>
+    <>
+      <CanvasContextProvider>
+        <GenerateNavbar />
+        {children}
+      </CanvasContextProvider>
+    </>
   )
 }

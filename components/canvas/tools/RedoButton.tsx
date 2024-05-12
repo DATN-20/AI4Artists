@@ -1,7 +1,6 @@
 import { CanvasModeContext } from "@/store/canvasHooks"
 import { useContext, memo } from "react"
 import { RiArrowGoForwardLine } from "react-icons/ri"
-import { Button } from "@/components/ui/button"
 import { redo } from "../HistoryUtilities"
 
 export const RedoButton: React.FC = memo(() => {

@@ -54,8 +54,6 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
   }
 
   const handleAddToAlbum = async () => {
-    console.log("image:", selectedImageId)
-    console.log("album:", selectedAlbumId)
     if (!selectedImageId || !selectedAlbumId) {
       return
     }
@@ -165,8 +163,12 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
               </DialogFooter>
             </DialogContent>
           </CarouselContent>
-          <CarouselPrevious className="absolute left-0 top-1/2 h-12 w-12 -translate-y-1/2 transform rounded-md" />
-          <CarouselNext className="absolute right-0 top-1/2 h-12 w-12 -translate-y-1/2 transform rounded-md" />
+          {generateImgData && generateImgData.length > 3 && (
+            <>
+              <CarouselPrevious className="absolute left-0 top-1/2 h-12 w-12 -translate-y-1/2 transform rounded-xl" />
+              <CarouselNext className="absolute right-0 top-1/2 h-12 w-12 -translate-y-1/2 transform rounded-xl" />
+            </>
+          )}
         </Carousel>
       </Dialog>
     </>

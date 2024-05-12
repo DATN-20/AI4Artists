@@ -8,20 +8,22 @@ import {
 } from "../ui/dialog"
 import OptionSelect from "../canvas/OptionSelect"
 import ToolSelect from "../canvas/ToolSelect"
+import { selectGenerate, setField } from "@/features/generateSlice"
 import { CanvasModeContext } from "@/store/canvasHooks"
-import { useContext } from "react"
-export const ControlnetDialog: React.FC = () => {
+import { useAppDispatch } from "@/store/hooks"
+import { useContext, useEffect } from "react"
+import { useSelector } from "react-redux"
+export const ControlnetDialog = ({ type }: { type: string }) => {
   const canvasModeContext = useContext(CanvasModeContext)
-  const {
-    canvasRef,
-    initialRectPosition,
-    _history,
-    panOffset,
-    currentHistoryIndex,
-    imageRef,
-    scale,
-    setChosenFile
-  } = canvasModeContext!
+  const { imageFile } = canvasModeContext!
+  const dispatch = useAppDispatch()
+  const generateStates = useSelector(selectGenerate)
+
+  useEffect(() => {
+    if (imageFile) {
+      dispatch(setField({ field: "controlNetImages", value: imageFile }))
+    }
+  }, [imageFile])
 
   return (
       <Dialog>

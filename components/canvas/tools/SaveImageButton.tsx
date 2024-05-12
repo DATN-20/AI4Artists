@@ -1,6 +1,5 @@
 import { CanvasModeContext } from "@/store/canvasHooks"
 import { useContext, memo } from "react"
-import { Button } from "@/components/ui/button"
 import { adjustHistoryToIndex } from "../HistoryUtilities"
 import { MdSaveAlt } from "react-icons/md"
 
@@ -13,8 +12,8 @@ export const SaveImageButton: React.FC = memo(() => {
     panOffset,
     currentHistoryIndex,
     imageRef,
-    scale,
-    setChosenFile
+    setImageFile,
+    scale
   } = canvasModeContext!
 
   return (
@@ -54,7 +53,7 @@ export const SaveImageButton: React.FC = memo(() => {
         )
 
         const dataUrl = tempCanvas.toDataURL("image/png")
-        setChosenFile(new File([dataUrl], "image.png"))
+        setImageFile(new File([dataUrl], "image.png", { type: "image/png" }))
         const fileName = "image.png"
         const a = document.createElement("a")
         a.href = dataUrl

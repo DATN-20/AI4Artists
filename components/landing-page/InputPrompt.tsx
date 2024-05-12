@@ -23,15 +23,15 @@ export default function InputPrompt() {
       <div className="flex w-full max-w-4xl items-center justify-center rounded-full bg-white px-4 py-3">
         <input
           type="text"
-          placeholder="Enter your name"
-          className="flex-grow bg-transparent text-black placeholder-white outline-none"
+          placeholder="Enter your prompt here..."
+          className="flex-grow bg-transparent text-black placeholder-black outline-none ml-2"
           value={inputValue}
           onChange={handleInputChange}
         />
         <DialogTrigger asChild>
           <button
             type="button"
-            className="ml-4 flex items-center justify-center rounded-full bg-gradient-default px-4 py-3 font-bold text-black hover:bg-purple-700"
+            className="ml-4 flex items-center justify-center rounded-full bg-gradient-default px-4 py-3 font-bold text-gray-800 "
             onClick={handleGenerateClick}
           >
             <span className="mr-2">✨</span>

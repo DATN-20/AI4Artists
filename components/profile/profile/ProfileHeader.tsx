@@ -63,13 +63,19 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
   const [originalImage, setOriginalImage] = useState<HTMLImageElement | null>(
     null,
   )
+  const [originalBg, setOriginalBg] = useState<HTMLImageElement | null>(null)
   const [bgUrl, setBgUrl] = useState<string | null>(null)
   const [showAvatarModal, setShowAvatarModal] = useState(false)
+  const [showBgModal, setShowBgModal] = useState(false)
+
   const [updateAvatar] = useUpdateAvatarMutation()
   const [updateBackground] = useUpdateBackgroundMutation()
   const [updateProfile] = useUpdateProfileMutation()
   const toggleAvatarModal = () => {
     setShowAvatarModal(!showAvatarModal)
+  }
+  const toggleBgModal = () => {
+    setShowBgModal(!showBgModal)
   }
   function base64StringToFile(base64String: string, filename: string): File {
     const byteString = atob(base64String.split(",")[1])
@@ -162,37 +168,67 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
     if (file) {
       const reader = new FileReader()
       reader.onload = () => {
-        const imageUrl = reader.result as string
-        setBgUrl(imageUrl)
-        setOpenBgChange(true)
+        const image = new Image()
+        image.src = reader.result as string
+        image.onload = () => {
+          setOriginalBg(image)
+          toggleBgModal()
+        }
       }
       reader.readAsDataURL(file)
     }
   }
 
   const handleSaveBg = async () => {
-    if (bgUrl) {
-      const response = await fetch(bgUrl)
-      const blob = await response.blob()
-
-      const file = new File([blob], "background_image.jpg", {
-        type: "image/jpeg",
-      })
-      let formData = new FormData()
-
-      formData.append("file", file)
-
-      toast.success("Update background successfully")
-      setCroppedBgUrl(bgUrl)
-      setOpenBgChange(false)
-      await updateBackground(formData)
-    }
+    // Lưu ảnh đã cắt
+    getCroppedBg()
+    // Đóng dialog
+    toggleBgModal()
   }
 
   const onImageCrop = (crop: Crop) => {
     setCrop(crop)
   }
+  const onBgCrop = (crop: Crop) => {
+    setCrop(crop)
+  }
+  const getCroppedBg = async () => {
+    if (originalBg) {
+      const canvas = document.createElement("canvas")
+      const scaleX = originalBg.width / (originalBg.naturalWidth || 1)
+      const scaleY = originalBg.height / (originalBg.naturalHeight || 1)
+      const ctx = canvas.getContext("2d")
 
+      if (ctx && crop.width && crop.height) {
+        canvas.width = crop.width
+        canvas.height = crop.height
+
+        ctx.drawImage(
+          originalBg,
+          crop.x * scaleX,
+          crop.y * scaleY,
+          crop.width * scaleX,
+          crop.height * scaleY,
+          0,
+          0,
+          crop.width,
+          crop.height,
+        )
+
+        const croppedImageBase64 = canvas.toDataURL("image/jpeg")
+        setCroppedBgUrl(croppedImageBase64)
+        if (croppedImageBase64) {
+          let formData = new FormData()
+
+          const filename = "image.jpg"
+          const imageFile = base64StringToFile(croppedImageBase64, filename)
+          formData.append("file", imageFile)
+          await updateBackground(formData)
+          toast.success("Update background successfully")
+        }
+      }
+    }
+  }
   const getCroppedImage = async () => {
     if (originalImage) {
       const canvas = document.createElement("canvas")
@@ -218,7 +254,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
 
         const croppedImageBase64 = canvas.toDataURL("image/jpeg")
         setCroppedImageUrl(croppedImageBase64)
-        console.log(croppedImageBase64)
         if (croppedImageBase64) {
           let formData = new FormData()
 
@@ -270,7 +305,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
 
     try {
       const result = await updateProfile(requestBody).unwrap()
-      console.log(result)
       // setGenerateImgData(result)
     } catch (error) {
       console.error("Error :", error)
@@ -335,9 +369,62 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
           </div>
         )}
       </div>
+      <Dialog open={showBgModal}>
+        <AlertDialog>
+          <DialogContent className="w-fit	max-w-4xl	">
+            {originalBg && (
+              <ReactCrop
+                crop={crop}
+                onChange={onBgCrop}
+                // onComplete={getCroppedImage}
+              >
+                <img src={originalBg?.src} />
+              </ReactCrop>
+            )}
+
+            <DialogFooter className="mt-4 flex justify-between">
+              <AlertDialogTrigger asChild>
+                <Button
+                  type="submit"
+                  className="rounded-md  px-4 py-2 text-white  focus:outline-none"
+                >
+                  Save changes
+                </Button>
+              </AlertDialogTrigger>
+              <DialogClose>
+                <Button
+                  type="button"
+                  className="rounded-md bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400 focus:outline-none"
+                  onClick={() => {
+                    toggleBgModal()
+                  }}
+                >
+                  Close
+                </Button>
+              </DialogClose>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Confirm Save</AlertDialogTitle>
+                </AlertDialogHeader>
+                <AlertDialogDescription>
+                  Are you sure you want to save changes?
+                </AlertDialogDescription>
+                <AlertDialogFooter className="mt-5">
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction>
+                    <Button type="submit" onClick={handleSaveBg}>
+                      Save
+                    </Button>
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </DialogFooter>
+          </DialogContent>
+        </AlertDialog>
+      </Dialog>
       <Dialog open={showAvatarModal}>
         <AlertDialog>
-          <DialogContent>
+          <DialogContent className="w-fit	max-w-4xl	">
             {originalImage && (
               <ReactCrop
                 crop={crop}
@@ -388,24 +475,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
           </DialogContent>
         </AlertDialog>
       </Dialog>
-      <AlertDialog open={openBgChange}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Save</AlertDialogTitle>
-          </AlertDialogHeader>
-          <AlertDialogDescription>
-            Are you sure you want to save changes?
-          </AlertDialogDescription>
-          <AlertDialogFooter className="mt-5">
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction>
-              <Button type="submit" onClick={handleSaveBg}>
-                Save
-              </Button>
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
       <div className="ml-[240px] flex items-center justify-between px-2 pt-2">
         <div className="flex flex-col">
           <h1 className="flex text-3xl font-bold">

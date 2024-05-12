@@ -9,8 +9,10 @@ import {
 } from "@/components/ui/drawer"
 import { X } from "lucide-react"
 import NavigationSideBarCard from "@/components/sidebar/card/NavigationSideBarCard"
+import { useRouter } from "next/navigation"
 
 const DashboardNavbar = () => {
+  const router = useRouter()
   return (
     <nav className="block md:hidden">
       <div className="flex w-full items-center justify-between px-6 pt-4">
@@ -29,7 +31,10 @@ const DashboardNavbar = () => {
             </DrawerContent>
           </Drawer>
         </div>
-        <div className="flex flex-grow justify-center">
+        <div
+          className="flex flex-grow cursor-pointer justify-center"
+          onClick={() => router.push("/dashboard")}
+        >
           <NextImage src="/logo.png" alt="logo" width={50} height={50} />
         </div>
         <div className="flex-grow-0"></div>

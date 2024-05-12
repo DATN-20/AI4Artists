@@ -73,8 +73,8 @@ export type CanvasModeContextType = {
   setEraseMode: Dispatch<SetStateAction<EraseModeOptions>>
   cursor: string
   setCursor: Dispatch<SetStateAction<string>>
-  chosenFile: File | null
-  setChosenFile: Dispatch<SetStateAction<File | null>>
+  imageFile: File | null
+  setImageFile: Dispatch<SetStateAction<File | null>>
 }
 
 export const CanvasModeContext = createContext<
@@ -117,7 +117,7 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
   const [currentHistoryIndex, setCurrentHistoryIndex] = useState(-1)
   const [scale, setScale] = useState(1)
   const [scaleOffset, setScaleOffset] = useState({ x: 0, y: 0 })
-  const [chosenFile, setChosenFile] = useState<File | null>(null)
+  const [imageFile, setImageFile] = useState<File | null>(null)
 
   const updateShapeCoordinates = (
     newCoordinates: Partial<typeof shapeCoordinates>,
@@ -177,8 +177,8 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
     setEraseMode,
     cursor,
     setCursor,
-    chosenFile,
-    setChosenFile,
+    imageFile,
+    setImageFile,
   }
 
   return (
