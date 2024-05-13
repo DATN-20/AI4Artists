@@ -24,7 +24,14 @@ export const ControlnetDialog = ({ type }: { type: string }) => {
 
   useEffect(() => {
     if (imageFile) {
-      dispatch(setField({ field: "controlNetImages", value: imageFile }))
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const base64String = reader.result?.toString()
+        if (base64String) {
+          dispatch(setField({ field: "controlNetImages", value: base64String }))
+        }
+      }
+      reader.readAsDataURL(imageFile)
     }
   }, [imageFile])
 
@@ -51,10 +58,7 @@ export const ControlnetDialog = ({ type }: { type: string }) => {
             <div className="rounded-lg bg-card px-4 dark:bg-white">
               <ToolSelect />
             </div>
-            <SaveChangesButton
-              open={open}
-              setOpen={setOpen}
-            />
+            <SaveChangesButton open={open} setOpen={setOpen} />
           </div>
         </div>
       </DialogContentLoginModal>

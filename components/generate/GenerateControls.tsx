@@ -91,9 +91,9 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
         <Label htmlFor="image-mode">Use Image Generation</Label>
       </div>
 
-      <StyleDrawer />
 
       {useImg2Img && <ImageInput onImageChange={handleImageChange} />}
+      <StyleDrawer />
       <button
         type="button"
         onClick={handleGenerate}

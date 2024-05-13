@@ -109,7 +109,12 @@ export default function Generate() {
 
     if (generateStates.dataInputs) {
       generateStates.dataInputs.forEach((input, index) => {
-        const { name, value } = input
+        const { name, value } = input 
+        if(name === 'controlNetImages') {
+          const imageFile = base64StringToFile(value as string, 'image.jpg')
+          formData.append('controlNetImages', imageFile)
+          return
+        }
         formData.append(name, (value as any).toString())
       })
      formData.append("aiName", "comfyUI")
