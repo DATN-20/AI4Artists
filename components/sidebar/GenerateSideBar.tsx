@@ -11,6 +11,7 @@ import {
   selectGenerate,
   setField,
   setUseControlnet,
+  setUseImage,
 } from "@/features/generateSlice"
 import Image from "next/image"
 import { ArrowLeftFromLine } from "lucide-react"
@@ -21,6 +22,7 @@ import { Switch } from "../ui/switch"
 import { Label } from "../ui/label"
 import { useAppDispatch } from "../../store/hooks"
 import TrueFalseInput from "../generate/input-component/TrueFalseInput"
+import DynamicImageInput from "../generate/input-component/DynamicImageInput"
 
 export default function GenerateSideBar() {
   const dispatch = useAppDispatch()
@@ -99,8 +101,63 @@ export default function GenerateSideBar() {
 
       case "image":
         switch (propertyName) {
-          case "image":
-            return null
+          case "image": {
+            if (!generateStates.useImage) {
+              dispatch(
+                setField({
+                  field: "image",
+                  delete: true,
+                }),
+              )
+              dispatch(
+                setField({
+                  field: "noise",
+                  delete: true,
+                }),
+              )
+              return (
+                <div className="flex justify-between p-4 pb-0">
+                  <Label htmlFor="image-mode" className="text-lg font-semibold">
+                    {name}
+                  </Label>
+                  <Switch
+                    id="image-mode"
+                    className="bg-black"
+                    onClick={() => {
+                      dispatch(
+                        setUseImage({
+                          useImage: !generateStates.useImage,
+                        }),
+                      )
+                    }}
+                  />
+                </div>
+              )
+            }
+            return (
+              <>
+                <div className="flex justify-between p-4 pb-0">
+                  <Label htmlFor="image-mode" className="text-lg font-semibold">
+                    {name}
+                  </Label>
+                  <Switch
+                    id="image-mode"
+                    className="bg-black"
+                    onClick={() => {
+                      dispatch(
+                        setUseImage({
+                          useImage: !generateStates.useImage,
+                        }),
+                      )
+                    }}
+                  />
+                </div>
+                <div className="w-full p-4 pb-0">
+                  <DynamicImageInput name={name} type={propertyName} />
+                </div>
+              </>
+            )
+          }
 
           case "controlNetImages":
             return (
@@ -209,7 +266,6 @@ export default function GenerateSideBar() {
       {aiInputs &&
         aiInputs.map((aiInput: any) => {
           if (
-            aiInput.input_property_name === "image" ||
             aiInput.input_property_name === "noise" ||
             aiInput.input_property_name === "positivePrompt" ||
             aiInput.input_property_name === "negativePrompt" ||

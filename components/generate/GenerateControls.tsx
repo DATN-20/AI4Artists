@@ -79,7 +79,7 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
         />
       )}
 
-      <div className="mt-5 flex items-center space-x-2">
+      {/* <div className="mt-5 flex items-center space-x-2">
         <Switch
           id="image-mode"
           className="bg-black"
@@ -91,9 +91,9 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
         <Label htmlFor="image-mode">Use Image Generation</Label>
       </div>
 
-      <StyleDrawer />
 
-      {useImg2Img && <ImageInput onImageChange={handleImageChange} />}
+      {useImg2Img && <ImageInput onImageChange={handleImageChange} />} */}
+      <StyleDrawer />
       <button
         type="button"
         onClick={handleGenerate}
