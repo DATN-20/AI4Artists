@@ -33,9 +33,9 @@ export const ControlnetDialog = ({ type }: { type: string }) => {
         }
       }
       reader.readAsDataURL(imageFile)
+      console.log(imageFile)
+      console.log(URL.createObjectURL(imageFile!))
     }
-    console.log(imageFile)
-    console.log(URL.createObjectURL(imageFile!))
   }, [imageFile])
 
   return (
@@ -71,8 +71,7 @@ export const ControlnetDialog = ({ type }: { type: string }) => {
         <img
           src={URL.createObjectURL(imageFile!)}
           alt="Selected"
-          className="mx-auto max-h-[512px] max-w-[512px]"
-          width={512}
+          className="mx-auto max-h-[512px]"
           height={512}
         />
       )}

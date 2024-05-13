@@ -21,6 +21,8 @@ export const SaveChangesButton = ({
     imageRef,
     setImageFile,
     scale,
+    currentShape,
+    setCurrentShape
   } = canvasModeContext!
 
   return (
@@ -31,12 +33,31 @@ export const SaveChangesButton = ({
         if (!canvas) return
         const context = canvas.getContext("2d")
         if (!context) return
+
+        if (currentShape !== null) {   
+          currentShape.showBounding(false)
+          adjustHistoryToIndex(
+            canvas,
+            context,
+            initialRectPosition,
+            _history,
+            currentHistoryIndex,
+            panOffset,
+            true,
+            imageRef.current!,
+          )
+          currentShape.draw(context, panOffset)
+          setCurrentShape(null)
+        }
+
         const tempCanvas = document.createElement("canvas")
         tempCanvas.width = initialRectPosition.w
         tempCanvas.height = initialRectPosition.h
 
         const tempContext = tempCanvas.getContext("2d")
         if (!tempContext) return
+
+        tempContext.fillRect(0, 0, tempCanvas.width, tempCanvas.height)
         adjustHistoryToIndex(
           canvas,
           context,
@@ -60,7 +81,13 @@ export const SaveChangesButton = ({
         )
 
         const dataUrl = tempCanvas.toDataURL("image/png")
-        setImageFile(new File([dataUrl], "image.png", { type: "image/png" }))
+        var blobBin = atob(dataUrl.split(",")[1])
+        var array = []
+        for (var i = 0; i < blobBin.length; i++) {
+          array.push(blobBin.charCodeAt(i))
+        }
+        var blob = new Blob([new Uint8Array(array)], { type: "image/png" })
+        setImageFile(new File([blob], "image.png", { type: "image/png" }))
         adjustHistoryToIndex(
           canvas,
           context,

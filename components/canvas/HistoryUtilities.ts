@@ -15,8 +15,8 @@ export const drawInitialRectangle = (
   image: HTMLImageElement | null,
   callback: () => void
 ) => {
- context.beginPath();
-  context.fillStyle = 'white';
+  context.beginPath();
+  context.fillStyle = 'black';
 
   if (isInitialBorderExist) {
     const gradient = context.createLinearGradient(
@@ -28,7 +28,7 @@ export const drawInitialRectangle = (
     gradient.addColorStop(0, "#9cc8fb");
     gradient.addColorStop(0.6, "#d35bff");
     context.strokeStyle = gradient;
-    context.fillStyle = 'white';
+    context.fillStyle = 'black';
     context.lineWidth = 3;
     context.fillRect(
       initialRectPosition.x + panOffset.x,

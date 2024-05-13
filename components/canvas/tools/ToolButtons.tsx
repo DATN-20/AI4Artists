@@ -1,7 +1,5 @@
 import { CanvasModeContext } from "@/store/canvasHooks"
 import { useContext, memo } from "react"
-import { Button } from "@/components/ui/button"
-import { adjustHistoryToIndex, redo } from "../HistoryUtilities"
 import CanvasMode, { CanvasState } from "@/constants/canvas"
 import { FaRegHandPaper, FaShapes } from "react-icons/fa"
 import { IoIosBrush } from "react-icons/io"
@@ -17,15 +15,7 @@ import {
 export const ToolButtons: React.FC = memo(() => {
   const canvasModeContext = useContext(CanvasModeContext)
   const {
-    canvasRef,
-    initialRectPosition,
-    _history,
-    panOffset,
-    currentHistoryIndex,
-    currentShape,
-    imageRef,
     mode,
-    setCurrentShape,
     setState,
     setMode,
     setCursor,
@@ -65,7 +55,7 @@ export const ToolButtons: React.FC = memo(() => {
     {
       icon: <MdEmojiPeople className="dark:text-black" size={25} />,
       mode: CanvasMode.OPENPOSE_MODE,
-      cursor: "crosshair",
+      cursor: "precision.cur",
       tooltip: "Add pose",
     },
   ]
@@ -73,35 +63,12 @@ export const ToolButtons: React.FC = memo(() => {
   return (
     <div>
       {tools.map((tool) => (
-        <TooltipProvider>
+        <TooltipProvider key={tool.mode}>
           <Tooltip>
             <TooltipTrigger className="flex w-full min-w-0 justify-start">
               <div
                 className={`rounded-xl dark:bg-current dark:bg-white dark:hover:bg-primary ${mode !== tool.mode ? "bg-card dark:bg-white" : "dark:bg-primary"} p-3 `}
                 onClick={() => {
-                  if (
-                    mode === CanvasMode.SELECT_MODE &&
-                    currentShape !== null
-                  ) {
-                    const canvas = canvasRef.current
-                    if (!canvas) return
-                    const context = canvas.getContext("2d")
-                    if (!context) return
-
-                    currentShape.showBounding(false)
-                    adjustHistoryToIndex(
-                      canvas,
-                      context,
-                      initialRectPosition,
-                      _history,
-                      currentHistoryIndex,
-                      panOffset,
-                      true,
-                      imageRef.current!,
-                    )
-                    currentShape.draw(context, panOffset)
-                    setCurrentShape(null)
-                  }
                   setState(CanvasState.IDLE)
                   setMode(tool.mode)
                   setCursor(tool.cursor)

@@ -10,7 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip"
-import { handleMouseUpCanvas } from "./HistoryUtilities"
+import { adjustHistoryToIndex, handleMouseUpCanvas } from "./HistoryUtilities"
 import { CanvasModeContext } from "@/store/canvasHooks"
 import { useContext } from "react"
 
@@ -80,11 +80,35 @@ const ToolSelect = () => {
       setCursor,
       imageRef,
     )
+  
+  const handleClick = () => {
+    if (currentShape !== null) {
+      const canvas = canvasRef.current
+      if (!canvas) return
+      const context = canvas.getContext("2d")
+      if (!context) return
+
+      currentShape.showBounding(false)
+      adjustHistoryToIndex(
+        canvas,
+        context,
+        initialRectPosition,
+        _history,
+        currentHistoryIndex,
+        panOffset,
+        true,
+        imageRef.current!,
+      )
+      currentShape.draw(context, panOffset)
+      setCurrentShape(null)
+    }
+  }
 
   return (
     <div
       className="flex flex-col items-center py-4 dark:bg-white"
       onMouseUp={handleMouseUp}
+      onClick={handleClick}
     >
       <ToolButtons />
       {tools.map((tool) => (
