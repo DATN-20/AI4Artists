@@ -51,11 +51,11 @@ export default function Generate() {
   const dispatch = useAppDispatch()
   const generateStates = useSelector(selectGenerate)
   const [useNegativePrompt, setUseNegativePrompt] = useState(false)
-  const [useImg2Img, setUseImg2Img] = useState(false)
   const [promptPos, setPromptPos] = useState("")
   const [promptNeg, setPromptNeg] = useState("")
   const [isLoadingInformation, setIsLoadingInformation] = useState(true)
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
+  const [useImg2Img, setUseImg2Img] = useState(false)
 
   const canvasModeContext = useContext(CanvasModeContext)
   const [
@@ -98,7 +98,8 @@ export default function Generate() {
 
   useEffect(() => {
     console.log(generateStates.dataInputs)
-  }, [generateStates.dataInputs])
+    console.log("useImage", generateStates.useImage)
+  }, [generateStates.dataInputs, generateStates.useImage])
 
   const handleGenerate = async () => {
     fetchHistoryData()
@@ -109,34 +110,38 @@ export default function Generate() {
 
     if (generateStates.dataInputs) {
       generateStates.dataInputs.forEach((input, index) => {
-        const { name, value } = input 
-        if(name === 'controlNetImages') {
-          const imageFile = base64StringToFile(value as string, 'image.jpg')
-          formData.append('controlNetImages', imageFile)
+        const { name, value } = input
+
+        if (name === "image") {
+          if (generateStates.useImage) {
+            const imageInput = generateStates.dataInputs?.find(
+              (input: any) => input.name === "image",
+            )
+            if (imageInput) {
+              const base64String = (imageInput as any).value
+              if (base64String) {
+                const filename = "image.jpg"
+                const imageFile = base64StringToFile(base64String, filename)
+                formData.append("image", imageFile)
+                return
+              }
+            }
+          }
+        }
+
+        if (name === "controlNetImages") {
+          const imageFile = base64StringToFile(value as string, "image.jpg")
+          formData.append("controlNetImages", imageFile)
           return
         }
         formData.append(name, (value as any).toString())
       })
-     formData.append("aiName", "comfyUI")
-    }
-
-    if (useImg2Img) {
-      const imageInput = generateStates.dataInputs?.find(
-        (input: any) => input.name === "image",
-      )
-      if (imageInput) {
-        const base64String = (imageInput as any).value
-        if (base64String) {
-          const filename = "image.jpg"
-          const imageFile = base64StringToFile(base64String, filename)
-          formData.append("image", imageFile)
-        }
-      }
+      formData.append("aiName", "comfyUI")
     }
 
     try {
       let result
-      if (useImg2Img) {
+      if (generateStates.useImage) {
         result = await imageToImage(formData).unwrap()
       } else {
         result = await textToImage(formData).unwrap()

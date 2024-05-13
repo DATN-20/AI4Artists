@@ -1,7 +1,6 @@
-import { selectGenerate, setField } from "@/features/generateSlice"
+import { setField } from "@/features/generateSlice"
 import { useAppDispatch } from "@/store/hooks"
 import { useState, useRef } from "react"
-import { useSelector } from "react-redux"
 
 const ImageInput: React.FC<{ onImageChange: (image: File) => void }> = ({
   onImageChange,
