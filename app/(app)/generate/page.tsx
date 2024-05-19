@@ -68,9 +68,7 @@ export default function Generate() {
     await getGenerationHistory(undefined)
   }
 
-  const handleImageChange = (image: File) => {
-    // Do something with the selected image file
-  }
+
   const handlePosPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const prompt = event.target.value
     setPromptPos(prompt)
@@ -97,9 +95,8 @@ export default function Generate() {
   }
 
   useEffect(() => {
-    console.log(generateStates.dataInputs)
-    console.log("useImage", generateStates.useImage)
-  }, [generateStates.dataInputs, generateStates.useImage])
+    console.log('dataInput',generateStates.dataInputs)
+  }, [generateStates.dataInputs])
 
   const handleGenerate = async () => {
     fetchHistoryData()
@@ -215,12 +212,9 @@ export default function Generate() {
             <GenerateControls
               handlePosPromptChange={handlePosPromptChange}
               handleNegPromptChange={handleNegPromptChange}
-              handleImageChange={handleImageChange}
               handleGenerate={handleGenerate}
               setUseNegativePrompt={setUseNegativePrompt}
-              setUseImg2Img={setUseImg2Img}
               useNegativePrompt={useNegativePrompt}
-              useImg2Img={useImg2Img}
               promptPos={promptPos}
             />
             {isLoading ? (

@@ -8,7 +8,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { selectGenerate, setField } from "@/features/generateSlice"
+import {
+  selectGenerate,
+  setField,
+  setStyleField,
+} from "@/features/generateSlice"
 import { useAppDispatch } from "@/store/hooks"
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
@@ -18,9 +22,18 @@ type InputSelectProps = {
   onSelect: (value: string) => void
   type: string
   arrayType?: string
+  arrayIndex?: number
+  isStyleGenerate?: boolean
 }
 
-const InputSelect = ({ data, onSelect, type, arrayType }: InputSelectProps) => {
+const InputSelect = ({
+  data,
+  onSelect,
+  type,
+  arrayType,
+  arrayIndex,
+  isStyleGenerate,
+}: InputSelectProps) => {
   const [selected, setSelected] = useState("")
   const dispatch = useAppDispatch()
   const generateStates = useSelector(selectGenerate)
@@ -30,7 +43,16 @@ const InputSelect = ({ data, onSelect, type, arrayType }: InputSelectProps) => {
     onSelect(value)
 
     if (arrayType) {
-      dispatch(setField({ field: `${arrayType}[0].${type}`, value: value }))
+      if (isStyleGenerate) {
+        dispatch(
+          setStyleField({
+            field: `${arrayType}[${arrayIndex}].${type}`,
+            value: value,
+          }),
+        )
+      } else {
+        dispatch(setField({ field: `${arrayType}[0].${type}`, value: value }))
+      }
     } else {
       dispatch(setField({ field: type, value: value }))
     }
@@ -40,15 +62,24 @@ const InputSelect = ({ data, onSelect, type, arrayType }: InputSelectProps) => {
     const defaultValue = Object.values(data)[0]
     if (defaultValue) {
       if (arrayType) {
-        dispatch(
-          setField({ field: `${arrayType}[0].${type}`, value: defaultValue }),
-        )
+        if (isStyleGenerate) {
+          dispatch(
+            setStyleField({
+              field: `${arrayType}[${arrayIndex}].${type}`,
+              value: defaultValue,
+            }),
+          )
+        } else {
+          dispatch(
+            setField({ field: `${arrayType}[0].${type}`, value: defaultValue }),
+          )
+        }
       } else {
         dispatch(setField({ field: type, value: defaultValue }))
       }
       setSelected(defaultValue)
     }
-  }, [])
+  }, [arrayIndex])
 
   const dataArray = Object.entries(data)
 
