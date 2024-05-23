@@ -19,15 +19,15 @@ const ProfileContent = ({ imagesData }: { imagesData: any }) => {
         </span>
       </div>{" "}
       <div className="mt-5 flex flex-col lg:flex-row">
-        <div className="flex items-center justify-center rounded-full bg-card px-4">
+        {/* <div className="flex items-center justify-center rounded-full bg-card px-4">
           <input
             type="text"
             placeholder="Prompt"
             className="flex-grow bg-transparent p-2 placeholder-black outline-none dark:placeholder-white"
           />
           <Search className="dark:text-white" />
-        </div>
-        <div className="mt-4 flex gap-4 lg:mt-0">
+        </div> */}
+        {/* <div className="mt-4 flex gap-4 lg:mt-0">
           <Select>
             <SelectTrigger className=" w-[180px] bg-white dark:bg-zinc-800 lg:ml-5">
               <FaFilter />
@@ -56,7 +56,7 @@ const ProfileContent = ({ imagesData }: { imagesData: any }) => {
               </SelectGroup>
             </SelectContent>
           </Select>
-        </div>
+        </div> */}
       </div>
       <MansoryGrid data={imagesData} />
     </div>
