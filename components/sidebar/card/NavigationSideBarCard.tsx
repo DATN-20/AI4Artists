@@ -43,6 +43,10 @@ const NavigationSideBarCard = () => {
   }, [])
 
   useEffect(() => {
+    localStorage.setItem("userID", userData?.id)
+  }, [userData])
+
+  useEffect(() => {
     const section = pathname.split("/")[1]
 
     setCurrentSection(section)
@@ -56,7 +60,7 @@ const NavigationSideBarCard = () => {
     <>
       <Card>
         <CardHeader
-          className="flex flex-row items-center gap-4 cursor-pointer"
+          className="flex cursor-pointer flex-row items-center gap-4"
           onClick={() => {
             router.push("/dashboard")
           }}
@@ -68,7 +72,10 @@ const NavigationSideBarCard = () => {
           <ul className=" flex flex-col gap-3">
             <li>
               <CardSection
-                onClick={() => handleToggleSection("home")}
+                onClick={() => {
+                  handleToggleSection("home")
+                  localStorage.removeItem("guestID")
+                }}
                 title="Home"
                 href="/dashboard"
                 isOpen={currentSection === "home"}
@@ -77,7 +84,10 @@ const NavigationSideBarCard = () => {
             </li>
             <li>
               <CardSection
-                onClick={() => handleToggleSection("profile")}
+                onClick={() => {
+                  handleToggleSection("profile")
+                  localStorage.removeItem("guestID")
+                }}
                 title="Personal Feed"
                 href="/profile"
                 isOpen={currentSection === "profile"}

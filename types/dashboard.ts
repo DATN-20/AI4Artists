@@ -13,6 +13,7 @@ export type DashboardImage = {
     first_name: string
     last_name: string
     alias_name: string
+    avatar: string
   }
   is_liked: boolean
   like_number: number
