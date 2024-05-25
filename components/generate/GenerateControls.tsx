@@ -74,7 +74,7 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
         Generate
       </button>
       <h1 className="mt-5 text-3xl font-bold">Generated Images</h1>
-      <div className="mt-5 flex flex-col lg:flex-row">
+      {/* <div className="mt-5 flex flex-col lg:flex-row">
         <div className="flex items-center justify-center rounded-full bg-card px-4">
           <input
             type="text"
@@ -113,7 +113,7 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
             </SelectContent>
           </Select>
         </div>
-      </div>
+      </div> */}
     </>
   )
 }

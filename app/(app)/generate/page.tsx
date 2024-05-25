@@ -28,6 +28,7 @@ import HistoryCarousel from "@/components/generate/HistoryCarousel"
 import { useGetProfileAlbumMutation } from "@/services/profile/profileApi"
 import { selectAuth, setTotalAlbum } from "@/features/authSlice"
 import { CanvasModeContext } from "../../../store/canvasHooks"
+import { Button } from "@/components/ui/button"
 
 interface AIField {
   ai_name: string | null
@@ -92,6 +93,44 @@ export default function Generate() {
     }
     const blob = new Blob([ab], { type: "image/jpeg" })
     return new File([blob], filename)
+  }
+
+  async function saveImageToDisk(imageUrl: string) {
+    try {
+      const response = await fetch(imageUrl)
+      const blob = await response.blob()
+
+      const blobUrl = URL.createObjectURL(blob)
+
+      const link = document.createElement("a")
+      link.href = blobUrl
+      link.download = "image.jpg"
+      document.body.appendChild(link)
+
+      link.click()
+
+      URL.revokeObjectURL(blobUrl)
+
+      document.body.removeChild(link)
+
+      console.log("Image saved successfully!")
+    } catch (error) {
+      console.error("Error saving image:", error)
+    }
+  }
+
+  const downloadAllImages = async () => {
+    if (historyData) {
+      for (let i = 0; i < historyData.length; i++) {
+        const item = historyData[i]
+        if (item.images) {
+          for (let j = 0; j < item.images.length; j++) {
+            const imageUrl = item.images[j].url
+            await saveImageToDisk(imageUrl)
+          }
+        }
+      }
+    }
   }
 
   useEffect(() => {
@@ -231,6 +270,13 @@ export default function Generate() {
                 />
               )
             )} */}
+            <Button
+              variant={"outline"}
+              className="mt-[16px] w-fit  rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+              onClick={downloadAllImages}
+            >
+              Download all images
+            </Button>
             {historyData &&
               historyData.map((item: any, index: number) => (
                 <HistoryCarousel

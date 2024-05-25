@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { IoAddCircleOutline } from "react-icons/io5"
+import { IoAddCircleOutline, IoCloudDownloadOutline } from "react-icons/io5"
 
 import Image from "next/image"
 import {
@@ -51,6 +51,29 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
 
   const handleAlbumSelect = (albumId: number) => {
     setSelectedAlbumId(albumId === selectedAlbumId ? null : albumId)
+  }
+  async function saveImageToDisk(imageUrl: string) {
+    try {
+      const response = await fetch(imageUrl)
+      const blob = await response.blob()
+
+      const blobUrl = URL.createObjectURL(blob)
+
+      const link = document.createElement("a")
+      link.href = blobUrl
+      link.download = "image.jpg"
+      document.body.appendChild(link)
+
+      link.click()
+
+      URL.revokeObjectURL(blobUrl)
+
+      document.body.removeChild(link)
+
+      console.log("Image saved successfully!")
+    } catch (error) {
+      console.error("Error saving image:", error)
+    }
   }
 
   const handleAddToAlbum = async () => {
@@ -120,6 +143,14 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
                               className="cursor-pointer"
                             />
                           </DialogTrigger>
+                          <IoCloudDownloadOutline
+                            size={32}
+                            className="ml-5 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              saveImageToDisk(item.url)
+                            }}
+                          />
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white">
                           <p className="line-clamp-3">Prompt: {item.prompt}</p>
