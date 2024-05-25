@@ -36,9 +36,9 @@ import {
 
 interface ProfileHeaderProps {
   userData: {
-    firstName: string
-    lastName: string
-    aliasName: string
+    first_name: string
+    last_name: string
+    alias_name: string
     profileImageUrl: string
     socials: { social_name: string; social_link: string }[]
     avatar: string
@@ -114,9 +114,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
     }
     setFormData((prevData) => ({
       ...prevData,
-      firstName: userData?.firstName || "",
-      lastName: userData?.lastName || "",
-      aliasName: userData?.aliasName || "",
+      first_name: userData?.first_name || "",
+      last_name: userData?.last_name || "",
+      alias_name: userData?.alias_name || "",
     }))
     userData?.socials?.forEach((item) => {
       switch (item.social_name) {
@@ -267,15 +267,15 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
     }
   }
   const [formData, setFormData] = useState({
-    firstName: userData?.firstName || "",
-    lastName: userData?.lastName || "",
-    aliasName: userData?.aliasName || "",
+    first_name: userData?.first_name || "",
+    last_name: userData?.last_name || "",
+    alias_name: userData?.alias_name || "",
     instagram: "",
     facebook: "",
     twitter: "",
   })
 
-  const { firstName, lastName, aliasName, instagram, facebook, twitter } =
+  const { first_name, last_name, alias_name, instagram, facebook, twitter } =
     formData
 
   const handleChange = (e: any) => {
@@ -284,9 +284,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
 
   const handleUpdateProfile = async () => {
     const requestBody = {
-      firstName: formData.firstName,
-      aliasName: formData.aliasName,
-      lastName: formData.lastName,
+      firstName: formData.first_name,
+      aliasName: formData.alias_name,
+      lastName: formData.last_name,
       socials: [
         {
           socialName: "Facebook",
@@ -478,7 +478,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
       <div className="ml-[240px] flex items-center justify-between px-2 pt-2">
         <div className="flex flex-col">
           <h1 className="flex text-3xl font-bold">
-            {userData?.firstName + " " + userData?.lastName}
+            {userData?.first_name + " " + userData?.last_name}
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <IoPencilSharp className="ml-3 cursor-pointer"></IoPencilSharp>
@@ -492,16 +492,16 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
                 <form>
                   <div className="mb-4">
                     <label
-                      htmlFor="firstName"
+                      htmlFor="first_name"
                       className="block text-sm font-medium text-gray-300"
                     >
                       First Name
                     </label>
                     <input
                       type="text"
-                      id="firstName"
-                      name="firstName"
-                      value={firstName}
+                      id="first_name"
+                      name="first_name"
+                      value={first_name}
                       onChange={handleChange}
                       className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                     />
@@ -515,9 +515,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
                     </label>
                     <input
                       type="text"
-                      id="lastName"
-                      name="lastName"
-                      value={lastName}
+                      id="last_name"
+                      name="last_name"
+                      value={last_name}
                       onChange={handleChange}
                       className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                     />
@@ -531,9 +531,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
                     </label>
                     <input
                       type="text"
-                      id="aliasName"
-                      name="aliasName"
-                      value={aliasName}
+                      id="alias_name"
+                      name="alias_name"
+                      value={alias_name}
                       onChange={handleChange}
                       className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                     />
@@ -619,7 +619,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
               </AlertDialogContent>
             </AlertDialog>
           </h1>
-          <p className="text-lg font-light">{userData?.aliasName}</p>
+          <p className="text-lg font-light">{userData?.alias_name}</p>
         </div>
         {/* Social Links */}
         <div className="flex flex-col justify-end">

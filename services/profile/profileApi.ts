@@ -101,7 +101,15 @@ export const profileApi = createApi({
         }
       },
     }),
+    getGuestProfile: builder.mutation({
+      query: ({ id }) => {
+        return {
+          url: `/api/v1/users/${id}`,
+          method: "GET",
+        }
+      },
+    }),
   }),
 })
 
-export const { useGetProfileMutation, useGetProfileAlbumMutation , useGetTotalImageMutation, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation, useGetGuestImageMutation} = profileApi
+export const { useGetProfileMutation, useGetProfileAlbumMutation , useGetTotalImageMutation, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation, useGetGuestImageMutation, useGetGuestProfileMutation} = profileApi

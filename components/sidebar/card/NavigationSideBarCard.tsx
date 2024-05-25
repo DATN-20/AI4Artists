@@ -174,7 +174,7 @@ const NavigationSideBarCard = () => {
                   <IoPersonCircleSharp size={40} />
                 )}
                 <span className="text-xl font-bold">
-                  {userData?.firstName + " " + userData?.lastName}
+                  {userData?.first_name + " " + userData?.last_name}
                 </span>
               </a>
             </div>
