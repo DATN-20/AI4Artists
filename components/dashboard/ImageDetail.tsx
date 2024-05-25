@@ -270,16 +270,6 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
                 />
               </div>
             </div>
-            <div className="flex items-center gap-2">
-                <h1 className="text-lg font-semibold">{image.like_number}</h1>
-                <FaHeart
-                  className={`font-bold ${image.is_liked ? "text-red-500" : "hover:scale-125"} cursor-pointer hover:transition-transform`}
-                  size={20}
-                  onClick={() => {
-                    likeImage({ imageId: image.id, type: "like"})
-                  }}
-                />
-              </div>
             <h1 className="mt-[16px] text-lg font-semibold">
               This is the Image I created with the new AI
             </h1>
@@ -290,7 +280,7 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
               <p className="p-4">{image.prompt}</p>
             </div>
             <Label className="mt-[8px] flex w-full items-center text-lg font-semibold">
-              <div className="w-1/4">Type</div>
+              <div className="w-1/3">Type</div>
               <Button
                 variant={"outline"}
                 className="w-fit cursor-default rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700 hover:text-primary-700"
@@ -298,20 +288,22 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
                 {image.type}
               </Button>
             </Label>
-            <div className="mt-[8px] flex items-center gap-5">
-              <h1 className="w-1/4 text-lg font-semibold">Style</h1>
-              <div className="w-full rounded-lg bg-card">
+            <div className="mt-[8px] flex w-full items-center">
+              <h1 className="w-1/3 text-lg font-semibold">Style</h1>
+              <div className="w-2/3 rounded-lg bg-card">
                 <p className="p-4">{image.style}</p>
               </div>
             </div>
-            <div className="mt-[8px] flex items-center gap-4">
-              <h1 className="flex-shrink-0 text-lg font-semibold">AI Name</h1>
+            <div className="mt-[8px] flex items-center">
+              <h1 className="w-1/3 flex-shrink-0 text-lg font-semibold">
+                AI Name
+              </h1>
               <div className="flex-grow rounded-lg bg-card">
                 <p className="p-4">{image.ai_name}</p>
               </div>
             </div>
-            <div className="mt-[8px] flex items-center gap-4">
-              <h1 className="flex-shrink-0 text-lg font-semibold">
+            <div className="mt-[8px] flex items-center">
+              <h1 className="w-1/3 flex-shrink-0 text-lg font-semibold">
                 Created At
               </h1>
               <div className="flex-grow rounded-lg bg-card">
@@ -320,12 +312,20 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
                 </p>
               </div>
             </div>
-            <div className="mt-[8px] flex items-center gap-4">
-              <h1 className="flex-shrink-0 text-lg font-semibold">Dimension</h1>
+            <div className="mt-[8px] flex items-center">
+              <h1 className="w-1/3 flex-shrink-0 text-lg font-semibold">
+                Width
+              </h1>
               <div className="flex-grow rounded-lg bg-card">
-                <p className="p-4">
-                  {width} x {height}
-                </p>
+                <p className="p-4">{width}</p>
+              </div>
+            </div>
+            <div className="mt-[8px] flex items-center">
+              <h1 className="w-1/3 flex-shrink-0 text-lg font-semibold">
+                Height
+              </h1>
+              <div className="flex-grow rounded-lg bg-card">
+                <p className="p-4">{height}</p>
               </div>
             </div>
           </div>
