@@ -9,8 +9,10 @@ export interface GenerateState {
   useImage: boolean
   useControlnet: boolean
   useCustomDimension: boolean
+  useStyleImage: boolean
   dataInputs: [] | null
   history: ImageGroup[] | null
+  dataStyleInputs: { name: string, value: any, ArrayIndex?: number }[] | null
 }
 
 const initialState: GenerateState = {
@@ -18,9 +20,11 @@ const initialState: GenerateState = {
   useImage: false,
   useControlnet: false,
   useCustomDimension: false,
+  useStyleImage: false,
   ai_name: "",
   dataInputs: [],
   history: [],
+  dataStyleInputs: [],
 }
 
 export const generateSlice = createSlice({
@@ -50,6 +54,12 @@ export const generateSlice = createSlice({
       action: PayloadAction<{ useCustomDimension: boolean }>,
     ) => {
       state.useCustomDimension = action.payload.useCustomDimension
+    },
+    setUseStyleImage: (
+      state,
+      action: PayloadAction<{ useStyleImage: boolean }>,
+    ) => {
+      state.useStyleImage = action.payload.useStyleImage
     },
     setField: (
       state,
@@ -105,6 +115,55 @@ export const generateSlice = createSlice({
         }
       }
     },
+
+    setStyleField: (
+      state,
+      action: PayloadAction<{ field: string; value?: any; delete?: boolean; ArrayIndex?: number }>,
+    ) => {
+      const { field, value, delete: deleteField, ArrayIndex } = action.payload;
+      const dataStyleInputs = state.dataStyleInputs as {
+        name: string;
+        value: any;
+        ArrayIndex?: number;
+      }[];
+    
+      if (dataStyleInputs) {
+        const existingFieldIndex = dataStyleInputs.findIndex(
+          (item) => item.name === field && (ArrayIndex === undefined || item.ArrayIndex === ArrayIndex),
+        );
+    
+        if (deleteField) {
+          if (ArrayIndex !== undefined) {
+            for (let i = dataStyleInputs.length - 1; i >= 0; i--) {
+              if (dataStyleInputs[i].ArrayIndex === ArrayIndex) {
+                dataStyleInputs.splice(i, 1);
+              }
+            }
+          } else if (existingFieldIndex !== -1) {
+            dataStyleInputs.splice(existingFieldIndex, 1);
+          }
+        } else {
+          if (existingFieldIndex !== -1) {
+            dataStyleInputs[existingFieldIndex].value = value;
+          } else {
+            dataStyleInputs.push({ name: field, value, ArrayIndex });
+          }
+        }
+      }
+    },
+    
+
+    eraseStyleFields: (state, action: PayloadAction<{ arrayType: string, arrayIndex: number }>) => {
+      const { arrayType, arrayIndex } = action.payload
+      const dataStyleInputs = state.dataStyleInputs as {
+        name: string
+        value: any
+      }[]
+
+      state.dataStyleInputs = dataStyleInputs.filter(
+        (item) => !item.name.startsWith(`${arrayType}[${arrayIndex}]`)
+      )
+    },
   },
 })
 
@@ -117,8 +176,11 @@ export const {
   setDimension,
   setHistory,
   setUseCustomDimension,
+  setUseStyleImage,
   setAIName,
   setField,
+  setStyleField,
+  eraseStyleFields
 } = generateSlice.actions
 
 export default generateSlice.reducer

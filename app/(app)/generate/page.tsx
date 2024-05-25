@@ -28,6 +28,7 @@ import HistoryCarousel from "@/components/generate/HistoryCarousel"
 import { useGetProfileAlbumMutation } from "@/services/profile/profileApi"
 import { selectAuth, setTotalAlbum } from "@/features/authSlice"
 import { CanvasModeContext } from "../../../store/canvasHooks"
+import { Button } from "@/components/ui/button"
 
 interface AIField {
   ai_name: string | null
@@ -68,9 +69,7 @@ export default function Generate() {
     await getGenerationHistory(undefined)
   }
 
-  const handleImageChange = (image: File) => {
-    // Do something with the selected image file
-  }
+
   const handlePosPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const prompt = event.target.value
     setPromptPos(prompt)
@@ -96,10 +95,47 @@ export default function Generate() {
     return new File([blob], filename)
   }
 
+  async function saveImageToDisk(imageUrl: string) {
+    try {
+      const response = await fetch(imageUrl)
+      const blob = await response.blob()
+
+      const blobUrl = URL.createObjectURL(blob)
+
+      const link = document.createElement("a")
+      link.href = blobUrl
+      link.download = "image.jpg"
+      document.body.appendChild(link)
+
+      link.click()
+
+      URL.revokeObjectURL(blobUrl)
+
+      document.body.removeChild(link)
+
+      console.log("Image saved successfully!")
+    } catch (error) {
+      console.error("Error saving image:", error)
+    }
+  }
+
+  const downloadAllImages = async () => {
+    if (historyData) {
+      for (let i = 0; i < historyData.length; i++) {
+        const item = historyData[i]
+        if (item.images) {
+          for (let j = 0; j < item.images.length; j++) {
+            const imageUrl = item.images[j].url
+            await saveImageToDisk(imageUrl)
+          }
+        }
+      }
+    }
+  }
+
   useEffect(() => {
-    console.log(generateStates.dataInputs)
-    console.log("useImage", generateStates.useImage)
-  }, [generateStates.dataInputs, generateStates.useImage])
+    console.log('dataInput',generateStates.dataInputs)
+  }, [generateStates.dataInputs])
 
   const handleGenerate = async () => {
     fetchHistoryData()
@@ -216,15 +252,12 @@ export default function Generate() {
             <GenerateControls
               handlePosPromptChange={handlePosPromptChange}
               handleNegPromptChange={handleNegPromptChange}
-              handleImageChange={handleImageChange}
               handleGenerate={handleGenerate}
               setUseNegativePrompt={setUseNegativePrompt}
-              setUseImg2Img={setUseImg2Img}
               useNegativePrompt={useNegativePrompt}
-              useImg2Img={useImg2Img}
               promptPos={promptPos}
             />
-            {isLoading ? (
+            {/* {isLoading ? (
               <Skeleton
                 className="mt-5 rounded-xl"
                 style={{ width: 512, height: 512 }}
@@ -237,7 +270,14 @@ export default function Generate() {
                   height={512}
                 />
               )
-            )}
+            )} */}
+            <Button
+              variant={"outline"}
+              className="mt-[16px] w-fit  rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+              onClick={downloadAllImages}
+            >
+              Download all images
+            </Button>
             {historyData &&
               historyData.map((item: any, index: number) => (
                 <HistoryCarousel

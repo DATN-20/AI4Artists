@@ -27,6 +27,14 @@ export const generateApi = createApi({
         }
       },
     }),
+    aiStyleInformation: builder.mutation({
+      query: () => {
+        return {
+          url: "/api/v1/generate-image/ai-generate-by-images-style-info",
+          method: "GET",
+        }
+      },
+    }),
     textToImage: builder.mutation({
       query: (formData) => ({
         url: "/api/v1/generate-image/text-to-image",
@@ -60,6 +68,7 @@ export const generateApi = createApi({
 
 export const {
   useAiInformationMutation,
+  useAiStyleInformationMutation,
   useTextToImageMutation,
   useImageToImageMutation,
   useGetGenerationHistoryMutation,
