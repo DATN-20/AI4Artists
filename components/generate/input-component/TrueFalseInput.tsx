@@ -9,11 +9,15 @@ const TrueFalseInput = ({
   type,
   defaultValue,
   arrayType,
+  arrayIndex,
+  isStyleGenerate,
 }: {
   name: string
   type: string
   defaultValue: boolean
   arrayType?: string
+  arrayIndex?: number
+  isStyleGenerate?: boolean
 }) => {
   const dispatch = useAppDispatch()
   const [value, setValue] = useState(defaultValue)
@@ -21,18 +25,44 @@ const TrueFalseInput = ({
   const handleValueChange = () => {
     const newValue = !value
     setValue(newValue)
-    dispatch(setField({ field: `${arrayType}[0].${type}`, value: value }))
+    if (arrayType) {
+      if (isStyleGenerate) {
+        dispatch(
+          setField({
+            field: `${arrayType}[${arrayIndex}].${type}`,
+            value: newValue,
+          }),
+        )
+      } else {
+        dispatch(
+          setField({ field: `${arrayType}[0].${type}`, value: newValue }),
+        )
+      }
+    } else {
+      dispatch(setField({ field: type, value: value }))
+    }
   }
 
   useEffect(() => {
-    dispatch(
-      setField({ field: `${arrayType}[0].${type}`, value: defaultValue }),
-    )
+    if (arrayType) {
+      if (isStyleGenerate) {
+        dispatch(
+          setField({
+            field: `${arrayType}[${arrayIndex}].${type}`,
+            value: value,
+          }),
+        )
+      } else {
+        dispatch(setField({ field: `${arrayType}[0].${type}`, value: value }))
+      }
+    } else {
+      dispatch(setField({ field: type, value: value }))
+    }
   }, [])
 
   return (
     <div className="flex justify-between">
-      <Label htmlFor="array-mode" className="text-lg font-semibold">
+      <Label htmlFor="truefalse" className="text-lg font-semibold">
         {name}
       </Label>
       <Switch

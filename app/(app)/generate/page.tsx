@@ -69,9 +69,7 @@ export default function Generate() {
     await getGenerationHistory(undefined)
   }
 
-  const handleImageChange = (image: File) => {
-    // Do something with the selected image file
-  }
+
   const handlePosPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const prompt = event.target.value
     setPromptPos(prompt)
@@ -136,9 +134,8 @@ export default function Generate() {
   }
 
   useEffect(() => {
-    console.log(generateStates.dataInputs)
-    console.log("useImage", generateStates.useImage)
-  }, [generateStates.dataInputs, generateStates.useImage])
+    console.log('dataInput',generateStates.dataInputs)
+  }, [generateStates.dataInputs])
 
   const handleGenerate = async () => {
     fetchHistoryData()
@@ -254,15 +251,12 @@ export default function Generate() {
             <GenerateControls
               handlePosPromptChange={handlePosPromptChange}
               handleNegPromptChange={handleNegPromptChange}
-              handleImageChange={handleImageChange}
               handleGenerate={handleGenerate}
               setUseNegativePrompt={setUseNegativePrompt}
-              setUseImg2Img={setUseImg2Img}
               useNegativePrompt={useNegativePrompt}
-              useImg2Img={useImg2Img}
               promptPos={promptPos}
             />
-            {isLoading ? (
+            {/* {isLoading ? (
               <Skeleton
                 className="mt-5 rounded-xl"
                 style={{ width: 512, height: 512 }}
@@ -275,7 +269,7 @@ export default function Generate() {
                   height={512}
                 />
               )
-            )}
+            )} */}
             <Button
               variant={"outline"}
               className="mt-[16px] w-fit  rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"

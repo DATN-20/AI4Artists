@@ -11,14 +11,26 @@ import {
 import { Label } from "../../ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
-import { setField } from "@/features/generateSlice"
+import { setField, setStyleField } from "@/features/generateSlice"
 import { toast } from "react-toastify"
 import { useGetProfileAlbumMutation } from "@/services/profile/profileApi"
 import { selectAuth, setTotalAlbum } from "@/features/authSlice"
 import Image from "next/image"
 import axios from "axios"
 
-const DynamicImageInput = ({ name, type }: { name: string; type: string }) => {
+const DynamicImageInput = ({
+  name,
+  type,
+  defaultValue,
+  isStyleGenerate,
+  arrayIndex,
+}: {
+  name: string
+  type: string
+  defaultValue?: string
+  isStyleGenerate?: boolean
+  arrayIndex?: number
+}) => {
   const [open, setOpen] = useState(false)
   const [selectedAlbum, setSelectedAlbum] = useState<any | null>(null)
   const dispatch = useAppDispatch()
@@ -26,6 +38,20 @@ const DynamicImageInput = ({ name, type }: { name: string; type: string }) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
   const authStates = useAppSelector(selectAuth)
+
+  const base64ToFile = async (base64: string, filename: string): Promise<File> => {
+    const response = await fetch(base64)
+    const blob = await response.blob()
+    return new File([blob], filename, { type: blob.type })
+  }
+
+  useEffect(() => {
+    if (defaultValue) {
+      base64ToFile(defaultValue, "defaultImage.jpg").then((file) => {
+        setSelectedImage(file)
+      })
+    }
+  }, [defaultValue])
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files
@@ -36,7 +62,17 @@ const DynamicImageInput = ({ name, type }: { name: string; type: string }) => {
       reader.onloadend = () => {
         const base64String = reader.result?.toString()
         if (base64String) {
-          dispatch(setField({ field: "image", value: base64String }))
+          if (isStyleGenerate) {
+            dispatch(
+              setStyleField({
+                field: type,
+                value: base64String,
+                ArrayIndex: arrayIndex,
+              }),
+            )
+          } else {
+            dispatch(setField({ field: "image", value: base64String }))
+          }
         }
       }
       reader.readAsDataURL(imageGen)
@@ -89,8 +125,19 @@ const DynamicImageInput = ({ name, type }: { name: string; type: string }) => {
       const reader = new FileReader()
       reader.onloadend = () => {
         const base64String = reader.result?.toString()
+
         if (base64String) {
-          dispatch(setField({ field: "image", value: base64String }))
+          if (isStyleGenerate) {
+            dispatch(
+              setStyleField({
+                field: type,
+                value: base64String,
+                ArrayIndex: arrayIndex,
+              }),
+            )
+          } else {
+            dispatch(setField({ field: "image", value: base64String }))
+          }
         }
       }
       reader.readAsDataURL(imageFile)

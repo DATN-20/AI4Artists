@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef } from "react"
 import { Slider } from "../../ui/slider"
 import { useAppDispatch } from "@/store/hooks"
-import { selectGenerate, setField } from "@/features/generateSlice"
+import {
+  selectGenerate,
+  setField,
+  setStyleField,
+} from "@/features/generateSlice"
 import { useSelector } from "react-redux"
 
 const SliderInput = ({
@@ -11,6 +15,8 @@ const SliderInput = ({
   defaultValue,
   type,
   arrayType,
+  arrayIndex,
+  isStyleGenerate,
 }: {
   min: number
   max: number
@@ -18,29 +24,53 @@ const SliderInput = ({
   defaultValue?: number
   type: string
   arrayType?: string
+  arrayIndex?: number
+  isStyleGenerate?: boolean
 }) => {
   const dispatch = useAppDispatch()
-  const generateStates = useSelector(selectGenerate)
+
   const [value, setValue] = useState(
     defaultValue ?? Math.round((min + max) / 2),
   )
 
   const handleValueChange = (valueArray: number[], type: string) => {
     setValue(valueArray[0])
+
     if (arrayType) {
-      dispatch(setField({ field: `${arrayType}[0].${type}`, value: valueArray[0] }))
+      if (isStyleGenerate) {
+        dispatch(
+          setStyleField({
+            field: type,
+            value: valueArray[0],
+            ArrayIndex: arrayIndex,
+          }),
+        )
+      } else {
+        dispatch(
+          setField({ field: `${arrayType}[0].${type}`, value: valueArray[0] }),
+        )
+      }
     } else {
       dispatch(setField({ field: type, value: valueArray[0] }))
     }
   }
   useEffect(() => {
     if (arrayType) {
-      dispatch(setField({ field: `${arrayType}[0].${type}`, value: value }))
+      if (isStyleGenerate) {
+        dispatch(
+          setStyleField({
+            field: type,
+            value: value,
+            ArrayIndex: arrayIndex,
+          }),
+        )
+      } else {
+        dispatch(setField({ field: `${arrayType}[0].${type}`, value: value }))
+      }
     } else {
       dispatch(setField({ field: type, value: value }))
     }
   }, [])
-
 
   return (
     <>
