@@ -15,7 +15,7 @@ import { useEffect, useState } from "react"
 import { useAiStyleInformationMutation } from "../../services/generate/generateApi"
 import { renderInput } from "./renderInput"
 import { useAppDispatch } from "../../store/hooks"
-import { useSelector } from "react-redux"
+import { shallowEqual, useSelector } from "react-redux"
 import {
   selectGenerate,
   setStyleField,
@@ -26,7 +26,7 @@ const StyleDrawer = () => {
   const [currentStep, setCurrentStep] = useState(1)
 
   const dispatch = useAppDispatch()
-  const generateStates = useSelector(selectGenerate)
+  const generateStates = useSelector(selectGenerate, shallowEqual)
 
   const [aiStyleInformation, { data: inputData }] =
     useAiStyleInformationMutation()
@@ -43,10 +43,8 @@ const StyleDrawer = () => {
   const getMaxStep = () => {
     const maxIndex =
       generateStates.dataStyleInputs?.reduce((max, item) => {
-        const match = item.name.match(/ipadapterStyleTranferInputs\[(\d+)\]/)
-        if (match) {
-          const index = parseInt(match[1], 10)
-          return index > max ? index : max
+        if (item.ArrayIndex !== undefined) {
+          return item.ArrayIndex > max ? item.ArrayIndex : max
         }
         return max
       }, 0) ?? 0
@@ -61,16 +59,6 @@ const StyleDrawer = () => {
 
   const addOrUpdateImageToData = () => {
     navigateToStep(currentStep + 1)
-  }
-
-  const eraseStep = () => {
-    dispatch(
-      eraseStyleFields({
-        arrayType: "ipadapterStyleTranferInputs",
-        arrayIndex: currentStep - 1,
-      }),
-    )
-    setCurrentStep(Math.max(currentStep - 1, 1))
   }
 
   useEffect(() => {
@@ -134,7 +122,10 @@ const StyleDrawer = () => {
           inputData[0].inputs.map((input: any, index: number) => {
             if (input.input_property_name === "ipadapterStyleTranferInputs") {
               return (
-                <div className="mx-4 mt-4 rounded-xl pb-4" key={index}>
+                <div
+                  className="mx-4 mt-4 rounded-xl pb-4"
+                  key={`${currentStep - 1}`}
+                >
                   {renderInput(
                     input,
                     dispatch,
@@ -151,13 +142,6 @@ const StyleDrawer = () => {
         <DrawerFooter>
           <Button variant={"outline"} onClick={addOrUpdateImageToData}>
             {currentStep >= getMaxStep() ? "Add Image" : "Update Image"}
-          </Button>
-          <Button
-            variant={"outline"}
-            onClick={eraseStep}
-            disabled={currentStep === 1}
-          >
-            Erase Step
           </Button>
           <Button onClick={submitData}>Submit</Button>
         </DrawerFooter>

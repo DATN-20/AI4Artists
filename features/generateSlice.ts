@@ -12,7 +12,7 @@ export interface GenerateState {
   useStyleImage: boolean
   dataInputs: [] | null
   history: ImageGroup[] | null
-  dataStyleInputs: { name: string, value: any }[] | null
+  dataStyleInputs: { name: string, value: any, ArrayIndex?: number }[] | null
 }
 
 const initialState: GenerateState = {
@@ -118,31 +118,40 @@ export const generateSlice = createSlice({
 
     setStyleField: (
       state,
-      action: PayloadAction<{ field: string; value?: any; delete?: boolean }>,
+      action: PayloadAction<{ field: string; value?: any; delete?: boolean; ArrayIndex?: number }>,
     ) => {
-      const { field, value, delete: deleteField } = action.payload
+      const { field, value, delete: deleteField, ArrayIndex } = action.payload;
       const dataStyleInputs = state.dataStyleInputs as {
-        name: string
-        value: any
-      }[]
-
+        name: string;
+        value: any;
+        ArrayIndex?: number;
+      }[];
+    
       if (dataStyleInputs) {
         const existingFieldIndex = dataStyleInputs.findIndex(
-          (item) => item.name === field,
-        )
+          (item) => item.name === field && (ArrayIndex === undefined || item.ArrayIndex === ArrayIndex),
+        );
+    
         if (deleteField) {
-          if (existingFieldIndex !== -1) {
-            dataStyleInputs.splice(existingFieldIndex, 1)
+          if (ArrayIndex !== undefined) {
+            for (let i = dataStyleInputs.length - 1; i >= 0; i--) {
+              if (dataStyleInputs[i].ArrayIndex === ArrayIndex) {
+                dataStyleInputs.splice(i, 1);
+              }
+            }
+          } else if (existingFieldIndex !== -1) {
+            dataStyleInputs.splice(existingFieldIndex, 1);
           }
         } else {
           if (existingFieldIndex !== -1) {
-            dataStyleInputs[existingFieldIndex].value = value
+            dataStyleInputs[existingFieldIndex].value = value;
           } else {
-            dataStyleInputs.push({ name: field, value })
+            dataStyleInputs.push({ name: field, value, ArrayIndex });
           }
         }
       }
     },
+    
 
     eraseStyleFields: (state, action: PayloadAction<{ arrayType: string, arrayIndex: number }>) => {
       const { arrayType, arrayIndex } = action.payload

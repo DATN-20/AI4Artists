@@ -33,15 +33,22 @@ export const renderInput = (
     info,
   } = input
 
+  const existingValue = generateStates.dataStyleInputs?.find(
+    (field: any) =>
+      field.name === propertyName && field.ArrayIndex === arrayIndex,
+  )
+
+  const checkDefaultValue = existingValue ? existingValue.value : defaultValue
+
   switch (type) {
     case "choice":
       return (
         <CollapsibleSection title={name} key={propertyName}>
           <InputSelect
             data={info.choices}
-            onSelect={(value) => console.log(`Selected ${name}:`, value)}
             type={propertyName}
             arrayType={arrayType}
+            defaultValue={checkDefaultValue}
             arrayIndex={arrayIndex}
             isStyleGenerate={isStyleGenerate}
           />
@@ -55,7 +62,7 @@ export const renderInput = (
             min={info.min}
             max={info.max}
             step={info.step}
-            defaultValue={defaultValue}
+            defaultValue={checkDefaultValue}
             type={propertyName}
             arrayType={arrayType}
             arrayIndex={arrayIndex}
@@ -131,15 +138,15 @@ export const renderInput = (
             </CollapsibleSection>
           )
         case "imageForIpadapter": {
-          dispatch( 
-            setStyleField({
-              field: `${arrayType}[${arrayIndex}].${propertyName}`,
-            }),
-          )
-
           return (
             <div className="w-full p-4 pb-0">
-              <DynamicImageInput name={name} type={propertyName} />
+              <DynamicImageInput
+                name={name}
+                type={propertyName}
+                defaultValue = {checkDefaultValue}
+                isStyleGenerate={isStyleGenerate}
+                arrayIndex={arrayIndex}
+              />
             </div>
           )
         }
@@ -170,7 +177,7 @@ export const renderInput = (
               return (
                 <Card
                   key={nestedInput.input_property_name}
-                  className="border-none px-0 lg:border bg-transparent"
+                  className="border-none bg-transparent px-0 lg:border"
                 >
                   {renderInput(
                     nestedInput,
@@ -178,7 +185,7 @@ export const renderInput = (
                     generateStates,
                     info.element.input_property_name,
                     arrayIndex,
-                    true
+                    true,
                   )}
                 </Card>
               )
@@ -233,7 +240,7 @@ export const renderInput = (
                     generateStates,
                     info.element.input_property_name,
                     arrayIndex,
-                    false
+                    false,
                   )}
                 </Card>
               )

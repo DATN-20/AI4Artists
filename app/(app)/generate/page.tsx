@@ -217,7 +217,7 @@ export default function Generate() {
               useNegativePrompt={useNegativePrompt}
               promptPos={promptPos}
             />
-            {isLoading ? (
+            {/* {isLoading ? (
               <Skeleton
                 className="mt-5 rounded-xl"
                 style={{ width: 512, height: 512 }}
@@ -230,7 +230,7 @@ export default function Generate() {
                   height={512}
                 />
               )
-            )}
+            )} */}
             {historyData &&
               historyData.map((item: any, index: number) => (
                 <HistoryCarousel

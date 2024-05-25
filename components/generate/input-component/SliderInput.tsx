@@ -28,7 +28,7 @@ const SliderInput = ({
   isStyleGenerate?: boolean
 }) => {
   const dispatch = useAppDispatch()
-  const generateStates = useSelector(selectGenerate)
+
   const [value, setValue] = useState(
     defaultValue ?? Math.round((min + max) / 2),
   )
@@ -40,8 +40,9 @@ const SliderInput = ({
       if (isStyleGenerate) {
         dispatch(
           setStyleField({
-            field: `${arrayType}[${arrayIndex}].${type}`,
+            field: type,
             value: valueArray[0],
+            ArrayIndex: arrayIndex,
           }),
         )
       } else {
@@ -58,8 +59,9 @@ const SliderInput = ({
       if (isStyleGenerate) {
         dispatch(
           setStyleField({
-            field: `${arrayType}[${arrayIndex}].${type}`,
+            field: type,
             value: value,
+            ArrayIndex: arrayIndex,
           }),
         )
       } else {
@@ -68,7 +70,7 @@ const SliderInput = ({
     } else {
       dispatch(setField({ field: type, value: value }))
     }
-  }, [arrayIndex])
+  }, [])
 
   return (
     <>
