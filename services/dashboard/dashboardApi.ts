@@ -23,8 +23,20 @@ export const dashboardApi = createApi({
         }
       },
     }),
-    
+    getSearchImage: builder.query({
+      query: ({ query , page, limit }) => {
+        const searchParams = new URLSearchParams()
+        if (query) searchParams.append("query", query)
+        if (page) searchParams.append("page", page)
+        if (limit) searchParams.append("limit", limit)
+
+        return {
+          url: `api/v1/images/search-prompt?${searchParams}`,
+          method: "GET",
+        }
+      },
+    }),
   }),
 })
 
-export const { useGetAllDashboardImageQuery } = dashboardApi
+export const { useGetAllDashboardImageQuery, useGetSearchImageQuery } = dashboardApi

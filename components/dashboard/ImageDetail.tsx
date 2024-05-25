@@ -17,6 +17,8 @@ import { set } from "react-hook-form"
 import Loading from "../Loading"
 import { Card, CardContent } from "../ui/card"
 import { extractCloudinaryId } from "../../lib/cloudinary"
+import Image from "next/image"
+import { IoPersonCircleSharp } from "react-icons/io5"
 
 interface ImageDetailProps {
   image: DashboardImage
@@ -173,10 +175,54 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
           </div>
           <div className="ml-4 flex flex-1 flex-col">
             <div className="flex items-center gap-2">
-              <div className="h-[32px] w-[32px] rounded-full bg-white" />
-              <h1>
-                {image.created_user?.first_name} {image.created_user?.last_name}
-              </h1>
+              <div>
+                {image.created_user?.avatar ? (
+                  <a href="/profile">
+                    <h1
+                      onClick={() => {
+                        localStorage.setItem(
+                          "guestID",
+                          (image.created_user?.id).toString(),
+                        )
+                      }}
+                    >
+                      <Image
+                        src={image.created_user?.avatar}
+                        alt=""
+                        width={40}
+                        height={40}
+                        className="rounded-full"
+                      />
+                    </h1>
+                  </a>
+                ) : (
+                  <a href="/profile">
+                    <h1
+                      onClick={() => {
+                        localStorage.setItem(
+                          "guestID",
+                          (image.created_user?.id).toString(),
+                        )
+                      }}
+                    >
+                      <IoPersonCircleSharp size={40} />
+                    </h1>
+                  </a>
+                )}
+              </div>
+              <a href="/profile">
+                <h1
+                  onClick={() => {
+                    localStorage.setItem(
+                      "guestID",
+                      (image.created_user?.id).toString(),
+                    )
+                  }}
+                >
+                  {image.created_user?.first_name}{" "}
+                  {image.created_user?.last_name}
+                </h1>
+              </a>
             </div>
             <h1 className="mt-[16px] text-lg font-semibold">
               This is the Image I created with the new AI

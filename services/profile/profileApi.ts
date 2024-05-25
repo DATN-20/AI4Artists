@@ -89,7 +89,19 @@ export const profileApi = createApi({
         body,
       }),
     }),
+    getGuestImage: builder.mutation({
+      query: ({ id, page, limit }) => {
+        const searchParams = new URLSearchParams()
+        if (page) searchParams.append("page", page)
+        if (limit) searchParams.append("limit", limit)
+
+        return {
+          url: `api/v1/images/user/${id}?${searchParams}&type=LATEST`,
+          method: "GET",
+        }
+      },
+    }),
   }),
 })
 
-export const { useGetProfileMutation, useGetProfileAlbumMutation , useGetTotalImageMutation, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation} = profileApi
+export const { useGetProfileMutation, useGetProfileAlbumMutation , useGetTotalImageMutation, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation, useGetGuestImageMutation} = profileApi
