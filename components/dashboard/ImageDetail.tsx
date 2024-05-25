@@ -27,9 +27,11 @@ import { IoPersonCircleSharp } from "react-icons/io5"
 interface ImageDetailProps {
   image: DashboardImage
   index: number
+  width: number
+  height: number
 }
 
-const ImageDetail = ({ image, index }: ImageDetailProps) => {
+const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
   const router = useRouter()
   const [processImage, { isLoading, isError, data }] = useProcessImageMutation()
   const [processType, setProcessType] = useState("original")
@@ -107,8 +109,8 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
         <Card className="transform transition-transform duration-300 hover:scale-105 ">
           <CardContent className=" p-0">
             <Image
-              width={400}
-              height={400}
+              width={width}
+              height={height}
               key={index}
               className="w-full rounded-lg"
               src={image.url}
@@ -206,76 +208,68 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
             </div>
           </div>
           <div className="ml-4 flex flex-1 flex-col">
-            <div className="flex items-center gap-2">
-              <div>
-                {image.created_user?.avatar ? (
-                  <a href="/profile">
-                    <h1
-                      onClick={() => {
-                        localStorage.setItem(
-                          "guestID",
-                          (image.created_user?.id).toString(),
-                        )
-                      }}
-                    >
-                      <Image
-                        src={image.created_user?.avatar}
-                        alt=""
-                        width={40}
-                        height={40}
-                        className="rounded-full"
-                      />
-                    </h1>
-                  </a>
-                ) : (
-                  <a href="/profile">
-                    <h1
-                      onClick={() => {
-                        localStorage.setItem(
-                          "guestID",
-                          (image.created_user?.id).toString(),
-                        )
-                      }}
-                    >
-                      <IoPersonCircleSharp size={40} />
-                    </h1>
-                  </a>
-                )}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div>
+                  {image.created_user?.avatar ? (
+                    <a href="/profile">
+                      <h1
+                        onClick={() => {
+                          localStorage.setItem(
+                            "guestID",
+                            (image.created_user?.id).toString(),
+                          )
+                        }}
+                      >
+                        <Image
+                          src={image.created_user?.avatar}
+                          alt=""
+                          width={40}
+                          height={40}
+                          className="rounded-full"
+                        />
+                      </h1>
+                    </a>
+                  ) : (
+                    <a href="/profile">
+                      <h1
+                        onClick={() => {
+                          localStorage.setItem(
+                            "guestID",
+                            (image.created_user?.id).toString(),
+                          )
+                        }}
+                      >
+                        <IoPersonCircleSharp size={40} />
+                      </h1>
+                    </a>
+                  )}
+                </div>
+                <a href="/profile">
+                  <h1
+                    onClick={() => {
+                      localStorage.setItem(
+                        "guestID",
+                        (image.created_user?.id).toString(),
+                      )
+                    }}
+                  >
+                    {image.created_user?.first_name}{" "}
+                    {image.created_user?.last_name}
+                  </h1>
+                </a>
               </div>
-              <a href="/profile">
-                <h1
-                  onClick={() => {
-                    localStorage.setItem(
-                      "guestID",
-                      (image.created_user?.id).toString(),
-                    )
-                  }}
-                >
-                  {image.created_user?.first_name}{" "}
-                  {image.created_user?.last_name}
-                </h1>
-              </a>
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-semibold">{image.like_number}</h1>
                 <FaHeart
                   className={`font-bold ${image.is_liked ? "text-red-500" : "hover:scale-125"} cursor-pointer hover:transition-transform`}
                   size={20}
                   onClick={() => {
-                    likeImage({ imageId: image.id, type: "like"})
+                    likeImage({ imageId: image.id, type: "like" })
                   }}
                 />
               </div>
             </div>
-            <div className="flex items-center gap-2">
-                <h1 className="text-lg font-semibold">{image.like_number}</h1>
-                <FaHeart
-                  className={`font-bold ${image.is_liked ? "text-red-500" : "hover:scale-125"} cursor-pointer hover:transition-transform`}
-                  size={20}
-                  onClick={() => {
-                    likeImage({ imageId: image.id, type: "like"})
-                  }}
-                />
-              </div>
             <h1 className="mt-[16px] text-lg font-semibold">
               This is the Image I created with the new AI
             </h1>
@@ -307,9 +301,21 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
               </div>
             </div>
             <div className="mt-[8px] flex items-center gap-4">
-              <h1 className="flex-shrink-0 text-lg font-semibold">Created At</h1>
+              <h1 className="flex-shrink-0 text-lg font-semibold">
+                Created At
+              </h1>
               <div className="flex-grow rounded-lg bg-card">
-                <p className="p-4">{new Date(image.created_at).toLocaleString()}</p>
+                <p className="p-4">
+                  {new Date(image.created_at).toLocaleString()}
+                </p>
+              </div>
+            </div>
+            <div className="mt-[8px] flex items-center gap-4">
+              <h1 className="flex-shrink-0 text-lg font-semibold">Dimension</h1>
+              <div className="flex-grow rounded-lg bg-card">
+                <p className="p-4">
+                  {width} x {height}
+                </p>
               </div>
             </div>
           </div>
