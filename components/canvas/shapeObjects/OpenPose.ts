@@ -4,6 +4,7 @@ import ShapeInterface from "./ShapeInterface"
 interface OpenPoseInterface extends ShapeInterface {
   isPointNearby(pointX: number, pointY: number): boolean
   moveOnePoint(x: number, y: number): void
+  eraseChosenPoint(): void
 }
 
 export default function OpenPose(id: number): OpenPoseInterface {
@@ -173,6 +174,10 @@ export default function OpenPose(id: number): OpenPoseInterface {
     points[isChoosingPoint].y = y
   }
 
+  const eraseChosenPoint = () => {
+    isChoosingPoint = -1
+  }
+
   return {
     draw,
     move,
@@ -182,6 +187,7 @@ export default function OpenPose(id: number): OpenPoseInterface {
     shapeType,
     isPointNearby,
     moveOnePoint,
+    eraseChosenPoint,
     id
   }
 }

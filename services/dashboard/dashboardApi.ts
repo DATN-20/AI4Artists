@@ -23,6 +23,21 @@ export const dashboardApi = createApi({
         }
       },
     }),
+    likeImage: builder.mutation<any, any>({
+      query: ({
+        imageId,
+        type,
+      }: {
+        type: string
+        imageId: number
+      }) => {
+        return {
+          url: `/api/v1/images/interact`,
+          method: "POST",
+          body: { imageId: imageId, type: type },
+        }
+      }
+    }),
     getSearchImage: builder.query({
       query: ({ query , page, limit }) => {
         const searchParams = new URLSearchParams()
@@ -39,4 +54,4 @@ export const dashboardApi = createApi({
   }),
 })
 
-export const { useGetAllDashboardImageQuery, useGetSearchImageQuery } = dashboardApi
+export const { useGetAllDashboardImageQuery, useGetSearchImageQuery, useLikeImageMutation } = dashboardApi

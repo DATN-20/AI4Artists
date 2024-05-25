@@ -57,6 +57,12 @@ export const generateApi = createApi({
         }
       },
     }),
+    changePublicStatus: builder.mutation({
+      query: (imageId: number) => ({
+        url: `/api/v1/images/visibility/${imageId}`,
+        method: "PATCH",
+      }),
+    }),
   }),
 })
 
@@ -66,4 +72,5 @@ export const {
   useTextToImageMutation,
   useImageToImageMutation,
   useGetGenerationHistoryMutation,
+  useChangePublicStatusMutation,
 } = generateApi

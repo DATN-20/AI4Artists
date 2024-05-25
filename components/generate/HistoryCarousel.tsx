@@ -28,6 +28,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { IoEyeOutline } from "react-icons/io5"
+import { FaRegEyeSlash } from "react-icons/fa"
+import { useChangePublicStatusMutation } from "@/services/generate/generateApi"
 interface HistoryCarouselProps {
   generateImgData: Image[] | null
   width?: number
@@ -47,6 +50,8 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
 }) => {
   const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null)
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
+  const [isPublic, setIsPublic] = useState<boolean>(false)
+  const [changeVisibility] = useChangePublicStatusMutation()
   const [addToAlbum] = useAddToAlbumMutation()
 
   const handleAlbumSelect = (albumId: number) => {
@@ -90,6 +95,11 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
       albumId: selectedAlbumId,
     })
     setSelectedAlbumId(null)
+  }
+
+  const changePublicStatus = (publicImage: boolean, imageId: number) => {
+    changeVisibility(imageId)
+    setIsPublic(!publicImage)
   }
   return (
     <>
@@ -136,7 +146,24 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
                         />
                       </CardContent>
                       <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
-                        <div className="flex max-w-full justify-end pr-5">
+                        <div className="flex max-w-full items-center justify-end pr-5">
+                          {item.isPublic ? (
+                            <FaRegEyeSlash
+                              size={32}
+                              className="cursor-pointer"
+                              onClick={() =>
+                                changePublicStatus(item.isPublic, item.id)
+                              }
+                            />
+                          ) : (
+                            <IoEyeOutline
+                              size={32}
+                              className="cursor-pointer"
+                              onClick={() =>
+                                changePublicStatus(item.isPublic, item.id)
+                              }
+                            />
+                          )}
                           <DialogTrigger asChild>
                             <IoAddCircleOutline
                               size={32}

@@ -286,6 +286,7 @@ export const handleMouseUpCanvas = (
     case CanvasMode.OPENPOSE_MODE:
       if (state !== CanvasState.SELECTING) return
       setState(CanvasState.IDLE)
+      currentShape.eraseChosenPoint()
       setNewHistory(
         currentHistoryIndex,
         setCurrentHistoryIndex,
