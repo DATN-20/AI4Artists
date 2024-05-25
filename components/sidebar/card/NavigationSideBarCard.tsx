@@ -120,7 +120,7 @@ const NavigationSideBarCard = () => {
             <li>
               <CardSection
                 onClick={() => {}}
-                title="Realtime Canvas"
+                title="Canvas"
                 href="/canvas"
                 isOpen={false}
                 icon={<Palette />}

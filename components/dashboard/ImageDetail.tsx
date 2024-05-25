@@ -17,6 +17,11 @@ import { set } from "react-hook-form"
 import Loading from "../Loading"
 import { Card, CardContent } from "../ui/card"
 import { extractCloudinaryId } from "../../lib/cloudinary"
+import Image from "next/image"
+import { FaHeart } from "react-icons/fa"
+import { IconContext } from "react-icons"
+import { Label } from "@radix-ui/react-label"
+import { useLikeImageMutation } from "@/services/dashboard/dashboardApi"
 
 interface ImageDetailProps {
   image: DashboardImage
@@ -25,11 +30,11 @@ interface ImageDetailProps {
 
 const ImageDetail = ({ image, index }: ImageDetailProps) => {
   const router = useRouter()
-
   const [processImage, { isLoading, isError, data }] = useProcessImageMutation()
   const [processType, setProcessType] = useState("original")
   const [selectedImage, setSelectedImage] = useState(image.url)
   const [open, setOpen] = useState(false)
+  const [likeImage] = useLikeImageMutation()
 
   useEffect(() => {
     if (!open) {
@@ -100,14 +105,42 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
       <DialogTrigger className="w-full">
         <Card className="transform transition-transform duration-300 hover:scale-105 ">
           <CardContent className=" p-0">
-            <img
+            <Image
+              width={400}
+              height={400}
               key={index}
               className="w-full rounded-lg"
               src={image.url}
               alt={image.prompt}
+              loading="lazy"
             />
           </CardContent>
           <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
+            <div className="absolute top-0 flex w-full items-center justify-between p-3">
+              <div className="flex space-x-2">
+                <div>
+                  <Image
+                    height={0}
+                    width={25}
+                    className="h-[25px] rounded-full"
+                    src={image.url}
+                    alt={image.prompt}
+                  />
+                </div>
+                <p className="font-semibold text-white">
+                  {image.created_user?.first_name}{" "}
+                  {image.created_user?.last_name}
+                </p>
+              </div>
+
+              <div className="flex w-1/3 items-center justify-between rounded-xl bg-white bg-opacity-20 px-3 py-1">
+                <p className="text-white">{image.like_number}</p>
+                <FaHeart
+                  className={`font-bold ${image.is_liked ? "text-red-500" : ""}  hover:scale-125 hover:transition-transform`}
+                  size={20}
+                />
+              </div>
+            </div>
             <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white">
               <p className="line-clamp-3">Prompt: {image.prompt}</p>
             </div>
@@ -172,11 +205,24 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
             </div>
           </div>
           <div className="ml-4 flex flex-1 flex-col">
-            <div className="flex items-center gap-2">
-              <div className="h-[32px] w-[32px] rounded-full bg-white" />
-              <h1>
-                {image.created_user?.first_name} {image.created_user?.last_name}
-              </h1>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="h-[32px] w-[32px] rounded-full bg-white" />
+                <h1>
+                  {image.created_user?.first_name}{" "}
+                  {image.created_user?.last_name}
+                </h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg font-semibold">{image.like_number}</h1>
+                <FaHeart
+                  className={`font-bold ${image.is_liked ? "text-red-500" : "hover:scale-125"} cursor-pointer hover:transition-transform`}
+                  size={20}
+                  onClick={() => {
+                    likeImage({ imageId: image.id, type: "like"})
+                  }}
+                />
+              </div>
             </div>
             <h1 className="mt-[16px] text-lg font-semibold">
               This is the Image I created with the new AI
@@ -187,22 +233,31 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
             <div className="mt-[8px] w-full rounded-lg bg-card">
               <p className="p-4">{image.prompt}</p>
             </div>
-            <Button
-              variant={"outline"}
-              className="mt-[8px] w-fit  rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
-            >
-              {image.type}
-            </Button>
-            <div className="mt-[8px] flex items-center gap-4">
-              <h1 className="text-lg font-semibold">Style:</h1>
+            <Label className="mt-[8px] flex w-full items-center text-lg font-semibold">
+              <div className="w-1/4">Type</div>
+              <Button
+                variant={"outline"}
+                className="w-fit cursor-default rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700 hover:text-primary-700"
+              >
+                {image.type}
+              </Button>
+            </Label>
+            <div className="mt-[8px] flex items-center gap-5">
+              <h1 className="w-1/4 text-lg font-semibold">Style</h1>
               <div className="w-full rounded-lg bg-card">
                 <p className="p-4">{image.style}</p>
               </div>
             </div>
             <div className="mt-[8px] flex items-center gap-4">
-              <h1 className="flex-shrink-0 text-lg font-semibold">AI name:</h1>
+              <h1 className="flex-shrink-0 text-lg font-semibold">AI Name</h1>
               <div className="flex-grow rounded-lg bg-card">
                 <p className="p-4">{image.ai_name}</p>
+              </div>
+            </div>
+            <div className="mt-[8px] flex items-center gap-4">
+              <h1 className="flex-shrink-0 text-lg font-semibold">Created At</h1>
+              <div className="flex-grow rounded-lg bg-card">
+                <p className="p-4">{new Date(image.created_at).toLocaleString()}</p>
               </div>
             </div>
           </div>

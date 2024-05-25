@@ -118,7 +118,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
       lastName: userData?.lastName || "",
       aliasName: userData?.aliasName || "",
     }))
-    userData?.socials.forEach((item) => {
+    userData?.socials?.forEach((item) => {
       switch (item.social_name) {
         case "instagram":
           socialLinks.instagram = item.social_link
@@ -624,7 +624,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         {/* Social Links */}
         <div className="flex flex-col justify-end">
           <div className="mb-5 flex">
-            {userData?.socials.map((item, index) => (
+            {userData?.socials?.map((item, index) => (
               <a
                 key={index}
                 href={item.social_link}

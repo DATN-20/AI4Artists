@@ -146,6 +146,7 @@ export default function Generate() {
       } else {
         result = await textToImage(formData).unwrap()
       }
+      console.log(result)
       setGenerateImgData(result)
     } catch (error) {
       console.error("Error generating image:", error)
