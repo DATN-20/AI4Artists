@@ -270,6 +270,16 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
                 />
               </div>
             </div>
+            <div className="flex items-center gap-2">
+                <h1 className="text-lg font-semibold">{image.like_number}</h1>
+                <FaHeart
+                  className={`font-bold ${image.is_liked ? "text-red-500" : "hover:scale-125"} cursor-pointer hover:transition-transform`}
+                  size={20}
+                  onClick={() => {
+                    likeImage({ imageId: image.id, type: "like"})
+                  }}
+                />
+              </div>
             <h1 className="mt-[16px] text-lg font-semibold">
               This is the Image I created with the new AI
             </h1>
