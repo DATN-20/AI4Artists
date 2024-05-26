@@ -33,6 +33,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { requestData } from "@/types/profile"
 
 interface ProfileHeaderProps {
   userData: {
@@ -120,14 +121,26 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
     }))
     userData?.socials?.forEach((item) => {
       switch (item.social_name) {
-        case "instagram":
+        case "Instagram":
           socialLinks.instagram = item.social_link
+          setFormData((prevData) => ({
+            ...prevData,
+            instagram: item.social_link || "",
+          }))
           break
-        case "facebook":
+        case "Facebook":
           socialLinks.facebook = item.social_link
+          setFormData((prevData) => ({
+            ...prevData,
+            facebook: item.social_link || "",
+          }))
           break
-        case "twitter":
+        case "Twitter":
           socialLinks.twitter = item.social_link
+          setFormData((prevData) => ({
+            ...prevData,
+            twitter: item.social_link || "",
+          }))
           break
         default:
           break
@@ -283,31 +296,49 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
   }
 
   const handleUpdateProfile = async () => {
-    const requestBody = {
-      firstName: formData.first_name,
-      aliasName: formData.alias_name,
-      lastName: formData.last_name,
-      socials: [
-        {
-          socialName: "Facebook",
-          socialLink: formData.facebook,
-        },
-        {
-          socialName: "Twitter",
-          socialLink: formData.twitter,
-        },
-        {
-          socialName: "Instagram",
-          socialLink: formData.instagram,
-        },
-      ],
+    const requestBody = {}
+
+    if (formData.first_name) {
+      ;(requestBody as requestData).firstName = formData.first_name
+    }
+
+    if (formData.alias_name) {
+      ;(requestBody as requestData).aliasName = formData.alias_name
+    }
+
+    if (formData.last_name) {
+      ;(requestBody as requestData).lastName = formData.last_name
+    }
+
+    const socials = []
+    if (formData.facebook) {
+      socials.push({
+        socialName: "Facebook",
+        socialLink: formData.facebook,
+      })
+    }
+    if (formData.twitter) {
+      socials.push({
+        socialName: "Twitter",
+        socialLink: formData.twitter,
+      })
+    }
+    if (formData.instagram) {
+      socials.push({
+        socialName: "Instagram",
+        socialLink: formData.instagram,
+      })
+    }
+
+    if (socials.length > 0) {
+      ;(requestBody as requestData).socials = socials
     }
 
     try {
-      const result = await updateProfile(requestBody).unwrap()
-      // setGenerateImgData(result)
+      const result = await updateProfile(requestBody as requestData).unwrap()
+      // setGenerateImgData(result);
     } catch (error) {
-      console.error("Error :", error)
+      console.error("Error:", error)
     }
   }
 
@@ -619,30 +650,38 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
               </AlertDialogContent>
             </AlertDialog>
           </h1>
-          <p className="text-lg font-light">{userData?.alias_name}</p>
+          <p className="text-lg font-light">{formData?.alias_name}</p>
         </div>
         {/* Social Links */}
         <div className="flex flex-col justify-end">
           <div className="mb-5 flex">
-            {userData?.socials?.map((item, index) => (
+            {formData?.instagram && (
               <a
-                key={index}
-                href={item.social_link}
+                href={formData.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {/* Render Social Icon */}
-                {item.social_name === "facebook" && (
-                  <Facebook size={24} className="ml-4 cursor-pointer" />
-                )}
-                {item.social_name === "instagram" && (
-                  <Instagram size={24} className="ml-4 cursor-pointer" />
-                )}
-                {item.social_name === "twitter" && (
-                  <Twitter size={24} className="ml-4 cursor-pointer" />
-                )}
+                <Instagram size={24} className="ml-4 cursor-pointer" />
               </a>
-            ))}
+            )}
+            {formData?.facebook && (
+              <a
+                href={formData.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Facebook size={24} className="ml-4 cursor-pointer" />
+              </a>
+            )}
+            {formData?.twitter && (
+              <a
+                href={formData.twitter}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Twitter size={24} className="ml-4 cursor-pointer" />
+              </a>
+            )}
           </div>
           <TabsList className="flex justify-end gap-2 bg-inherit">
             <TabsTrigger value="introduction" className="px-0 py-0">

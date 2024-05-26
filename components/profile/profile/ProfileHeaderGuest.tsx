@@ -348,7 +348,7 @@ const ProfileHeaderGuest: React.FC<ProfileHeaderGuestProps> = ({
         {/* Social Links */}
         <div className="flex flex-col justify-end">
           <div className="mb-5 flex">
-            {userData?.socials.map((item, index) => (
+            {userData?.socials?.map((item, index) => (
               <a
                 key={index}
                 href={item.social_link}

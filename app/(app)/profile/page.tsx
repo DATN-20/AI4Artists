@@ -154,8 +154,9 @@ const Profile = () => {
     if (isLoading) {
       return <Loading />
     }
-
-    if (guestData && guestProfile) {
+    const guestID = localStorage.getItem("guestID")
+    const userID = localStorage.getItem("userID")
+    if (guestData && guestID !== userID && guestProfile) {
       return (
         <div className="flex gap-4 py-4">
           <div className="hidden lg:block lg:min-w-[300px]">
@@ -164,7 +165,7 @@ const Profile = () => {
             </div>
           </div>
           <div className="mr-8 h-full flex-1">
-            <ProfileHeaderGuest userData={userData} />
+            <ProfileHeaderGuest userData={guestProfile.data} />
             <ProfileContent imagesData={guestData.data.data} />
           </div>
         </div>
@@ -186,7 +187,7 @@ const Profile = () => {
                 window.scrollTo({ top: 0, behavior: "smooth" })
               }}
             >
-              <ProfileHeaderGuest userData={guestProfile.data} />
+              <ProfileHeader userData={userData} />
               <TabsContent value="introduction">
                 <div className="mt-8">
                   <span className="bg-gradient-default bg-clip-text text-4xl font-black text-transparent">
