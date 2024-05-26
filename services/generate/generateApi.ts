@@ -63,6 +63,12 @@ export const generateApi = createApi({
         method: "PATCH",
       }),
     }),
+    getNotifications: builder.query<any, void>({
+      query: () => ({
+        url: "/api/v1/notifications",
+        method: "GET",
+      }),
+    }),
   }),
 })
 
@@ -73,4 +79,5 @@ export const {
   useImageToImageMutation,
   useGetGenerationHistoryMutation,
   useChangePublicStatusMutation,
+  useGetNotificationsQuery,
 } = generateApi
