@@ -36,9 +36,9 @@ import {
 
 interface ProfileHeaderGuestProps {
   userData: {
-    firstName: string
-    lastName: string
-    aliasName: string
+    first_name: string
+    last_name: string
+    alias_name: string
     profileImageUrl: string
     socials: { social_name: string; social_link: string }[]
     avatar: string
@@ -116,11 +116,11 @@ const ProfileHeaderGuest: React.FC<ProfileHeaderGuestProps> = ({
     }
     setFormData((prevData) => ({
       ...prevData,
-      firstName: userData?.firstName || "",
-      lastName: userData?.lastName || "",
-      aliasName: userData?.aliasName || "",
+      firstName: userData?.first_name || "",
+      lastName: userData?.last_name || "",
+      aliasName: userData?.alias_name || "",
     }))
-    userData?.socials.forEach((item) => {
+    userData?.socials?.forEach((item) => {
       switch (item.social_name) {
         case "instagram":
           socialLinks.instagram = item.social_link
@@ -269,9 +269,9 @@ const ProfileHeaderGuest: React.FC<ProfileHeaderGuestProps> = ({
     }
   }
   const [formData, setFormData] = useState({
-    firstName: userData?.firstName || "",
-    lastName: userData?.lastName || "",
-    aliasName: userData?.aliasName || "",
+    firstName: userData?.first_name || "",
+    lastName: userData?.last_name || "",
+    aliasName: userData?.alias_name || "",
     instagram: "",
     facebook: "",
     twitter: "",
@@ -341,9 +341,9 @@ const ProfileHeaderGuest: React.FC<ProfileHeaderGuestProps> = ({
       <div className="ml-[240px] flex items-center justify-between px-2 pt-2">
         <div className="flex flex-col">
           <h1 className="flex text-3xl font-bold">
-            {userData?.firstName + " " + userData?.lastName}
+            {userData?.first_name + " " + userData?.last_name}
           </h1>
-          <p className="text-lg font-light">{userData?.aliasName}</p>
+          <p className="text-lg font-light">{userData?.alias_name}</p>
         </div>
         {/* Social Links */}
         <div className="flex flex-col justify-end">

@@ -12,6 +12,7 @@ import {
   useAddNewAlbumMutation,
   useDeleteAlbumMutation,
   useGetGuestImageMutation,
+  useGetGuestProfileMutation,
   useGetProfileAlbumMutation,
   useGetProfileMutation,
   useGetTotalImageMutation,
@@ -71,10 +72,13 @@ const Profile = () => {
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
   const [getTotalImage, { data: imagesData }] = useGetTotalImageMutation()
   const [getGuest, { data: guestImages }] = useGetGuestImageMutation()
-
+  const [getGuestProfile, { data: guestProfileData }] =
+    useGetGuestProfileMutation()
   const [addNewAlbum] = useAddNewAlbumMutation()
   const [deleteAlbum] = useDeleteAlbumMutation()
   const [guestData, setGuestData] = useState<any>(null)
+  const [guestProfile, setGuestProfile] = useState<any>(null)
+
   const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null)
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
@@ -101,8 +105,7 @@ const Profile = () => {
       await getTotalImage(undefined)
       const guestID = localStorage.getItem("guestID")
       const userID = localStorage.getItem("userID")
-      console.log(guestID)
-      console.log(userID)
+
       if (guestID && guestID !== userID) {
         const guestDataResponse = await getGuest({
           id: guestID,
@@ -110,6 +113,8 @@ const Profile = () => {
           limit: 100,
         })
         setGuestData(guestDataResponse)
+        const guestProfileRes = await getGuestProfile({ id: guestID })
+        setGuestProfile(guestProfileRes)
       }
       setIsLoading(false)
     }
@@ -150,7 +155,7 @@ const Profile = () => {
       return <Loading />
     }
 
-    if (guestData) {
+    if (guestData && guestProfile) {
       return (
         <div className="flex gap-4 py-4">
           <div className="hidden lg:block lg:min-w-[300px]">
@@ -181,7 +186,7 @@ const Profile = () => {
                 window.scrollTo({ top: 0, behavior: "smooth" })
               }}
             >
-              <ProfileHeader userData={userData} />
+              <ProfileHeaderGuest userData={guestProfile.data} />
               <TabsContent value="introduction">
                 <div className="mt-8">
                   <span className="bg-gradient-default bg-clip-text text-4xl font-black text-transparent">

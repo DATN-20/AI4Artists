@@ -271,13 +271,13 @@ export default function Generate() {
                 />
               )
             )} */}
-            <Button
+            {/* <Button
               variant={"outline"}
               className="mt-[16px] w-fit  rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
               onClick={downloadAllImages}
             >
               Download all images
-            </Button>
+            </Button> */}
             {historyData &&
               historyData.map((item: any, index: number) => (
                 <HistoryCarousel
