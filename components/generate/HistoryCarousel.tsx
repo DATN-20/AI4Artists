@@ -50,7 +50,9 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
 }) => {
   const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null)
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
-  const [isPublic, setIsPublic] = useState<boolean>(false)
+  const [isPublic, setIsPublic] = useState<boolean[]>(
+    generateImgData?.map((item) => item.visibility) || [],
+  )
   const [changeVisibility] = useChangePublicStatusMutation()
   const [addToAlbum] = useAddToAlbumMutation()
 
@@ -97,10 +99,15 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
     setSelectedAlbumId(null)
   }
 
-  const changePublicStatus = (publicImage: boolean, imageId: number) => {
+  const changePublicStatus = async (imageId: number, index: number) => {
+    setIsPublic((prev) => {
+      const newState = [...prev]
+      newState[index] = !newState[index]
+      return newState
+    })
     changeVisibility(imageId)
-    setIsPublic(!publicImage)
   }
+
   return (
     <>
       <div className="mt-10 flex w-full items-center justify-between gap-6">
@@ -126,7 +133,7 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
         <Carousel className="relative mt-5 w-full">
           <CarouselContent>
             {generateImgData &&
-              generateImgData.map((item: any) => (
+              generateImgData.map((item: Image, index: number) => (
                 <CarouselItem
                   key={item.id}
                   className="lg:basis-1/3"
@@ -146,33 +153,29 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
                         />
                       </CardContent>
                       <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
-                        <div className="flex max-w-full items-center justify-end pr-5">
-                          {item.isPublic ? (
+                        <div className="flex max-w-full items-center justify-end gap-x-2 pr-5">
+                          {isPublic[index] ? (
                             <FaRegEyeSlash
                               size={32}
-                              className="cursor-pointer"
-                              onClick={() =>
-                                changePublicStatus(item.isPublic, item.id)
-                              }
+                              className="cursor-pointer hover:text-primary"
+                              onClick={() => changePublicStatus(item.id, index)}
                             />
                           ) : (
                             <IoEyeOutline
                               size={32}
-                              className="cursor-pointer"
-                              onClick={() =>
-                                changePublicStatus(item.isPublic, item.id)
-                              }
+                              className="cursor-pointer hover:text-primary"
+                              onClick={() => changePublicStatus(item.id, index)}
                             />
                           )}
                           <DialogTrigger asChild>
                             <IoAddCircleOutline
                               size={32}
-                              className="cursor-pointer"
+                              className="cursor-pointer hover:text-primary"
                             />
                           </DialogTrigger>
                           <IoCloudDownloadOutline
                             size={32}
-                            className="ml-5 cursor-pointer"
+                            className="cursor-pointer hover:text-primary"
                             onClick={(e) => {
                               e.stopPropagation()
                               saveImageToDisk(item.url)
@@ -200,9 +203,9 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
                     key={albumItem.album.id}
                     className={`mr-5 rounded-md px-3 py-2 ${
                       selectedAlbumId === albumItem.album.id
-                        ? "bg-blue-500 text-white"
+                        ? "bg-primary text-white"
                         : "bg-gray-200 text-gray-700"
-                    } transition-colors hover:bg-blue-600 hover:text-white`}
+                    } transition-colors hover:bg-primary hover:text-white`}
                     onClick={() => handleAlbumSelect(albumItem.album.id)}
                   >
                     {albumItem.album.name}

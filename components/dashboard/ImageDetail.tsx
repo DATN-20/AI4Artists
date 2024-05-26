@@ -38,6 +38,10 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
   const [selectedImage, setSelectedImage] = useState(image.url)
   const [open, setOpen] = useState(false)
   const [likeImage] = useLikeImageMutation()
+  const [likeInfo, setlikeInfo] = useState({
+    isLiked: image.is_liked,
+    likeNumber: image.like_number,
+  })
 
   useEffect(() => {
     if (!open) {
@@ -103,6 +107,19 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
     }
   }
 
+  const handleLikeToggle = async (
+    event: React.MouseEvent<SVGElement, MouseEvent>,
+  ) => {
+    event.stopPropagation()
+    setlikeInfo({
+      isLiked: !likeInfo.isLiked,
+      likeNumber: likeInfo.isLiked
+        ? likeInfo.likeNumber - 1
+        : likeInfo.likeNumber + 1,
+    })
+    await likeImage({ imageId: image.id, type: "like" }).unwrap()
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger className="w-full">
@@ -120,15 +137,19 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
           </CardContent>
           <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
             <div className="absolute top-0 flex w-full items-center justify-between p-3">
-              <div className="flex space-x-2">
+              <div className="flex space-x-2 content-center">
                 <div>
-                  <Image
-                    height={0}
-                    width={25}
-                    className="h-[25px] rounded-full"
-                    src={image.url}
-                    alt={image.prompt}
-                  />
+                  {image.created_user?.avatar ? (
+                    <Image
+                      height={25}
+                      width={25}
+                      className="rounded-full"
+                      src={image.created_user?.avatar}
+                      alt={image.prompt}
+                    />
+                  ) : (
+                    <IoPersonCircleSharp size={25} />
+                  )}
                 </div>
                 <p className="font-semibold text-white">
                   {image.created_user?.first_name}{" "}
@@ -137,10 +158,11 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
               </div>
 
               <div className="flex w-1/3 items-center justify-between rounded-xl bg-white bg-opacity-20 px-3 py-1">
-                <p className="text-white">{image.like_number}</p>
+                <p className="text-white">{likeInfo.likeNumber}</p>
                 <FaHeart
-                  className={`font-bold ${image.is_liked ? "text-red-500" : ""}  hover:scale-125 hover:transition-transform`}
+                  className={`font-bold ${likeInfo.isLiked ? "text-red-500" : ""}  hover:scale-125 hover:transition-transform`}
                   size={20}
+                  onClick={handleLikeToggle}
                 />
               </div>
             </div>
@@ -260,13 +282,11 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
                 </a>
               </div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-semibold">{image.like_number}</h1>
+                <h1 className="text-lg font-semibold">{likeInfo.likeNumber}</h1>
                 <FaHeart
-                  className={`font-bold ${image.is_liked ? "text-red-500" : "hover:scale-125"} cursor-pointer hover:transition-transform`}
+                  className={`font-bold ${likeInfo.isLiked ? "text-red-500" : "hover:scale-125"} cursor-pointer hover:transition-transform`}
                   size={20}
-                  onClick={() => {
-                    likeImage({ imageId: image.id, type: "like" })
-                  }}
+                  onClick={handleLikeToggle}
                 />
               </div>
             </div>

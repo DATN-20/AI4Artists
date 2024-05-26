@@ -69,6 +69,12 @@ export const generateApi = createApi({
         method: "GET",
       }),
     }),
+    changeNotificationStatus: builder.mutation({
+      query: (notificationId: number) => ({
+        url: `/api/v1/notifications/${notificationId}/change-status`,
+        method: "PATCH",
+      }),
+    }),
   }),
 })
 
@@ -80,4 +86,5 @@ export const {
   useGetGenerationHistoryMutation,
   useChangePublicStatusMutation,
   useGetNotificationsQuery,
+  useChangeNotificationStatusMutation,
 } = generateApi
