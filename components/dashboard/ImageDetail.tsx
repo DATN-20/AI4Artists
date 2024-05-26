@@ -122,13 +122,17 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
             <div className="absolute top-0 flex w-full items-center justify-between p-3">
               <div className="flex space-x-2">
                 <div>
-                  <Image
-                    height={0}
-                    width={25}
-                    className="h-[25px] rounded-full"
-                    src={image.url}
-                    alt={image.prompt}
-                  />
+                  {image.created_user?.avatar ? (
+                    <Image
+                      height={0}
+                      width={25}
+                      className="h-[25px] rounded-full"
+                      src={image.created_user?.avatar}
+                      alt={image.prompt}
+                    />
+                  ) : (
+                    <IoPersonCircleSharp size={25} />
+                  )}
                 </div>
                 <p className="font-semibold text-white">
                   {image.created_user?.first_name}{" "}

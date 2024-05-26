@@ -119,6 +119,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
       last_name: userData?.last_name || "",
       alias_name: userData?.alias_name || "",
     }))
+    setProfileData((prevData) => ({
+      ...prevData,
+      first_name: userData?.first_name || "",
+      last_name: userData?.last_name || "",
+      alias_name: userData?.alias_name || "",
+    }))
     userData?.socials?.forEach((item) => {
       switch (item.social_name) {
         case "Instagram":
@@ -149,6 +155,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
 
     // Cập nhật state formData với các link từ socials
     setFormData((prevData) => ({
+      ...prevData,
+      ...socialLinks,
+    }))
+    setProfileData((prevData) => ({
       ...prevData,
       ...socialLinks,
     }))
@@ -287,7 +297,14 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
     facebook: "",
     twitter: "",
   })
-
+  const [profileData, setProfileData] = useState({
+    first_name: userData?.first_name || "",
+    last_name: userData?.last_name || "",
+    alias_name: userData?.alias_name || "",
+    instagram: "",
+    facebook: "",
+    twitter: "",
+  })
   const { first_name, last_name, alias_name, instagram, facebook, twitter } =
     formData
 
@@ -330,13 +347,21 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
       })
     }
 
-    if (socials.length > 0) {
-      ;(requestBody as requestData).socials = socials
-    }
+    ;(requestBody as requestData).socials = socials
 
     try {
       const result = await updateProfile(requestBody as requestData).unwrap()
       // setGenerateImgData(result);
+      toast.success("Update profile successfully")
+
+      setProfileData({
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        alias_name: formData.alias_name,
+        instagram: formData.instagram,
+        facebook: formData.facebook,
+        twitter: formData.twitter,
+      })
     } catch (error) {
       console.error("Error:", error)
     }
@@ -509,7 +534,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
       <div className="ml-[240px] flex items-center justify-between px-2 pt-2">
         <div className="flex flex-col">
           <h1 className="flex text-3xl font-bold">
-            {userData?.first_name + " " + userData?.last_name}
+            {profileData?.first_name + " " + profileData?.last_name}
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <IoPencilSharp className="ml-3 cursor-pointer"></IoPencilSharp>
@@ -650,32 +675,32 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
               </AlertDialogContent>
             </AlertDialog>
           </h1>
-          <p className="text-lg font-light">{formData?.alias_name}</p>
+          <p className="text-lg font-light">{profileData?.alias_name}</p>
         </div>
         {/* Social Links */}
         <div className="flex flex-col justify-end">
           <div className="mb-5 flex">
-            {formData?.instagram && (
+            {profileData?.instagram && (
               <a
-                href={formData.instagram}
+                href={profileData.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <Instagram size={24} className="ml-4 cursor-pointer" />
               </a>
             )}
-            {formData?.facebook && (
+            {profileData?.facebook && (
               <a
-                href={formData.facebook}
+                href={profileData.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <Facebook size={24} className="ml-4 cursor-pointer" />
               </a>
             )}
-            {formData?.twitter && (
+            {profileData?.twitter && (
               <a
-                href={formData.twitter}
+                href={profileData.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
               >
