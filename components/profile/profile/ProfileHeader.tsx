@@ -313,41 +313,25 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
   }
 
   const handleUpdateProfile = async () => {
-    const requestBody = {}
-
-    if (formData.first_name) {
-      ;(requestBody as requestData).firstName = formData.first_name
+    const requestBody = {
+      firstName: formData.first_name,
+      aliasName: formData.alias_name,
+      lastName: formData.last_name,
+      socials: [
+        {
+          socialName: "Facebook",
+          socialLink: formData.facebook,
+        },
+        {
+          socialName: "Twitter",
+          socialLink: formData.twitter,
+        },
+        {
+          socialName: "Instagram",
+          socialLink: formData.instagram,
+        },
+      ],
     }
-
-    if (formData.alias_name) {
-      ;(requestBody as requestData).aliasName = formData.alias_name
-    }
-
-    if (formData.last_name) {
-      ;(requestBody as requestData).lastName = formData.last_name
-    }
-
-    const socials = []
-    if (formData.facebook) {
-      socials.push({
-        socialName: "Facebook",
-        socialLink: formData.facebook,
-      })
-    }
-    if (formData.twitter) {
-      socials.push({
-        socialName: "Twitter",
-        socialLink: formData.twitter,
-      })
-    }
-    if (formData.instagram) {
-      socials.push({
-        socialName: "Instagram",
-        socialLink: formData.instagram,
-      })
-    }
-
-    ;(requestBody as requestData).socials = socials
 
     try {
       const result = await updateProfile(requestBody as requestData).unwrap()
