@@ -6,16 +6,24 @@ import { useGetNotificationsQuery } from "@/services/generate/generateApi"
 
 const LogLayout = ({ children }: { children: React.ReactNode }) => {
   const [isLogVisible, setIsLogVisible] = useState(false)
-  const [pollingInterval, setPollingInterval] = useState(3000) // 3 seconds polling interval
+  const [pollingInterval, setPollingInterval] = useState(3000) 
   const { data: notifications, refetch } = useGetNotificationsQuery()
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      refetch()
-    }, pollingInterval)
+    let interval: NodeJS.Timeout | null = null;
 
-    return () => clearInterval(interval)
-  }, [pollingInterval, refetch])
+    if (isLogVisible) {
+      interval = setInterval(() => {
+        refetch();
+      }, pollingInterval);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isLogVisible, pollingInterval, refetch]);
 
   const toggleLogVisibility = () => {
     setIsLogVisible(!isLogVisible)
@@ -54,7 +62,7 @@ const LogLayout = ({ children }: { children: React.ReactNode }) => {
           </Button>
         )}
       </div>
-      <div>{children}</div>
+      {children}
     </>
   )
 }
