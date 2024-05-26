@@ -9,6 +9,7 @@ interface Image {
   created_user: any; 
   is_liked: boolean;
   like_number: number | null;
+  visibility: boolean;
 }
 
 interface ImageGroup {
