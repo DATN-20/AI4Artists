@@ -12,7 +12,15 @@ export interface Person {
   description: string;
   socials: Social[];
 }
-
+export interface requestData {
+  firstName: string
+  lastName: string
+  aliasName: string
+  profileImageUrl: string
+  socials: { socialName: string; socialLink: string }[]
+  avatar: string
+  background: string
+}
 export interface ImageAlbum {
   id: number;
   userId: number;
