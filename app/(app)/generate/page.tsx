@@ -4,6 +4,7 @@ import { ChangeEvent, useContext, useEffect, useState } from "react"
 import GenerateSideBar from "@/components/sidebar/GenerateSideBar"
 import {
   useAiInformationMutation,
+  useAiStyleInformationMutation,
   useGetGenerationHistoryMutation,
   useImageToImageMutation,
   useTextToImageMutation,
@@ -18,6 +19,7 @@ import {
   setHistory,
   setAIName,
   setField,
+  setAIStyleInputs,
 } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
 import { Skeleton } from "../../../components/ui/skeleton"
@@ -195,6 +197,7 @@ export default function Generate() {
     dispatch(setField({ field: "negativePrompt", value: prompt }))
   }
   const [aiInformation, { data: inputData }] = useAiInformationMutation()
+  const [aiStyleInformation, {data: inputStyleData}] = useAiStyleInformationMutation()
 
   useEffect(() => {
     const promptValue = localStorage.getItem("prompt")
@@ -214,6 +217,10 @@ export default function Generate() {
       await getAlbum(undefined)
     }
     fetchAlbumData()
+    const fetchStyleData = async () => {
+      await aiStyleInformation(undefined)
+    }
+    fetchStyleData()
   }, [])
 
   useEffect(() => {
@@ -223,6 +230,12 @@ export default function Generate() {
       setIsLoadingInformation(false)
     }
   }, [inputData])
+
+  useEffect(() => {
+    if (inputStyleData) {
+      dispatch(setAIStyleInputs({ aiStyleInputs: inputStyleData[0].inputs }))
+    }
+  }, [inputStyleData])
 
   useEffect(() => {
     if (historyData) {

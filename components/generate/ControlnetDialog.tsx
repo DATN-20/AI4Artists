@@ -42,12 +42,12 @@ export const ControlnetDialog = ({ type }: { type: string }) => {
     <div className="flex flex-col gap-4">
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogHeader className="hidden" />
-        <DialogTrigger>
+        <DialogTrigger className="flex my-3">
           <Button
             variant={"outline"}
-            className="w-fit  rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+            className="w-fit rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
           >
-            Add Pose Image
+            Add ControlNet Image
           </Button>
         </DialogTrigger>
         <DialogContentLoginModal className="left-0 top-0 flex h-full max-w-none translate-x-0 translate-y-0 justify-center border-none p-0">
