@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import LogCard from "./LogCard"
 import { useGetNotificationsQuery } from "@/services/generate/generateApi"
 import { IoIosMailUnread } from "react-icons/io"
+import { IoIosNotifications } from "react-icons/io"
 
 interface NotificationInfo {
   id: number
@@ -17,7 +18,7 @@ interface NotificationInfo {
 
 const LogLayout = ({ children }: { children: React.ReactNode }) => {
   const [isLogVisible, setIsLogVisible] = useState(false)
-  const [pollingInterval, setPollingInterval] = useState(3000) 
+  const [pollingInterval, setPollingInterval] = useState(3000)
   const { data: notifications, refetch } = useGetNotificationsQuery()
   const [unreadCount, setUnreadCount] = useState(0)
 
@@ -32,20 +33,20 @@ const LogLayout = ({ children }: { children: React.ReactNode }) => {
   }, [notifications])
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
+    let interval: NodeJS.Timeout | null = null
 
     if (isLogVisible) {
       interval = setInterval(() => {
-        refetch();
-      }, pollingInterval);
+        refetch()
+      }, pollingInterval)
     }
 
     return () => {
       if (interval) {
-        clearInterval(interval);
+        clearInterval(interval)
       }
-    };
-  }, [isLogVisible, pollingInterval, refetch]);
+    }
+  }, [isLogVisible, pollingInterval, refetch])
 
   const toggleLogVisibility = () => {
     setIsLogVisible(!isLogVisible)
@@ -89,9 +90,14 @@ const LogLayout = ({ children }: { children: React.ReactNode }) => {
         ) : (
           <Button
             onClick={toggleLogVisibility}
-            className="fixed bottom-0 right-0 h-64 rounded px-0"
+            className="fixed bottom-0 right-0 h-10 w-10 rounded px-0"
           >
-            <ChevronLeft className="h-8 w-8" />
+            <IoIosNotifications className="h-8 w-8" />
+            {unreadCount > 0 && (
+              <span className="absolute right-0 top-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs text-white">
+                {unreadCount}
+              </span>
+            )}
           </Button>
         )}
       </div>
