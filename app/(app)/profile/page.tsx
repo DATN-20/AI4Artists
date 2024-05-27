@@ -215,16 +215,20 @@ const Profile = () => {
                 </TabsList>
 
                 <div className="mt-3 grid grid-cols-1 gap-4 p-1 md:grid-cols-3">
-                  {authStates.totalAlbum?.map((album: any, index: number) => (
-                    <AlbumCard
-                      key={index}
-                      albumData={album}
-                      width={512}
-                      height={512}
-                      setSelectedAlbum={setSelectedAlbum}
-                      selectedAlbum={selectedAlbum}
-                    />
-                  ))}
+                  {authStates.totalAlbum && authStates.totalAlbum.length > 0 ? (
+                    authStates.totalAlbum.map((album: any, index: number) => (
+                      <AlbumCard
+                        key={index}
+                        albumData={album}
+                        width={512}
+                        height={512}
+                        setSelectedAlbum={setSelectedAlbum}
+                        selectedAlbum={selectedAlbum}
+                      />
+                    ))
+                  ) : (
+                    <p>No albums found</p>
+                  )}
                 </div>
               </TabsContent>
               <TabsContent value="profile">
@@ -237,7 +241,7 @@ const Profile = () => {
                       <TabsList className=" h-full bg-transparent">
                         <TabsTrigger
                           value="introduction"
-                          className="text-white"
+                          className="dark:text-white"
                         >
                           <h1 className=" text-2xl font-bold">
                             <IoArrowBackOutline />

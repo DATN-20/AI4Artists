@@ -68,6 +68,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
   const [bgUrl, setBgUrl] = useState<string | null>(null)
   const [showAvatarModal, setShowAvatarModal] = useState(false)
   const [showBgModal, setShowBgModal] = useState(false)
+  const [editProfileToggle, setEditProfileToggle] = useState(false)
 
   const [updateAvatar] = useUpdateAvatarMutation()
   const [updateBackground] = useUpdateBackgroundMutation()
@@ -368,7 +369,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
           alt=""
         />
         {isHoveredBg && (
-          <div className="absolute inset-0 flex items-center justify-center  bg-black bg-opacity-50">
+          <div className="absolute inset-0 flex h-[540px] items-center justify-center  bg-black bg-opacity-50">
             <label htmlFor="avatarInput" className="cursor-pointer">
               <IoCloudUploadOutline size={36} className="text-white" />
 
@@ -519,143 +520,153 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         <div className="flex flex-col">
           <h1 className="flex text-3xl font-bold">
             {profileData?.first_name + " " + profileData?.last_name}
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <IoPencilSharp className="ml-3 cursor-pointer"></IoPencilSharp>
-              </AlertDialogTrigger>
+            <AlertDialog open={editProfileToggle}>
+              <IoPencilSharp
+                className="ml-3 cursor-pointer"
+                onClick={() => {
+                  setEditProfileToggle(true)
+                }}
+              ></IoPencilSharp>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle className="text-center">
                     Edit Profile
                   </AlertDialogTitle>
                 </AlertDialogHeader>
-                <form>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="first_name"
-                      className="block text-sm font-medium text-gray-300"
+                <div className="mb-4">
+                  <label
+                    htmlFor="first_name"
+                    className="block text-sm font-medium "
+                  >
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    id="first_name"
+                    name="first_name"
+                    value={first_name}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="lastName"
+                    className="block text-sm font-medium "
+                  >
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    id="last_name"
+                    name="last_name"
+                    value={last_name}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="aliasName"
+                    className="block text-sm font-medium"
+                  >
+                    Alias Name
+                  </label>
+                  <input
+                    type="text"
+                    id="alias_name"
+                    name="alias_name"
+                    value={alias_name}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="instagram"
+                    className="block text-sm font-medium"
+                  >
+                    Instagram Link
+                  </label>
+                  <input
+                    type="text"
+                    id="instagram"
+                    name="instagram"
+                    value={instagram}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="facebook"
+                    className="block text-sm font-medium"
+                  >
+                    Facebook Link
+                  </label>
+                  <input
+                    type="text"
+                    id="facebook"
+                    name="facebook"
+                    value={facebook}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="twitter"
+                    className="block text-sm font-medium"
+                  >
+                    Twitter Link
+                  </label>
+                  <input
+                    type="text"
+                    id="twitter"
+                    name="twitter"
+                    value={twitter}
+                    onChange={handleChange}
+                    className="bg-gray mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <AlertDialogFooter className="mt-5">
+                    <AlertDialogCancel
+                      onClick={() => {
+                        setEditProfileToggle(false)
+                      }}
                     >
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      id="first_name"
-                      name="first_name"
-                      value={first_name}
-                      onChange={handleChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="lastName"
-                      className="block text-sm font-medium text-gray-300"
-                    >
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      id="last_name"
-                      name="last_name"
-                      value={last_name}
-                      onChange={handleChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="aliasName"
-                      className="block text-sm font-medium text-gray-300"
-                    >
-                      Alias Name
-                    </label>
-                    <input
-                      type="text"
-                      id="alias_name"
-                      name="alias_name"
-                      value={alias_name}
-                      onChange={handleChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="instagram"
-                      className="block text-sm font-medium text-gray-300"
-                    >
-                      Instagram Link
-                    </label>
-                    <input
-                      type="text"
-                      id="instagram"
-                      name="instagram"
-                      value={instagram}
-                      onChange={handleChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="facebook"
-                      className="block text-sm font-medium text-gray-300"
-                    >
-                      Facebook Link
-                    </label>
-                    <input
-                      type="text"
-                      id="facebook"
-                      name="facebook"
-                      value={facebook}
-                      onChange={handleChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="twitter"
-                      className="block text-sm font-medium text-gray-300"
-                    >
-                      Twitter Link
-                    </label>
-                    <input
-                      type="text"
-                      id="twitter"
-                      name="twitter"
-                      value={twitter}
-                      onChange={handleChange}
-                      className="bg-gray mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    />
-                  </div>
-                  <div className="flex justify-end">
-                    <AlertDialogFooter className="mt-5">
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button>Save</Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Confirm Save</AlertDialogTitle>
-                          </AlertDialogHeader>
-                          <AlertDialogDescription>
-                            Are you sure you want to save changes?
-                          </AlertDialogDescription>
-                          <AlertDialogFooter className="mt-5">
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction>
-                              <Button
-                                type="submit"
-                                onClick={handleUpdateProfile}
-                              >
-                                Yes
-                              </Button>
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </AlertDialogFooter>
-                  </div>
-                </form>
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button>Save</Button>
+                      </AlertDialogTrigger>
+
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Confirm Save</AlertDialogTitle>
+                        </AlertDialogHeader>
+                        <AlertDialogDescription>
+                          Are you sure you want to save changes?
+                        </AlertDialogDescription>
+                        <AlertDialogFooter className="mt-5">
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction>
+                            <Button
+                              onClick={() => {
+                                handleUpdateProfile()
+                                setEditProfileToggle(false)
+                              }}
+                            >
+                              Yes
+                            </Button>
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </AlertDialogFooter>
+                </div>
               </AlertDialogContent>
             </AlertDialog>
           </h1>
