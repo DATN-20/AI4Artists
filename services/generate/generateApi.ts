@@ -63,6 +63,13 @@ export const generateApi = createApi({
         method: "PATCH",
       }),
     }),
+    generateTags: builder.mutation({
+      query: (formData) => ({
+        url: `/api/v1/generate-tag`,
+        method: "POST",
+        body: formData,
+      }),
+    }),
     getNotifications: builder.query<any, void>({
       query: () => ({
         url: "/api/v1/notifications",
@@ -95,4 +102,5 @@ export const {
   useGetNotificationsQuery,
   useChangeNotificationStatusMutation,
   useGenerateStyleImageMutation,
+  useGenerateTagsMutation
 } = generateApi
