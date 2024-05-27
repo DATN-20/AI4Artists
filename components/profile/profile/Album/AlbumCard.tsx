@@ -25,7 +25,7 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
 }) => {
   const authStates = useSelector(selectAuth)
   const handleClick = () => {
-    setSelectedAlbum(albumData.album.id - 1)
+    setSelectedAlbum(selectedAlbum)
   }
 
   const hasImages = albumData.images && albumData.images.length > 0
