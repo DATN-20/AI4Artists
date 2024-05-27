@@ -16,6 +16,7 @@ import DynamicImageInput from "./input-component/DynamicImageInput"
 import { ControlnetDialog } from "./ControlnetDialog"
 import TrueFalseInput from "./input-component/TrueFalseInput"
 import { Card } from "../ui/card"
+import StyleDrawer from "./StyleDrawer"
 
 export const renderInput = (
   input: any,
@@ -143,7 +144,7 @@ export const renderInput = (
               <DynamicImageInput
                 name={name}
                 type={propertyName}
-                defaultValue = {checkDefaultValue}
+                defaultValue={checkDefaultValue}
                 isStyleGenerate={isStyleGenerate}
                 arrayIndex={arrayIndex}
               />
@@ -170,6 +171,18 @@ export const renderInput = (
     }
 
     case "array": {
+      if (propertyName === "ipadapterStyleTranferInputs" && !isStyleGenerate) {
+        return (
+          <CollapsibleSection title={name} key={propertyName}>
+            <StyleDrawer
+              dispatch={dispatch}
+              generateStates={generateStates}
+              inputData={input}
+            />
+          </CollapsibleSection>
+        )
+      }
+
       if (isStyleGenerate) {
         return (
           <>

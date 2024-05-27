@@ -63,6 +63,13 @@ export const generateApi = createApi({
         method: "PATCH",
       }),
     }),
+    generateTags: builder.mutation({
+      query: (formData) => ({
+        url: `/api/v1/generate-tag`,
+        method: "POST",
+        body: formData,
+      }),
+    }),
     getNotifications: builder.query<any, void>({
       query: () => ({
         url: "/api/v1/notifications",
@@ -73,6 +80,13 @@ export const generateApi = createApi({
       query: (notificationId: number) => ({
         url: `/api/v1/notifications/${notificationId}/change-status`,
         method: "PATCH",
+      }),
+    }),
+    generateStyleImage: builder.mutation({
+      query: (formData) => ({
+        url: "/api/v1/generate-image/image-by-images-style",
+        method: "POST",
+        body: formData,
       }),
     }),
   }),
@@ -87,4 +101,6 @@ export const {
   useChangePublicStatusMutation,
   useGetNotificationsQuery,
   useChangeNotificationStatusMutation,
+  useGenerateStyleImageMutation,
+  useGenerateTagsMutation
 } = generateApi

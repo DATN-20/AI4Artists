@@ -1,17 +1,6 @@
 import React from "react"
-
-import { Search } from "lucide-react"
-import { FaFilter, FaSort } from "react-icons/fa"
 import { Switch } from "../ui/switch"
 import { Label } from "../ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select"
 import StyleDrawer from "./StyleDrawer"
 
 interface GenerateControlsProps {
@@ -64,7 +53,6 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
           className="mt-5 w-full  flex-grow resize-none rounded-2xl bg-[#2c2d31] p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
         />
       )}
-      <StyleDrawer />
       <button
         type="button"
         onClick={handleGenerate}
@@ -74,46 +62,6 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
         Generate
       </button>
       <h1 className="mt-5 text-3xl font-bold">Generated Images</h1>
-      {/* <div className="mt-5 flex flex-col lg:flex-row">
-        <div className="flex items-center justify-center rounded-full bg-card px-4">
-          <input
-            type="text"
-            placeholder="Prompt"
-            className="flex-grow bg-transparent p-2 placeholder-black outline-none dark:placeholder-white"
-          />
-          <Search className="dark:text-white" />
-        </div>
-        <div className="mt-4 flex gap-4 lg:mt-0">
-          <Select>
-            <SelectTrigger className=" w-[180px] bg-white dark:bg-zinc-800 lg:ml-5">
-              <FaFilter />
-              <SelectValue placeholder="Filter" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="alphabet">Alphabet</SelectItem>
-                <SelectItem value="newest">Newest</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Select>
-            <SelectTrigger className="w-[180px] bg-white dark:bg-zinc-800 lg:ml-5">
-              <FaSort />
-              <SelectValue placeholder="Sort By" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="descending">
-                  Time Created: Descending
-                </SelectItem>
-                <SelectItem value="ascending">
-                  Time Created: Ascending
-                </SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-      </div> */}
     </>
   )
 }

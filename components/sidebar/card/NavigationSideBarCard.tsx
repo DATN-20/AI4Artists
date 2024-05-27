@@ -149,7 +149,7 @@ const NavigationSideBarCard = () => {
               <CardSection
                 onClick={() => {}}
                 title="Image Tag"
-                href="#"
+                href="/tags"
                 isOpen={false}
                 icon={<FaTag />}
               />
