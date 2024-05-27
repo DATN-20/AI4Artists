@@ -133,9 +133,6 @@ export default function Generate() {
     }
   }
 
-  useEffect(() => {
-    console.log('dataInput',generateStates.dataInputs)
-  }, [generateStates.dataInputs])
 
   const handleGenerate = async () => {
     fetchHistoryData()

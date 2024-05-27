@@ -75,6 +75,13 @@ export const generateApi = createApi({
         method: "PATCH",
       }),
     }),
+    generateStyleImage: builder.mutation({
+      query: (formData) => ({
+        url: "/api/v1/generate-image/image-by-images-style",
+        method: "POST",
+        body: formData,
+      }),
+    }),
   }),
 })
 
@@ -87,4 +94,5 @@ export const {
   useChangePublicStatusMutation,
   useGetNotificationsQuery,
   useChangeNotificationStatusMutation,
+  useGenerateStyleImageMutation,
 } = generateApi
