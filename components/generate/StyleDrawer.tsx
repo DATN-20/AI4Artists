@@ -27,30 +27,32 @@ import {
 import { base64StringToFile } from "../../lib/base64StringToFile"
 import { toast } from "react-toastify"
 
-const StyleDrawer = () => {
+const StyleDrawer = ({
+  dispatch,
+  generateStates,
+  inputData,
+}: {
+  dispatch: any
+  generateStates: any
+  inputData: any
+}) => {
   const [currentStep, setCurrentStep] = useState(1)
-
-  const dispatch = useAppDispatch()
-  const generateStates = useSelector(selectGenerate, shallowEqual)
-
-  const [aiStyleInformation, { data: inputData }] =
-    useAiStyleInformationMutation()
 
   const [generateStyle, { data: generateStyleData }] =
     useGenerateStyleImageMutation()
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await aiStyleInformation(undefined)
-    }
-    fetchData()
-  }, [])
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     await aiStyleInformation(undefined)
+  //   }
+  //   fetchData()
+  // }, [])
 
   const [open, setOpen] = useState(false)
 
   const getMaxStep = () => {
     const maxIndex =
-      generateStates.dataStyleInputs?.reduce((max, item) => {
+      generateStates.dataStyleInputs?.reduce((max: any, item: any) => {
         if (item.ArrayIndex !== undefined) {
           return item.ArrayIndex > max ? item.ArrayIndex : max
         }
@@ -185,27 +187,18 @@ const StyleDrawer = () => {
             <ChevronRight className="h-6 w-6" />
           </Button>
         </div>
-        {inputData &&
-          inputData[0].inputs.map((input: any, index: number) => {
-            if (input.input_property_name === "ipadapterStyleTranferInputs") {
-              return (
-                <div
-                  className="mx-4 mt-4 rounded-xl pb-4"
-                  key={`${currentStep - 1}`}
-                >
-                  {renderInput(
-                    input,
-                    dispatch,
-                    generateStates,
-                    input.input_property_name,
-                    currentStep - 1,
-                    true,
-                  )}
-                </div>
-              )
-            }
-            return null
-          })}
+        {inputData && (
+          <div className="mx-4 mt-4 rounded-xl pb-4" key={`${currentStep - 1}`}>
+            {renderInput(
+              inputData,
+              dispatch,
+              generateStates,
+              inputData.input_property_name,
+              currentStep - 1,
+              true,
+            )}
+          </div>
+        )}
         <DrawerFooter>
           <Button variant={"outline"} onClick={addOrUpdateImageToData}>
             {currentStep >= getMaxStep() ? "Add Image" : "Update Image"}

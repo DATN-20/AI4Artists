@@ -53,7 +53,6 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
           className="mt-5 w-full  flex-grow resize-none rounded-2xl bg-[#2c2d31] p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
         />
       )}
-      <StyleDrawer />
       <button
         type="button"
         onClick={handleGenerate}

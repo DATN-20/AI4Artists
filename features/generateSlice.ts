@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "@/store/store"
 import { Root } from "react-dom/client"
+import { set } from "react-hook-form"
 
 // Định nghĩa interface cho dữ liệu generate state
 export interface GenerateState {
@@ -12,6 +13,7 @@ export interface GenerateState {
   useStyleImage: boolean
   dataInputs: [] | null
   history: ImageGroup[] | null
+  aiStyleInputs: [] | null
   dataStyleInputs: { name: string, value: any, ArrayIndex?: number }[] | null
 }
 
@@ -24,6 +26,7 @@ const initialState: GenerateState = {
   ai_name: "",
   dataInputs: [],
   history: [],
+  aiStyleInputs: [],
   dataStyleInputs: [],
 }
 
@@ -33,6 +36,9 @@ export const generateSlice = createSlice({
   reducers: {
     setInputs: (state, action: PayloadAction<{ aiInputs: [] }>) => {
       state.aiInputs = action.payload.aiInputs
+    },
+    setAIStyleInputs: (state, action: PayloadAction<{ aiStyleInputs: [] }>) => {
+      state.aiStyleInputs = action.payload.aiStyleInputs
     },
     setAIName: (state, action: PayloadAction<{ ai_name: string }>) => {
       state.ai_name = action.payload.ai_name
@@ -171,6 +177,7 @@ export const selectGenerate = (state: RootState) => state.generate
 
 export const {
   setInputs,
+  setAIStyleInputs,
   setUseImage,
   setUseControlnet,
   setDimension,

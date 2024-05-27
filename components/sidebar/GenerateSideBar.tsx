@@ -6,20 +6,24 @@ import ChooseInput from "../generate/input-component/ChooseInput"
 import SliderInput from "../generate/input-component/SliderInput"
 import { Card, CardHeader } from "../ui/card"
 import { useSelector } from "react-redux"
-import { selectGenerate } from "@/features/generateSlice"
+import { selectGenerate, setUseStyleImage } from "@/features/generateSlice"
 import Image from "next/image"
 import { ArrowLeftFromLine } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 import { useAppDispatch } from "../../store/hooks"
 import { renderInput } from "../generate/renderInput"
+import { Switch } from "../ui/switch"
+import { Label } from "../ui/label"
 
 export default function GenerateSideBar() {
   const dispatch = useAppDispatch()
   const generateStates = useSelector(selectGenerate)
   const aiInputs = generateStates.aiInputs
+  const aiStyleInputs = generateStates.aiStyleInputs
   const router = useRouter()
   const [noiseElement, setNoiseElement] = useState<JSX.Element | null>(null)
+
   useEffect(() => {
     if (aiInputs && generateStates.useImage) {
       const noiseInput = aiInputs.find(
@@ -78,35 +82,93 @@ export default function GenerateSideBar() {
       </CardHeader>
       {noiseElement}
 
-      {aiInputs &&
-        aiInputs.map((aiInput: any) => {
-          if (
-            aiInput.input_property_name === "noise" ||
-            aiInput.input_property_name === "positivePrompt" ||
-            aiInput.input_property_name === "negativePrompt" ||
-            aiInput.input_property_name === "height"
-          ) {
-            return null
-          }
-          if (aiInput.input_property_name === "width") {
-            return (
-              <CollapsibleSection
-                title={"Image Dimensions"}
-                key="image-dimensions"
-              >
-                <ChooseInput options={dimensionOptions} type="dimension" />
-              </CollapsibleSection>
+      <div className="flex items-center justify-between p-4 mt-4">
+        <Label htmlFor="use-style-mode" className="text-lg font-semibold">Use Style Generation</Label>
+        <Switch
+          id="use-style-mode"
+          className="bg-black"
+          onClick={() => {
+            dispatch(
+              setUseStyleImage({
+                useStyleImage: !generateStates.useStyleImage,
+              }),
             )
-          }
-          return (
-            <Card
-              key={aiInput.input_property_name}
-              className="border-none pb-4 lg:border"
-            >
-              {renderInput(aiInput, dispatch, generateStates, undefined, 0, false)}
-            </Card>
-          )
-        })}
+          }}
+        />
+      </div>
+      {generateStates.useStyleImage
+        ? aiStyleInputs &&
+          aiStyleInputs.map((aiInput: any) => {
+            if (
+              aiInput.input_property_name === "noise" ||
+              aiInput.input_property_name === "positivePrompt" ||
+              aiInput.input_property_name === "negativePrompt" ||
+              aiInput.input_property_name === "height"
+            ) {
+              return null
+            }
+            if (aiInput.input_property_name === "width") {
+              return (
+                <CollapsibleSection
+                  title={"Image Dimensions"}
+                  key="image-dimensions"
+                >
+                  <ChooseInput options={dimensionOptions} type="dimension" />
+                </CollapsibleSection>
+              )
+            }
+            return (
+              <Card
+                key={aiInput.input_property_name}
+                className="border-none pb-4 lg:border"
+              >
+                {renderInput(
+                  aiInput,
+                  dispatch,
+                  generateStates,
+                  undefined,
+                  undefined,
+                  false,
+                )}
+              </Card>
+            )
+          })
+        : aiInputs &&
+          aiInputs.map((aiInput: any) => {
+            if (
+              aiInput.input_property_name === "noise" ||
+              aiInput.input_property_name === "positivePrompt" ||
+              aiInput.input_property_name === "negativePrompt" ||
+              aiInput.input_property_name === "height"
+            ) {
+              return null
+            }
+            if (aiInput.input_property_name === "width") {
+              return (
+                <CollapsibleSection
+                  title={"Image Dimensions"}
+                  key="image-dimensions"
+                >
+                  <ChooseInput options={dimensionOptions} type="dimension" />
+                </CollapsibleSection>
+              )
+            }
+            return (
+              <Card
+                key={aiInput.input_property_name}
+                className="border-none pb-4 lg:border"
+              >
+                {renderInput(
+                  aiInput,
+                  dispatch,
+                  generateStates,
+                  undefined,
+                  0,
+                  false,
+                )}
+              </Card>
+            )
+          })}
     </Card>
   )
 }
