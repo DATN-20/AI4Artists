@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { IoAddCircleOutline } from "react-icons/io5"
+import { IoAddCircleOutline, IoCloudDownloadOutline } from "react-icons/io5"
 
 import Image from "next/image"
 import {
@@ -28,6 +28,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { IoEyeOutline } from "react-icons/io5"
+import { FaRegEyeSlash } from "react-icons/fa"
+import { useChangePublicStatusMutation } from "@/services/generate/generateApi"
 interface HistoryCarouselProps {
   generateImgData: Image[] | null
   width?: number
@@ -47,15 +50,40 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
 }) => {
   const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null)
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
+  const [isPublic, setIsPublic] = useState<boolean[]>(
+    generateImgData?.map((item) => item.visibility) || [],
+  )
+  const [changeVisibility] = useChangePublicStatusMutation()
   const [addToAlbum] = useAddToAlbumMutation()
 
   const handleAlbumSelect = (albumId: number) => {
     setSelectedAlbumId(albumId === selectedAlbumId ? null : albumId)
   }
+  async function saveImageToDisk(imageUrl: string) {
+    try {
+      const response = await fetch(imageUrl)
+      const blob = await response.blob()
+
+      const blobUrl = URL.createObjectURL(blob)
+
+      const link = document.createElement("a")
+      link.href = blobUrl
+      link.download = "image.jpg"
+      document.body.appendChild(link)
+
+      link.click()
+
+      URL.revokeObjectURL(blobUrl)
+
+      document.body.removeChild(link)
+
+      console.log("Image saved successfully!")
+    } catch (error) {
+      console.error("Error saving image:", error)
+    }
+  }
 
   const handleAddToAlbum = async () => {
-    console.log("image:", selectedImageId)
-    console.log("album:", selectedAlbumId)
     if (!selectedImageId || !selectedAlbumId) {
       return
     }
@@ -70,6 +98,16 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
     })
     setSelectedAlbumId(null)
   }
+
+  const changePublicStatus = async (imageId: number, index: number) => {
+    setIsPublic((prev) => {
+      const newState = [...prev]
+      newState[index] = !newState[index]
+      return newState
+    })
+    changeVisibility(imageId)
+  }
+
   return (
     <>
       <div className="mt-10 flex w-full items-center justify-between gap-6">
@@ -95,7 +133,7 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
         <Carousel className="relative mt-5 w-full">
           <CarouselContent>
             {generateImgData &&
-              generateImgData.map((item: any) => (
+              generateImgData.map((item: Image, index: number) => (
                 <CarouselItem
                   key={item.id}
                   className="lg:basis-1/3"
@@ -115,13 +153,34 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
                         />
                       </CardContent>
                       <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
-                        <div className="flex max-w-full justify-end pr-5">
+                        <div className="flex max-w-full items-center justify-end gap-x-2 pr-5">
+                          {isPublic[index] ? (
+                            <FaRegEyeSlash
+                              size={32}
+                              className="cursor-pointer hover:text-primary"
+                              onClick={() => changePublicStatus(item.id, index)}
+                            />
+                          ) : (
+                            <IoEyeOutline
+                              size={32}
+                              className="cursor-pointer hover:text-primary"
+                              onClick={() => changePublicStatus(item.id, index)}
+                            />
+                          )}
                           <DialogTrigger asChild>
                             <IoAddCircleOutline
                               size={32}
-                              className="cursor-pointer"
+                              className="cursor-pointer hover:text-primary"
                             />
                           </DialogTrigger>
+                          <IoCloudDownloadOutline
+                            size={32}
+                            className="cursor-pointer hover:text-primary"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              saveImageToDisk(item.url)
+                            }}
+                          />
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white">
                           <p className="line-clamp-3">Prompt: {item.prompt}</p>
@@ -144,9 +203,9 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
                     key={albumItem.album.id}
                     className={`mr-5 rounded-md px-3 py-2 ${
                       selectedAlbumId === albumItem.album.id
-                        ? "bg-blue-500 text-white"
+                        ? "bg-primary text-white"
                         : "bg-gray-200 text-gray-700"
-                    } transition-colors hover:bg-blue-600 hover:text-white`}
+                    } transition-colors hover:bg-primary hover:text-white`}
                     onClick={() => handleAlbumSelect(albumItem.album.id)}
                   >
                     {albumItem.album.name}
@@ -165,8 +224,12 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
               </DialogFooter>
             </DialogContent>
           </CarouselContent>
-          <CarouselPrevious className="absolute left-0 top-1/2 h-12 w-12 -translate-y-1/2 transform rounded-md" />
-          <CarouselNext className="absolute right-0 top-1/2 h-12 w-12 -translate-y-1/2 transform rounded-md" />
+          {generateImgData && generateImgData.length > 3 && (
+            <>
+              <CarouselPrevious className="absolute left-0 top-1/2 h-12 w-12 -translate-y-1/2 transform rounded-xl" />
+              <CarouselNext className="absolute right-0 top-1/2 h-12 w-12 -translate-y-1/2 transform rounded-xl" />
+            </>
+          )}
         </Carousel>
       </Dialog>
     </>

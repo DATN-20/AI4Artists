@@ -1,9 +1,7 @@
 import { CanvasModeContext } from "@/store/canvasHooks"
 import { useContext, memo } from "react"
 import { RiArrowGoForwardLine } from "react-icons/ri"
-import { Button } from "@/components/ui/button"
 import { redo } from "../HistoryUtilities"
-import { useTheme } from "next-themes"
 
 export const RedoButton: React.FC = memo(() => {
   const canvasModeContext = useContext(CanvasModeContext)
@@ -16,11 +14,10 @@ export const RedoButton: React.FC = memo(() => {
     setCurrentHistoryIndex,
     imageRef,
   } = canvasModeContext!
-  const { resolvedTheme } = useTheme()
 
   return (
-    <Button
-      className={`my-1 rounded-xl bg-card font-bold dark:bg-white dark:text-black dark:hover:bg-primary ${currentHistoryIndex >= _history.length - 1 ? "disabled pointer-events-none opacity-50" : ""}`}
+    <div
+      className={`my-1 rounded-xl bg-card p-3 font-bold dark:bg-white dark:text-black dark:hover:bg-primary ${currentHistoryIndex >= _history.length - 1 ? "disabled pointer-events-none opacity-50" : ""}`}
       onClick={() => {
         redo(
           canvasRef.current!,
@@ -31,11 +28,10 @@ export const RedoButton: React.FC = memo(() => {
           setCurrentHistoryIndex,
           panOffset,
           imageRef.current!,
-          resolvedTheme,
         )
       }}
     >
       <RiArrowGoForwardLine size={25} />
-    </Button>
+    </div>
   )
-});
+})

@@ -1,5 +1,6 @@
-import { HistoryAction } from "@/constants/canvas"
+import CanvasMode, { CanvasState, HistoryAction } from "@/constants/canvas"
 import { Dispatch, SetStateAction } from "react"
+import { Point } from "./shapeObjects/ShapeInterface";
 
 export const drawInitialRectangle = (
   context: CanvasRenderingContext2D,
@@ -12,15 +13,10 @@ export const drawInitialRectangle = (
   panOffset: { x: number; y: number },
   isInitialBorderExist: boolean = true,
   image: HTMLImageElement | null,
-  theme: string | undefined,
-  callback: () => void,
+  callback: () => void
 ) => {
- context.beginPath();
-  let backgroundColor = "transparent";
-  if (theme === "dark") {
-    backgroundColor = "#ffffff";
-  } 
-  context.fillStyle = backgroundColor;
+  context.beginPath();
+  context.fillStyle = 'black';
 
   if (isInitialBorderExist) {
     const gradient = context.createLinearGradient(
@@ -32,7 +28,7 @@ export const drawInitialRectangle = (
     gradient.addColorStop(0, "#9cc8fb");
     gradient.addColorStop(0.6, "#d35bff");
     context.strokeStyle = gradient;
-    context.fillStyle = backgroundColor;
+    context.fillStyle = 'black';
     context.lineWidth = 3;
     context.fillRect(
       initialRectPosition.x + panOffset.x,
@@ -86,7 +82,6 @@ const IsShapeDeleted = (
   history: Array<{ action: number; value: any }>,
   index: number,
 ) => {
-  console.log(history)
   for (let i = index; i >= 0; i--) {
     if (history[i].value.id === id && history[i].action === HistoryAction.DELETE) {
       return true
@@ -108,11 +103,10 @@ _history: any[],
 index: number,
 panOffset: { x: number; y: number },
 isInitialBorderExist: boolean = true,
-image: HTMLImageElement | null,
-theme: string | undefined
+image: HTMLImageElement | null
 ) => {
 context.clearRect(0, 0, canvas.width, canvas.height)
-drawInitialRectangle(context, initialRect, panOffset, isInitialBorderExist, image, theme, () => {
+drawInitialRectangle(context, initialRect, panOffset, isInitialBorderExist, image, () => {
   for (var i = 0; i <= index; i++) {
     var actionType = _history[i].action;
     if (_history[i].value == null) continue;
@@ -120,7 +114,7 @@ drawInitialRectangle(context, initialRect, panOffset, isInitialBorderExist, imag
 
     if (actionType === HistoryAction.DELETE && shape === "all") {
       context.clearRect(0, 0, canvas.width, canvas.height)
-      drawInitialRectangle(context, initialRect, panOffset, isInitialBorderExist, image, theme, () => {})
+      drawInitialRectangle(context, initialRect, panOffset, isInitialBorderExist, image, () => {})
       continue
     }
 
@@ -167,8 +161,7 @@ export const redo = (
     currentHistoryIndex: number,
     setCurrentHistoryIndex: Dispatch<SetStateAction<number>>,
     panOffset: { x: number; y: number },
-    image: HTMLImageElement | null,
-    theme: string | undefined
+    image: HTMLImageElement | null
 ) => {
     if (currentHistoryIndex >= _history.length - 1) return
     setCurrentHistoryIndex(currentHistoryIndex + 1)
@@ -180,8 +173,7 @@ export const redo = (
       currentHistoryIndex + 1,
       panOffset,
       true,
-      image,
-      theme
+      image
     )
 }
 
@@ -198,8 +190,7 @@ export const undo = (
     currentHistoryIndex: number,
     setCurrentHistoryIndex: Dispatch<SetStateAction<number>>,
     panOffset: { x: number; y: number },
-    image: HTMLImageElement | null,
-    theme: string | undefined
+    image: HTMLImageElement | null
 ) => {
     if (currentHistoryIndex < 0) return
     
@@ -212,8 +203,100 @@ export const undo = (
       currentHistoryIndex - 1,
       panOffset,
         true,
-        image,
-        theme
+        image
     )
 }
 
+export const handleMouseUpCanvas = (
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
+  state: CanvasState,
+  setState: Dispatch<SetStateAction<CanvasState>>,
+  mode: CanvasMode,
+  currentShape: any,
+  setCurrentShape: Dispatch<SetStateAction<any>>,
+  currentHistoryIndex: number,
+  setCurrentHistoryIndex: Dispatch<SetStateAction<number>>,
+  _history: any[],
+  setHistory: Dispatch<SetStateAction<any[]>>,
+  panOffset: { x: number; y: number },
+  initialRectPosition: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  },
+  setBrushCoordinates: Dispatch<SetStateAction<Point[]>>,
+  setCursor: Dispatch<SetStateAction<string>>,
+  imageRef: React.MutableRefObject<HTMLImageElement | null>
+) => {
+  const canvas = canvasRef.current
+  if (!canvas || state === CanvasState.IDLE) return
+  const context = canvas.getContext("2d")
+  if (!context) return
+
+  switch (mode) {
+    case CanvasMode.BRUSH_MODE:
+    case CanvasMode.SHAPE_MODE:
+      if (currentShape === null) {
+        setState(CanvasState.IDLE)
+        return
+      }
+      setBrushCoordinates([])
+      setNewHistory(
+        currentHistoryIndex,
+        setCurrentHistoryIndex,
+        _history,
+        setHistory,
+        currentShape,
+        HistoryAction.CREATE,
+      )
+      setCurrentShape(null)
+      setState(CanvasState.IDLE)
+      break
+
+    case CanvasMode.SELECT_MODE:
+      if (state !== CanvasState.SELECTING) return
+      adjustHistoryToIndex(
+        canvas,
+        context,
+        initialRectPosition,
+        _history,
+        currentHistoryIndex,
+        panOffset,
+        true,
+        imageRef.current!,
+      )
+      currentShape.showBounding(true)
+      currentShape.draw(context, panOffset)
+      setState(CanvasState.IDLE)
+      setNewHistory(
+        currentHistoryIndex,
+        setCurrentHistoryIndex,
+        _history,
+        setHistory,
+        currentShape,
+        HistoryAction.MOVE,
+      )
+      break
+    case CanvasMode.DRAG_MODE:
+      setCursor("grab_release.png")
+      setState(CanvasState.IDLE)
+      break
+
+    case CanvasMode.OPENPOSE_MODE:
+      if (state !== CanvasState.SELECTING) return
+      setState(CanvasState.IDLE)
+      currentShape.eraseChosenPoint()
+      setNewHistory(
+        currentHistoryIndex,
+        setCurrentHistoryIndex,
+        _history,
+        setHistory,
+        currentShape,
+        HistoryAction.MOVE,
+      )
+      break
+    default:
+      return
+    }
+}

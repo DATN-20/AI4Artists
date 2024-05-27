@@ -19,7 +19,6 @@ const ChooseThreeInput = ({
   const handleSelect = (value: string) => {
     setSelectedValue(value)
     onSelect(value)
-    console.log("You selected: ", value)
   }
 
   return (

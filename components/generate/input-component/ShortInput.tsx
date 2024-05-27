@@ -1,7 +1,7 @@
-import { setHeight, setWidth } from "@/features/generateSlice"
+import { setField } from "@/features/generateSlice"
 import { useAppDispatch } from "@/store/hooks"
 import { on } from "events"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ReactFormState } from "react-dom/client"
 
 const ShortInput = ({ title, type }: { title: string; type: string }) => {
@@ -10,12 +10,19 @@ const ShortInput = ({ title, type }: { title: string; type: string }) => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrent(event.target.value)
-    if (type === "height") {
-      dispatch(setHeight({ height: Number(current) }))
-    } else if (type === "width") {
-      dispatch(setWidth({ width: Number(current) }))
-    }
+    dispatch(setField({ field: type, value: Number(current) }))
+
+    // if (type === "height") {
+    //   dispatch(setHeight({ height: Number(current) }))
+    // } else if (type === "width") {
+    //   dispatch(setWidth({ width: Number(current) }))
+    // }
   }
+  useEffect(() => {
+    if (current !== "") {
+      dispatch(setField({ field: type, value: Number(current) }))
+    }
+  }, [])
 
   return (
     <div className="ml-2 flex w-full justify-between gap-2 py-2">

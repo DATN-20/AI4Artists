@@ -2,91 +2,40 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "@/store/store"
 import { Root } from "react-dom/client"
 
-interface AIField {
-  ai_name: string | null
-  inputs: InputField[]
-}
-
-interface DataInputs {
-  aiName: string
-  positivePrompt: string
-  negativePrompt: string // Chuỗi mô tả negative prompt
-  style: string // Loại style, có thể là bất kỳ kiểu nào
-  width: number // Chiều rộng ảnh
-  height: number // Chiều cao ảnh
-  numberOfImage: number // Số lượng ảnh được tạo
-  steps: number // Số bước trong quá trình tạo ảnh
-  sampleMethod: string // Phương pháp lấy mẫu
-  cfg: number // Cấu hình (không rõ ý nghĩa cụ thể)
-  noise: number // Độ nhiễu
-  image: string
-}
-
 // Định nghĩa interface cho dữ liệu generate state
 export interface GenerateState {
-  aiInputs: AIField[] | null
+  aiInputs: [] | null
+  ai_name: string | null
   useImage: boolean
-  useCustomDimension: boolean,
-  dataInputs: DataInputs | null
+  useControlnet: boolean
+  useCustomDimension: boolean
+  useStyleImage: boolean
+  dataInputs: [] | null
   history: ImageGroup[] | null
-}
-
-// Định nghĩa interface cho các trường dữ liệu input
-interface InputField {
-  name: string
-  default: string | number | null
-  typeName: string
-  max?: number
-  min?: number
-  step?: number
-  info?: {
-    choices?: Record<string, string>
-  }
-  input_property_name?: string
+  dataStyleInputs: { name: string, value: any, ArrayIndex?: number }[] | null
 }
 
 const initialState: GenerateState = {
   aiInputs: [],
   useImage: false,
+  useControlnet: false,
   useCustomDimension: false,
-  dataInputs: {
-    aiName: "",
-    positivePrompt: "",
-    negativePrompt: "",
-    style: "",
-    width: 512,
-    height: 512,
-    numberOfImage: 1,
-    steps: 20,
-    sampleMethod: "euler",
-    cfg: 8,
-    noise: 0.75,
-    image: "",
-  },
-  history: []
+  useStyleImage: false,
+  ai_name: "",
+  dataInputs: [],
+  history: [],
+  dataStyleInputs: [],
 }
 
 export const generateSlice = createSlice({
   name: "generate",
   initialState,
   reducers: {
-    setInputs: (state, action: PayloadAction<{ aiInputs: AIField[] }>) => {
+    setInputs: (state, action: PayloadAction<{ aiInputs: [] }>) => {
       state.aiInputs = action.payload.aiInputs
-      if (
-        state.aiInputs &&
-        state.dataInputs &&
-        action.payload.aiInputs[0].ai_name
-      ) {
-        state.dataInputs.aiName = action.payload.aiInputs[0].ai_name
-      }
-      if (
-        state.aiInputs &&
-        state.dataInputs &&
-        action.payload.aiInputs[0].inputs[0].default
-      ) {
-        state.dataInputs.style =
-          action.payload.aiInputs[0].inputs[0].default.toString()
-      }
+    },
+    setAIName: (state, action: PayloadAction<{ ai_name: string }>) => {
+      state.ai_name = action.payload.ai_name
     },
     setHistory: (state, action: PayloadAction<{ history: ImageGroup[] }>) => {
       state.history = action.payload.history
@@ -94,87 +43,126 @@ export const generateSlice = createSlice({
     setUseImage: (state, action: PayloadAction<{ useImage: boolean }>) => {
       state.useImage = action.payload.useImage
     },
-    setUseCustomDimension: (state, action: PayloadAction<{ useCustomDimension: boolean }>) => {
+    setUseControlnet: (
+      state,
+      action: PayloadAction<{ useControlnet: boolean }>,
+    ) => {
+      state.useControlnet = action.payload.useControlnet
+    },
+    setUseCustomDimension: (
+      state,
+      action: PayloadAction<{ useCustomDimension: boolean }>,
+    ) => {
       state.useCustomDimension = action.payload.useCustomDimension
     },
-    setPositivePrompt: (state, action: PayloadAction<{ value: string }>) => {
-      if (state.dataInputs) {
-        state.dataInputs.positivePrompt = action.payload.value
-      }
-    },
-    setNegativePrompt: (state, action: PayloadAction<{ value: string }>) => {
-      if (state.dataInputs) {
-        state.dataInputs.negativePrompt = action.payload.value
-      }
-    },
-    setNumberOfImage: (
+    setUseStyleImage: (
       state,
-      action: PayloadAction<{ numberOfImage: number }>,
+      action: PayloadAction<{ useStyleImage: boolean }>,
     ) => {
-      if (state.dataInputs) {
-        state.dataInputs.numberOfImage = action.payload.numberOfImage
+      state.useStyleImage = action.payload.useStyleImage
+    },
+    setField: (
+      state,
+      action: PayloadAction<{ field: string; value?: any; delete?: boolean }>,
+    ) => {
+      const { field, value, delete: deleteField } = action.payload
+      const dataInputs = state.dataInputs as { name: string; value: any }[]
+
+      if (dataInputs) {
+        const existingFieldIndex = dataInputs.findIndex(
+          (item) => item.name === field,
+        )
+        if (deleteField) {
+          if (existingFieldIndex !== -1) {
+            dataInputs.splice(existingFieldIndex, 1)
+          }
+        } else {
+          if (existingFieldIndex !== -1) {
+            dataInputs[existingFieldIndex].value = value
+          } else {
+            dataInputs.push({ name: field, value })
+          }
+        }
       }
     },
+
     setDimension: (
       state,
       action: PayloadAction<{ width: number; height: number }>,
     ) => {
-      if (state.dataInputs) {
-        state.dataInputs.width = action.payload.width
-        state.dataInputs.height = action.payload.height
+      const dataInputs = state.dataInputs as
+        | { name: string; value: any }[]
+        | null
+      if (dataInputs) {
+        // Kiểm tra sự tồn tại của dataInputs
+        const existingWidthIndex = dataInputs.findIndex(
+          (item) => item.name === "width",
+        )
+        const existingHeightIndex = dataInputs.findIndex(
+          (item) => item.name === "height",
+        )
+
+        if (existingWidthIndex !== -1) {
+          dataInputs[existingWidthIndex].value = action.payload.width
+        } else {
+          dataInputs.push({ name: "width", value: action.payload.width })
+        }
+
+        if (existingHeightIndex !== -1) {
+          dataInputs[existingHeightIndex].value = action.payload.height
+        } else {
+          dataInputs.push({ name: "height", value: action.payload.height })
+        }
       }
     },
-    setHeight: (
+
+    setStyleField: (
       state,
-      action: PayloadAction<{  height: number }>,
+      action: PayloadAction<{ field: string; value?: any; delete?: boolean; ArrayIndex?: number }>,
     ) => {
-      if (state.dataInputs) {
-        state.dataInputs.height = action.payload.height
-      }
-    },
-    setSample: (
-      state,
-      action: PayloadAction<{  sample: string }>,
-    ) => {
-      if (state.dataInputs) {
-        state.dataInputs.sampleMethod = action.payload.sample
-      }
-    },
-    setStyle: (
-      state,
-      action: PayloadAction<{  style: string }>,
-    ) => {
-      if (state.dataInputs) {
-        state.dataInputs.style = action.payload.style
+      const { field, value, delete: deleteField, ArrayIndex } = action.payload;
+      const dataStyleInputs = state.dataStyleInputs as {
+        name: string;
+        value: any;
+        ArrayIndex?: number;
+      }[];
+    
+      if (dataStyleInputs) {
+        const existingFieldIndex = dataStyleInputs.findIndex(
+          (item) => item.name === field && (ArrayIndex === undefined || item.ArrayIndex === ArrayIndex),
+        );
+    
+        if (deleteField) {
+          if (ArrayIndex !== undefined) {
+            for (let i = dataStyleInputs.length - 1; i >= 0; i--) {
+              if (dataStyleInputs[i].ArrayIndex === ArrayIndex) {
+                dataStyleInputs.splice(i, 1);
+              }
             }
-    },
-    setWidth: (
-      state,
-      action: PayloadAction<{  width: number }>,
-    ) => {
-      if (state.dataInputs) {
-        state.dataInputs.width = action.payload.width
+          } else if (existingFieldIndex !== -1) {
+            dataStyleInputs.splice(existingFieldIndex, 1);
+          }
+        } else {
+          if (existingFieldIndex !== -1) {
+            dataStyleInputs[existingFieldIndex].value = value;
+          } else {
+            dataStyleInputs.push({ name: field, value, ArrayIndex });
+          }
+        }
       }
     },
-    setSteps: (state, action: PayloadAction<{ steps: number }>) => {
-      if (state.dataInputs) {
-        state.dataInputs.steps = action.payload.steps
-      }
-    },
-    setCFG: (state, action: PayloadAction<{ cfg: number }>) => {
-      if (state.dataInputs) {
-        state.dataInputs.cfg = action.payload.cfg
-      }
-    },
-    setNoise: (state, action: PayloadAction<{ noise: number }>) => {
-      if (state.dataInputs) {
-        state.dataInputs.noise = action.payload.noise
-      }
-    },
-    setImageGenerate: (state, action: PayloadAction<{ image: string }>) => {
-      if (state.dataInputs) {
-        state.dataInputs.image = action.payload.image
-      }
+    
+
+    eraseStyleFields: (state, action: PayloadAction<{ arrayType: string, arrayIndex: number }>) => {
+      const { arrayType, arrayIndex } = action.payload
+      const dataStyleInputs = state.dataStyleInputs as {
+        name: string
+        value: any
+      }[]
+
+      state.dataStyleInputs = dataStyleInputs.filter(
+        (item) => !item.name.startsWith(`${arrayType}[${arrayIndex}]`)
+      )
     },
   },
 })
@@ -184,20 +172,15 @@ export const selectGenerate = (state: RootState) => state.generate
 export const {
   setInputs,
   setUseImage,
-  setPositivePrompt,
-  setNegativePrompt,
-  setNumberOfImage,
+  setUseControlnet,
   setDimension,
-  setSteps,
-  setCFG,
-  setNoise,
-  setImageGenerate,
   setHistory,
   setUseCustomDimension,
-  setHeight,
-  setWidth,
-  setSample,
-  setStyle
+  setUseStyleImage,
+  setAIName,
+  setField,
+  setStyleField,
+  eraseStyleFields
 } = generateSlice.actions
 
 export default generateSlice.reducer

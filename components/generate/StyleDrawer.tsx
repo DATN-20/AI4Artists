@@ -10,87 +10,136 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import { Button } from "../ui/button"
-import ImageInputStyle from "./ImageInputStyle"
-import SliderInputStyle from "./SliderInputStyle"
-import CollapsibleSection from "./CollapsibleSection"
-import { X } from "lucide-react"
+import { X, ChevronLeft, ChevronRight } from "lucide-react"
 import { useEffect, useState } from "react"
-import { ChevronLeft } from "lucide-react"
-import { ChevronRight } from "lucide-react"
+import {
+  useAiStyleInformationMutation,
+  useGenerateStyleImageMutation,
+} from "../../services/generate/generateApi"
+import { renderInput } from "./renderInput"
+import { useAppDispatch } from "../../store/hooks"
+import { shallowEqual, useSelector } from "react-redux"
+import {
+  selectGenerate,
+  setStyleField,
+  eraseStyleFields,
+} from "../../features/generateSlice"
+import { base64StringToFile } from "../../lib/base64StringToFile"
+import { toast } from "react-toastify"
 
 const StyleDrawer = () => {
-  const [imagesData, setImagesData] = useState<
-    Array<{ image: File | null; strength: number; noise: number }>
-  >([])
-  const [currentImage, setCurrentImage] = useState<File | null>(null)
-  const [currentStrength, setCurrentStrength] = useState(1)
-  const [currentNoise, setCurrentNoise] = useState(0.1)
   const [currentStep, setCurrentStep] = useState(1)
+
+  const dispatch = useAppDispatch()
+  const generateStates = useSelector(selectGenerate, shallowEqual)
+
+  const [aiStyleInformation, { data: inputData }] =
+    useAiStyleInformationMutation()
+
+  const [generateStyle, { data: generateStyleData }] =
+    useGenerateStyleImageMutation()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await aiStyleInformation(undefined)
+    }
+    fetchData()
+  }, [])
 
   const [open, setOpen] = useState(false)
 
-  const handleImageChange = (image: File) => {
-    setCurrentImage(image)
+  const getMaxStep = () => {
+    const maxIndex =
+      generateStates.dataStyleInputs?.reduce((max, item) => {
+        if (item.ArrayIndex !== undefined) {
+          return item.ArrayIndex > max ? item.ArrayIndex : max
+        }
+        return max
+      }, 0) ?? 0
+    return maxIndex + 1
   }
 
-  const handleValueChange = (value: number, type: string) => {
-    if (type === "strength") {
-      setCurrentStrength(value)
-    } else if (type === "noise") {
-      setCurrentNoise(value)
-    }
-  }
-
-  const navigateToStep = (step: number, maxSteps: number) => {
-    if (step >= 1 && step <= maxSteps) {
-      console.log("Navigating to step:", step)
+  const navigateToStep = (step: number) => {
+    if (step >= 1) {
       setCurrentStep(step)
-      const imageData = imagesData[step - 1]
-      if (imageData) {
-        setCurrentImage(imageData.image)
-        setCurrentStrength(imageData.strength)
-        setCurrentNoise(imageData.noise)
-      } else {
-        setCurrentImage(null)
-        setCurrentStrength(1)
-        setCurrentNoise(0.1)
-      }
     }
   }
 
   const addOrUpdateImageToData = () => {
-    const newData = {
-      image: currentImage,
-      strength: currentStrength,
-      noise: currentNoise,
-    }
-    let updatedImagesData = [...imagesData]
-    if (currentStep - 1 < imagesData.length) {
-      updatedImagesData[currentStep - 1] = newData
-      setImagesData(updatedImagesData)
-    } else {
-      setImagesData((prevImagesData) => {
-        const updatedImagesData = [...prevImagesData, newData]
-        const newStep = currentStep + 1
-        const maxSteps = updatedImagesData.length + 1;
-        navigateToStep(newStep, maxSteps)
-        return updatedImagesData
-      })
-    }
+    navigateToStep(currentStep + 1)
   }
 
   useEffect(() => {
     if (!open) {
-      setCurrentImage(null)
-      setCurrentStrength(1)
-      setCurrentNoise(0.1)
-      setImagesData([])
       setCurrentStep(1)
     }
   }, [open])
 
-  const submitData = () => {
-    console.log(imagesData)
+  const submitData = async () => {
+    const formData = new FormData()
+
+    if (generateStates.dataInputs && generateStates.dataStyleInputs) {
+      generateStates.dataInputs.forEach((input: any, index: any) => {
+        const { name, value } = input
+
+        if (name === "image") {
+          if (generateStates.useImage) {
+            const imageInput = generateStates.dataInputs?.find(
+              (input: any) => input.name === "image",
+            )
+            if (imageInput) {
+              const base64String = (imageInput as any).value
+              if (base64String) {
+                const filename = "image.jpg"
+                const imageFile = base64StringToFile(base64String, filename)
+                formData.append("image", imageFile)
+                return
+              }
+            }
+          }
+        }
+
+        if (name === "controlNetImages") {
+          const imageFile = base64StringToFile(value as string, "image.jpg")
+          formData.append("controlNetImages", imageFile)
+          return
+        }
+        formData.append(name, (value as any).toString())
+      })
+      formData.append("aiName", "comfyUI")
+      generateStates.dataStyleInputs.forEach((input: any, index: any) => {
+        const { name, value } = input
+        if (name === "imageForIpadapter") {
+          const imageInput = generateStates.dataStyleInputs?.find(
+            (input: any) => input.name === "imageForIpadapter",
+          )
+          if (imageInput) {
+            const base64String = (imageInput as any).value
+            if (base64String) {
+              const filename = "image.jpg"
+              const imageFile = base64StringToFile(base64String, filename)
+              formData.append("imageForIpadapter", imageFile)
+              return
+            }
+          }
+        }
+
+        formData.append(name, (value as any).toString())
+      })
+      formData.forEach((value, key) => {
+        console.log(key, value)
+      })
+
+      try {
+        let result = await generateStyle(formData)
+        console.log(result)
+      } catch (error) {
+        console.error("Error generating image:", error)
+        toast.error("Error generating image")
+      }
+    } else {
+      toast.error("Please fill all Input field")
+    }
   }
 
   return (
@@ -103,7 +152,7 @@ const StyleDrawer = () => {
       <DrawerTrigger>
         <Button
           variant={"outline"}
-          className="mt-[16px] w-fit  rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+          className="mt-[16px] w-fit rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
         >
           Generate With Style
         </Button>
@@ -115,62 +164,51 @@ const StyleDrawer = () => {
         <DrawerHeader>
           <DrawerTitle>Input your style Image here</DrawerTitle>
           <DrawerDescription>
-            The more image you sent in, the more exactly our model can generate
+            The more image you send in, the more accurately our model can
+            generate
           </DrawerDescription>
         </DrawerHeader>
-        <div className="flex items-center justify-between mx-4">
+        <div className="mx-4 flex items-center justify-between">
           <Button
-            onClick={() => navigateToStep(currentStep - 1, imagesData.length + 1)}
+            onClick={() => navigateToStep(currentStep - 1)}
             disabled={currentStep === 1}
           >
             <ChevronLeft className="h-6 w-6" />
           </Button>
           <p>
-            Step {currentStep}/{imagesData.length + 1}
+            Step {currentStep}/{getMaxStep()}
           </p>
           <Button
-            onClick={() => navigateToStep(currentStep + 1, imagesData.length + 1)}
-            disabled={currentStep > imagesData.length}
+            onClick={() => navigateToStep(currentStep + 1)}
+            disabled={currentStep >= getMaxStep()}
           >
             <ChevronRight className="h-6 w-6" />
           </Button>
         </div>
-        <div className="flex flex-col">
-          <ImageInputStyle
-            onImageChange={handleImageChange}
-            selectedImage={currentImage}
-            setSelectedImage={setCurrentImage}
-          />
-          <div className="flex flex-col">
-            <CollapsibleSection title={"Strength"}>
-              <SliderInputStyle
-                min={0}
-                max={2}
-                step={0.1}
-                defaultValue={currentStrength}
-                handleValueChange={(value) =>
-                  handleValueChange(value, "strength")
-                }
-                value={currentStrength}
-                setValue={setCurrentStrength}
-              />
-            </CollapsibleSection>
-            <CollapsibleSection title={"Noise Agementation"}>
-              <SliderInputStyle
-                min={0}
-                max={1}
-                step={0.1}
-                defaultValue={currentNoise}
-                handleValueChange={(value) => handleValueChange(value, "noise")}
-                value={currentNoise}
-                setValue={setCurrentNoise}
-              />
-            </CollapsibleSection>
-          </div>
-        </div>
+        {inputData &&
+          inputData[0].inputs.map((input: any, index: number) => {
+            if (input.input_property_name === "ipadapterStyleTranferInputs") {
+              return (
+                <div
+                  className="mx-4 mt-4 rounded-xl pb-4"
+                  key={`${currentStep - 1}`}
+                >
+                  {renderInput(
+                    input,
+                    dispatch,
+                    generateStates,
+                    input.input_property_name,
+                    currentStep - 1,
+                    true,
+                  )}
+                </div>
+              )
+            }
+            return null
+          })}
         <DrawerFooter>
           <Button variant={"outline"} onClick={addOrUpdateImageToData}>
-            {currentStep > imagesData.length ? "Add Image" : "Update Image"}
+            {currentStep >= getMaxStep() ? "Add Image" : "Update Image"}
           </Button>
           <Button onClick={submitData}>Submit</Button>
         </DrawerFooter>

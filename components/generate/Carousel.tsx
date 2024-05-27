@@ -8,6 +8,7 @@ import {
 } from "../../components/ui/carousel"
 import { Card, CardContent } from "../../components/ui/card"
 import Image from "next/image"
+import { IoCloudDownloadOutline } from "react-icons/io5"
 
 interface CarouselProps {
   generateImgData: string[] | null
@@ -20,6 +21,29 @@ const Carousel: React.FC<CarouselProps> = ({
   width,
   height,
 }) => {
+  async function saveImageToDisk(imageUrl: string) {
+    try {
+      const response = await fetch(imageUrl)
+      const blob = await response.blob()
+
+      const blobUrl = URL.createObjectURL(blob)
+
+      const link = document.createElement("a")
+      link.href = blobUrl
+      link.download = "image.jpg"
+      document.body.appendChild(link)
+
+      link.click()
+
+      URL.revokeObjectURL(blobUrl)
+
+      document.body.removeChild(link)
+
+      console.log("Image saved successfully!")
+    } catch (error) {
+      console.error("Error saving image:", error)
+    }
+  }
   return (
     <BaseCarousel className="relative mt-5 w-full">
       <CarouselContent>
@@ -37,21 +61,36 @@ const Carousel: React.FC<CarouselProps> = ({
                         width={width}
                         height={height}
                         src={item}
-                        className = {'rounded-lg'}
+                        className={"rounded-lg"}
                       />
                     </CardContent>
-                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">
-                      <p className="text-center text-white">
-                        Your text overlay
-                      </p>
+                    <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
+                      <div className="flex max-w-full justify-end pr-5">
+                        <IoCloudDownloadOutline
+                          size={32}
+                          className="ml-5 cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            saveImageToDisk(item.url)
+                          }}
+                        />
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white">
+                        <p className="line-clamp-3">Prompt: {item.prompt}</p>
+                      </div>
                     </div>
                   </Card>
                 </div>
               </CarouselItem>
             ))}
       </CarouselContent>
-      <CarouselPrevious className="absolute left-0 top-1/2 h-12 w-12 -translate-y-1/2 transform" />
-      <CarouselNext className="absolute right-0 top-1/2 h-12 w-12 -translate-y-1/2 transform" />
+
+      {generateImgData && generateImgData.length > 3 && (
+        <>
+          <CarouselPrevious className="absolute left-0 top-1/2 h-12 w-12 -translate-y-1/2 transform rounded-xl" />
+          <CarouselNext className="absolute right-0 top-1/2 h-12 w-12 -translate-y-1/2 transform rounded-xl" />
+        </>
+      )}
     </BaseCarousel>
   )
 }

@@ -15,7 +15,7 @@ const NavBar: React.FC = () => {
     <header className="sticky z-10 w-full">
       <nav className=" mx-auto flex items-center justify-between bg-[#0e1217] px-4 py-4 md:px-6 md:py-6">
         <Dialog>
-          <Link href="/" className="flex items-center justify-center gap-4">
+          <Link href="/dashboard" className="flex items-center justify-center gap-4 cursor-pointer">
             <Image src="/logo.png" alt="logo" width={60} height={60} />
             <h1 className="text-3xl font-bold text-white">AI Artist</h1>
           </Link>

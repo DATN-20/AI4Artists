@@ -8,47 +8,86 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { setSample, setStyle } from "@/features/generateSlice"
+import {
+  selectGenerate,
+  setField,
+  setStyleField,
+} from "@/features/generateSlice"
 import { useAppDispatch } from "@/store/hooks"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { LuType } from "react-icons/lu"
+import { useSelector } from "react-redux"
 
 type InputSelectProps = {
   data: Record<string, string>
-  onSelect: (value: string) => void
   type: string
+  arrayType?: string
+  defaultValue?: string
+  arrayIndex?: number
+  isStyleGenerate?: boolean
 }
 
-const InputSelect = ({ data, onSelect, type }: InputSelectProps) => {
-  const [selected, setSelected] = useState("")
+const InputSelect = ({
+  data,
+  type,
+  arrayType,
+  defaultValue,
+  arrayIndex,
+  isStyleGenerate,
+}: InputSelectProps) => {
   const dispatch = useAppDispatch()
-
   const handleSelect = (value: string) => {
-    setSelected(value)
-    onSelect(value)
-    if (type === "style") {
-      dispatch(setStyle({ style: value }))
-    } else if (type === "sampleMethos") {
-      dispatch(setSample({ sample: value }))
+    if (arrayType) {
+      if (isStyleGenerate) {
+        dispatch(
+          setStyleField({
+            field: type,
+            value: value,
+            ArrayIndex: arrayIndex,
+          }),
+        )
+      } else {
+        dispatch(setField({ field: `${arrayType}[0].${type}`, value: value }))
+      }
+    } else {
+      dispatch(setField({ field: type, value: value }))
     }
   }
 
-  const dataArray = Object.entries(data)
+  useEffect(() => {
+    if (arrayType) {
+      if (isStyleGenerate) {
+        dispatch(
+          setStyleField({
+            field: type,
+            value: defaultValue,
+            ArrayIndex: arrayIndex,
+          }),
+        )
+      } else {
+        dispatch(
+          setField({ field: `${arrayType}[0].${type}`, value: defaultValue }),
+        )
+      }
+    } else {
+      dispatch(setField({ field: type, value: defaultValue }))
+    }
+  }, [arrayIndex])
 
-  const firstChoiceKey = dataArray.length > 0 ? dataArray[0][0] : ""
 
   return (
-    <Select>
+    <Select
+      onValueChange={(value) => {
+        handleSelect(value)
+      }}
+    >
       <SelectTrigger className="bg-card-highlight">
-        <SelectValue placeholder={firstChoiceKey} />
+        <SelectValue placeholder={defaultValue} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {dataArray.map(([key, value], index) => (
-            <SelectItem
-              key={index}
-              value={value}
-              onSelect={() => handleSelect(value)}
-            >
+          {Object.entries(data).map(([key, value], index) => (
+            <SelectItem key={index} value={value}>
               {key}
             </SelectItem>
           ))}

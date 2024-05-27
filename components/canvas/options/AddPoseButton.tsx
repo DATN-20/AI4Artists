@@ -3,9 +3,14 @@ import React, { useContext } from "react"
 import { CanvasModeContext } from "@/store/canvasHooks"
 import { FaPersonCirclePlus } from "react-icons/fa6"
 import OpenPose from "../shapeObjects/OpenPose"
-import { adjustHistoryToIndex  } from "../HistoryUtilities"
+import { adjustHistoryToIndex } from "../HistoryUtilities"
 import { HistoryAction } from "@/constants/canvas"
-import { useTheme } from "next-themes"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 const AddPoseButton: React.FC = () => {
   const poseContext = useContext(CanvasModeContext)
@@ -19,9 +24,8 @@ const AddPoseButton: React.FC = () => {
     shapeId,
     setShapeId,
     setCurrentHistoryIndex,
-    imageRef
+    imageRef,
   } = poseContext!
-  const { resolvedTheme } = useTheme()
 
   const addNewPose = () => {
     const canvas = canvasRef.current
@@ -31,7 +35,7 @@ const AddPoseButton: React.FC = () => {
 
     setShapeId(shapeId + 1)
     let newShape = OpenPose(shapeId)
-    adjustHistoryToIndex (
+    adjustHistoryToIndex(
       canvas,
       context,
       initialRectPosition,
@@ -40,7 +44,6 @@ const AddPoseButton: React.FC = () => {
       panOffset,
       true,
       imageRef.current!,
-      resolvedTheme
     )
     newShape.draw(context, panOffset)
     setCurrentHistoryIndex(currentHistoryIndex + 1)
@@ -49,9 +52,21 @@ const AddPoseButton: React.FC = () => {
 
   return (
     <div className="relative z-10 inline-block">
-      <Button className="rounded-xl bg-card dark:bg-white dark:hover:bg-primary" onClick={addNewPose}>
-        <FaPersonCirclePlus className="z-10 h-[30px] w-[25px] text-black" />
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger className="flex w-full min-w-0 justify-start">
+            <Button
+              className="rounded-xl bg-card dark:bg-white dark:hover:bg-primary"
+              onClick={addNewPose}
+            >
+              <FaPersonCirclePlus className="z-10 h-[30px] w-[25px] text-black" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-[200px] md:max-w-[400px]">
+            Add pose
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
   )
 }

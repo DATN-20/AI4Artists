@@ -1,4 +1,9 @@
-import CanvasMode, { CanvasState, EraseModeOptions, ShapeModeOptions } from "@/constants/canvas"
+import { Point } from "@/components/canvas/shapeObjects/ShapeInterface"
+import CanvasMode, {
+  CanvasState,
+  EraseModeOptions,
+  ShapeModeOptions,
+} from "@/constants/canvas"
 import {
   useState,
   useRef,
@@ -13,15 +18,10 @@ export type CanvasModeContextType = {
   setMode: Dispatch<SetStateAction<CanvasMode>>
   color: string
   setColor: Dispatch<SetStateAction<string>>
-  showColorPicker: boolean
-  setShowColorPicker: Dispatch<SetStateAction<boolean>>
-  brushSettings: {
-    size: number
-    showSlider: boolean
-  }
-  setBrushSettings: Dispatch<
-    SetStateAction<{ size: number; showSlider: boolean }>
-  >
+  brushSize: number
+  setBrushSize: Dispatch<SetStateAction<number>>
+  brushCoordinates: Point[]
+  setBrushCoordinates: Dispatch<SetStateAction<Point[]>>
   shapeMode: ShapeModeOptions
   setShapeMode: Dispatch<SetStateAction<ShapeModeOptions>>
   state: CanvasState
@@ -47,21 +47,15 @@ export type CanvasModeContextType = {
   shapeCoordinates: {
     startX: number
     startY: number
-    endX: number
-    endY: number
   }
   updateShapeCoordinates: (
     newCoordinates: Partial<{
       startX: number
       startY: number
-      endX: number
-      endY: number
     }>,
   ) => void
   panOffset: { x: number; y: number }
   setPanOffset: Dispatch<SetStateAction<{ x: number; y: number }>>
-  startPanMousePosition: { x: number; y: number }
-  setStartPanMousePosition: Dispatch<SetStateAction<{ x: number; y: number }>>
   currentHistoryIndex: number
   setCurrentHistoryIndex: Dispatch<SetStateAction<number>>
   shapeId: number
@@ -79,6 +73,8 @@ export type CanvasModeContextType = {
   setEraseMode: Dispatch<SetStateAction<EraseModeOptions>>
   cursor: string
   setCursor: Dispatch<SetStateAction<string>>
+  imageFile: File | null
+  setImageFile: Dispatch<SetStateAction<File | null>>
 }
 
 export const CanvasModeContext = createContext<
@@ -88,21 +84,18 @@ export const CanvasModeContext = createContext<
 export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [mode, setMode] = useState(CanvasMode.SELECT_MODE)
-  const [color, setColor] = useState("black")
-  const [showColorPicker, setShowColorPicker] = useState(false)
-  const [brushSettings, setBrushSettings] = useState({
-    size: 5,
-    showSlider: false,
-  })
-  const [eraseSize, setEraseSize] = useState(1)
+  const [mode, setMode] = useState<CanvasMode>(CanvasMode.SELECT_MODE)
+  const [color, setColor] = useState<string>("black")
+  const [brushSize, setBrushSize] = useState<number>(5)
+  const [brushCoordinates, setBrushCoordinates] = useState<Point[]>([])
+  const [eraseSize, setEraseSize] = useState<number>(1)
   const [shapeMode, setShapeMode] = useState<ShapeModeOptions>(
     ShapeModeOptions.RECTANGLE_SHAPE,
   )
   const [eraseMode, setEraseMode] = useState<EraseModeOptions>(
     EraseModeOptions.ERASE,
   )
-  const [cursor, setCursor] = useState<string>('crosshair');
+  const [cursor, setCursor] = useState<string>("pointer.cur")
   const [state, setState] = useState<CanvasState>(CanvasState.IDLE)
   const shapeModeRef = useRef<ShapeModeOptions>(shapeMode)
   const [shapeId, setShapeId] = useState<number>(0)
@@ -119,17 +112,12 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
   const [shapeCoordinates, setShapeCoordinates] = useState({
     startX: 0,
     startY: 0,
-    endX: 0,
-    endY: 0,
   })
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 })
   const [currentHistoryIndex, setCurrentHistoryIndex] = useState(-1)
-  const [startPanMousePosition, setStartPanMousePosition] = useState({
-    x: 0,
-    y: 0,
-  })
   const [scale, setScale] = useState(1)
   const [scaleOffset, setScaleOffset] = useState({ x: 0, y: 0 })
+  const [imageFile, setImageFile] = useState<File | null>(null)
 
   const updateShapeCoordinates = (
     newCoordinates: Partial<typeof shapeCoordinates>,
@@ -154,10 +142,10 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
     setMode,
     color,
     setColor,
-    showColorPicker,
-    setShowColorPicker,
-    brushSettings,
-    setBrushSettings,
+    brushSize,
+    setBrushSize,
+    brushCoordinates,
+    setBrushCoordinates,
     shapeMode,
     setShapeMode,
     shapeModeRef,
@@ -175,8 +163,6 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
     initialRectPosition,
     panOffset,
     setPanOffset,
-    startPanMousePosition,
-    setStartPanMousePosition,
     currentHistoryIndex,
     setCurrentHistoryIndex,
     scale,
@@ -191,6 +177,8 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
     setEraseMode,
     cursor,
     setCursor,
+    imageFile,
+    setImageFile,
   }
 
   return (

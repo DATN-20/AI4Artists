@@ -1,4 +1,3 @@
-import { selectGenerate, setImageGenerate } from "@/features/generateSlice"
 import { useAppDispatch } from "@/store/hooks"
 import clsx from "clsx"
 import { useState, useRef } from "react"

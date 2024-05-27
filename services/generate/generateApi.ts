@@ -27,23 +27,19 @@ export const generateApi = createApi({
         }
       },
     }),
+    aiStyleInformation: builder.mutation({
+      query: () => {
+        return {
+          url: "/api/v1/generate-image/ai-generate-by-images-style-info",
+          method: "GET",
+        }
+      },
+    }),
     textToImage: builder.mutation({
-      query: (body: {
-        aiName: string | undefined
-        positivePrompt: string | undefined
-        negativePrompt: string | undefined
-        style: string | undefined
-        width: number | undefined
-        height: number | undefined
-        numberOfImage: number | undefined
-        steps: number | undefined
-        sampleMethod: string | undefined
-        cfg: number | undefined
-        noise: number | undefined
-      }) => ({
+      query: (formData) => ({
         url: "/api/v1/generate-image/text-to-image",
         method: "POST",
-        body: { ...body, aiName:'comfyUI' },
+        body: formData,
       }),
     }),
     imageToImage: builder.mutation({
@@ -54,19 +50,49 @@ export const generateApi = createApi({
       }),
     }),
     getGenerationHistory: builder.mutation({
-        query: () => {
-          return {
-            url: "api/v1/images/generate-history",
-            method: "get",
-          };
+      query: () => {
+        return {
+          url: "api/v1/images/generate-history",
+          method: "get",
         }
+      },
+    }),
+    changePublicStatus: builder.mutation({
+      query: (imageId: number) => ({
+        url: `/api/v1/images/visibility/${imageId}`,
+        method: "PATCH",
       }),
+    }),
+    getNotifications: builder.query<any, void>({
+      query: () => ({
+        url: "/api/v1/notifications",
+        method: "GET",
+      }),
+    }),
+    changeNotificationStatus: builder.mutation({
+      query: (notificationId: number) => ({
+        url: `/api/v1/notifications/${notificationId}/change-status`,
+        method: "PATCH",
+      }),
+    }),
+    generateStyleImage: builder.mutation({
+      query: (formData) => ({
+        url: "/api/v1/generate-image/image-by-images-style",
+        method: "POST",
+        body: formData,
+      }),
+    }),
   }),
 })
 
 export const {
   useAiInformationMutation,
+  useAiStyleInformationMutation,
   useTextToImageMutation,
   useImageToImageMutation,
-  useGetGenerationHistoryMutation
+  useGetGenerationHistoryMutation,
+  useChangePublicStatusMutation,
+  useGetNotificationsQuery,
+  useChangeNotificationStatusMutation,
+  useGenerateStyleImageMutation,
 } = generateApi

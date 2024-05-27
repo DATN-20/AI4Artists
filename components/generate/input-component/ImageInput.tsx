@@ -1,7 +1,6 @@
-import { selectGenerate, setImageGenerate } from "@/features/generateSlice"
+import { setField } from "@/features/generateSlice"
 import { useAppDispatch } from "@/store/hooks"
 import { useState, useRef } from "react"
-import { useSelector } from "react-redux"
 
 const ImageInput: React.FC<{ onImageChange: (image: File) => void }> = ({
   onImageChange,
@@ -20,7 +19,7 @@ const ImageInput: React.FC<{ onImageChange: (image: File) => void }> = ({
       reader.onloadend = () => {
         const base64String = reader.result?.toString()
         if (base64String) {
-          dispatch(setImageGenerate({ image: base64String }))
+          dispatch(setField({ field: "image", value: base64String }))
         }
       }
       reader.readAsDataURL(imageGen)

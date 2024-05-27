@@ -1,6 +1,6 @@
 "use client"
 
-import { ChangeEvent, useEffect, useState } from "react"
+import { ChangeEvent, useContext, useEffect, useState } from "react"
 import GenerateSideBar from "@/components/sidebar/GenerateSideBar"
 import {
   useAiInformationMutation,
@@ -13,9 +13,11 @@ import {
   selectGenerate,
   setInputs,
   setUseImage,
-  setPositivePrompt,
-  setNegativePrompt,
+  // setPositivePrompt,
+  // setNegativePrompt,
   setHistory,
+  setAIName,
+  setField,
 } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
 import { Skeleton } from "../../../components/ui/skeleton"
@@ -25,6 +27,8 @@ import Loading from "@/components/Loading"
 import HistoryCarousel from "@/components/generate/HistoryCarousel"
 import { useGetProfileAlbumMutation } from "@/services/profile/profileApi"
 import { selectAuth, setTotalAlbum } from "@/features/authSlice"
+import { CanvasModeContext } from "../../../store/canvasHooks"
+import { Button } from "@/components/ui/button"
 
 interface AIField {
   ai_name: string | null
@@ -48,26 +52,13 @@ export default function Generate() {
   const dispatch = useAppDispatch()
   const generateStates = useSelector(selectGenerate)
   const [useNegativePrompt, setUseNegativePrompt] = useState(false)
-  const [useImg2Img, setUseImg2Img] = useState(false)
   const [promptPos, setPromptPos] = useState("")
   const [promptNeg, setPromptNeg] = useState("")
   const [isLoadingInformation, setIsLoadingInformation] = useState(true)
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
-  const {
-    aiName,
-    positivePrompt,
-    negativePrompt,
-    style,
-    width,
-    height,
-    numberOfImage,
-    steps,
-    sampleMethod,
-    cfg,
-    noise,
-    image,
-  } = generateStates.dataInputs || {}
+  const [useImg2Img, setUseImg2Img] = useState(false)
 
+  const canvasModeContext = useContext(CanvasModeContext)
   const [
     getGenerationHistory,
     { data: historyData, error: historyError, isSuccess: getHistorySuccess },
@@ -78,14 +69,20 @@ export default function Generate() {
     await getGenerationHistory(undefined)
   }
 
-  const handleImageChange = (image: File) => {
-    // Do something with the selected image file
-  }
+
   const handlePosPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const prompt = event.target.value
     setPromptPos(prompt)
-    dispatch(setPositivePrompt({ value: prompt }))
+    dispatch(setField({ field: "positivePrompt", value: prompt }))
   }
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
+
+  const [textToImage] = useTextToImageMutation()
+  const [imageToImage] = useImageToImageMutation()
+
+  const [generateImgData, setGenerateImgData] = useState<string[] | null>(null)
 
   function base64StringToFile(base64String: string, filename: string): File {
     const byteString = atob(base64String.split(",")[1])
@@ -98,62 +95,91 @@ export default function Generate() {
     return new File([blob], filename)
   }
 
-  const [isLoading, setIsLoading] = useState(false)
-  const [isError, setIsError] = useState(false)
+  async function saveImageToDisk(imageUrl: string) {
+    try {
+      const response = await fetch(imageUrl)
+      const blob = await response.blob()
 
-  const [textToImage] = useTextToImageMutation()
-  const [imageToImage] = useImageToImageMutation()
+      const blobUrl = URL.createObjectURL(blob)
 
-  const [generateImgData, setGenerateImgData] = useState<string[] | null>(null)
+      const link = document.createElement("a")
+      link.href = blobUrl
+      link.download = "image.jpg"
+      document.body.appendChild(link)
+
+      link.click()
+
+      URL.revokeObjectURL(blobUrl)
+
+      document.body.removeChild(link)
+
+      console.log("Image saved successfully!")
+    } catch (error) {
+      console.error("Error saving image:", error)
+    }
+  }
+
+  const downloadAllImages = async () => {
+    if (historyData) {
+      for (let i = 0; i < historyData.length; i++) {
+        const item = historyData[i]
+        if (item.images) {
+          for (let j = 0; j < item.images.length; j++) {
+            const imageUrl = item.images[j].url
+            await saveImageToDisk(imageUrl)
+          }
+        }
+      }
+    }
+  }
+
 
   const handleGenerate = async () => {
     fetchHistoryData()
     setIsLoading(true)
     setIsError(false)
 
-    let formData = new FormData()
+    const formData = new FormData()
 
-    formData.append("aiName", aiName || "")
-    formData.append("positivePrompt", positivePrompt || "")
-    formData.append("negativePrompt", negativePrompt || "")
-    formData.append("style", style || "")
-    formData.append("width", width?.toString() || "")
-    formData.append("height", height?.toString() || "")
-    formData.append("numberOfImage", numberOfImage?.toString() || "")
-    formData.append("steps", steps?.toString() || "")
-    formData.append("sampleMethod", sampleMethod || "")
-    formData.append("cfg", cfg?.toString() || "")
-    formData.append("noise", noise?.toString() || "")
+    if (generateStates.dataInputs) {
+      generateStates.dataInputs.forEach((input, index) => {
+        const { name, value } = input
 
-    if (useImg2Img) {
-      const base64String = generateStates.dataInputs?.image
-      if (base64String) {
-        const filename = "image.jpg"
-        const imageFile = base64StringToFile(base64String, filename)
-        formData.append("image", imageFile)
-      }
-    }
-    const requestBody = {
-      aiName,
-      positivePrompt,
-      negativePrompt,
-      style,
-      width: width,
-      height: height,
-      numberOfImage: numberOfImage,
-      steps: steps,
-      sampleMethod,
-      cfg: cfg,
-      noise: noise,
+        if (name === "image") {
+          if (generateStates.useImage) {
+            const imageInput = generateStates.dataInputs?.find(
+              (input: any) => input.name === "image",
+            )
+            if (imageInput) {
+              const base64String = (imageInput as any).value
+              if (base64String) {
+                const filename = "image.jpg"
+                const imageFile = base64StringToFile(base64String, filename)
+                formData.append("image", imageFile)
+                return
+              }
+            }
+          }
+        }
+
+        if (name === "controlNetImages") {
+          const imageFile = base64StringToFile(value as string, "image.jpg")
+          formData.append("controlNetImages", imageFile)
+          return
+        }
+        formData.append(name, (value as any).toString())
+      })
+      formData.append("aiName", "comfyUI")
     }
 
     try {
       let result
-      if (useImg2Img) {
+      if (generateStates.useImage) {
         result = await imageToImage(formData).unwrap()
       } else {
-        result = await textToImage(requestBody).unwrap()
+        result = await textToImage(formData).unwrap()
       }
+      console.log(result)
       setGenerateImgData(result)
     } catch (error) {
       console.error("Error generating image:", error)
@@ -166,7 +192,7 @@ export default function Generate() {
   const handleNegPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const prompt = event.target.value
     setPromptNeg(prompt)
-    dispatch(setNegativePrompt({ value: prompt }))
+    dispatch(setField({ field: "negativePrompt", value: prompt }))
   }
   const [aiInformation, { data: inputData }] = useAiInformationMutation()
 
@@ -192,7 +218,8 @@ export default function Generate() {
 
   useEffect(() => {
     if (inputData) {
-      dispatch(setInputs({ aiInputs: inputData }))
+      dispatch(setAIName({ ai_name: inputData[0].ai_name }))
+      dispatch(setInputs({ aiInputs: inputData[0].inputs }))
       setIsLoadingInformation(false)
     }
   }, [inputData])
@@ -222,18 +249,15 @@ export default function Generate() {
             <GenerateControls
               handlePosPromptChange={handlePosPromptChange}
               handleNegPromptChange={handleNegPromptChange}
-              handleImageChange={handleImageChange}
               handleGenerate={handleGenerate}
               setUseNegativePrompt={setUseNegativePrompt}
-              setUseImg2Img={setUseImg2Img}
               useNegativePrompt={useNegativePrompt}
-              useImg2Img={useImg2Img}
               promptPos={promptPos}
             />
-            {isLoading ? (
+            {/* {isLoading ? (
               <Skeleton
                 className="mt-5 rounded-xl"
-                style={{ width: width, height: height }}
+                style={{ width: 512, height: 512 }}
               />
             ) : (
               generateImgData && (
@@ -243,7 +267,14 @@ export default function Generate() {
                   height={512}
                 />
               )
-            )}
+            )} */}
+            {/* <Button
+              variant={"outline"}
+              className="mt-[16px] w-fit  rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+              onClick={downloadAllImages}
+            >
+              Download all images
+            </Button> */}
             {historyData &&
               historyData.map((item: any, index: number) => (
                 <HistoryCarousel

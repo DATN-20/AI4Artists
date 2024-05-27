@@ -5,6 +5,7 @@ import Loading from "@/components/Loading"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { ThemeProvider } from "@/components/provider/ThemeProvider"
+import LogLayout from "../../components/layout/LogLayout"
 
 export default function AppLayout({
   children,
@@ -39,7 +40,7 @@ export default function AppLayout({
         enableSystem
         disableTransitionOnChange
       >
-        {children}
+        <LogLayout>{children}</LogLayout>
       </ThemeProvider>
     </>
   )

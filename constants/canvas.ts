@@ -1,3 +1,5 @@
+import { MdHeight } from "react-icons/md"
+
 enum CanvasMode {
     BRUSH_MODE = 0,
     DRAG_MODE = 1,
@@ -5,7 +7,6 @@ enum CanvasMode {
     SHAPE_MODE = 3,
     ERASE_MODE = 4,
     OPENPOSE_MODE = 5,
-    CROP_MODE = 10,
 }
 
 export enum ShapeModeOptions {
@@ -18,17 +19,16 @@ export enum ShapeModeOptions {
 export enum EraseModeOptions {
     ERASE = 0,
     ERASE_ALL = 1,
-    ERASE_ALL_IMAGE = 2,
+    ERASE_IMAGE = 2,
 }
 
 export enum CanvasState {
     IDLE = 0,
     DRAWING = 1,
-    CROPPING = 2,
-    ZOOMING = 3,
-    DRAGGING = 4,
-    SELECTING = 5,
-    ERASING = 6,
+    DRAGGING = 2,
+    SELECTING = 3,
+    ERASING = 4,
+    READY = 5,
 }
 
 export enum HistoryAction {
@@ -36,6 +36,11 @@ export enum HistoryAction {
     UPDATE = 1,
     DELETE = 2,
     MOVE = 3
+}
+
+export let CANVAS_DIMENSIONS = {
+    WIDTH: 1000,
+    HEIGHT: 600,
 }
   
 export default CanvasMode
