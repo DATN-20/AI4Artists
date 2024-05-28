@@ -215,16 +215,20 @@ const Profile = () => {
                 </TabsList>
 
                 <div className="mt-3 grid grid-cols-1 gap-4 p-1 md:grid-cols-3">
-                  {authStates.totalAlbum?.map((album: any, index: number) => (
-                    <AlbumCard
-                      key={index}
-                      albumData={album}
-                      width={512}
-                      height={512}
-                      setSelectedAlbum={setSelectedAlbum}
-                      selectedAlbum={selectedAlbum}
-                    />
-                  ))}
+                  {authStates.totalAlbum && authStates.totalAlbum.length > 0 ? (
+                    authStates.totalAlbum.map((album: any, index: number) => (
+                      <AlbumCard
+                        key={index}
+                        albumData={album}
+                        width={512}
+                        height={512}
+                        setSelectedAlbum={setSelectedAlbum}
+                        selectedAlbum={index}
+                      />
+                    ))
+                  ) : (
+                    <p>No albums found</p>
+                  )}
                 </div>
               </TabsContent>
               <TabsContent value="profile">
@@ -237,7 +241,7 @@ const Profile = () => {
                       <TabsList className=" h-full bg-transparent">
                         <TabsTrigger
                           value="introduction"
-                          className="text-white"
+                          className="dark:text-white"
                         >
                           <h1 className=" text-2xl font-bold">
                             <IoArrowBackOutline />
@@ -297,10 +301,10 @@ const Profile = () => {
                     </AlertDialog>
                   </div>
                   {authStates.totalAlbum?.map((item: any, index: number) => (
-                    <div key={index} className="mb-10 rounded-xl bg-card">
+                    <div key={index} className="mb-10 mb-5 rounded-xl bg-card ">
                       <div className="flex justify-between">
-                        <div className="my-5 ml-5 text-2xl font-semibold">
-                          {item.album.name}
+                        <div className="my-5  ml-5 text-2xl font-semibold">
+                          Album name: {item.album.name}
                         </div>
                         <div>
                           <AlertDialog>
@@ -344,7 +348,7 @@ const Profile = () => {
                               .slice(0, 3)
                               .map((image: any, imageIndex: number) => (
                                 <div className="relative" key={imageIndex}>
-                                  <div className="flex justify-center bg-card">
+                                  <div className="mb-5 flex justify-center bg-card">
                                     <Image
                                       src={image.image.url}
                                       alt={`Image ${imageIndex + 1}`}
@@ -357,11 +361,16 @@ const Profile = () => {
                               ))}
                             <div className="relative">
                               {item.images.length > 4 && (
-                                <div className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black bg-opacity-75 text-white">
-                                  <DialogTrigger asChild>
+                                <DialogTrigger asChild>
+                                  <div
+                                    className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black bg-opacity-75 text-white"
+                                    onClick={() => {
+                                      setSelectedAlbum(index)
+                                    }}
+                                  >
                                     <p className="text-lg">See all</p>
-                                  </DialogTrigger>
-                                </div>
+                                  </div>
+                                </DialogTrigger>
                               )}
                               {item.images[3] && (
                                 <Image
@@ -375,7 +384,7 @@ const Profile = () => {
                             </div>
                           </>
                         ) : (
-                          <p>No images available</p>
+                          <p className="mb-5 ">No images available</p>
                         )}
                       </div>
                     </div>
