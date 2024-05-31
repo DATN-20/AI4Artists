@@ -14,6 +14,7 @@ interface AlbumCardProps {
   height: number | undefined
   setSelectedAlbum: (albumId: number) => void
   selectedAlbum: number
+  setOpenDialogCarousel: (can: boolean) => void
 }
 
 const AlbumCard: React.FC<AlbumCardProps> = ({
@@ -22,6 +23,7 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
   height,
   setSelectedAlbum,
   selectedAlbum,
+  setOpenDialogCarousel,
 }) => {
   const authStates = useSelector(selectAuth)
   const handleClick = () => {
@@ -37,34 +39,35 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
         onClick={handleClick}
       >
         {hasImages ? (
-          <DialogTrigger asChild>
-            <div
-              className={`relative grid h-full w-full gap-1 ${
-                albumData.images.length === 0
-                  ? "grid-cols-1 grid-rows-1"
-                  : "grid-cols-2 grid-rows-2"
-              }`}
-            >
-              {albumData.images
-                .slice(0, 4)
-                .map((image: any, imageIndex: number) => (
-                  <div key={imageIndex} className="relative h-40">
-                    <Image
-                      src={image.image.url}
-                      alt={`Image ${imageIndex + 1}`}
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded-md"
-                    />
-                  </div>
-                ))}
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">
-                <p className="text-center text-white">
-                  Album: {albumData.album.name}
-                </p>
-              </div>
+          <div
+            className={`relative grid h-full w-full gap-1 ${
+              albumData.images.length === 0
+                ? "grid-cols-1 grid-rows-1"
+                : "grid-cols-2 grid-rows-2"
+            }`}
+            onClick={() => {
+              setOpenDialogCarousel(true)
+            }}
+          >
+            {albumData.images
+              .slice(0, 4)
+              .map((image: any, imageIndex: number) => (
+                <div key={imageIndex} className="relative h-40">
+                  <Image
+                    src={image.url}
+                    alt={`Image ${imageIndex + 1}`}
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-md"
+                  />
+                </div>
+              ))}
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">
+              <p className="text-center text-white">
+                Album: {albumData.album.name}
+              </p>
             </div>
-          </DialogTrigger>
+          </div>
         ) : (
           <div className="mt-20 flex max-h-full max-w-full justify-center">
             No images available
@@ -85,6 +88,7 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
                   height={height}
                   setSelectedAlbum={setSelectedAlbum}
                   selectedAlbum={selectedAlbum}
+                  setOpenDialogCarousel={setOpenDialogCarousel}
                 />
               </TabsTrigger>
             </TabsList>

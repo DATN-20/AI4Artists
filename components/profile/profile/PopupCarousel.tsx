@@ -23,18 +23,21 @@ import { IoCloseCircleOutline } from "react-icons/io5"
 import { Button } from "@/components/ui/button"
 import {
   useDeleteFromAlbumMutation,
+  useGetAlbumMutation,
   useGetProfileAlbumMutation,
 } from "@/services/profile/profileApi"
 import { toast } from "react-toastify"
 import { setTotalAlbum } from "@/features/authSlice"
 import { useAppDispatch } from "@/store/hooks"
+import { ErrorObject } from "@/types"
 
 interface PopupCarouselProps {
-  generateImgData: ImageAlbum[] | null
+  generateImgData: any | null
   width?: number
   height?: number
   setSelectedAlbum: (albumId: number) => void
   selectedAlbum: number
+  setOpenDialogCarousel: (can: boolean) => void
 }
 
 const PopupCarousel: React.FC<PopupCarouselProps> = ({
@@ -43,15 +46,16 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
   height,
   setSelectedAlbum,
   selectedAlbum,
+  setOpenDialogCarousel,
 }) => {
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
   const [deleteFromAlbum] = useDeleteFromAlbumMutation()
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
+
   const dispatch = useAppDispatch()
 
   const handleDeleteFromAlbum = async () => {
-
-    if (!selectedImageId || !(selectedAlbum + 1)) {
+    if (!selectedImageId || !selectedAlbum) {
       return
     }
 
@@ -61,13 +65,16 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
 
     const result = await deleteFromAlbum({
       imageId: imageIds,
-      albumId: selectedAlbum + 1,
+      albumId: selectedAlbum,
     })
     const fetchAlbumData = async () => {
       await getAlbum(undefined)
     }
-
-    toast.success("Delete from album successfully")
+    if ((result as ErrorObject).error) {
+      toast.error((result as ErrorObject).error.data.message)
+    } else {
+      toast.success("Delete from album successfully")
+    }
     fetchAlbumData()
   }
 
@@ -84,10 +91,10 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
             {generateImgData &&
               generateImgData.map((item: any) => (
                 <CarouselItem
-                  key={item.image.id}
+                  key={item.id}
                   className="lg:basis-1/3"
                   onClick={() => {
-                    setSelectedImageId(item.image.id)
+                    setSelectedImageId(item.id)
                   }}
                 >
                   <div className="relative flex h-full items-center justify-center p-1">
@@ -97,7 +104,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
                           alt="generated image"
                           width={width}
                           height={height}
-                          src={item.image.url}
+                          src={item.url}
                           className="rounded-lg"
                         />
                       </CardContent>
@@ -111,9 +118,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
                           </DialogTrigger>
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white">
-                          <p className="line-clamp-3">
-                            Prompt: {item.image.prompt}
-                          </p>
+                          <p className="line-clamp-3">Prompt: {item.prompt}</p>
                         </div>
                       </div>
                     </Card>
@@ -128,17 +133,23 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
               </DialogHeader>
 
               <DialogFooter>
-                <Button
-                  type="submit"
-                  onClick={() => {
-                    handleDeleteFromAlbum()
-                  }}
-                >
-                  Yes
-                </Button>
+                <DialogClose asChild>
+                  <Button
+                    type="submit"
+                    onClick={() => {
+                      handleDeleteFromAlbum()
+                      setOpenDialogCarousel(false)
+                    }}
+                  >
+                    Yes
+                  </Button>
+                </DialogClose>
 
                 <DialogClose asChild>
                   <Button
+                    onClick={() => {
+                      setOpenDialogCarousel(false)
+                    }}
                     type="button"
                     className="rounded-md bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400 focus:outline-none"
                   >

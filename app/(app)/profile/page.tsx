@@ -11,6 +11,7 @@ import ProfileContent from "@/components/profile/profile/ProfileContent"
 import {
   useAddNewAlbumMutation,
   useDeleteAlbumMutation,
+  useGetAlbumMutation,
   useGetGuestImageMutation,
   useGetGuestProfileMutation,
   useGetProfileAlbumMutation,
@@ -56,6 +57,7 @@ import { Input } from "@/components/ui/input"
 import { toast } from "react-toastify"
 import NavigationSideBarCard from "@/components/sidebar/card/NavigationSideBarCard"
 import ProfileHeaderGuest from "@/components/profile/profile/ProfileHeaderGuest"
+import { ErrorObject } from "@/types"
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -69,6 +71,8 @@ const Profile = () => {
   const authStates = useSelector(selectAuth)
   const [selectedAlbum, setSelectedAlbum] = useState(-1)
   const [getUser, { data: userData }] = useGetProfileMutation()
+  const [getOneAlbum, { data: oneAlbumData }] = useGetAlbumMutation()
+  const [openDialogCarousel, setOpenDialogCarousel] = useState<boolean>(false)
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
   const [getTotalImage, { data: imagesData }] = useGetTotalImageMutation()
   const [getGuest, { data: guestImages }] = useGetGuestImageMutation()
@@ -91,7 +95,11 @@ const Profile = () => {
     const { name } = values
     if (name) {
       const result = await addNewAlbum(name)
-      toast.success("Added new album successfully!")
+      if ((result as ErrorObject).error) {
+        toast.error((result as ErrorObject).error.data.message)
+      } else {
+        toast.success("Added new album successfully!")
+      }
       await getAlbum(undefined)
     } else {
       toast.error("Please enter album name!")
@@ -144,10 +152,19 @@ const Profile = () => {
     const albumId = Array.isArray(selectedAlbumId)
       ? selectedAlbumId
       : [selectedAlbumId]
-    await deleteAlbum({ albumId })
-    toast.success("Deleted album successfully")
+    const result = await deleteAlbum({ albumId })
+    if ((result as ErrorObject).error) {
+      toast.error((result as ErrorObject).error.data.message)
+    } else {
+      toast.success("Deleted album successfully")
+    }
     setSelectedAlbumId(null)
     await getAlbum(undefined)
+  }
+
+  const handleSelectAlbum = async (albumId: number) => {
+    setSelectedAlbum(albumId)
+    await getOneAlbum({ albumId })
   }
 
   const renderContent = () => {
@@ -173,7 +190,7 @@ const Profile = () => {
     }
 
     return (
-      <Dialog>
+      <Dialog open={openDialogCarousel}>
         <div className="flex gap-4 py-4 ">
           <div className="hidden lg:block lg:min-w-[300px]">
             <div className="no-scrollbar fixed left-0 top-0 flex h-screen min-h-screen w-[300px] flex-col gap-4 overflow-y-scroll p-4 ">
@@ -222,8 +239,9 @@ const Profile = () => {
                         albumData={album}
                         width={512}
                         height={512}
-                        setSelectedAlbum={setSelectedAlbum}
-                        selectedAlbum={index}
+                        setSelectedAlbum={handleSelectAlbum}
+                        selectedAlbum={album.album.id}
+                        setOpenDialogCarousel={setOpenDialogCarousel}
                       />
                     ))
                   ) : (
@@ -350,7 +368,7 @@ const Profile = () => {
                                 <div className="relative" key={imageIndex}>
                                   <div className="mb-5 flex justify-center bg-card">
                                     <Image
-                                      src={image.image.url}
+                                      src={image.url}
                                       alt={`Image ${imageIndex + 1}`}
                                       width={512}
                                       height={512}
@@ -361,20 +379,19 @@ const Profile = () => {
                               ))}
                             <div className="relative">
                               {item.images.length > 4 && (
-                                <DialogTrigger asChild>
-                                  <div
-                                    className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black bg-opacity-75 text-white"
-                                    onClick={() => {
-                                      setSelectedAlbum(index)
-                                    }}
-                                  >
-                                    <p className="text-lg">See all</p>
-                                  </div>
-                                </DialogTrigger>
+                                <div
+                                  className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black bg-opacity-75 text-white"
+                                  onClick={() => {
+                                    setSelectedAlbum(index)
+                                    setOpenDialogCarousel(true)
+                                  }}
+                                >
+                                  <p className="text-lg">See all</p>
+                                </div>
                               )}
                               {item.images[3] && (
                                 <Image
-                                  src={item.images[3].image.url}
+                                  src={item.images[3].url}
                                   alt=""
                                   width={512}
                                   height={512}
@@ -390,17 +407,14 @@ const Profile = () => {
                     </div>
                   ))}
                   <DialogContent className=" lg:min-w-[950px]">
-                    {authStates.totalAlbum && selectedAlbum !== -1 && (
+                    {oneAlbumData && selectedAlbum !== -1 && (
                       <PopupCarousel
-                        generateImgData={
-                          (authStates.totalAlbum as AlbumWithImages[])[
-                            selectedAlbum
-                          ]?.images
-                        }
+                        generateImgData={oneAlbumData}
                         width={512}
                         height={512}
                         setSelectedAlbum={setSelectedAlbum}
                         selectedAlbum={selectedAlbum}
+                        setOpenDialogCarousel={setOpenDialogCarousel}
                       />
                     )}
                   </DialogContent>
