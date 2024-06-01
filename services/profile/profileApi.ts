@@ -21,7 +21,7 @@ export const profileApi = createApi({
     getProfileAlbum: builder.mutation({
       query: () => {
         return {
-          url: "/api/v1/album/full-info",
+          url: "/api/v1/albums/full-info",
           method: "GET",
         }
       },
@@ -34,32 +34,42 @@ export const profileApi = createApi({
         }
       },
     }),
+    getAlbum: builder.mutation<number[], {  albumId: number }>({
+      query: ({ albumId }) => ({
+        url: `/api/v1/albums/${albumId}/images`,
+        method: "GET",
+      }),
+    }),
     addToAlbum: builder.mutation<number[], { imageId: number[]; albumId: number }>({
       query: ({ imageId, albumId }) => ({
-        url: `/api/v1/album/${albumId}`,
+        url: `/api/v1/albums/${albumId}/images`,
         method: "POST",
-        body: { idImage: imageId },
+        body: { imageIds: imageId },
       }),
     }),
     deleteFromAlbum: builder.mutation<number[], { imageId: number[]; albumId: number }>({
       query: ({ imageId, albumId }) => ({
-        url: `/api/v1/album/${albumId}`,
+        url: `/api/v1/albums/${albumId}/images`,
         method: "DELETE",
-        body: { idImage: imageId },
+        body: { imageIds: imageId },
+        responseHandler: "text"
+
       }),
     }),
     addNewAlbum: builder.mutation({
       query: ( albumName ) => ({
-        url: "/api/v1/album",
+        url: "/api/v1/albums",
         method: "POST",
         body: {name: albumName},
       }),
     }),
     deleteAlbum: builder.mutation<number[], { albumId: number[] }>({
       query: ({ albumId }) => ({
-        url: `/api/v1/album`,
+        url: `/api/v1/albums`,
         method: "DELETE",
         body: { albumIds: albumId },
+        responseHandler: "text"
+
       }),
     }),
     updateAvatar: builder.mutation({
@@ -112,4 +122,4 @@ export const profileApi = createApi({
   }),
 })
 
-export const { useGetProfileMutation, useGetProfileAlbumMutation , useGetTotalImageMutation, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation, useGetGuestImageMutation, useGetGuestProfileMutation} = profileApi
+export const { useGetProfileMutation, useGetProfileAlbumMutation , useGetTotalImageMutation, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation, useGetGuestImageMutation, useGetGuestProfileMutation, useGetAlbumMutation} = profileApi

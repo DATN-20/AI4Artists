@@ -29,6 +29,7 @@ import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { useAppDispatch } from "@/store/hooks"
 import { setTotalAlbum } from "@/features/authSlice"
+import { ErrorObject } from "@/types"
 
 interface CarouselProps {
   generateImgData: ImageTotal[] | null
@@ -45,6 +46,8 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
 }) => {
   const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null)
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
+  const [closeDialog, setCloseDialog] = useState<boolean>(false)
+
   const [addToAlbum] = useAddToAlbumMutation()
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
   const dispatch = useAppDispatch()
@@ -57,11 +60,10 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
     if (!selectedImageId || !selectedAlbumId) {
       return
     }
-
     const imageIds = Array.isArray(selectedImageId)
       ? selectedImageId
       : [selectedImageId]
-
+    console.log(imageIds)
     const result = await addToAlbum({
       imageId: imageIds,
       albumId: selectedAlbumId,
@@ -69,8 +71,11 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
     const fetchAlbumData = async () => {
       await getAlbum(undefined)
     }
-
-    toast.success("Add to album successfully")
+    if ((result as ErrorObject).error) {
+      toast.error((result as ErrorObject).error.data.message)
+    } else {
+      toast.success("Add to album successfully")
+    }
     setSelectedAlbumId(null)
     fetchAlbumData()
   }
@@ -82,7 +87,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
   }, [albumData])
 
   return (
-    <Dialog>
+    <Dialog open={closeDialog}>
       {generateImgData && generateImgData.length > 0 ? (
         <Carousel className="relative mt-3 w-full">
           <CarouselContent>
@@ -106,14 +111,17 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
                       />
                     </CardContent>
                     <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
-                      <div className="flex max-w-full justify-end pr-5">
-                        <DialogTrigger asChild>
-                          <IoAddCircleOutline
-                            size={32}
-                            className="cursor-pointer "
-                            color="white"
-                          />
-                        </DialogTrigger>
+                      <div
+                        className="flex max-w-full justify-end pr-5"
+                        onClick={() => {
+                          setCloseDialog(true)
+                        }}
+                      >
+                        <IoAddCircleOutline
+                          size={32}
+                          className="cursor-pointer "
+                          color="white"
+                        />
                       </div>
                       <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white">
                         <p className="line-clamp-3">Prompt: {item.prompt}</p>
@@ -160,6 +168,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
                     className="rounded-md px-4 py-2 text-white focus:outline-none"
                     onClick={() => {
                       handleAddToAlbum()
+                      setCloseDialog(false)
                     }}
                   >
                     Save changes
@@ -170,6 +179,9 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
 
                 <DialogClose>
                   <Button
+                    onClick={() => {
+                      setCloseDialog(false)
+                    }}
                     type="button"
                     className="rounded-md bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400 focus:outline-none"
                   >

@@ -34,6 +34,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { requestData } from "@/types/profile"
+import { ErrorObject } from "@/types"
 
 interface ProfileHeaderProps {
   userData: {
@@ -247,8 +248,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
           const filename = "image.jpg"
           const imageFile = base64StringToFile(croppedImageBase64, filename)
           formData.append("file", imageFile)
-          await updateBackground(formData)
-          toast.success("Update background successfully")
+          const result = await updateBackground(formData)
+          if ((result as ErrorObject).error) {
+            toast.error((result as ErrorObject).error.data.message)
+          } else {
+            toast.success("Update background successfully")
+          }
         }
       }
     }
@@ -284,8 +289,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
           const filename = "image.jpg"
           const imageFile = base64StringToFile(croppedImageBase64, filename)
           formData.append("file", imageFile)
-          await updateAvatar(formData)
-          toast.success("Update avatar successfully")
+          const result = await updateAvatar(formData)
+          if ((result as ErrorObject).error) {
+            toast.error((result as ErrorObject).error.data.message)
+          } else {
+            toast.success("Update avatar successfully")
+          }
         }
       }
     }
@@ -337,7 +346,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
     try {
       const result = await updateProfile(requestBody as requestData).unwrap()
       // setGenerateImgData(result);
-      toast.success("Update profile successfully")
+      if ((result as ErrorObject).error) {
+        toast.error((result as ErrorObject).error.data.message)
+      } else {
+        toast.success("Update profile successfully")
+      }
 
       setProfileData({
         first_name: formData.first_name,
