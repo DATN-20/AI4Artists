@@ -1,3 +1,4 @@
+import React from "react"
 import { ChevronDown, Search } from "lucide-react"
 import { Button } from "../ui/button"
 import {
@@ -9,82 +10,62 @@ import {
 } from "../ui/dropdown-menu"
 import { useEffect, useState } from "react"
 import MansoryGrid from "./MansoryGrid"
-import {
-  useGetAllDashboardImageQuery,
-  useGetSearchImageQuery,
-} from "@/services/dashboard/dashboardApi" // Correct import
 import Loading from "../Loading"
-import React from "react" // Import React for typing events
+import { DashboardImage } from "@/types/dashboard"
+import axiosInstance from "@/axiosInstance"
 
-interface Selection {
+interface CurrentSelection {
   label: string
   value: string
 }
 
 export default function DashboardContent() {
-  const [currentSelection, setCurrentSelection] = useState<Selection>({
+  const [currentSelection, setCurrentSelection] = useState<CurrentSelection>({
     label: "Latest",
     value: "LATEST",
   })
+  const [searchTerm, setSearchTerm] = useState("")
+  const [data, setData] = useState<DashboardImage[]>([])
+  const [filteredData, setFilteredData] = useState<DashboardImage[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
-  const [searchTerm, setSearchTerm] = useState<string>("")
-  const [triggerSearch, setTriggerSearch] = useState<boolean>(false)
-  const [displaySearch, setDisplaySearch] = useState<boolean>(false)
-
-  const handleSelection = (selection: Selection) => {
+  const handleSelection = (selection: CurrentSelection) => {
     setCurrentSelection(selection)
   }
 
-  const handleSearchSubmit = () => {
-    setTriggerSearch(true)
-  }
+  const fetchData = async (type: string, page: string, limit: string) => {
+    setIsLoading(true)
+    try {
+      const searchParams = new URLSearchParams()
+      if (type) searchParams.append("type", type)
+      if (page) searchParams.append("page", page)
+      if (limit) searchParams.append("limit", limit)
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      handleSearchSubmit()
+      const response = await axiosInstance.get(
+        `/api/v1/images/dashboard?${searchParams}`,
+      )
+      setData(response.data.data)
+    } catch (err) {
+      console.error("Failed to fetch images:", err)
+    } finally {
+      setIsLoading(false)
     }
   }
 
-  const { data, error, isLoading } = useGetAllDashboardImageQuery({
-    type: currentSelection.value,
-    page: 1,
-    limit: 100,
-  })
-
-  const {
-    data: searchData,
-    error: searchError,
-    isLoading: isSearchLoading,
-  } = useGetSearchImageQuery(
-    {
-      query: searchTerm,
-      page: 1,
-      limit: 100,
-    },
-    { skip: !triggerSearch },
-  )
-
   useEffect(() => {
-    if (triggerSearch) {
-      setTriggerSearch(false)
-      setDisplaySearch(true)
-    }
-  }, [searchData, searchError])
+    fetchData(currentSelection.value, "1", "100")
+  }, [currentSelection])
 
-  useEffect(() => {
-    if (searchTerm === "") {
-      setDisplaySearch(false)
+  const handleSearch = () => {
+    if (searchTerm !== "") {
+      const filtered = data.filter((item) =>
+        item.prompt.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
+      setFilteredData(filtered)
+    } else {
+      setFilteredData([])
     }
-  }, [searchTerm])
-
-  useEffect(() => {
-    if (error) {
-      console.error("Failed to fetch images:", error)
-    }
-    if (searchError) {
-      console.error("Failed to fetch images:", searchError)
-    }
-  }, [error, searchError])
+  }
 
   return (
     <div className="flex w-full flex-col lg:p-2">
@@ -129,21 +110,56 @@ export default function DashboardContent() {
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-        <div className="flex items-center justify-center rounded-full bg-card px-4">
+        <div className="flex items-center justify-center rounded-full bg-card px-4 ">
           <input
             type="text"
-            placeholder="search"
+            placeholder="Search"
             className="flex-grow bg-transparent placeholder-white outline-none"
-            onKeyDown={handleKeyDown}
+            value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearch()
+              }
+            }}
           />
-          <Search onClick={handleSearchSubmit} className="cursor-pointer" />
+          <Search onClick={handleSearch} />
         </div>
       </div>
-      {isLoading || isSearchLoading ? (
+      <div className="no-scrollbar mt-4 flex gap-4 overflow-x-scroll">
+        <Button
+          className="rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+          variant={"outline"}
+        >
+          All
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
+          Photography
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
+          Animals
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
+          Anime
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
+          Architecture
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
+          Food
+        </Button>
+        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
+          Sci-fi
+        </Button>
+      </div>
+      {isLoading ? (
         <Loading />
       ) : (
-        <MansoryGrid data={displaySearch ? searchData?.data : data?.data} />
+        <MansoryGrid
+          data={
+            searchTerm !== "" && filteredData.length > 0 ? filteredData : data
+          }
+        />
       )}
     </div>
   )
