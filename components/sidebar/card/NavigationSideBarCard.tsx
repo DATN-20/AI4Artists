@@ -31,24 +31,19 @@ const NavigationSideBarCard = () => {
     router.push("/")
     toast.success("Logged out successfully")
   }
+
   const [currentSection, setCurrentSection] = useState("home")
 
-  const [getUser, { data: userData }] = useGetProfileMutation()
+  // Sử dụng JSON.parse một cách an toàn
+  const getUserDataFromLocalStorage = () => {
+    const data = localStorage.getItem("userData")
+    return data ? JSON.parse(data) : null
+  }
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      await getUser(undefined)
-    }
-    fetchUserData()
-  }, [])
-
-  useEffect(() => {
-    localStorage.setItem("userID", userData?.id)
-  }, [userData])
+  const [userData, setUserData] = useState(getUserDataFromLocalStorage())
 
   useEffect(() => {
     const section = pathname.split("/")[1]
-
     setCurrentSection(section)
   }, [pathname])
 
@@ -178,7 +173,11 @@ const NavigationSideBarCard = () => {
                 </span>
               </a>
             </div>
-            <MdLogout onClick={handleLogout} size={28} />
+            <MdLogout
+              onClick={handleLogout}
+              size={28}
+              className="cursor-pointer"
+            />
           </div>
           <div className="flex items-center justify-between">
             <div className="flex gap-3 ">
