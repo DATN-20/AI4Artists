@@ -1,4 +1,3 @@
-import React from "react"
 import { ChevronDown, Search } from "lucide-react"
 import { Button } from "../ui/button"
 import {
@@ -10,62 +9,30 @@ import {
 } from "../ui/dropdown-menu"
 import { useEffect, useState } from "react"
 import MansoryGrid from "./MansoryGrid"
+import { useGetAllDashboardImageQuery } from "@/services/dashboard/dashboardApi"
 import Loading from "../Loading"
-import { DashboardImage } from "@/types/dashboard"
-import axiosInstance from "@/axiosInstance"
-
-interface CurrentSelection {
-  label: string
-  value: string
-}
 
 export default function DashboardContent() {
-  const [currentSelection, setCurrentSelection] = useState<CurrentSelection>({
+  const [currentSelection, setCurrentSelection] = useState({
     label: "Latest",
     value: "LATEST",
   })
-  const [searchTerm, setSearchTerm] = useState("")
-  const [data, setData] = useState<DashboardImage[]>([])
-  const [filteredData, setFilteredData] = useState<DashboardImage[]>([])
-  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSelection = (selection: CurrentSelection) => {
+  const handleSelection = (selection: { label: string; value: string }) => {
     setCurrentSelection(selection)
   }
 
-  const fetchData = async (type: string, page: string, limit: string) => {
-    setIsLoading(true)
-    try {
-      const searchParams = new URLSearchParams()
-      if (type) searchParams.append("type", type)
-      if (page) searchParams.append("page", page)
-      if (limit) searchParams.append("limit", limit)
-
-      const response = await axiosInstance.get(
-        `/api/v1/images/dashboard?${searchParams}`,
-      )
-      setData(response.data.data)
-    } catch (err) {
-      console.error("Failed to fetch images:", err)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const { data, error, isLoading } = useGetAllDashboardImageQuery({
+    type: currentSelection.value,
+    page: 1,
+    limit: 100,
+  })
 
   useEffect(() => {
-    fetchData(currentSelection.value, "1", "100")
-  }, [currentSelection])
-
-  const handleSearch = () => {
-    if (searchTerm !== "") {
-      const filtered = data.filter((item) =>
-        item.prompt.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
-      setFilteredData(filtered)
-    } else {
-      setFilteredData([])
+    if (error) {
+      console.error("Failed to fetch images:", error)
     }
-  }
+  }, [error, data])
 
   return (
     <div className="flex w-full flex-col lg:p-2">
@@ -113,17 +80,10 @@ export default function DashboardContent() {
         <div className="flex items-center justify-center rounded-full bg-card px-4 ">
           <input
             type="text"
-            placeholder="Search"
+            placeholder="search"
             className="flex-grow bg-transparent placeholder-white outline-none"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSearch()
-              }
-            }}
           />
-          <Search onClick={handleSearch} />
+          <Search />
         </div>
       </div>
       <div className="no-scrollbar mt-4 flex gap-4 overflow-x-scroll">
@@ -152,15 +112,7 @@ export default function DashboardContent() {
           Sci-fi
         </Button>
       </div>
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <MansoryGrid
-          data={
-            searchTerm !== "" && filteredData.length > 0 ? filteredData : data
-          }
-        />
-      )}
+      {isLoading ? <Loading /> : <MansoryGrid data={data.data} />}
     </div>
   )
 }
