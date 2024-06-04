@@ -49,7 +49,7 @@ export const generateApi = createApi({
         body: formData,
       }),
     }),
-    getGenerationHistory: builder.mutation({
+    getGenerationHistory: builder.query<ImageGroup[], void>({
       query: () => {
         return {
           url: "api/v1/images/generate-history",
@@ -82,6 +82,12 @@ export const generateApi = createApi({
         method: "PATCH",
       }),
     }),
+    getNotificationImage: builder.mutation({
+      query: (generationId: string) => ({
+        url: `/api/v1/images/generate-history/${generationId}`,
+        method: "GET",
+      }),
+    }),
     generateStyleImage: builder.mutation({
       query: (formData) => ({
         url: "/api/v1/generate-image/image-by-images-style",
@@ -97,10 +103,11 @@ export const {
   useAiStyleInformationMutation,
   useTextToImageMutation,
   useImageToImageMutation,
-  useGetGenerationHistoryMutation,
+  useGetGenerationHistoryQuery,
   useChangePublicStatusMutation,
   useGetNotificationsQuery,
   useChangeNotificationStatusMutation,
+  useGetNotificationImageMutation,
   useGenerateStyleImageMutation,
   useGenerateTagsMutation
 } = generateApi

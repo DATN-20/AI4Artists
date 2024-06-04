@@ -319,7 +319,7 @@ const Profile = () => {
                     </AlertDialog>
                   </div>
                   {authStates.totalAlbum?.map((item: any, index: number) => (
-                    <div key={index} className="mb-10 mb-5 rounded-xl bg-card ">
+                    <div key={index} className="mb-5 rounded-xl bg-card ">
                       <div className="flex justify-between">
                         <div className="my-5  ml-5 text-2xl font-semibold">
                           Album name: {item.album.name}

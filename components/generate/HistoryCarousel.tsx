@@ -113,7 +113,7 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
       <div className="mt-10 flex w-full items-center justify-between gap-6">
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger className="flex w-full min-w-0 justify-start">
+            <TooltipTrigger className="flex min-w-0 justify-start">
               <p className="truncate text-lg font-semibold">{prompt}</p>
             </TooltipTrigger>
             <TooltipContent className="max-w-[200px] md:max-w-[400px]">
@@ -123,7 +123,7 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
         </TooltipProvider>
         <Button
           variant={"outline"}
-          className="mt-[8px] min-w-[100px] rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+          className="mt-[8px] min-w-fit rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700 hover:cursor-default"
         >
           {styleAlbum}
         </Button>
@@ -155,13 +155,13 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
                       <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
                         <div className="flex max-w-full items-center justify-end gap-x-2 pr-5">
                           {isPublic[index] ? (
-                            <FaRegEyeSlash
+                            <IoEyeOutline
                               size={32}
                               className="cursor-pointer hover:text-primary"
                               onClick={() => changePublicStatus(item.id, index)}
                             />
                           ) : (
-                            <IoEyeOutline
+                            <FaRegEyeSlash
                               size={32}
                               className="cursor-pointer hover:text-primary"
                               onClick={() => changePublicStatus(item.id, index)}

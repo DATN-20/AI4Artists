@@ -5,7 +5,7 @@ import GenerateSideBar from "@/components/sidebar/GenerateSideBar"
 import {
   useAiInformationMutation,
   useAiStyleInformationMutation,
-  useGetGenerationHistoryMutation,
+  useGetGenerationHistoryQuery,
   useImageToImageMutation,
   useTextToImageMutation,
 } from "@/services/generate/generateApi"
@@ -61,16 +61,8 @@ export default function Generate() {
   const [useImg2Img, setUseImg2Img] = useState(false)
 
   const canvasModeContext = useContext(CanvasModeContext)
-  const [
-    getGenerationHistory,
-    { data: historyData, error: historyError, isSuccess: getHistorySuccess },
-  ] = useGetGenerationHistoryMutation()
+  const {data: historyData, refetch} = useGetGenerationHistoryQuery()
   const authStates = useSelector(selectAuth)
-
-  const fetchHistoryData = async () => {
-    await getGenerationHistory(undefined)
-  }
-
 
   const handlePosPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const prompt = event.target.value
@@ -135,12 +127,8 @@ export default function Generate() {
     }
   }
 
-
   const handleGenerate = async () => {
-    fetchHistoryData()
-    setIsLoading(true)
     setIsError(false)
-
     const formData = new FormData()
 
     if (generateStates.dataInputs) {
@@ -181,13 +169,10 @@ export default function Generate() {
       } else {
         result = await textToImage(formData).unwrap()
       }
-      console.log(result)
       setGenerateImgData(result)
     } catch (error) {
       console.error("Error generating image:", error)
       setIsError(true)
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -197,7 +182,8 @@ export default function Generate() {
     dispatch(setField({ field: "negativePrompt", value: prompt }))
   }
   const [aiInformation, { data: inputData }] = useAiInformationMutation()
-  const [aiStyleInformation, {data: inputStyleData}] = useAiStyleInformationMutation()
+  const [aiStyleInformation, { data: inputStyleData }] =
+    useAiStyleInformationMutation()
 
   useEffect(() => {
     const promptValue = localStorage.getItem("prompt")
@@ -209,10 +195,6 @@ export default function Generate() {
       await aiInformation(undefined)
     }
     fetchAIData()
-    const fetchHistoryData = async () => {
-      await getGenerationHistory(undefined)
-    }
-    fetchHistoryData()
     const fetchAlbumData = async () => {
       await getAlbum(undefined)
     }
@@ -267,20 +249,6 @@ export default function Generate() {
               useNegativePrompt={useNegativePrompt}
               promptPos={promptPos}
             />
-            {/* {isLoading ? (
-              <Skeleton
-                className="mt-5 rounded-xl"
-                style={{ width: 512, height: 512 }}
-              />
-            ) : (
-              generateImgData && (
-                <Carousel
-                  generateImgData={generateImgData}
-                  width={512}
-                  height={512}
-                />
-              )
-            )} */}
             {/* <Button
               variant={"outline"}
               className="mt-[16px] w-fit  rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
@@ -289,15 +257,15 @@ export default function Generate() {
               Download all images
             </Button> */}
             {historyData &&
-              historyData.map((item: any, index: number) => (
+              historyData.map((item: ImageGroup, index: number) => (
                 <HistoryCarousel
                   key={index}
                   generateImgData={item.images}
                   width={512}
                   height={512}
-                  styleAlbum={item.style}
+                  styleAlbum={item.style || undefined}
                   prompt={item.prompt}
-                  album={authStates.totalAlbum}
+                  album={authStates?.totalAlbum}
                 />
               ))}
           </div>

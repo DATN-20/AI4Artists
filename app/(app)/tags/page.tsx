@@ -39,22 +39,6 @@ const Tags = () => {
   const [generateTags] = useGenerateTagsMutation()
   const [tags, setTags] = useState<string | null>(null)
 
-  const base64ToFile = async (
-    base64: string,
-    filename: string,
-  ): Promise<File> => {
-    const response = await fetch(base64)
-    const blob = await response.blob()
-    return new File([blob], filename, { type: blob.type })
-  }
-
-  // useEffect(() => {
-  //   if (defaultValue) {
-  //     base64ToFile(defaultValue, "defaultImage.jpg").then((file) => {
-  //       setSelectedImage(file)
-  //     })
-  //   }
-  // }, [defaultValue])
   const generateStates = useSelector(selectGenerate)
 
   function base64StringToFile(base64String: string, filename: string): File {
@@ -236,7 +220,7 @@ const Tags = () => {
                           onClick={() => handleImageSelectFromAlbum(image)}
                         >
                           <Image
-                            src={image.image.url}
+                            src={image?.image?.url }
                             alt={`Image ${imageIndex + 1}`}
                             layout="fill"
                             objectFit="cover"
@@ -265,7 +249,7 @@ const Tags = () => {
                           .map((image: any, imageIndex: number) => (
                             <div key={imageIndex} className="relative h-40">
                               <Image
-                                src={image.image.url}
+                                src={image?.image?.url}
                                 alt={`Image ${imageIndex + 1}`}
                                 layout="fill"
                                 objectFit="cover"

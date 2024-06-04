@@ -66,13 +66,13 @@ const LogLayout = ({ children }: { children: React.ReactNode }) => {
               </Button>
               <div className="flex w-full flex-col">
                 <div className="sticky left-0 top-0 flex items-center justify-between p-4">
-                  <h2 className="text-3xl font-semibold">Notifications</h2>
+                  <h2 className="text-2xl font-semibold">Notifications</h2>
                   <div className="flex items-center gap-1">
                     <IoIosMailUnread className="text-2xl" />
                     <span>{unreadCount}</span>
                   </div>
                 </div>
-                <div className="overflow-y-auto">
+                <div className="overflow-y-auto no-scrollbar">
                   {notifications?.map((notification: NotificationInfo) => (
                     <LogCard
                       key={notification.id}
@@ -81,6 +81,7 @@ const LogLayout = ({ children }: { children: React.ReactNode }) => {
                       createdAt={notification.created_at}
                       is_read={notification.is_read}
                       id={notification.id}
+                      reference_data = {notification.reference_data}
                     />
                   ))}
                 </div>
