@@ -29,6 +29,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { FaFacebook, FaGoogle } from "react-icons/fa"
 import { X } from "lucide-react"
+import { useGetProfileMutation } from "@/services/profile/profileApi"
 
 const formSchema = z.object({
   email: z.string().min(2, {
@@ -46,6 +47,8 @@ interface ModalLoginProps {
 const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
   const dispatch = useAppDispatch()
   const router = useRouter()
+
+  const [getUser, { data: userData }] = useGetProfileMutation()
 
   const [
     loginUser,
@@ -86,9 +89,17 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
   }
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      const res = await getUser(undefined)
+      if ("data" in res) {
+        localStorage.setItem("userID", res.data?.id)
+        localStorage.setItem("userData", JSON.stringify(res.data))
+      }
+    }
     if (isLoginSuccess) {
       toast.success("User login successfully")
       dispatch(setUser({ token: loginData.access_token, name: "Hao" }))
+      fetchUserData()
       const promptValue = localStorage.getItem("prompt")
       if (promptValue) {
         router.push("/generate")
@@ -134,7 +145,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
           </div>
         </div>
 
-        <div className="mx-auto w-full lg:w-1/2 px-8 py-5">
+        <div className="dark:background-white mx-auto w-full px-8 py-5 lg:w-1/2">
           <Form {...form}>
             <h1 className="my-5 text-center text-3xl font-bold">Login</h1>
             <form
