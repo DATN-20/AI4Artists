@@ -6,16 +6,6 @@ import { useGetNotificationsQuery } from "@/services/generate/generateApi"
 import { IoIosMailUnread } from "react-icons/io"
 import { IoIosNotifications } from "react-icons/io"
 
-interface NotificationInfo {
-  id: number
-  title: string
-  content: string
-  type: string
-  is_read: boolean
-  reference_data: string | null
-  created_at: string
-}
-
 const LogLayout = ({ children }: { children: React.ReactNode }) => {
   const [isLogVisible, setIsLogVisible] = useState(false)
   const [pollingInterval, setPollingInterval] = useState(3000)

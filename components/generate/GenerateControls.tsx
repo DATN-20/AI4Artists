@@ -2,6 +2,7 @@ import React from "react"
 import { Switch } from "../ui/switch"
 import { Label } from "../ui/label"
 import StyleDrawer from "./StyleDrawer"
+import ImageToTag from "./input-component/ImageToTag"
 
 interface GenerateControlsProps {
   handlePosPromptChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
@@ -61,7 +62,7 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
         <span className="mr-2">✨</span>
         Generate
       </button>
-      <h1 className="mt-5 text-3xl font-bold">Generated Images</h1>
+      <ImageToTag />
     </>
   )
 }

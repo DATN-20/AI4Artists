@@ -1,6 +1,6 @@
 import {
   useChangeNotificationStatusMutation,
-  useGetNotificationImageMutation,
+  useGetNotificationImageQuery
 } from "@/services/generate/generateApi"
 import React, { useState } from "react"
 import { toast } from "react-toastify"
@@ -38,8 +38,8 @@ const LogCard = ({
   const [isRead, setIsRead] = useState<boolean>(is_read)
   const [open, setOpen] = useState(false)
   const [changeNotificationStatus] = useChangeNotificationStatusMutation()
-  const [getNotificationImage, { data: notificationImage }] =
-    useGetNotificationImageMutation()
+  const { data: notificationImage, refetch } =
+  useGetNotificationImageQuery(reference_data)
   const changeToUnread = async () => {
     if (isRead) {
       setIsRead(false)
@@ -49,7 +49,7 @@ const LogCard = ({
 
   const toggleRead = async () => {
     if (reference_data) {
-      const result = await getNotificationImage(reference_data)
+      const result = await refetch()
       if ((result as ErrorObject).error) {
         toast.error((result as ErrorObject).error.data.message)
       }
@@ -61,19 +61,6 @@ const LogCard = ({
 
   const notificationDisplayTime = () => {
     const date = new Date(createdAt)
-    const now = new Date()
-    const diff = now.getTime() - date.getTime()
-
-    const minute = 1000 * 60
-    const hour = minute * 60
-    const day = hour * 24
-    const week = day * 7
-
-    if (diff < minute) return "Now"
-    if (diff < hour) return `${Math.floor(diff / minute)} mins ago`
-    if (diff < day) return `${Math.floor(diff / hour)} hours ago`
-    if (diff < week) return `${Math.floor(diff / day)} days ago`
-
     return date.toLocaleString()
   }
 
@@ -120,10 +107,13 @@ const LogCard = ({
             <span className={`text-xs ${!isRead ? "text-primary" : ""}`}>
               {notificationDisplayTime()}
             </span>
-            <div className="absolute right-4 top-1/2 z-10 hidden group-hover:block" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="absolute right-4 top-1/2 z-10 hidden group-hover:block"
+              onClick={(e) => e.stopPropagation()}
+            >
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <BsThreeDots className="text-primary bg-gray-500 rounded-full p-1 text-2xl flex justify-center items-center" />
+                  <BsThreeDots className="flex items-center justify-center rounded-full bg-gray-500 p-1 text-2xl text-primary" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="center">
                   <DropdownMenuItem onClick={changeToUnread}>

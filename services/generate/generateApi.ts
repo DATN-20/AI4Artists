@@ -1,3 +1,4 @@
+import { DashboardImageGroup } from "@/types/dashboard"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 
 export const generateApi = createApi({
@@ -10,16 +11,7 @@ export const generateApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    // generateImage: builder.mutation({
-    //   query: (body: { email: string; password: string }) => {
-    //     return {
-    //       url: "api/v1/generate-image/ai-info",
-    //       method: "get",
-    //       body,
-    //     };
-    //   }
-    // }),
-    aiInformation: builder.mutation({
+    aiInformation: builder.query<AIConfig[],void>({
       query: () => {
         return {
           url: "/api/v1/generate-image/ai-info",
@@ -68,9 +60,10 @@ export const generateApi = createApi({
         url: `/api/v1/generate-tag`,
         method: "POST",
         body: formData,
+        responseHandler: "text"
       }),
     }),
-    getNotifications: builder.query<any, void>({
+    getNotifications: builder.query<NotificationInfo[], void>({
       query: () => ({
         url: "/api/v1/notifications",
         method: "GET",
@@ -82,7 +75,7 @@ export const generateApi = createApi({
         method: "PATCH",
       }),
     }),
-    getNotificationImage: builder.mutation({
+    getNotificationImage: builder.query<DashboardImageGroup, string | null>({
       query: (generationId: string) => ({
         url: `/api/v1/images/generate-history/${generationId}`,
         method: "GET",
@@ -99,7 +92,7 @@ export const generateApi = createApi({
 })
 
 export const {
-  useAiInformationMutation,
+  useAiInformationQuery,
   useAiStyleInformationMutation,
   useTextToImageMutation,
   useImageToImageMutation,
@@ -107,7 +100,7 @@ export const {
   useChangePublicStatusMutation,
   useGetNotificationsQuery,
   useChangeNotificationStatusMutation,
-  useGetNotificationImageMutation,
+  useGetNotificationImageQuery,
   useGenerateStyleImageMutation,
   useGenerateTagsMutation
 } = generateApi
