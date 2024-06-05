@@ -113,7 +113,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
                           <DialogTrigger asChild>
                             <IoCloseCircleOutline
                               size={32}
-                              className="cursor-pointer"
+                              className="cursor-pointer text-white"
                             />
                           </DialogTrigger>
                         </div>

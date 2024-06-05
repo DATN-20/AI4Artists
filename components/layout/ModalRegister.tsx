@@ -105,7 +105,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
 
   return (
     <DialogContentLoginModal
-      className="border-none p-0 lg:min-w-[950px] "
+      className="border-none p-0 lg:min-w-[1020px] "
       style={{ borderRadius: 50 }}
     >
       <div className="flex h-full w-full">
@@ -129,11 +129,23 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
                 </span>
               </div>
 
-              <div className="mt-5 flex h-full flex-col  gap-12 text-2xl font-bold text-white">
-                <p>✨ 50+ Free Image Generations Daily</p>
-                <p>✨ Generate Image in your own Style</p>
-                <p>✨ Generate characters with pose</p>
-                <p>✨ Manage your own profile space</p>
+              <div className="ml-5 mr-5 mt-5 flex  h-full flex-col gap-8 text-2xl font-bold text-white">
+                <p className="flex">
+                  <p className="mr-5 flex	items-center">✨</p>{" "}
+                  <p>20 Free Image Generation daily</p>
+                </p>
+                <p className="flex">
+                  <p className="mr-5 flex	items-center">✨</p>{" "}
+                  <p>Generate Image in your own Style</p>
+                </p>
+                <p className="flex">
+                  <p className="mr-5 flex	items-center">✨</p>{" "}
+                  <p>Generate Image with pose, depth, sketch,…</p>
+                </p>
+                <p className="mb-10 flex">
+                  <p className="mr-5 flex	items-center">✨</p>{" "}
+                  <p>Manage your own profile space</p>
+                </p>
               </div>
             </div>
           </div>

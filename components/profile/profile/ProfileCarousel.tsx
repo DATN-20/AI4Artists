@@ -87,7 +87,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
   }, [albumData])
 
   return (
-    <Dialog open={closeDialog}>
+    <Dialog open={closeDialog} onOpenChange={setCloseDialog}>
       {generateImgData && generateImgData.length > 0 ? (
         <Carousel className="relative mt-3 w-full">
           <CarouselContent>
@@ -110,7 +110,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
                         className="rounded-lg"
                       />
                     </CardContent>
-                    <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
+                    <div className="absolute inset-0   bg-black bg-opacity-50 pt-5 opacity-0 transition-opacity duration-300 hover:opacity-100">
                       <div
                         className="flex max-w-full justify-end pr-5"
                         onClick={() => {
