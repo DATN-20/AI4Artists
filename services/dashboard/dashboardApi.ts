@@ -1,3 +1,4 @@
+import { AllDashboardImageResponse } from "@/types/dashboard"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 
 export const dashboardApi = createApi({
@@ -10,12 +11,16 @@ export const dashboardApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    getAllDashboardImage: builder.query({
+    getAllDashboardImage: builder.query<AllDashboardImageResponse, {
+      type: string
+      page: number
+      limit: number
+    }>({
       query: ({ type, page, limit }) => {
         const searchParams = new URLSearchParams()
         if (type) searchParams.append("type", type)
-        if (page) searchParams.append("page", page)
-        if (limit) searchParams.append("limit", limit)
+        if (page) searchParams.append("page", page.toString())
+        if (limit) searchParams.append("limit", limit.toString())
 
         return {
           url: `api/v1/images/dashboard?${searchParams}`,

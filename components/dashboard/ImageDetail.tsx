@@ -22,12 +22,13 @@ import { useLikeImageMutation } from "@/services/dashboard/dashboardApi"
 import { IoPersonCircleSharp } from "react-icons/io5"
 import probe from "probe-image-size"
 
-interface ImageDetailProps {
+const ImageDetail = ({
+  image,
+  index,
+}: {
   image: DashboardImage
   index: number
-}
-
-const ImageDetail = ({ image, index }: ImageDetailProps) => {
+}) => {
   const router = useRouter()
   const [processImage, { isLoading, isError, data }] = useProcessImageMutation()
   const [processType, setProcessType] = useState("original")
@@ -46,15 +47,15 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
   useEffect(() => {
     const fetchImageSize = async () => {
       try {
-        const size = await probe(image.url);
-        setDimension({ width: size.width, height: size.height });
+        const size = await probe(image.url)
+        setDimension({ width: size.width, height: size.height })
       } catch (error) {
-        console.error('Failed to load image size:', error);
+        console.error("Failed to load image size:", error)
       }
-    };
+    }
 
-    fetchImageSize();
-  }, []);
+    fetchImageSize()
+  }, [])
 
   useEffect(() => {
     if (!open) {
@@ -62,6 +63,13 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
       setProcessType("original")
     }
   }, [open])
+
+  useEffect(() => {
+    setlikeInfo({
+      isLiked: image.is_liked,
+      likeNumber: image.like_number,
+    })
+  }, [image])
 
   const handleSelectValue = (processType: string) => {
     setProcessType(processType)
@@ -138,14 +146,13 @@ const ImageDetail = ({ image, index }: ImageDetailProps) => {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} key={index}>
       <DialogTrigger className="w-full">
         <Card className="transform transition-transform duration-300 hover:scale-105 ">
           <CardContent className=" p-0">
             <Image
               width={dimension.width}
               height={dimension.height}
-              key={index}
               className="w-full rounded-lg"
               src={image.url}
               alt={image.prompt}

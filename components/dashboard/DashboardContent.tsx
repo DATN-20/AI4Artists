@@ -11,12 +11,14 @@ import { useEffect, useState } from "react"
 import MansoryGrid from "./MansoryGrid"
 import { useGetAllDashboardImageQuery } from "@/services/dashboard/dashboardApi"
 import Loading from "../Loading"
+import { DashboardImage } from "@/types/dashboard"
 
 export default function DashboardContent() {
   const [currentSelection, setCurrentSelection] = useState({
     label: "Latest",
     value: "LATEST",
   })
+  const [images, setImages] = useState<DashboardImage[] | undefined>(undefined)
 
   const handleSelection = (selection: { label: string; value: string }) => {
     setCurrentSelection(selection)
@@ -31,6 +33,8 @@ export default function DashboardContent() {
   useEffect(() => {
     if (error) {
       console.error("Failed to fetch images:", error)
+    } else if (data) {
+      setImages(data.data)
     }
   }, [error, data])
 
@@ -86,33 +90,7 @@ export default function DashboardContent() {
           <Search />
         </div>
       </div>
-      <div className="no-scrollbar mt-4 flex gap-4 overflow-x-scroll">
-        <Button
-          className="rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
-          variant={"outline"}
-        >
-          All
-        </Button>
-        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
-          Photography
-        </Button>
-        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
-          Animals
-        </Button>
-        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
-          Anime
-        </Button>
-        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
-          Architecture
-        </Button>
-        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
-          Food
-        </Button>
-        <Button className="rounded-xl bg-card px-6 py-2 font-bold ">
-          Sci-fi
-        </Button>
-      </div>
-      {isLoading ? <Loading /> : <MansoryGrid data={data.data} />}
+      {isLoading ? <Loading /> : <MansoryGrid data={images} />}
     </div>
   )
 }

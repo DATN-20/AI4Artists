@@ -19,10 +19,18 @@ export type DashboardImage = {
   like_number: number
   remove_background: string
   upscale: string
+  visibility: boolean
 }
 
 export type DashboardImageGroup = {
   style: string
   prompt: string
   images: DashboardImage[]
+}
+
+export type AllDashboardImageResponse = {
+  data: DashboardImage[]
+  total: number
+  page: number
+  limit: number
 }
