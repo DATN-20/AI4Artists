@@ -143,8 +143,8 @@ const NavigationSideBarCard = () => {
             <li>
               <CardSection
                 onClick={() => {}}
-                title="Image Tag"
-                href="/tags"
+                title="Remove Background"
+                href="/"
                 isOpen={false}
                 icon={<FaTag />}
               />

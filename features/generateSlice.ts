@@ -5,7 +5,7 @@ import { set } from "react-hook-form"
 
 // Định nghĩa interface cho dữ liệu generate state
 export interface GenerateState {
-  aiInputs: [] | null
+  aiInputs: GenerateInput[] | null
   ai_name: string | null
   useImage: boolean
   useControlnet: boolean
@@ -34,7 +34,7 @@ export const generateSlice = createSlice({
   name: "generate",
   initialState,
   reducers: {
-    setInputs: (state, action: PayloadAction<{ aiInputs: [] }>) => {
+    setInputs: (state, action: PayloadAction<{ aiInputs: GenerateInput[] }>) => {
       state.aiInputs = action.payload.aiInputs
     },
     setAIStyleInputs: (state, action: PayloadAction<{ aiStyleInputs: [] }>) => {

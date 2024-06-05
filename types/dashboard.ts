@@ -20,3 +20,9 @@ export type DashboardImage = {
   remove_background: string
   upscale: string
 }
+
+export type DashboardImageGroup = {
+  style: string
+  prompt: string
+  images: DashboardImage[]
+}
