@@ -2,7 +2,7 @@ import React, { useEffect } from "react"
 import { DashboardImage } from "@/types/dashboard"
 import ImageDetail from "./ImageDetail"
 
-const MansoryGrid = ({ data }: { data: DashboardImage[] }) => {
+const MansoryGrid = ({ data }: { data: DashboardImage[] | undefined }) => {
   if (!data) {
     return <div>No images found.</div>
   }
@@ -23,7 +23,7 @@ const MansoryGrid = ({ data }: { data: DashboardImage[] }) => {
       {imageColumns.map((column, index) => (
         <div className="flex flex-col gap-4" key={index}>
           {column.map((item, index) => (
-            <ImageDetail key={index} image={item} index={index} />
+            <ImageDetail image={item} index={index} key={index} />
           ))}
         </div>
       ))}
