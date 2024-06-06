@@ -377,6 +377,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         toast.error((result as ErrorObject).error.data.message)
       } else {
         toast.success("Update profile successfully")
+        setEditProfileToggle(false)
       }
 
       setProfileData({
@@ -750,7 +751,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
                             <Button
                               onClick={() => {
                                 handleUpdateProfile()
-                                setEditProfileToggle(false)
                               }}
                             >
                               Yes
