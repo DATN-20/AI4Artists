@@ -371,7 +371,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
     }
 
     try {
-      const result = await updateProfile(requestBody as requestData).unwrap()
+      const result = await updateProfile(requestBody as requestData)
       // setGenerateImgData(result);
       if ((result as ErrorObject).error) {
         toast.error((result as ErrorObject).error.data.message)
@@ -562,7 +562,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
       <div className="ml-[240px] flex items-center justify-between px-2 pt-2">
         <div className="flex flex-col">
           <h1 className="flex text-3xl font-bold">
-            {profileData?.first_name + " " + profileData?.last_name}
+            {profileData?.first_name + " " + profileData?.last_name}{" "}
+            {profileData?.alias_name.length > 0
+              ? " (" + profileData?.alias_name + ")"
+              : ""}
             <AlertDialog open={editProfileToggle}>
               <IoPencilSharp
                 className="ml-3 cursor-pointer"
@@ -761,7 +764,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
               </AlertDialogContent>
             </AlertDialog>
           </h1>
-          <p className="text-lg font-light">{profileData?.alias_name}</p>
+          <p
+            className="text-lg font-light"
+            dangerouslySetInnerHTML={{ __html: profileData?.description }}
+          ></p>
         </div>
         {/* Social Links */}
         <div className="flex flex-col justify-end">

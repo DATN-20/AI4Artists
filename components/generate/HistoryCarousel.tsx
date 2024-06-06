@@ -152,30 +152,30 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
                           className="rounded-lg"
                         />
                       </CardContent>
-                      <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
+                      <div className="absolute inset-0   bg-black bg-opacity-50 pt-5 opacity-0 transition-opacity duration-300 hover:opacity-100">
                         <div className="flex max-w-full items-center justify-end gap-x-2 pr-5">
                           {isPublic[index] ? (
                             <IoEyeOutline
                               size={32}
-                              className="cursor-pointer hover:text-primary"
+                              className="cursor-pointer text-white hover:text-primary"
                               onClick={() => changePublicStatus(item.id, index)}
                             />
                           ) : (
                             <FaRegEyeSlash
                               size={32}
-                              className="cursor-pointer hover:text-primary"
+                              className="cursor-pointer text-white hover:text-primary"
                               onClick={() => changePublicStatus(item.id, index)}
                             />
                           )}
                           <DialogTrigger asChild>
                             <IoAddCircleOutline
                               size={32}
-                              className="cursor-pointer hover:text-primary"
+                              className="cursor-pointer text-white hover:text-primary"
                             />
                           </DialogTrigger>
                           <IoCloudDownloadOutline
                             size={32}
-                            className="cursor-pointer hover:text-primary"
+                            className="cursor-pointer text-white hover:text-primary"
                             onClick={(e) => {
                               e.stopPropagation()
                               saveImageToDisk(item.url)
