@@ -13,25 +13,22 @@ import { useEffect, useState } from "react"
 import { useProcessImageMutation } from "@/services/image/imageApi"
 import { ProcessType } from "../../types/Image"
 import { useRouter } from "next/navigation"
-import { set } from "react-hook-form"
 import Loading from "../Loading"
 import { Card, CardContent } from "../ui/card"
-import { extractCloudinaryId } from "../../lib/cloudinary"
 import Image from "next/image"
 import { FaHeart } from "react-icons/fa"
-import { IconContext } from "react-icons"
 import { Label } from "@radix-ui/react-label"
 import { useLikeImageMutation } from "@/services/dashboard/dashboardApi"
 import { IoPersonCircleSharp } from "react-icons/io5"
+import probe from "probe-image-size"
 
-interface ImageDetailProps {
+const ImageDetail = ({
+  image,
+  index,
+}: {
   image: DashboardImage
   index: number
-  width: number
-  height: number
-}
-
-const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
+}) => {
   const router = useRouter()
   const [processImage, { isLoading, isError, data }] = useProcessImageMutation()
   const [processType, setProcessType] = useState("original")
@@ -42,6 +39,23 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
     isLiked: image.is_liked,
     likeNumber: image.like_number,
   })
+  const [dimension, setDimension] = useState<{
+    width: number
+    height: number
+  }>({ width: 0, height: 0 })
+
+  useEffect(() => {
+    const fetchImageSize = async () => {
+      try {
+        const size = await probe(image.url)
+        setDimension({ width: size.width, height: size.height })
+      } catch (error) {
+        console.error("Failed to load image size:", error)
+      }
+    }
+
+    fetchImageSize()
+  }, [])
 
   useEffect(() => {
     if (!open) {
@@ -49,6 +63,13 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
       setProcessType("original")
     }
   }, [open])
+
+  useEffect(() => {
+    setlikeInfo({
+      isLiked: image.is_liked,
+      likeNumber: image.like_number,
+    })
+  }, [image])
 
   const handleSelectValue = (processType: string) => {
     setProcessType(processType)
@@ -80,12 +101,16 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
     if (isUpscale) {
       setSelectedImage(image.upscale)
     } else {
-      const result = await processImage({
-        processType: ProcessType.UPSCALE,
-        imageId: image.id,
-      })
-      if ("data" in result) {
-        setSelectedImage(result?.data.upscale)
+      try {
+        const result = await processImage({
+          processType: ProcessType.UPSCALE,
+          imageId: image.id,
+        })
+        if ("data" in result) {
+          setSelectedImage(result?.data.upscale)
+        }
+      } catch (error) {
+        console.log("Error upscaling image:", error)
       }
     }
   }
@@ -102,7 +127,7 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
         imageId: image.id,
       })
       if ("data" in result) {
-        setSelectedImage(result?.data.removeBackground)
+        setSelectedImage(result?.data.remove_background)
       }
     }
   }
@@ -121,14 +146,13 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} key={index}>
       <DialogTrigger className="w-full">
         <Card className="transform transition-transform duration-300 hover:scale-105 ">
           <CardContent className=" p-0">
             <Image
-              width={width}
-              height={height}
-              key={index}
+              width={dimension.width}
+              height={dimension.height}
               className="w-full rounded-lg"
               src={image.url}
               alt={image.prompt}
@@ -137,7 +161,7 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
           </CardContent>
           <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
             <div className="absolute top-0 flex w-full items-center justify-between p-3">
-              <div className="flex space-x-2 content-center">
+              <div className="flex content-center space-x-2">
                 <div>
                   {image.created_user?.avatar ? (
                     <Image
@@ -146,6 +170,7 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
                       className="rounded-full"
                       src={image.created_user?.avatar}
                       alt={image.prompt}
+                      loading="lazy"
                     />
                   ) : (
                     <IoPersonCircleSharp size={25} />
@@ -332,20 +357,22 @@ const ImageDetail = ({ image, index, width, height }: ImageDetailProps) => {
                 </p>
               </div>
             </div>
+
             <div className="mt-[8px] flex items-center">
               <h1 className="w-1/3 flex-shrink-0 text-lg font-semibold">
                 Width
               </h1>
               <div className="flex-grow rounded-lg bg-card">
-                <p className="p-4">{width}</p>
+                <p className="p-4">{dimension.width}</p>
               </div>
             </div>
+
             <div className="mt-[8px] flex items-center">
               <h1 className="w-1/3 flex-shrink-0 text-lg font-semibold">
                 Height
               </h1>
               <div className="flex-grow rounded-lg bg-card">
-                <p className="p-4">{height}</p>
+                <p className="p-4">{dimension.height}</p>
               </div>
             </div>
           </div>

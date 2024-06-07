@@ -6,6 +6,7 @@ import {
   selectGenerate,
   setDimension,
   setField,
+  setStyleDimension,
   setUseCustomDimension,
 } from "@/features/generateSlice"
 import ShortInput from "./ShortInput"
@@ -21,9 +22,11 @@ type Option = {
 const ChooseInput = ({
   options,
   type,
+  isStyle = false,
 }: {
   options: Option[]
   type: string
+  isStyle?: boolean
 }) => {
   const [selectedValue, setSelectedValue] = useState<string>(options[0].value)
   const dispatch = useAppDispatch()
@@ -31,27 +34,32 @@ const ChooseInput = ({
 
   const handleSelect = (value: string, type: string) => {
     setSelectedValue(value)
-    if (type === "numberOfImage") {
-      dispatch(setField({ field: "numberOfImage", value: Number(value) }))
-    } else if (type === "dimension") {
-      if (value === "1") {
-        dispatch(setDimension({ width: 512, height: 512 }))
-      } else if (value === "2") {
-        dispatch(setDimension({ width: 768, height: 768 }))
-      } else if (value === "3") {
-        dispatch(setDimension({ width: 512, height: 1024 }))
-      } else if (value === "4") {
-        dispatch(setDimension({ width: 768, height: 1024 }))
-      } else if (value === "5") {
-        dispatch(setDimension({ width: 1024, height: 768 }))
+    if (type === "dimension") {
+      const dimensions: { [key: string]: { width: number; height: number } } = {
+        "1": { width: 512, height: 512 },
+        "2": { width: 768, height: 768 },
+        "3": { width: 512, height: 1024 },
+        "4": { width: 768, height: 1024 },
+        "5": { width: 1024, height: 768 },
+        "default": { width: 1024, height: 1024 },
+      };
+
+      const dimension = dimensions[value] || dimensions["default"]
+
+      if (isStyle) {
+        dispatch(setStyleDimension(dimension))
       } else {
-        dispatch(setDimension({ width: 1024, height: 1024 }))
+        dispatch(setDimension(dimension))
       }
     }
   }
   useEffect(() => {
-    dispatch(setDimension({ width: 512, height: 512 }))
-  }, [])
+    if (isStyle) {
+      dispatch(setStyleDimension({ width: 512, height: 512 }))
+    } else {
+      dispatch(setDimension({ width: 512, height: 512 }))
+    }
+  }, [isStyle])
 
   return (
     <div className="-mx-2 flex flex-wrap items-center">

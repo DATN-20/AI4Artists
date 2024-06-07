@@ -9,40 +9,19 @@ import {
 } from "../ui/dropdown-menu"
 import { useEffect, useState } from "react"
 import MansoryGrid from "./MansoryGrid"
-import {
-  useGetAllDashboardImageQuery,
-  useGetSearchImageQuery,
-} from "@/services/dashboard/dashboardApi" // Correct import
+import { useGetAllDashboardImageQuery } from "@/services/dashboard/dashboardApi"
 import Loading from "../Loading"
-import React from "react" // Import React for typing events
-
-interface Selection {
-  label: string
-  value: string
-}
+import { DashboardImage } from "@/types/dashboard"
 
 export default function DashboardContent() {
-  const [currentSelection, setCurrentSelection] = useState<Selection>({
+  const [currentSelection, setCurrentSelection] = useState({
     label: "Latest",
     value: "LATEST",
   })
+  const [images, setImages] = useState<DashboardImage[] | undefined>(undefined)
 
-  const [searchTerm, setSearchTerm] = useState<string>("")
-  const [triggerSearch, setTriggerSearch] = useState<boolean>(false)
-  const [displaySearch, setDisplaySearch] = useState<boolean>(false)
-
-  const handleSelection = (selection: Selection) => {
+  const handleSelection = (selection: { label: string; value: string }) => {
     setCurrentSelection(selection)
-  }
-
-  const handleSearchSubmit = () => {
-    setTriggerSearch(true)
-  }
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      handleSearchSubmit()
-    }
   }
 
   const { data, error, isLoading } = useGetAllDashboardImageQuery({
@@ -51,40 +30,13 @@ export default function DashboardContent() {
     limit: 100,
   })
 
-  const {
-    data: searchData,
-    error: searchError,
-    isLoading: isSearchLoading,
-  } = useGetSearchImageQuery(
-    {
-      query: searchTerm,
-      page: 1,
-      limit: 100,
-    },
-    { skip: !triggerSearch },
-  )
-
-  useEffect(() => {
-    if (triggerSearch) {
-      setTriggerSearch(false)
-      setDisplaySearch(true)
-    }
-  }, [searchData, searchError])
-
-  useEffect(() => {
-    if (searchTerm === "") {
-      setDisplaySearch(false)
-    }
-  }, [searchTerm])
-
   useEffect(() => {
     if (error) {
       console.error("Failed to fetch images:", error)
+    } else if (data) {
+      setImages(data.data)
     }
-    if (searchError) {
-      console.error("Failed to fetch images:", searchError)
-    }
-  }, [error, searchError])
+  }, [error, data])
 
   return (
     <div className="flex w-full flex-col lg:p-2">
@@ -129,22 +81,16 @@ export default function DashboardContent() {
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-        <div className="flex items-center justify-center rounded-full bg-card px-4">
+        <div className="flex items-center justify-center rounded-full bg-card px-4 ">
           <input
             type="text"
-            placeholder="search"
-            className="flex-grow bg-transparent placeholder-white outline-none"
-            onKeyDown={handleKeyDown}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search"
+            className="flex-grow bg-transparent outline-none dark:placeholder-white"
           />
-          <Search onClick={handleSearchSubmit} className="cursor-pointer" />
+          <Search />
         </div>
       </div>
-      {isLoading || isSearchLoading ? (
-        <Loading />
-      ) : (
-        <MansoryGrid data={displaySearch ? searchData?.data : data?.data} />
-      )}
+      {isLoading ? <Loading /> : <MansoryGrid data={images} />}
     </div>
   )
 }

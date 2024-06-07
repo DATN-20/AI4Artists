@@ -17,13 +17,6 @@ import {
   useGenerateStyleImageMutation,
 } from "../../services/generate/generateApi"
 import { renderInput } from "./renderInput"
-import { useAppDispatch } from "../../store/hooks"
-import { shallowEqual, useSelector } from "react-redux"
-import {
-  selectGenerate,
-  setStyleField,
-  eraseStyleFields,
-} from "../../features/generateSlice"
 import { base64StringToFile } from "../../lib/base64StringToFile"
 import { toast } from "react-toastify"
 
@@ -77,40 +70,24 @@ const StyleDrawer = ({
     }
   }, [open])
 
+  useEffect(() => {
+    console.log(generateStates.dataStyleInputs)
+  }, [generateStates.dataStyleInputs])
+
   const submitData = async () => {
     const formData = new FormData()
 
-    if (generateStates.dataInputs && generateStates.dataStyleInputs) {
-      generateStates.dataInputs.forEach((input: any, index: any) => {
+    if (generateStates.dataStyleInputs) {
+      formData.append("aiName", "comfyUI")
+
+      generateStates.dataStyleInputs.forEach((input: any, index: any) => {
         const { name, value } = input
-
-        if (name === "image") {
-          if (generateStates.useImage) {
-            const imageInput = generateStates.dataInputs?.find(
-              (input: any) => input.name === "image",
-            )
-            if (imageInput) {
-              const base64String = (imageInput as any).value
-              if (base64String) {
-                const filename = "image.jpg"
-                const imageFile = base64StringToFile(base64String, filename)
-                formData.append("image", imageFile)
-                return
-              }
-            }
-          }
-        }
-
         if (name === "controlNetImages") {
           const imageFile = base64StringToFile(value as string, "image.jpg")
           formData.append("controlNetImages", imageFile)
           return
         }
-        formData.append(name, (value as any).toString())
-      })
-      formData.append("aiName", "comfyUI")
-      generateStates.dataStyleInputs.forEach((input: any, index: any) => {
-        const { name, value } = input
+
         if (name === "imageForIpadapter") {
           const imageInput = generateStates.dataStyleInputs?.find(
             (input: any) => input.name === "imageForIpadapter",
@@ -118,7 +95,7 @@ const StyleDrawer = ({
           if (imageInput) {
             const base64String = (imageInput as any).value
             if (base64String) {
-              const filename = "image.jpg"
+              const filename = "image.png"
               const imageFile = base64StringToFile(base64String, filename)
               formData.append("imageForIpadapter", imageFile)
               return
@@ -133,8 +110,7 @@ const StyleDrawer = ({
       })
 
       try {
-        let result = await generateStyle(formData)
-        console.log(result)
+        await generateStyle(formData)
       } catch (error) {
         console.error("Error generating image:", error)
         toast.error("Error generating image")
@@ -193,8 +169,8 @@ const StyleDrawer = ({
               inputData,
               dispatch,
               generateStates,
-              inputData.input_property_name,
               currentStep - 1,
+              true,
               true,
             )}
           </div>

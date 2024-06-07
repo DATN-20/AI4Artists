@@ -16,6 +16,9 @@ export interface requestData {
   firstName: string
   lastName: string
   aliasName: string
+  phone:string
+  address: string
+  description: string
   profileImageUrl: string
   socials: { socialName: string; socialLink: string }[]
   avatar: string

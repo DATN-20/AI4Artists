@@ -82,8 +82,10 @@ export default function GenerateSideBar() {
       </CardHeader>
       {noiseElement}
 
-      <div className="flex items-center justify-between p-4 mt-4">
-        <Label htmlFor="use-style-mode" className="text-lg font-semibold">Use Style Generation</Label>
+      <div className="mt-4 flex items-center justify-between p-4">
+        <Label htmlFor="use-style-mode" className="text-lg font-semibold">
+          Use Style Generation
+        </Label>
         <Switch
           id="use-style-mode"
           className="bg-black"
@@ -113,7 +115,11 @@ export default function GenerateSideBar() {
                   title={"Image Dimensions"}
                   key="image-dimensions"
                 >
-                  <ChooseInput options={dimensionOptions} type="dimension" />
+                  <ChooseInput
+                    options={dimensionOptions}
+                    type="dimension"
+                    isStyle={true}
+                  />
                 </CollapsibleSection>
               )
             }
@@ -126,8 +132,8 @@ export default function GenerateSideBar() {
                   aiInput,
                   dispatch,
                   generateStates,
-                  undefined,
-                  undefined,
+                  0,
+                  true,
                   false,
                 )}
               </Card>
@@ -162,8 +168,8 @@ export default function GenerateSideBar() {
                   aiInput,
                   dispatch,
                   generateStates,
-                  undefined,
                   0,
+                  false,
                   false,
                 )}
               </Card>

@@ -12,11 +12,11 @@ import { Label } from "../../ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { setField, setStyleField } from "@/features/generateSlice"
-import { toast } from "react-toastify"
 import { useGetProfileAlbumMutation } from "@/services/profile/profileApi"
 import { selectAuth, setTotalAlbum } from "@/features/authSlice"
 import Image from "next/image"
 import axios from "axios"
+import { AlbumWithImages, ImageAlbum } from "@/types/profile"
 
 const DynamicImageInput = ({
   name,
@@ -38,8 +38,19 @@ const DynamicImageInput = ({
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
   const authStates = useAppSelector(selectAuth)
+  const [selectedInputImage, setSelectedInputImage] = useState<File | null>(
+    null,
+  )
+  const [selectedAlbumImage, setSelectedAlbumImage] = useState<File | null>(
+    null,
+  )
+  const [selectedAlbumImageIndex, setSelectedAlbumImageIndex] =
+    useState<number>(-1)
 
-  const base64ToFile = async (base64: string, filename: string): Promise<File> => {
+  const base64ToFile = async (
+    base64: string,
+    filename: string,
+  ): Promise<File> => {
     const response = await fetch(base64)
     const blob = await response.blob()
     return new File([blob], filename, { type: blob.type })
@@ -112,7 +123,7 @@ const DynamicImageInput = ({
     setSelectedAlbum(album)
   }
 
-  const handleImageSelectFromAlbum = async (image: any) => {
+  const handleImageSelectFromAlbum = async (image: any, index: number) => {
     try {
       const response = await axios.get(image.image.url, {
         responseType: "blob",
@@ -121,6 +132,7 @@ const DynamicImageInput = ({
         type: response.data.type,
       })
       setSelectedImage(imageFile)
+      setSelectedAlbumImageIndex(index)
 
       const reader = new FileReader()
       reader.onloadend = () => {
@@ -151,43 +163,55 @@ const DynamicImageInput = ({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <Label htmlFor="array-mode" className="text-lg font-semibold">
-          {name}
-        </Label>
+        {!selectedImage && (
+          <Label htmlFor="array-mode" className="text-lg font-semibold">
+            {name}
+          </Label>
+        )}
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger>
-            <Button
-              variant={"outline"}
-              className="w-fit rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
-            >
-              Add Image
-            </Button>
+            {!selectedImage && (
+              <Button
+                variant={"outline"}
+                className="w-fit rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+              >
+                Add Image
+              </Button>
+            )}
           </DialogTrigger>
           <DialogContentLoginModal
-            className="flex h-[80vh] min-h-[80vh] w-[80vw] min-w-[80vw] flex-col border-none p-0"
+            className="flex h-[80vh] max-h-[80vh] w-[80vw] min-w-[80vw] flex-col border-none p-0"
             style={{ borderRadius: 30 }}
           >
             <DialogHeader className="mt-12 flex w-full items-center space-y-0">
               <h2 className="text-2xl font-semibold">Add Image</h2>
             </DialogHeader>
-            <Tabs defaultValue="local" className="mx-10 flex h-full flex-col">
+            <Tabs
+              defaultValue="local"
+              className="mx-10 flex h-full max-h-full flex-col"
+            >
               <TabsList className="grid grid-cols-2">
                 <TabsTrigger value="local">Upload </TabsTrigger>
                 <TabsTrigger value="album">Album</TabsTrigger>
               </TabsList>
-              <TabsContent value="local" className="mb-10 h-full">
+              <TabsContent
+                value="local"
+                className=" mb-10 h-full max-h-full pt-5"
+              >
                 <div
                   onClick={handleClick}
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
-                  className="mt-5 flex h-full cursor-pointer items-center justify-center space-y-0 rounded-xl border-2 border-dashed border-black p-5 text-center dark:border-white"
+                  className="flex h-full max-h-fit cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-black p-5 text-center caret-transparent dark:border-white"
                 >
                   {selectedImage ? (
-                    <img
-                      src={URL.createObjectURL(selectedImage)}
-                      alt="Selected"
-                      className="mx-auto max-h-[512px] max-w-[512px]"
-                    />
+                    <div className="relative h-full w-full">
+                      <img
+                        src={URL.createObjectURL(selectedImage)}
+                        alt="Selected"
+                        className="absolute inset-0 h-full w-full rounded-xl object-contain"
+                      />
+                    </div>
                   ) : (
                     <p className="dark:text-white">
                       Drag & drop an image here or click to select one
@@ -197,7 +221,7 @@ const DynamicImageInput = ({
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
-                    className="hidden"
+                    className="pointer-events-none hidden"
                     ref={fileInputRef}
                     placeholder="Upload an image"
                   />
@@ -205,30 +229,41 @@ const DynamicImageInput = ({
               </TabsContent>
               <TabsContent value="album">
                 {selectedAlbum ? (
-                  <div className="mt-3 grid grid-cols-4 gap-4 p-1">
-                    {selectedAlbum.images &&
-                      selectedAlbum.images.map(
-                        (image: any, imageIndex: number) => (
-                          <div
-                            key={imageIndex}
-                            className="relative h-40 cursor-pointer"
-                            onClick={() => handleImageSelectFromAlbum(image)}
-                          >
-                            <Image
-                              src={image.image.url}
-                              alt={`Image ${imageIndex + 1}`}
-                              layout="fill"
-                              objectFit="cover"
-                              className="rounded-md"
-                            />
-                          </div>
-                        ),
-                      )}
-                  </div>
+                  <>
+                    <div className="mt-3 grid h-[300px] grid-cols-4 gap-4 p-1">
+                      {selectedAlbum.images &&
+                        selectedAlbum.images.map(
+                          (image: ImageAlbum, imageIndex: number) => (
+                            <div
+                              key={imageIndex}
+                              className="relative h-40 cursor-pointer transition-opacity duration-300 hover:opacity-50"
+                              onClick={() =>
+                                handleImageSelectFromAlbum(image, imageIndex)
+                              }
+                            >
+                              <Image
+                                src={image.url}
+                                alt={`Image ${imageIndex + 1}`}
+                                layout="fill"
+                                objectFit="cover"
+                                className={`rounded-md ${selectedAlbumImageIndex === imageIndex ? "border-2 border-primary-500 opacity-50" : ""}`}
+                              />
+                            </div>
+                          ),
+                        )}
+                    </div>
+                    <Button
+                      variant={"outline"}
+                      className=" flex w-fit rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+                      onClick={() => setSelectedAlbum(null)}
+                    >
+                      Back
+                    </Button>
+                  </>
                 ) : (
-                  <div className="mt-3 grid grid-cols-4 gap-4 p-1">
+                  <div className="mt-3 grid h-[300px] grid-cols-4 gap-4 p-1">
                     {authStates?.totalAlbum?.map(
-                      (album: any, index: number) => (
+                      (album: AlbumWithImages, index: number) => (
                         <div
                           key={index}
                           className={`relative grid h-full w-full gap-1 ${
@@ -242,10 +277,10 @@ const DynamicImageInput = ({
                             album.images.length > 0 &&
                             album.images
                               .slice(0, 4)
-                              .map((image: any, imageIndex: number) => (
+                              .map((image: ImageAlbum, imageIndex: number) => (
                                 <div key={imageIndex} className="relative h-40">
                                   <Image
-                                    src={image.image.url}
+                                    src={image.url}
                                     alt={`Image ${imageIndex + 1}`}
                                     layout="fill"
                                     objectFit="cover"
@@ -269,15 +304,6 @@ const DynamicImageInput = ({
                   </div>
                 )}
               </TabsContent>
-              <div className="my-5 flex justify-end">
-                <Button
-                  variant={"outline"}
-                  className=" flex w-fit rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
-                  onClick={() => setOpen(false)}
-                >
-                  Save Changes
-                </Button>
-              </div>
             </Tabs>
           </DialogContentLoginModal>
         </Dialog>
@@ -286,9 +312,10 @@ const DynamicImageInput = ({
         <Image
           src={selectedImage ? URL.createObjectURL(selectedImage) : ""}
           alt="Selected"
-          className="h-[512px] w-full rounded-xl object-cover"
+          className="w-full rounded-xl object-cover"
           width={512}
           height={512}
+          onClick={() => setOpen(true)}
         />
       )}
     </div>

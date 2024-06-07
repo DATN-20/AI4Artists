@@ -3,9 +3,9 @@
 import { ChangeEvent, useContext, useEffect, useState } from "react"
 import GenerateSideBar from "@/components/sidebar/GenerateSideBar"
 import {
-  useAiInformationMutation,
+  useAiInformationQuery,
   useAiStyleInformationMutation,
-  useGetGenerationHistoryMutation,
+  useGetGenerationHistoryQuery,
   useImageToImageMutation,
   useTextToImageMutation,
 } from "@/services/generate/generateApi"
@@ -13,42 +13,21 @@ import { useAppDispatch } from "@/store/hooks"
 import {
   selectGenerate,
   setInputs,
-  setUseImage,
-  // setPositivePrompt,
-  // setNegativePrompt,
   setHistory,
   setAIName,
   setField,
   setAIStyleInputs,
 } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
-import { Skeleton } from "../../../components/ui/skeleton"
-import Carousel from "@/components/generate/Carousel"
 import GenerateControls from "@/components/generate/GenerateControls"
 import Loading from "@/components/Loading"
 import HistoryCarousel from "@/components/generate/HistoryCarousel"
 import { useGetProfileAlbumMutation } from "@/services/profile/profileApi"
 import { selectAuth, setTotalAlbum } from "@/features/authSlice"
 import { CanvasModeContext } from "../../../store/canvasHooks"
-import { Button } from "@/components/ui/button"
-
-interface AIField {
-  ai_name: string | null
-  inputs: InputField[]
-}
-
-// Định nghĩa interface cho các trường dữ liệu input
-interface InputField {
-  name: string
-  default: string | number | null
-  typeName: string
-  max?: number
-  min?: number
-  step?: number
-  info?: {
-    choices?: Record<string, string>
-  }
-}
+import { toast } from "react-toastify"
+import { TagsContext } from "@/store/tagsHooks"
+import { IoIosClose } from "react-icons/io"
 
 export default function Generate() {
   const dispatch = useAppDispatch()
@@ -58,28 +37,24 @@ export default function Generate() {
   const [promptNeg, setPromptNeg] = useState("")
   const [isLoadingInformation, setIsLoadingInformation] = useState(true)
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
-  const [useImg2Img, setUseImg2Img] = useState(false)
 
   const canvasModeContext = useContext(CanvasModeContext)
-  const [
-    getGenerationHistory,
-    { data: historyData, error: historyError, isSuccess: getHistorySuccess },
-  ] = useGetGenerationHistoryMutation()
+  const { data: historyData, refetch } = useGetGenerationHistoryQuery()
   const authStates = useSelector(selectAuth)
-
-  const fetchHistoryData = async () => {
-    await getGenerationHistory(undefined)
-  }
-
+  const { setGenerateTags, generateTags } = useContext(TagsContext)
 
   const handlePosPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const prompt = event.target.value
     setPromptPos(prompt)
-    dispatch(setField({ field: "positivePrompt", value: prompt }))
+    if (generateTags.length > 0) {
+      dispatch(
+        setField({
+          field: "positivePrompt",
+          value: prompt + ", " + generateTags,
+        }),
+      )
+    } else dispatch(setField({ field: "positivePrompt", value: prompt }))
   }
-
-  const [isLoading, setIsLoading] = useState(false)
-  const [isError, setIsError] = useState(false)
 
   const [textToImage] = useTextToImageMutation()
   const [imageToImage] = useImageToImageMutation()
@@ -108,16 +83,12 @@ export default function Generate() {
       link.href = blobUrl
       link.download = "image.jpg"
       document.body.appendChild(link)
-
       link.click()
-
       URL.revokeObjectURL(blobUrl)
-
       document.body.removeChild(link)
-
-      console.log("Image saved successfully!")
-    } catch (error) {
-      console.error("Error saving image:", error)
+      toast.success("Image saved successfully!")
+    } catch (error: any) {
+      toast.error("Error saving image")
     }
   }
 
@@ -135,11 +106,11 @@ export default function Generate() {
     }
   }
 
-
   const handleGenerate = async () => {
-    fetchHistoryData()
-    setIsLoading(true)
-    setIsError(false)
+    if (promptPos === "" && generateTags === "") {
+      toast.error("Please enter a prompt or select tags")
+      return
+    }
 
     const formData = new FormData()
 
@@ -181,13 +152,14 @@ export default function Generate() {
       } else {
         result = await textToImage(formData).unwrap()
       }
-      console.log(result)
       setGenerateImgData(result)
-    } catch (error) {
-      console.error("Error generating image:", error)
-      setIsError(true)
-    } finally {
-      setIsLoading(false)
+      toast.success("Image is being generated! Please check for our notification.")
+    } catch (error: any) {
+      console.log(error)
+      toast.error(
+        "Error generating image: " +
+          (error as { data: { message: string } }).data.message,
+      )
     }
   }
 
@@ -196,8 +168,9 @@ export default function Generate() {
     setPromptNeg(prompt)
     dispatch(setField({ field: "negativePrompt", value: prompt }))
   }
-  const [aiInformation, { data: inputData }] = useAiInformationMutation()
-  const [aiStyleInformation, {data: inputStyleData}] = useAiStyleInformationMutation()
+  const { data: inputData, refetch: refetchData } = useAiInformationQuery()
+  const [aiStyleInformation, { data: inputStyleData }] =
+    useAiStyleInformationMutation()
 
   useEffect(() => {
     const promptValue = localStorage.getItem("prompt")
@@ -205,14 +178,6 @@ export default function Generate() {
     if (promptValue) {
       setPromptPos(promptValue)
     }
-    const fetchAIData = async () => {
-      await aiInformation(undefined)
-    }
-    fetchAIData()
-    const fetchHistoryData = async () => {
-      await getGenerationHistory(undefined)
-    }
-    fetchHistoryData()
     const fetchAlbumData = async () => {
       await getAlbum(undefined)
     }
@@ -267,37 +232,26 @@ export default function Generate() {
               useNegativePrompt={useNegativePrompt}
               promptPos={promptPos}
             />
-            {/* {isLoading ? (
-              <Skeleton
-                className="mt-5 rounded-xl"
-                style={{ width: 512, height: 512 }}
-              />
-            ) : (
-              generateImgData && (
-                <Carousel
-                  generateImgData={generateImgData}
-                  width={512}
-                  height={512}
+            {generateTags.length > 0 && (
+              <span className="relative rounded-sm border-2 border-primary-700 bg-transparent p-2 text-sm font-bold text-primary-700">
+                {generateTags}
+                <IoIosClose
+                  className="absolute right-[-5px] top-[-10px] size-4 cursor-pointer rounded-full bg-red-500 text-sm text-white hover:bg-red-300"
+                  onClick={() => setGenerateTags("")}
                 />
-              )
-            )} */}
-            {/* <Button
-              variant={"outline"}
-              className="mt-[16px] w-fit  rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
-              onClick={downloadAllImages}
-            >
-              Download all images
-            </Button> */}
+              </span>
+            )}
+            <h1 className="mt-5 text-3xl font-bold">Generated Images</h1>
             {historyData &&
-              historyData.map((item: any, index: number) => (
+              historyData.map((item: ImageGroup, index: number) => (
                 <HistoryCarousel
                   key={index}
                   generateImgData={item.images}
                   width={512}
                   height={512}
-                  styleAlbum={item.style}
+                  styleAlbum={item.style || undefined}
                   prompt={item.prompt}
-                  album={authStates.totalAlbum}
+                  album={authStates?.totalAlbum}
                 />
               ))}
           </div>
