@@ -46,17 +46,13 @@ export default function Generate() {
     dispatch(
       setField({
         field: "positivePrompt",
-        value: `${prompt}${
-          generateTags.length > 0 ? `, ${generateTags}` : ""
-        }`,
+        value: `${prompt}${generateTags.length > 0 ? `, ${generateTags}` : ""}`,
       }),
     )
     dispatch(
       setStyleField({
         field: "positivePrompt",
-        value: `${prompt}${
-          generateTags.length > 0 ? `, ${generateTags}` : ""
-        }`,
+        value: `${prompt}${generateTags.length > 0 ? `, ${generateTags}` : ""}`,
       }),
     )
   }
@@ -119,6 +115,16 @@ export default function Generate() {
     if (promptPos === "" && generateTags === "") {
       toast.error("Please enter a prompt or select tags")
       return
+    }
+
+    if (generateStates.useControlnet) {
+      const controlNetImagesInput = generateStates.dataInputs?.find(
+        (input: any) => input.name === "controlNetImages",
+      )
+      if (!controlNetImagesInput) {
+        toast.error("Please upload control net images")
+        return
+      }
     }
 
     const formData = new FormData()
