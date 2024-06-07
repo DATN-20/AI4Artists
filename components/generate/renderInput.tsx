@@ -13,7 +13,7 @@ import {
 import { Label } from "../ui/label"
 import { Switch } from "../ui/switch"
 import DynamicImageInput from "./input-component/DynamicImageInput"
-import { ControlnetDialog } from "./ControlnetDialog"
+import ControlnetDialog from "./ControlnetDialog"
 import TrueFalseInput from "./input-component/TrueFalseInput"
 import { Card } from "../ui/card"
 import StyleDrawer from "./StyleDrawer"
@@ -86,6 +86,7 @@ export const renderInput = (
                 delete: true,
               }),
             )
+
             return (
               <div className="flex justify-between p-4 pb-0">
                 <Label htmlFor="image-mode" className="text-lg font-semibold">
@@ -133,7 +134,10 @@ export const renderInput = (
         case "controlNetImages":
           return (
             <CollapsibleSection title={name} key={propertyName}>
-              <ControlnetDialog type={propertyName} />
+              <ControlnetDialog
+                type={propertyName}
+                isStyleGenerate={isStyleGenerate}
+              />
             </CollapsibleSection>
           )
 
