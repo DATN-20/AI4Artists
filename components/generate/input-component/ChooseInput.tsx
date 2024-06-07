@@ -5,11 +5,9 @@ import { useAppDispatch } from "@/store/hooks"
 import {
   selectGenerate,
   setDimension,
-  setField,
   setStyleDimension,
   setUseCustomDimension,
 } from "@/features/generateSlice"
-import ShortInput from "./ShortInput"
 import { useSelector } from "react-redux"
 import SliderInput from "./SliderInput"
 import CollapsibleSection from "../CollapsibleSection"
@@ -41,8 +39,8 @@ const ChooseInput = ({
         "3": { width: 512, height: 1024 },
         "4": { width: 768, height: 1024 },
         "5": { width: 1024, height: 768 },
-        "default": { width: 1024, height: 1024 },
-      };
+        default: { width: 1024, height: 1024 },
+      }
 
       const dimension = dimensions[value] || dimensions["default"]
 
@@ -54,10 +52,12 @@ const ChooseInput = ({
     }
   }
   useEffect(() => {
-    if (isStyle) {
-      dispatch(setStyleDimension({ width: 512, height: 512 }))
-    } else {
-      dispatch(setDimension({ width: 512, height: 512 }))
+    if (type === "dimension") {
+      if (isStyle) {
+        dispatch(setStyleDimension({ width: 512, height: 512 }))
+      } else {
+        dispatch(setDimension({ width: 512, height: 512 }))
+      }
     }
   }, [isStyle])
 

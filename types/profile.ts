@@ -1,16 +1,22 @@
 export interface Social {
-  socialLink: string;
-  socialName: string;
+  social_name: string;
+  social_link: string;
 }
 
 export interface Person {
-  firstName: string;
-  lastName: string;
-  aliasName?: string;
+  id: number;
+  first_name: string;
+  last_name: string;
   phone: string;
   address: string;
   description: string;
   socials: Social[];
+  alias_name: string;
+  role: string;
+  avatar: string;
+  background: string;
+  created_at: Date;
+  updated_at: Date;
 }
 export interface requestData {
   firstName: string

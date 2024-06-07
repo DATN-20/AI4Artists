@@ -33,22 +33,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { requestData } from "@/types/profile"
+import { Person, requestData } from "@/types/profile"
 import { ErrorObject } from "@/types"
 
 interface ProfileHeaderProps {
-  userData: {
-    first_name: string
-    last_name: string
-    alias_name: string
-    profileImageUrl: string
-    socials: { social_name: string; social_link: string }[]
-    avatar: string
-    background: string
-    phone: string
-    address: string
-    description: string
-  }
+  userData: Person | undefined
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
