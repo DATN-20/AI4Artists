@@ -14,7 +14,6 @@ const SliderInput = ({
   step,
   defaultValue,
   type,
-  arrayType,
   arrayIndex,
   isStyleGenerate,
 }: {
@@ -23,7 +22,6 @@ const SliderInput = ({
   step: number
   defaultValue?: number
   type: string
-  arrayType?: string
   arrayIndex?: number
   isStyleGenerate?: boolean
 }) => {
@@ -36,41 +34,31 @@ const SliderInput = ({
   const handleValueChange = (valueArray: number[], type: string) => {
     setValue(valueArray[0])
 
-    if (arrayType) {
-      if (isStyleGenerate) {
-        dispatch(
-          setStyleField({
-            field: type,
-            value: valueArray[0],
-            ArrayIndex: arrayIndex,
-          }),
-        )
-      } else {
-        dispatch(
-          setField({ field: `${arrayType}[0].${type}`, value: valueArray[0] }),
-        )
-      }
+    if (isStyleGenerate) {
+      dispatch(
+        setStyleField({
+          field: type,
+          value: valueArray[0],
+          ArrayIndex: arrayIndex,
+        }),
+      )
     } else {
       dispatch(setField({ field: type, value: valueArray[0] }))
     }
   }
   useEffect(() => {
-    if (arrayType) {
-      if (isStyleGenerate) {
-        dispatch(
-          setStyleField({
-            field: type,
-            value: value,
-            ArrayIndex: arrayIndex,
-          }),
-        )
-      } else {
-        dispatch(setField({ field: `${arrayType}[0].${type}`, value: value }))
-      }
+    if (isStyleGenerate) {
+      dispatch(
+        setStyleField({
+          field: type,
+          value: value,
+          ArrayIndex: arrayIndex,
+        }),
+      )
     } else {
       dispatch(setField({ field: type, value: value }))
     }
-  }, [])
+  }, [isStyleGenerate])
 
   return (
     <>
