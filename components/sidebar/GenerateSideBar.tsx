@@ -10,11 +10,11 @@ import { selectGenerate, setUseStyleImage } from "@/features/generateSlice"
 import Image from "next/image"
 import { ArrowLeftFromLine } from "lucide-react"
 import { useRouter } from "next/navigation"
-
 import { useAppDispatch } from "../../store/hooks"
 import { renderInput } from "../generate/renderInput"
 import { Switch } from "../ui/switch"
 import { Label } from "../ui/label"
+import ChooseAiInput from "../generate/input-component/ChooseAiInput"
 
 export default function GenerateSideBar() {
   const dispatch = useAppDispatch()
@@ -80,7 +80,10 @@ export default function GenerateSideBar() {
           }}
         />
       </CardHeader>
-      {noiseElement}
+
+      <CollapsibleSection title={"Choosing AI"} key="choosing-ai">
+        <ChooseAiInput/>
+      </CollapsibleSection>
 
       <div className="mt-4 flex items-center justify-between p-4">
         <Label htmlFor="use-style-mode" className="text-lg font-semibold">
@@ -98,6 +101,7 @@ export default function GenerateSideBar() {
           }}
         />
       </div>
+      {noiseElement}
       {generateStates.useStyleImage
         ? aiStyleInputs &&
           aiStyleInputs.map((aiInput: any) => {
@@ -128,14 +132,7 @@ export default function GenerateSideBar() {
                 key={aiInput.input_property_name}
                 className="border-none pb-4 lg:border"
               >
-                {renderInput(
-                  aiInput,
-                  dispatch,
-                  generateStates,
-                  0,
-                  true,
-                  false,
-                )}
+                {renderInput(aiInput, dispatch, generateStates, 0, true, false)}
               </Card>
             )
           })

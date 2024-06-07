@@ -12,12 +12,9 @@ import {
 import { Button } from "../ui/button"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
 import { useEffect, useState } from "react"
-import {
-  useAiStyleInformationMutation,
-  useGenerateStyleImageMutation,
-} from "../../services/generate/generateApi"
+import { useGenerateStyleImageMutation } from "@/services/generate/generateApi"
 import { renderInput } from "./renderInput"
-import { base64StringToFile } from "../../lib/base64StringToFile"
+import { base64StringToFile } from "@/lib/base64StringToFile"
 import { toast } from "react-toastify"
 
 const StyleDrawer = ({
@@ -33,13 +30,6 @@ const StyleDrawer = ({
 
   const [generateStyle, { data: generateStyleData }] =
     useGenerateStyleImageMutation()
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     await aiStyleInformation(undefined)
-  //   }
-  //   fetchData()
-  // }, [])
 
   const [open, setOpen] = useState(false)
 
@@ -78,7 +68,7 @@ const StyleDrawer = ({
     const formData = new FormData()
 
     if (generateStates.dataStyleInputs) {
-      formData.append("aiName", "comfyUI")
+      formData.append("aiName", generateStates.ai_name || "")
 
       generateStates.dataStyleInputs.forEach((input: any, index: any) => {
         const { name, value } = input

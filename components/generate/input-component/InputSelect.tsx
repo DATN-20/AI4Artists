@@ -7,10 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  setField,
-  setStyleField,
-} from "@/features/generateSlice"
+import { setField, setStyleField } from "@/features/generateSlice"
 import { useAppDispatch } from "@/store/hooks"
 import { useEffect } from "react"
 
@@ -65,7 +62,7 @@ const InputSelect = ({
       }}
     >
       <SelectTrigger className="bg-card-highlight">
-        <SelectValue placeholder={defaultValue} />
+        <SelectValue placeholder={type === "style" ? "anime" : defaultValue} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>

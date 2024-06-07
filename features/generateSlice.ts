@@ -11,8 +11,8 @@ export interface GenerateState {
   useStyleImage: boolean
   dataInputs: [] | null
   history: ImageGroup[] | null
-  aiStyleInputs: [] | null
-  dataStyleInputs: { name: string, value: any, ArrayIndex?: number }[] | null
+  aiStyleInputs: GenerateInput[] | null
+  dataStyleInputs: { name: string; value: any; ArrayIndex?: number }[] | null
 }
 
 const initialState: GenerateState = {
@@ -32,10 +32,16 @@ export const generateSlice = createSlice({
   name: "generate",
   initialState,
   reducers: {
-    setInputs: (state, action: PayloadAction<{ aiInputs: GenerateInput[] }>) => {
+    setInputs: (
+      state,
+      action: PayloadAction<{ aiInputs: GenerateInput[] }>,
+    ) => {
       state.aiInputs = action.payload.aiInputs
     },
-    setAIStyleInputs: (state, action: PayloadAction<{ aiStyleInputs: [] }>) => {
+    setAIStyleInputs: (
+      state,
+      action: PayloadAction<{ aiStyleInputs: GenerateInput[] }>,
+    ) => {
       state.aiStyleInputs = action.payload.aiStyleInputs
     },
     setAIName: (state, action: PayloadAction<{ ai_name: string }>) => {
@@ -124,7 +130,7 @@ export const generateSlice = createSlice({
       state,
       action: PayloadAction<{ width: number; height: number }>,
     ) => {
-      const dataInputs = state.dataStyleInputs 
+      const dataInputs = state.dataStyleInputs
       if (dataInputs) {
         // Kiểm tra sự tồn tại của dataInputs
         const existingWidthIndex = dataInputs.findIndex(
@@ -137,48 +143,63 @@ export const generateSlice = createSlice({
         if (existingWidthIndex !== -1) {
           dataInputs[existingWidthIndex].value = action.payload.width
         } else {
-          dataInputs.push({ name: "width", value: action.payload.width, ArrayIndex: 0 })
+          dataInputs.push({
+            name: "width",
+            value: action.payload.width,
+            ArrayIndex: 0,
+          })
         }
 
         if (existingHeightIndex !== -1) {
           dataInputs[existingHeightIndex].value = action.payload.height
         } else {
-          dataInputs.push({ name: "height", value: action.payload.height, ArrayIndex: 0})
+          dataInputs.push({
+            name: "height",
+            value: action.payload.height,
+            ArrayIndex: 0,
+          })
         }
       }
     },
 
     setStyleField: (
       state,
-      action: PayloadAction<{ field: string; value?: any; delete?: boolean; ArrayIndex?: number }>,
+      action: PayloadAction<{
+        field: string
+        value?: any
+        delete?: boolean
+        ArrayIndex?: number
+      }>,
     ) => {
-      const { field, value, delete: deleteField, ArrayIndex } = action.payload;
+      const { field, value, delete: deleteField, ArrayIndex } = action.payload
       const dataStyleInputs = state.dataStyleInputs as {
-        name: string;
-        value: any;
-        ArrayIndex?: number;
-      }[];
-    
+        name: string
+        value: any
+        ArrayIndex?: number
+      }[]
+
       if (dataStyleInputs) {
         const existingFieldIndex = dataStyleInputs.findIndex(
-          (item) => item.name === field && (ArrayIndex === undefined || item.ArrayIndex === ArrayIndex),
-        );
-    
+          (item) =>
+            item.name === field &&
+            (ArrayIndex === undefined || item.ArrayIndex === ArrayIndex),
+        )
+
         if (deleteField) {
           if (ArrayIndex !== undefined) {
             for (let i = dataStyleInputs.length - 1; i >= 0; i--) {
               if (dataStyleInputs[i].ArrayIndex === ArrayIndex) {
-                dataStyleInputs.splice(i, 1);
+                dataStyleInputs.splice(i, 1)
               }
             }
           } else if (existingFieldIndex !== -1) {
-            dataStyleInputs.splice(existingFieldIndex, 1);
+            dataStyleInputs.splice(existingFieldIndex, 1)
           }
         } else {
           if (existingFieldIndex !== -1) {
-            dataStyleInputs[existingFieldIndex].value = value;
+            dataStyleInputs[existingFieldIndex].value = value
           } else {
-            dataStyleInputs.push({ name: field, value, ArrayIndex });
+            dataStyleInputs.push({ name: field, value, ArrayIndex })
           }
         }
       }
