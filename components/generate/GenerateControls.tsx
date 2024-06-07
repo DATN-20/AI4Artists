@@ -28,7 +28,7 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
           placeholder="Type prompt here..."
           value={promptPos}
           onChange={handlePosPromptChange}
-          className="flex-grow resize-none rounded-2xl bg-[#2c2d31] p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
+          className="flex-grow resize-none rounded-2xl p-3 text-black placeholder-black outline-none dark:bg-[#2c2d31] dark:text-white dark:placeholder-white"
         />
         <button
           type="button"

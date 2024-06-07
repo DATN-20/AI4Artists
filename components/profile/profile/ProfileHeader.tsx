@@ -45,6 +45,9 @@ interface ProfileHeaderProps {
     socials: { social_name: string; social_link: string }[]
     avatar: string
     background: string
+    phone: string
+    address: string
+    description: string
   }
 }
 
@@ -120,12 +123,18 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
       first_name: userData?.first_name || "",
       last_name: userData?.last_name || "",
       alias_name: userData?.alias_name || "",
+      phone: userData?.phone || "",
+      address: userData?.address || "",
+      description: userData?.description || "",
     }))
     setProfileData((prevData) => ({
       ...prevData,
       first_name: userData?.first_name || "",
       last_name: userData?.last_name || "",
       alias_name: userData?.alias_name || "",
+      phone: userData?.phone || "",
+      address: userData?.address || "",
+      description: userData?.description || "",
     }))
     userData?.socials?.forEach((item) => {
       switch (item.social_name) {
@@ -303,6 +312,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
     first_name: userData?.first_name || "",
     last_name: userData?.last_name || "",
     alias_name: userData?.alias_name || "",
+    phone: userData?.phone || "",
+    address: userData?.address || "",
+    description: userData?.description || "",
     instagram: "",
     facebook: "",
     twitter: "",
@@ -311,12 +323,24 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
     first_name: userData?.first_name || "",
     last_name: userData?.last_name || "",
     alias_name: userData?.alias_name || "",
+    phone: userData?.phone || "",
+    address: userData?.address || "",
+    description: userData?.description || "",
     instagram: "",
     facebook: "",
     twitter: "",
   })
-  const { first_name, last_name, alias_name, instagram, facebook, twitter } =
-    formData
+  const {
+    first_name,
+    last_name,
+    alias_name,
+    instagram,
+    facebook,
+    twitter,
+    phone,
+    address,
+    description,
+  } = formData
 
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -327,6 +351,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
       firstName: formData.first_name,
       aliasName: formData.alias_name,
       lastName: formData.last_name,
+      phone: formData.phone,
+      address: formData.address,
+      description: formData.description,
       socials: [
         {
           socialName: "Facebook",
@@ -344,18 +371,22 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
     }
 
     try {
-      const result = await updateProfile(requestBody as requestData).unwrap()
+      const result = await updateProfile(requestBody as requestData)
       // setGenerateImgData(result);
       if ((result as ErrorObject).error) {
         toast.error((result as ErrorObject).error.data.message)
       } else {
         toast.success("Update profile successfully")
+        setEditProfileToggle(false)
       }
 
       setProfileData({
         first_name: formData.first_name,
         last_name: formData.last_name,
         alias_name: formData.alias_name,
+        phone: formData.phone,
+        address: formData.address,
+        description: formData.description,
         instagram: formData.instagram,
         facebook: formData.facebook,
         twitter: formData.twitter,
@@ -532,7 +563,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
       <div className="ml-[240px] flex items-center justify-between px-2 pt-2">
         <div className="flex flex-col">
           <h1 className="flex text-3xl font-bold">
-            {profileData?.first_name + " " + profileData?.last_name}
+            {profileData?.first_name + " " + profileData?.last_name}{" "}
+            {profileData?.alias_name.length > 0
+              ? " (" + profileData?.alias_name + ")"
+              : ""}
             <AlertDialog open={editProfileToggle}>
               <IoPencilSharp
                 className="ml-3 cursor-pointer"
@@ -546,101 +580,150 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
                     Edit Profile
                   </AlertDialogTitle>
                 </AlertDialogHeader>
-                <div className="mb-4">
-                  <label
-                    htmlFor="first_name"
-                    className="block text-sm font-medium "
-                  >
-                    First Name
-                  </label>
-                  <input
-                    type="text"
-                    id="first_name"
-                    name="first_name"
-                    value={first_name}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="lastName"
-                    className="block text-sm font-medium "
-                  >
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    id="last_name"
-                    name="last_name"
-                    value={last_name}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="aliasName"
-                    className="block text-sm font-medium"
-                  >
-                    Alias Name
-                  </label>
-                  <input
-                    type="text"
-                    id="alias_name"
-                    name="alias_name"
-                    value={alias_name}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="instagram"
-                    className="block text-sm font-medium"
-                  >
-                    Instagram Link
-                  </label>
-                  <input
-                    type="text"
-                    id="instagram"
-                    name="instagram"
-                    value={instagram}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="facebook"
-                    className="block text-sm font-medium"
-                  >
-                    Facebook Link
-                  </label>
-                  <input
-                    type="text"
-                    id="facebook"
-                    name="facebook"
-                    value={facebook}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="twitter"
-                    className="block text-sm font-medium"
-                  >
-                    Twitter Link
-                  </label>
-                  <input
-                    type="text"
-                    id="twitter"
-                    name="twitter"
-                    value={twitter}
-                    onChange={handleChange}
-                    className="bg-gray mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
+                <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div>
+                    <label
+                      htmlFor="first_name"
+                      className="block text-sm font-medium"
+                    >
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      id="first_name"
+                      name="first_name"
+                      value={first_name}
+                      onChange={handleChange}
+                      className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="last_name"
+                      className="block text-sm font-medium"
+                    >
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      id="last_name"
+                      name="last_name"
+                      value={last_name}
+                      onChange={handleChange}
+                      className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="alias_name"
+                      className="block text-sm font-medium"
+                    >
+                      Alias Name
+                    </label>
+                    <input
+                      type="text"
+                      id="alias_name"
+                      name="alias_name"
+                      value={alias_name}
+                      onChange={handleChange}
+                      className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="phone"
+                      className="block text-sm font-medium"
+                    >
+                      Phone
+                    </label>
+                    <input
+                      type="text"
+                      id="phone"
+                      name="phone"
+                      value={phone}
+                      onChange={handleChange}
+                      className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="address"
+                      className="block text-sm font-medium"
+                    >
+                      Address
+                    </label>
+                    <input
+                      type="text"
+                      id="address"
+                      name="address"
+                      value={address}
+                      onChange={handleChange}
+                      className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="description"
+                      className="block text-sm font-medium"
+                    >
+                      Description
+                    </label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      value={description}
+                      onChange={handleChange}
+                      className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="instagram"
+                      className="block text-sm font-medium"
+                    >
+                      Instagram Link
+                    </label>
+                    <input
+                      type="text"
+                      id="instagram"
+                      name="instagram"
+                      value={instagram}
+                      onChange={handleChange}
+                      className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="facebook"
+                      className="block text-sm font-medium"
+                    >
+                      Facebook Link
+                    </label>
+                    <input
+                      type="text"
+                      id="facebook"
+                      name="facebook"
+                      value={facebook}
+                      onChange={handleChange}
+                      className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="twitter"
+                      className="block text-sm font-medium"
+                    >
+                      Twitter Link
+                    </label>
+                    <input
+                      type="text"
+                      id="twitter"
+                      name="twitter"
+                      value={twitter}
+                      onChange={handleChange}
+                      className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    />
+                  </div>
                 </div>
                 <div className="flex justify-end">
                   <AlertDialogFooter className="mt-5">
@@ -655,7 +738,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
                       <AlertDialogTrigger asChild>
                         <Button>Save</Button>
                       </AlertDialogTrigger>
-
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>Confirm Save</AlertDialogTitle>
@@ -669,7 +751,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
                             <Button
                               onClick={() => {
                                 handleUpdateProfile()
-                                setEditProfileToggle(false)
                               }}
                             >
                               Yes
@@ -683,7 +764,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
               </AlertDialogContent>
             </AlertDialog>
           </h1>
-          <p className="text-lg font-light">{profileData?.alias_name}</p>
+          <p
+            className="text-lg font-light"
+            dangerouslySetInnerHTML={{ __html: profileData?.description }}
+          ></p>
         </div>
         {/* Social Links */}
         <div className="flex flex-col justify-end">

@@ -78,7 +78,8 @@ const Profile = () => {
   const [getGuest, { data: guestImages }] = useGetGuestImageMutation()
   const [getGuestProfile, { data: guestProfileData }] =
     useGetGuestProfileMutation()
-  const [addNewAlbum] = useAddNewAlbumMutation()
+  const [addNewAlbum, { isLoading: isAddingNewAlbum }] =
+    useAddNewAlbumMutation()
   const [deleteAlbum] = useDeleteAlbumMutation()
   const [guestData, setGuestData] = useState<any>(null)
   const [guestProfile, setGuestProfile] = useState<any>(null)
@@ -190,7 +191,7 @@ const Profile = () => {
     }
 
     return (
-      <Dialog open={openDialogCarousel}>
+      <Dialog open={openDialogCarousel} onOpenChange={setOpenDialogCarousel}>
         <div className="flex gap-4 py-4 ">
           <div className="hidden lg:block lg:min-w-[300px]">
             <div className="no-scrollbar fixed left-0 top-0 flex h-screen min-h-screen w-[300px] flex-col gap-4 overflow-y-scroll p-4 ">
@@ -207,7 +208,7 @@ const Profile = () => {
               <ProfileHeader userData={userData} />
               <TabsContent value="introduction">
                 <div className="mt-8">
-                  <span className="bg-gradient-default bg-clip-text text-4xl font-black text-transparent">
+                  <span className=" bg-clip-text text-4xl font-black dark:text-white">
                     Your Images
                   </span>
                 </div>
@@ -225,7 +226,7 @@ const Profile = () => {
 
                 <TabsList className="mb-5 mt-8 bg-transparent px-0">
                   <TabsTrigger value="album" className="px-0">
-                    <span className="bg-gradient-default bg-clip-text text-4xl font-black text-transparent">
+                    <span className=" bg-clip-text text-4xl font-black text-black dark:text-white">
                       Your Album
                     </span>
                   </TabsTrigger>
@@ -310,7 +311,12 @@ const Profile = () => {
                             <AlertDialogFooter className="mt-5">
                               <AlertDialogCancel>Close</AlertDialogCancel>
                               <AlertDialogAction>
-                                <Button type="submit">Save</Button>
+                                <Button
+                                  type="submit"
+                                  disabled={isAddingNewAlbum ? true : false}
+                                >
+                                  Save
+                                </Button>
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </form>

@@ -57,6 +57,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
       isSuccess: isLoginSuccess,
       isError: isLoginError,
       error: loginError,
+      isLoading,
     },
   ] = useLoginUserMutation()
 
@@ -111,7 +112,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
 
   return (
     <DialogContentLoginModal
-      className="border-none p-0 lg:min-w-[950px] "
+      className="border-none p-0 lg:min-w-[1020px] "
       style={{ borderRadius: 50 }}
     >
       <div className="flex h-full w-full">
@@ -135,17 +136,29 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
                 </span>
               </div>
 
-              <div className="mt-5 flex h-full flex-col  gap-12 text-2xl font-bold text-white">
-                <p>✨ 50+ Free Image Generations Daily</p>
-                <p>✨ Generate Image in your own Style</p>
-                <p>✨ Generate characters with pose</p>
-                <p>✨ Manage your own profile space</p>
+              <div className="ml-5 mr-5 mt-5 flex  h-full flex-col gap-8 text-2xl font-bold text-white">
+                <p className="flex">
+                  <p className="mr-5 flex	items-center">✨</p>{" "}
+                  <p>20 Free Image Generation daily</p>
+                </p>
+                <p className="flex">
+                  <p className="mr-5 flex	items-center">✨</p>{" "}
+                  <p>Generate Image in your own Style</p>
+                </p>
+                <p className="flex">
+                  <p className="mr-5 flex	items-center">✨</p>{" "}
+                  <p>Generate Image with pose, depth, sketch,…</p>
+                </p>
+                <p className="mb-10 flex">
+                  <p className="mr-5 flex	items-center">✨</p>{" "}
+                  <p>Manage your own profile space</p>
+                </p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="dark:background-white mx-auto w-full px-8 py-5 lg:w-1/2">
+        <div className="dark:background-white mx-auto flex w-full flex-col justify-center px-8 py-5 lg:w-1/2">
           <Form {...form}>
             <h1 className="my-5 text-center text-3xl font-bold">Login</h1>
             <form
@@ -193,31 +206,15 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
                   Forgot Password?
                 </a>
               </div>
-              <Button type="submit" className="h-10 w-full bg-black text-white">
+              <Button
+                type="submit"
+                className="h-10 w-full bg-black text-white"
+                disabled={isLoading ? true : false}
+              >
                 Sign In
               </Button>
               {/* Divider and Social Media Buttons */}
-              <div className="flex items-center justify-center">
-                <div className="flex-grow border-t border-gray-400"></div>
-                <div className="px-3">Or</div>
-                <div className="flex-grow border-t border-gray-400"></div>
-              </div>{" "}
-              <div className="flex flex-col gap-3">
-                <Button
-                  // icon={<GoogleOutlined />}
-                  className="h-10 w-full bg-red-600 text-white "
-                >
-                  <FaGoogle className="mr-3" />
-                  Sign in with Google
-                </Button>
-                <Button
-                  // icon={<FacebookFilled />}
-                  className="h-10 w-full bg-blue-800 text-white"
-                >
-                  <FaFacebook className="mr-3" />
-                  Sign in with Facebook
-                </Button>
-              </div>
+
               <div className="mb-10 text-center">
                 Don't you have an account?{" "}
                 <a href="#" className="text-secondary" onClick={onClose}>
