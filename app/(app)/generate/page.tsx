@@ -36,7 +36,8 @@ export default function Generate() {
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
   const { data: historyData, refetch } = useGetGenerationHistoryQuery()
   const authStates = useSelector(selectAuth)
-  const { setGenerateTags, generateTags } = useContext(TagsContext)
+  const { setGenerateTags, generateTags, setOpenStyleDrawer } =
+    useContext(TagsContext)
 
   const handlePosPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const prompt = event.target.value
@@ -101,6 +102,11 @@ export default function Generate() {
   }
 
   const handleGenerate = async () => {
+    if (generateStates.useStyleImage) {
+      setOpenStyleDrawer(true)
+      return
+    }
+
     if (promptPos === "" && generateTags === "") {
       toast.error("Please enter a prompt or select tags")
       return
@@ -185,11 +191,6 @@ export default function Generate() {
       dispatch(setTotalAlbum({ totalAlbum: albumData }))
     }
   }, [albumData])
-
-  useEffect(() => {
-    console.log(generateStates.dataStyleInputs)
-    console.log(generateStates.dataInputs)
-  }, [generateStates.dataStyleInputs, generateStates.dataInputs])
 
   return (
     <>

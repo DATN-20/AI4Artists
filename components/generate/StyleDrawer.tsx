@@ -11,11 +11,12 @@ import {
 } from "@/components/ui/drawer"
 import { Button } from "../ui/button"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useGenerateStyleImageMutation } from "@/services/generate/generateApi"
 import { renderInput } from "./renderInput"
 import { base64StringToFile } from "@/lib/base64StringToFile"
 import { toast } from "react-toastify"
+import { TagsContext } from "../../store/tagsHooks"
 
 const StyleDrawer = ({
   dispatch,
@@ -27,11 +28,9 @@ const StyleDrawer = ({
   inputData: any
 }) => {
   const [currentStep, setCurrentStep] = useState(1)
-
-  const [generateStyle, { data: generateStyleData }] =
+  const { openStyleDrawer, setOpenStyleDrawer } = useContext(TagsContext)
+  const [generateStyle, { data: generateStyleData, isLoading, isError }] =
     useGenerateStyleImageMutation()
-
-  const [open, setOpen] = useState(false)
 
   const getMaxStep = () => {
     const maxIndex =
@@ -55,19 +54,30 @@ const StyleDrawer = ({
   }
 
   useEffect(() => {
-    if (!open) {
+    if (!openStyleDrawer) {
       setCurrentStep(1)
     }
-  }, [open])
+  }, [openStyleDrawer])
 
   useEffect(() => {
-    console.log(generateStates.dataStyleInputs)
-  }, [generateStates.dataStyleInputs])
+    if (isError) {
+      toast.error("Error generating image")
+    }
+  }, [isError])
 
   const submitData = async () => {
     const formData = new FormData()
 
     if (generateStates.dataStyleInputs) {
+      console.log(generateStates.dataStyleInputs)
+      if (
+        !generateStates.dataStyleInputs.positivePrompt ||
+        generateStates.dataStyleInputs.positivePrompt.value.trim() === ""
+      ) {
+        toast.error("Please enter a prompt or select tags")
+        return
+      }
+
       formData.append("aiName", generateStates.ai_name || "")
 
       generateStates.dataStyleInputs.forEach((input: any, index: any) => {
@@ -114,8 +124,8 @@ const StyleDrawer = ({
     <Drawer
       direction="right"
       dismissible={false}
-      open={open}
-      onOpenChange={setOpen}
+      open={openStyleDrawer}
+      onOpenChange={setOpenStyleDrawer}
     >
       <DrawerTrigger>
         <Button
@@ -169,7 +179,7 @@ const StyleDrawer = ({
           <Button variant={"outline"} onClick={addOrUpdateImageToData}>
             {currentStep >= getMaxStep() ? "Add Image" : "Update Image"}
           </Button>
-          <Button onClick={submitData}>Submit</Button>
+          <Button onClick={submitData}>Generate With Style</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
