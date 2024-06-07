@@ -17,13 +17,6 @@ import {
   useGenerateStyleImageMutation,
 } from "../../services/generate/generateApi"
 import { renderInput } from "./renderInput"
-import { useAppDispatch } from "../../store/hooks"
-import { shallowEqual, useSelector } from "react-redux"
-import {
-  selectGenerate,
-  setStyleField,
-  eraseStyleFields,
-} from "../../features/generateSlice"
 import { base64StringToFile } from "../../lib/base64StringToFile"
 import { toast } from "react-toastify"
 
@@ -76,6 +69,10 @@ const StyleDrawer = ({
       setCurrentStep(1)
     }
   }, [open])
+
+  useEffect(() => {
+    console.log(generateStates.dataStyleInputs)
+  }, [generateStates.dataStyleInputs])
 
   const submitData = async () => {
     const formData = new FormData()
@@ -193,9 +190,9 @@ const StyleDrawer = ({
               inputData,
               dispatch,
               generateStates,
-              inputData.input_property_name,
               currentStep - 1,
               true,
+              true
             )}
           </div>
         )}

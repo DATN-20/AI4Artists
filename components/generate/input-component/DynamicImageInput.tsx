@@ -12,11 +12,11 @@ import { Label } from "../../ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { setField, setStyleField } from "@/features/generateSlice"
-import { toast } from "react-toastify"
 import { useGetProfileAlbumMutation } from "@/services/profile/profileApi"
 import { selectAuth, setTotalAlbum } from "@/features/authSlice"
 import Image from "next/image"
 import axios from "axios"
+import { AlbumWithImages, ImageAlbum } from "@/types/profile"
 
 const DynamicImageInput = ({
   name,
@@ -38,8 +38,19 @@ const DynamicImageInput = ({
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
   const authStates = useAppSelector(selectAuth)
+  const [selectedInputImage, setSelectedInputImage] = useState<File | null>(
+    null,
+  )
+  const [selectedAlbumImage, setSelectedAlbumImage] = useState<File | null>(
+    null,
+  )
+  const [selectedAlbumImageIndex, setSelectedAlbumImageIndex] =
+  useState<number>(-1)
 
-  const base64ToFile = async (base64: string, filename: string): Promise<File> => {
+  const base64ToFile = async (
+    base64: string,
+    filename: string,
+  ): Promise<File> => {
     const response = await fetch(base64)
     const blob = await response.blob()
     return new File([blob], filename, { type: blob.type })
@@ -112,7 +123,9 @@ const DynamicImageInput = ({
     setSelectedAlbum(album)
   }
 
-  const handleImageSelectFromAlbum = async (image: any) => {
+  const handleImageSelectFromAlbum = async (image: any, 
+    index: number
+  ) => {
     try {
       const response = await axios.get(image.image.url, {
         responseType: "blob",
@@ -121,6 +134,7 @@ const DynamicImageInput = ({
         type: response.data.type,
       })
       setSelectedImage(imageFile)
+      setSelectedAlbumImageIndex(index)
 
       const reader = new FileReader()
       reader.onloadend = () => {
@@ -205,30 +219,41 @@ const DynamicImageInput = ({
               </TabsContent>
               <TabsContent value="album">
                 {selectedAlbum ? (
-                  <div className="mt-3 grid grid-cols-4 gap-4 p-1">
-                    {selectedAlbum.images &&
-                      selectedAlbum.images.map(
-                        (image: any, imageIndex: number) => (
-                          <div
-                            key={imageIndex}
-                            className="relative h-40 cursor-pointer"
-                            onClick={() => handleImageSelectFromAlbum(image)}
-                          >
-                            <Image
-                              src={image.image.url}
-                              alt={`Image ${imageIndex + 1}`}
-                              layout="fill"
-                              objectFit="cover"
-                              className="rounded-md"
-                            />
-                          </div>
-                        ),
-                      )}
-                  </div>
+                  <>
+                    <div className="mt-3 grid h-[300px] grid-cols-4 gap-4 p-1">
+                      {selectedAlbum.images &&
+                        selectedAlbum.images.map(
+                          (image: ImageAlbum, imageIndex: number) => (
+                            <div
+                              key={imageIndex}
+                              className="relative h-40 cursor-pointer transition-opacity duration-300 hover:opacity-50"
+                              onClick={() =>
+                                handleImageSelectFromAlbum(image, imageIndex)
+                              }
+                            >
+                              <Image
+                                src={image.url}
+                                alt={`Image ${imageIndex + 1}`}
+                                layout="fill"
+                                objectFit="cover"
+                                className={`rounded-md ${selectedAlbumImageIndex === imageIndex ? "border-2 border-primary-500 opacity-50" : ""}`}
+                              />
+                            </div>
+                          ),
+                        )}
+                    </div>
+                    <Button
+                      variant={"outline"}
+                      className=" flex w-fit rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+                      onClick={() => setSelectedAlbum(null)}
+                    >
+                      Back
+                    </Button>
+                  </>
                 ) : (
-                  <div className="mt-3 grid grid-cols-4 gap-4 p-1">
+                  <div className="mt-3 grid h-[300px] grid-cols-4 gap-4 p-1">
                     {authStates?.totalAlbum?.map(
-                      (album: any, index: number) => (
+                      (album: AlbumWithImages, index: number) => (
                         <div
                           key={index}
                           className={`relative grid h-full w-full gap-1 ${
@@ -242,10 +267,10 @@ const DynamicImageInput = ({
                             album.images.length > 0 &&
                             album.images
                               .slice(0, 4)
-                              .map((image: any, imageIndex: number) => (
+                              .map((image: ImageAlbum, imageIndex: number) => (
                                 <div key={imageIndex} className="relative h-40">
                                   <Image
-                                    src={image.image.url}
+                                    src={image.url}
                                     alt={`Image ${imageIndex + 1}`}
                                     layout="fill"
                                     objectFit="cover"

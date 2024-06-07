@@ -1,7 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "@/store/store"
-import { Root } from "react-dom/client"
-import { set } from "react-hook-form"
 
 // Định nghĩa interface cho dữ liệu generate state
 export interface GenerateState {
@@ -122,6 +120,34 @@ export const generateSlice = createSlice({
       }
     },
 
+    setStyleDimension: (
+      state,
+      action: PayloadAction<{ width: number; height: number }>,
+    ) => {
+      const dataInputs = state.dataStyleInputs 
+      if (dataInputs) {
+        // Kiểm tra sự tồn tại của dataInputs
+        const existingWidthIndex = dataInputs.findIndex(
+          (item) => item.name === "width",
+        )
+        const existingHeightIndex = dataInputs.findIndex(
+          (item) => item.name === "height",
+        )
+
+        if (existingWidthIndex !== -1) {
+          dataInputs[existingWidthIndex].value = action.payload.width
+        } else {
+          dataInputs.push({ name: "width", value: action.payload.width, ArrayIndex: 0 })
+        }
+
+        if (existingHeightIndex !== -1) {
+          dataInputs[existingHeightIndex].value = action.payload.height
+        } else {
+          dataInputs.push({ name: "height", value: action.payload.height, ArrayIndex: 0})
+        }
+      }
+    },
+
     setStyleField: (
       state,
       action: PayloadAction<{ field: string; value?: any; delete?: boolean; ArrayIndex?: number }>,
@@ -157,19 +183,6 @@ export const generateSlice = createSlice({
         }
       }
     },
-    
-
-    eraseStyleFields: (state, action: PayloadAction<{ arrayType: string, arrayIndex: number }>) => {
-      const { arrayType, arrayIndex } = action.payload
-      const dataStyleInputs = state.dataStyleInputs as {
-        name: string
-        value: any
-      }[]
-
-      state.dataStyleInputs = dataStyleInputs.filter(
-        (item) => !item.name.startsWith(`${arrayType}[${arrayIndex}]`)
-      )
-    },
   },
 })
 
@@ -181,13 +194,13 @@ export const {
   setUseImage,
   setUseControlnet,
   setDimension,
+  setStyleDimension,
   setHistory,
   setUseCustomDimension,
   setUseStyleImage,
   setAIName,
   setField,
   setStyleField,
-  eraseStyleFields
 } = generateSlice.actions
 
 export default generateSlice.reducer

@@ -22,9 +22,9 @@ export const renderInput = (
   input: any,
   dispatch: any,
   generateStates: any,
-  arrayType?: string,
   arrayIndex?: number,
   isStyleGenerate?: boolean,
+  isStyleDrawer?: boolean,
 ) => {
   const {
     name,
@@ -48,7 +48,6 @@ export const renderInput = (
           <InputSelect
             data={info.choices}
             type={propertyName}
-            arrayType={arrayType}
             defaultValue={checkDefaultValue}
             arrayIndex={arrayIndex}
             isStyleGenerate={isStyleGenerate}
@@ -65,7 +64,6 @@ export const renderInput = (
             step={info.step}
             defaultValue={checkDefaultValue}
             type={propertyName}
-            arrayType={arrayType}
             arrayIndex={arrayIndex}
             isStyleGenerate={isStyleGenerate}
           />
@@ -138,6 +136,7 @@ export const renderInput = (
               <ControlnetDialog type={propertyName} />
             </CollapsibleSection>
           )
+
         case "imageForIpadapter": {
           return (
             <div className="w-full p-4 pb-0">
@@ -162,7 +161,6 @@ export const renderInput = (
             name={name}
             type={propertyName}
             defaultValue={defaultValue}
-            arrayType={arrayType}
             arrayIndex={arrayIndex}
             isStyleGenerate={isStyleGenerate}
           />
@@ -171,19 +169,7 @@ export const renderInput = (
     }
 
     case "array": {
-      if (propertyName === "ipadapterStyleTranferInputs" && !isStyleGenerate) {
-        return (
-          <CollapsibleSection title={name} key={propertyName}>
-            <StyleDrawer
-              dispatch={dispatch}
-              generateStates={generateStates}
-              inputData={input}
-            />
-          </CollapsibleSection>
-        )
-      }
-
-      if (isStyleGenerate) {
+      if (isStyleDrawer) {
         return (
           <>
             {info.element.info.inputs.map((nestedInput: any) => {
@@ -196,14 +182,29 @@ export const renderInput = (
                     nestedInput,
                     dispatch,
                     generateStates,
-                    info.element.input_property_name,
                     arrayIndex,
                     true,
+                    false,
                   )}
                 </Card>
               )
             })}
           </>
+        )
+      }
+      if (
+        propertyName === "ipadapterStyleTranferInputs" &&
+        isStyleGenerate &&
+        !isStyleDrawer
+      ) {
+        return (
+          <CollapsibleSection title={name} key={propertyName}>
+            <StyleDrawer
+              dispatch={dispatch}
+              generateStates={generateStates}
+              inputData={input}
+            />
+          </CollapsibleSection>
         )
       }
 
@@ -228,18 +229,21 @@ export const renderInput = (
 
           {info.element.info.inputs.map((nestedInput: any) => {
             if (!generateStates.useControlnet) {
-              dispatch(
-                setField({
-                  field: `${info.element.input_property_name}[0].${nestedInput.input_property_name}`,
-                  delete: true,
-                }),
-              )
-              dispatch(
-                setField({
-                  field: "controlNetImages",
-                  delete: true,
-                }),
-              )
+              if (isStyleGenerate) {
+                dispatch(
+                  setStyleField({
+                    field: nestedInput.input_property_name,
+                    delete: true,
+                  }),
+                )
+              } else {
+                dispatch(
+                  setField({
+                    field: nestedInput.input_property_name,
+                    delete: true,
+                  }),
+                )
+              }
               return null
             } else {
               return (
@@ -251,8 +255,8 @@ export const renderInput = (
                     nestedInput,
                     dispatch,
                     generateStates,
-                    info.element.input_property_name,
                     arrayIndex,
+                    isStyleGenerate,
                     false,
                   )}
                 </Card>
