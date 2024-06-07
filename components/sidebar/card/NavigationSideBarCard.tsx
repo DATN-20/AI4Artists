@@ -19,7 +19,6 @@ import { logout } from "@/features/authSlice"
 import { toast } from "react-toastify"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { useEffect, useState } from "react"
-import { useGetProfileMutation } from "@/services/profile/profileApi"
 
 const NavigationSideBarCard = () => {
   const dispatch = useAppDispatch()
