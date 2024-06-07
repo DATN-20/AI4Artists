@@ -204,6 +204,33 @@ export const generateSlice = createSlice({
         }
       }
     },
+    eraseStyleStep: (state, action: PayloadAction<{ ArrayIndex: number }>) => {
+      const { ArrayIndex } = action.payload
+
+      // Prevent erasing the step with ArrayIndex 0
+      if (ArrayIndex === 0) return
+
+      const dataStyleInputs = state.dataStyleInputs as {
+        name: string
+        value: any
+        ArrayIndex?: number
+      }[]
+
+      if (dataStyleInputs) {
+        for (let i = dataStyleInputs.length - 1; i >= 0; i--) {
+          if (dataStyleInputs[i].ArrayIndex === ArrayIndex) {
+            dataStyleInputs.splice(i, 1)
+          }
+        }
+
+        // Update subsequent ArrayIndex values
+        dataStyleInputs.forEach((input) => {
+          if (input.ArrayIndex && input.ArrayIndex > ArrayIndex) {
+            input.ArrayIndex = input.ArrayIndex - 1
+          }
+        })
+      }
+    },
   },
 })
 
@@ -222,6 +249,7 @@ export const {
   setAIName,
   setField,
   setStyleField,
+  eraseStyleStep,
 } = generateSlice.actions
 
 export default generateSlice.reducer

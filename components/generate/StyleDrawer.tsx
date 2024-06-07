@@ -17,6 +17,7 @@ import { renderInput } from "./renderInput"
 import { base64StringToFile } from "@/lib/base64StringToFile"
 import { toast } from "react-toastify"
 import { TagsContext } from "../../store/tagsHooks"
+import { eraseStyleStep } from "../../features/generateSlice"
 
 const StyleDrawer = ({
   dispatch,
@@ -53,9 +54,20 @@ const StyleDrawer = ({
     navigateToStep(currentStep + 1)
   }
 
+  const handleEraseStep = (ArrayIndex: number) => {
+    if (ArrayIndex !== 0) {
+      dispatch(eraseStyleStep({ ArrayIndex }))
+      if (currentStep > ArrayIndex) {
+        setCurrentStep(currentStep - 1)
+      }
+    } else {
+      toast.error("Cannot erase the initial step.")
+    }
+  }
+
   useEffect(() => {
     if (!openStyleDrawer) {
-      setCurrentStep(1)
+      setCurrentStep(getMaxStep())
     }
   }, [openStyleDrawer])
 
@@ -175,9 +187,18 @@ const StyleDrawer = ({
             )}
           </div>
         )}
-        <DrawerFooter>
-          <Button variant={"outline"} onClick={addOrUpdateImageToData}>
-            {currentStep >= getMaxStep() ? "Add Image" : "Update Image"}
+        <DrawerFooter className="flex flex-col gap-3">
+          {currentStep === getMaxStep() && (
+            <Button variant={"outline"} onClick={addOrUpdateImageToData}>
+              Add Step
+            </Button>
+          )}
+          <Button
+            variant={"outline"}
+            onClick={() => handleEraseStep(currentStep - 1)}
+            disabled={currentStep === 1}
+          >
+            Erase Step
           </Button>
           <Button onClick={submitData}>Generate With Style</Button>
         </DrawerFooter>
