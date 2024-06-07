@@ -185,6 +185,12 @@ export default function Generate() {
       dispatch(setTotalAlbum({ totalAlbum: albumData }))
     }
   }, [albumData])
+
+  useEffect(() => {
+    console.log(generateStates.dataStyleInputs)
+    console.log(generateStates.dataInputs)
+  }, [generateStates.dataStyleInputs, generateStates.dataInputs])
+
   return (
     <>
       <div className="block gap-4 p-4 lg:grid lg:grid-cols-10">

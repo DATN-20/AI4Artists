@@ -53,7 +53,7 @@ const InputSelect = ({
     } else {
       dispatch(setField({ field: type, value: defaultValue }))
     }
-  }, [arrayIndex, isStyleGenerate])
+  }, [arrayIndex, isStyleGenerate, type, defaultValue])
 
   return (
     <Select

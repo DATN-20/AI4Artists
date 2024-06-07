@@ -1,10 +1,7 @@
-import { useSelector } from "react-redux"
-import { useAppDispatch } from "../../store/hooks"
 import CollapsibleSection from "./CollapsibleSection"
 import InputSelect from "./input-component/InputSelect"
 import SliderInput from "./input-component/SliderInput"
 import {
-  selectGenerate,
   setField,
   setStyleField,
   setUseControlnet,
@@ -48,7 +45,7 @@ export const renderInput = (
           <InputSelect
             data={info.choices}
             type={propertyName}
-            defaultValue={checkDefaultValue}
+            defaultValue={isStyleDrawer ? checkDefaultValue : defaultValue}
             arrayIndex={arrayIndex}
             isStyleGenerate={isStyleGenerate}
           />
@@ -62,7 +59,7 @@ export const renderInput = (
             min={info.min}
             max={info.max}
             step={info.step}
-            defaultValue={checkDefaultValue}
+            defaultValue={isStyleDrawer ? checkDefaultValue : defaultValue}
             type={propertyName}
             arrayIndex={arrayIndex}
             isStyleGenerate={isStyleGenerate}
