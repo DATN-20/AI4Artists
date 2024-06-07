@@ -46,6 +46,16 @@ const StyleDrawer = ({
 
   const navigateToStep = (step: number) => {
     if (step >= 1) {
+      if (currentStep === step - 1) {
+        const currentStepData = generateStates.dataStyleInputs?.find(
+          (input: any) => input.ArrayIndex === currentStep - 1 && input.name === "imageForIpadapter"
+        )
+
+        if (!currentStepData || !currentStepData.value) {
+          toast.error("Please fill the imageForIpadapter field")
+          return
+        }
+      }
       setCurrentStep(step)
     }
   }
