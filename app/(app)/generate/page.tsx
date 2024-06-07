@@ -16,6 +16,7 @@ import {
   setAIName,
   setField,
   setAIStyleInputs,
+  setStyleField,
 } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
 import GenerateControls from "@/components/generate/GenerateControls"
@@ -45,7 +46,15 @@ export default function Generate() {
     dispatch(
       setField({
         field: "positivePrompt",
-        value: `${prompt} ${
+        value: `${prompt}${
+          generateTags.length > 0 ? `, ${generateTags}` : ""
+        }`,
+      }),
+    )
+    dispatch(
+      setStyleField({
+        field: "positivePrompt",
+        value: `${prompt}${
           generateTags.length > 0 ? `, ${generateTags}` : ""
         }`,
       }),
@@ -168,6 +177,7 @@ export default function Generate() {
     const prompt = event.target.value
     setPromptNeg(prompt)
     dispatch(setField({ field: "negativePrompt", value: prompt }))
+    dispatch(setStyleField({ field: "negativePrompt", value: prompt }))
   }
   useEffect(() => {
     const promptValue = localStorage.getItem("prompt")

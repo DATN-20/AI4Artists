@@ -69,12 +69,12 @@ const StyleDrawer = ({
     const formData = new FormData()
 
     if (generateStates.dataStyleInputs) {
-      console.log(generateStates.dataStyleInputs)
-      if (
-        !generateStates.dataStyleInputs.positivePrompt ||
-        generateStates.dataStyleInputs.positivePrompt.value.trim() === ""
-      ) {
-        toast.error("Please enter a prompt or select tags")
+      const positivePromptCheck = generateStates.dataStyleInputs?.find(
+        (input: any) => input.name === "positivePrompt",
+      )
+
+      if (!positivePromptCheck || positivePromptCheck.value.trim() === "") {
+        toast.error("Please fill all Input field")
         return
       }
 
