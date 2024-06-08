@@ -333,7 +333,7 @@ const ProfileHeaderGuest: React.FC<ProfileHeaderGuestProps> = ({
       <div className="absolute bottom-0 left-3 h-[220px] w-[220px] rounded-full">
         <img
           className="h-full w-full rounded-full object-cover"
-          src={croppedImageUrl || "default.jpg"}
+          src={croppedImageUrl || "/default.jpg"}
           alt=""
         />
       </div>

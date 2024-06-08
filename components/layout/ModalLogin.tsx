@@ -29,7 +29,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { FaFacebook, FaGoogle } from "react-icons/fa"
 import { X } from "lucide-react"
-import { useGetProfileQuery } from "@/services/profile/profileApi"
+import { useGetProfileMutation } from "@/services/profile/profileApi"
 
 const formSchema = z.object({
   email: z.string().min(2, {
@@ -48,11 +48,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
   const dispatch = useAppDispatch()
   const router = useRouter()
 
-  const {
-    data: profileData,
-    error: profileError,
-    refetch,
-  } = useGetProfileQuery()
+  const [getUser, { data: userData }] = useGetProfileMutation()
 
   const [
     loginUser,
@@ -97,17 +93,16 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (profileData) {
-        localStorage.setItem("userID", profileData.id.toString())
-        localStorage.setItem("userData", JSON.stringify(profileData))
+      const res = await getUser(undefined)
+      if ("data" in res) {
+        localStorage.setItem("userID", res.data?.id)
+        localStorage.setItem("userData", JSON.stringify(res.data))
       }
     }
-
-    const handleLoginSuccess = async () => {
-      await refetch()
+    const handleLoginSuccess = () => {
       toast.success("User login successfully")
       dispatch(setUser({ token: loginData.access_token, name: "Hao" }))
-      await fetchUserData()
+      fetchUserData()
       const promptValue = localStorage.getItem("prompt")
       if (promptValue) {
         router.push("/generate")

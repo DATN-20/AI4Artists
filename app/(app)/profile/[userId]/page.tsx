@@ -15,7 +15,7 @@ import {
   useGetGuestImageMutation,
   useGetGuestProfileMutation,
   useGetProfileAlbumMutation,
-  useGetProfileQuery,
+  useGetProfileMutation,
   useGetTotalImageQuery,
 } from "@/services/profile/profileApi"
 import {
@@ -70,7 +70,7 @@ const Profile = () => {
   const generateStates = useSelector(selectGenerate)
   const authStates = useSelector(selectAuth)
   const [selectedAlbum, setSelectedAlbum] = useState(-1)
-  const { data: userData } = useGetProfileQuery()
+  const [getUser, { data: userData }] = useGetProfileMutation()
   const [getOneAlbum, { data: oneAlbumData }] = useGetAlbumMutation()
   const [openDialogCarousel, setOpenDialogCarousel] = useState<boolean>(false)
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
@@ -109,6 +109,7 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      await getUser(undefined)
       await getAlbum(undefined)
       const guestID = localStorage.getItem("guestID")
       const userID = localStorage.getItem("userID")

@@ -11,7 +11,7 @@ export const profileApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    getProfile: builder.query<Person,void>({
+    getProfile: builder.mutation({
       query: () => {
         return {
           url: "/api/v1/users/me",
@@ -123,4 +123,4 @@ export const profileApi = createApi({
   }),
 })
 
-export const { useGetProfileQuery, useGetProfileAlbumMutation , useGetTotalImageQuery, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation, useGetGuestImageMutation, useGetGuestProfileMutation, useGetAlbumMutation} = profileApi
+export const { useGetProfileMutation, useGetProfileAlbumMutation , useGetTotalImageQuery, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation, useGetGuestImageMutation, useGetGuestProfileMutation, useGetAlbumMutation} = profileApi

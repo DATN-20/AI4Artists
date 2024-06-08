@@ -106,7 +106,7 @@ const NavigationSideBarCard = () => {
               <div className="rounded-lg bg-card py-2 font-semibold">
                 <a
                   className="flex items-center gap-2"
-                  href="/profile"
+                  href={`/profile/${userData.id}`}
                   onClick={() => {
                     localStorage.removeItem("guestID")
                   }}

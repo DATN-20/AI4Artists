@@ -278,7 +278,7 @@ const ImageDetail = ({
                       </h1>
                     </a>
                   ) : (
-                    <a href="/profile">
+                    <a href={`/profile/${image.created_user?.id}`}>
                       <h1
                         onClick={() => {
                           localStorage.setItem(
@@ -292,7 +292,7 @@ const ImageDetail = ({
                     </a>
                   )}
                 </div>
-                <a href="/profile">
+                <a href={`/profile/${image.created_user?.id}`}>
                   <h1
                     onClick={() => {
                       localStorage.setItem(
