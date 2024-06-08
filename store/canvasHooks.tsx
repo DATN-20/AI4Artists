@@ -85,7 +85,7 @@ export const CanvasContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [mode, setMode] = useState<CanvasMode>(CanvasMode.SELECT_MODE)
-  const [color, setColor] = useState<string>("black")
+  const [color, setColor] = useState<string>("white")
   const [brushSize, setBrushSize] = useState<number>(5)
   const [brushCoordinates, setBrushCoordinates] = useState<Point[]>([])
   const [eraseSize, setEraseSize] = useState<number>(1)

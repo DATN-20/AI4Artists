@@ -17,7 +17,7 @@ const NavBar: React.FC = () => {
         <Dialog>
           <Link href="/dashboard" className="flex items-center justify-center gap-4 cursor-pointer">
             <Image src="/logo.png" alt="logo" width={60} height={60} />
-            <h1 className="text-3xl font-bold text-white">AI Artist</h1>
+            <h1 className="text-3xl font-bold text-white">AIArtist</h1>
           </Link>
           <div className="flex">
             <DialogTrigger asChild>

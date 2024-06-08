@@ -14,18 +14,23 @@ import Loading from "../Loading"
 import { DashboardImage } from "@/types/dashboard"
 
 export default function DashboardContent() {
-  const [currentSelection, setCurrentSelection] = useState({
-    label: "Latest",
-    value: "LATEST",
-  })
+  const selectionList = [
+    { label: "Random", value: "RANDOM" },
+    { label: "Latest", value: "LATEST" },
+    { label: "Top Liked", value: "TOPLIKED" },
+    { label: "Trending", value: "TRENDING" },
+  ]
+
+  const [currentIndex, setCurrentIndex] = useState<number>(1)
   const [images, setImages] = useState<DashboardImage[] | undefined>(undefined)
 
-  const handleSelection = (selection: { label: string; value: string }) => {
-    setCurrentSelection(selection)
+  const handleSelection = (index: number) => {
+    setCurrentIndex(index)
+    refetch()
   }
 
-  const { data, error, isLoading } = useGetAllDashboardImageQuery({
-    type: currentSelection.value,
+  const { data, error, isLoading, refetch } = useGetAllDashboardImageQuery({
+    type: selectionList[currentIndex].value,
     page: 1,
     limit: 100,
   })
@@ -43,41 +48,22 @@ export default function DashboardContent() {
       <div className="flex w-full justify-between gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="rounded-xl bg-gradient-default px-4 py-3 text-lg font-bold text-white shadow-none hover:bg-primary-800">
-              {currentSelection.label}
+            <Button className="rounded-xl bg-gradient-default px-4 py-3 text-lg font-bold text-white shadow-none hover:bg-primary-800 focus-visible:ring-0">
+              {selectionList[currentIndex].label}
               <ChevronDown className="ml-2" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-24">
             <DropdownMenuGroup>
-              <DropdownMenuItem
-                onSelect={() =>
-                  handleSelection({ label: "Random", value: "RANDOM" })
-                }
-              >
-                Random
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() =>
-                  handleSelection({ label: "Latest", value: "LATEST" })
-                }
-              >
-                Latest
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() =>
-                  handleSelection({ label: "Top Liked", value: "TOPLIKED" })
-                }
-              >
-                Top Liked
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() =>
-                  handleSelection({ label: "Trending", value: "TRENDING" })
-                }
-              >
-                Trending
-              </DropdownMenuItem>
+              {selectionList.map((selection, index) => (
+                <DropdownMenuItem
+                  className={`focus:text-primary-700 ${index === currentIndex && "text-primary-800 bg-slate-200 dark:bg-gray-800"}`}
+                  key={index}
+                  onClick={() => handleSelection(index)}
+                >
+                  {selection.label}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>

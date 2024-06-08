@@ -87,9 +87,6 @@ const ImageDetail = ({
         localStorage.setItem("imageUrl", image.url)
         router.push(`/canvas`)
         break
-      case "report":
-        // reportImage()
-        break
       default:
         break
     }
@@ -191,7 +188,7 @@ const ImageDetail = ({
                 />
               </div>
             </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white">
+            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white rounded-lg">
               <p className="line-clamp-3">Prompt: {image.prompt}</p>
             </div>
           </div>
@@ -245,9 +242,6 @@ const ImageDetail = ({
                     </SelectItem>
                     <SelectItem key="edit" value="edit">
                       Edit In Canvas
-                    </SelectItem>
-                    <SelectItem key="report" value="report">
-                      Report This Image
                     </SelectItem>
                   </SelectGroup>
                 </SelectContent>

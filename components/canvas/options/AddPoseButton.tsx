@@ -55,12 +55,12 @@ const AddPoseButton: React.FC = () => {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger className="flex w-full min-w-0 justify-start">
-            <Button
-              className="rounded-xl bg-card dark:bg-white dark:hover:bg-primary"
+            <div
+              className="h-10 rounded-xl bg-card px-4 py-2 hover:bg-primary dark:bg-white"
               onClick={addNewPose}
             >
               <FaPersonCirclePlus className="z-10 h-[30px] w-[25px] text-black" />
-            </Button>
+            </div>
           </TooltipTrigger>
           <TooltipContent className="max-w-[200px] md:max-w-[400px]">
             Add pose

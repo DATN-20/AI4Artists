@@ -73,6 +73,7 @@ export const generateApi = createApi({
       query: (notificationId: number) => ({
         url: `/api/v1/notifications/${notificationId}/change-status`,
         method: "PATCH",
+        responseHandler: "text",
       }),
     }),
     getNotificationImage: builder.query<DashboardImageGroup, string | null>({

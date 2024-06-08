@@ -111,21 +111,23 @@ const ToolSelect = () => {
       onClick={handleClick}
     >
       <ToolButtons />
-      {tools.map((tool) => (
-        <TooltipProvider key={tool.key}>
-          <Tooltip>
-            <TooltipTrigger className="flex w-full min-w-0 justify-start">
-              {tool.button}
-            </TooltipTrigger>
-            <TooltipContent
-              className="max-w-[200px] md:max-w-[400px]"
-              side="left"
-            >
-              {tool.tooltip}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      ))}
+      <div>
+        {tools.map((tool) => (
+          <TooltipProvider key={tool.key}>
+            <Tooltip>
+              <TooltipTrigger className="flex w-full min-w-0 justify-start">
+                {tool.button}
+              </TooltipTrigger>
+              <TooltipContent
+                className="max-w-[200px] md:max-w-[400px]"
+                side="left"
+              >
+                {tool.tooltip}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ))}
+      </div>
     </div>
   )
 }

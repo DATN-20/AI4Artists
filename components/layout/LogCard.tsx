@@ -1,6 +1,6 @@
 import {
   useChangeNotificationStatusMutation,
-  useGetNotificationImageQuery
+  useGetNotificationImageQuery,
 } from "@/services/generate/generateApi"
 import React, { useState } from "react"
 import { toast } from "react-toastify"
@@ -31,14 +31,9 @@ const LogCard = ({
   const [isRead, setIsRead] = useState<boolean>(is_read)
   const [open, setOpen] = useState(false)
   const [changeNotificationStatus] = useChangeNotificationStatusMutation()
-  const { data: notificationImage, refetch } =
-  useGetNotificationImageQuery(reference_data)
-  const changeToUnread = async () => {
-    if (isRead) {
-      setIsRead(false)
-      changeNotificationStatus(id)
-    }
-  }
+  const { data: notificationImage, refetch } = useGetNotificationImageQuery(
+    reference_data || "",
+  )
 
   const toggleRead = async () => {
     if (reference_data) {
@@ -64,7 +59,7 @@ const LogCard = ({
           <DialogHeader className="hidden" />
           <DialogTrigger className="my-3 flex w-full text-start">
             <div
-              className={`border-b p-4 ${isRead ? "text-gray-500" : "text-white"} flex items-center gap-4 hover:cursor-pointer hover:bg-gray-800`}
+              className={`border-b p-4 ${isRead ? "text-gray-500" : "text-gray-800 dark:text-white"} flex items-center gap-4 hover:cursor-pointer hover:bg-slate-300 dark:hover:bg-gray-800`}
               onClick={toggleRead}
             >
               <div>
@@ -91,7 +86,7 @@ const LogCard = ({
         </Dialog>
       ) : (
         <div
-          className={`group border-b p-4 ${isRead ? "text-gray-500" : "text-white"} flex items-center gap-4 hover:cursor-pointer hover:bg-gray-800`}
+          className={`group border-b p-4 ${isRead ? "text-gray-500" : "text-gray-800 dark:text-white"} flex items-center gap-4 hover:cursor-pointer hover:bg-slate-300 dark:hover:bg-gray-800`}
           onClick={toggleRead}
         >
           <div className="relative">
