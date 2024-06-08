@@ -11,7 +11,7 @@ export const generateApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    aiInformation: builder.query<AIConfig[],void>({
+    aiInformation: builder.query<AIConfig[], void>({
       query: () => {
         return {
           url: "/api/v1/generate-image/ai-info",
@@ -19,7 +19,7 @@ export const generateApi = createApi({
         }
       },
     }),
-    aiStyleInformation: builder.mutation({
+    aiStyleInformation: builder.query<AIConfig[], void>({
       query: () => {
         return {
           url: "/api/v1/generate-image/ai-generate-by-images-style-info",
@@ -60,7 +60,7 @@ export const generateApi = createApi({
         url: `/api/v1/generate-tag`,
         method: "POST",
         body: formData,
-        responseHandler: "text"
+        responseHandler: "text",
       }),
     }),
     getNotifications: builder.query<NotificationInfo[], void>({
@@ -93,7 +93,7 @@ export const generateApi = createApi({
 
 export const {
   useAiInformationQuery,
-  useAiStyleInformationMutation,
+  useAiStyleInformationQuery,
   useTextToImageMutation,
   useImageToImageMutation,
   useGetGenerationHistoryQuery,
@@ -102,5 +102,5 @@ export const {
   useChangeNotificationStatusMutation,
   useGetNotificationImageQuery,
   useGenerateStyleImageMutation,
-  useGenerateTagsMutation
+  useGenerateTagsMutation,
 } = generateApi

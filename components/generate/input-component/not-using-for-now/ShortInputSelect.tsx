@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useState } from "react"
-import { Button } from "../../ui/button"
+import { Button } from "../../../ui/button"
 
 type ShortInputSelectProps = {
   data: Array<{

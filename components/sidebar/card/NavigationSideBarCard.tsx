@@ -52,65 +52,17 @@ const NavigationSideBarCard = () => {
 
   return (
     <>
-      <Card>
+      <Card className="flex h-full min-h-full flex-col">
         <CardHeader
-          className="flex cursor-pointer flex-row items-center gap-4"
+          className="mt-4 flex cursor-pointer flex-col items-center gap-4"
           onClick={() => {
             router.push("/dashboard")
           }}
         >
-          <Image src="/logo.png" alt="logo" width={70} height={70} />
+          <Image src="/logo.png" alt="logo" width={90} height={90} />
           <h1 className="text-4xl font-bold ">AIArtist</h1>
         </CardHeader>
-        <CardContent className="px-4 pb-2">
-          <ul className=" flex flex-col gap-3">
-            <li>
-              <CardSection
-                onClick={() => {
-                  handleToggleSection("home")
-                  localStorage.removeItem("guestID")
-                }}
-                title="Home"
-                href="/dashboard"
-                isOpen={currentSection === "home"}
-                icon={<FaHome />}
-              />
-            </li>
-            <li>
-              <CardSection
-                onClick={() => {
-                  handleToggleSection("profile")
-                  localStorage.removeItem("guestID")
-                }}
-                title="Personal Feed"
-                href={`/profile/${userData.id}`}
-                isOpen={currentSection === "profile"}
-                icon={<IoPerson />}
-              />
-            </li>
-            <li>
-              <CardSection
-                onClick={() => handleToggleSection("#")}
-                title="Training & Dataset"
-                href="#"
-                isOpen={currentSection === "#"}
-                icon={<MdModelTraining />}
-              />
-            </li>
-            <li>
-              <CardSection
-                onClick={() => handleToggleSection("#")}
-                title="Models"
-                href="#"
-                isOpen={currentSection === "#"}
-                icon={<TbBoxModel2 />}
-              />
-            </li>
-          </ul>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent className="px-4 py-3">
+        <CardContent className="flex h-full flex-col justify-end gap-4 px-4 py-3">
           <ul className=" flex flex-col gap-3">
             <li>
               <CardSection
@@ -133,7 +85,7 @@ const NavigationSideBarCard = () => {
             <li>
               <CardSection
                 onClick={() => {}}
-                title="Image Copyright"
+                title="Upscale Image"
                 href="#"
                 isOpen={false}
                 icon={<FaClipboardCheck />}
@@ -149,45 +101,49 @@ const NavigationSideBarCard = () => {
               />
             </li>
           </ul>
+          <div className="flex flex-col gap-3 border-t-2 border-white pt-2">
+            <div className="flex items-center justify-between gap-2">
+              <div className="rounded-lg bg-card py-2 font-semibold">
+                <a
+                  className="flex items-center gap-2"
+                  href="/profile"
+                  onClick={() => {
+                    localStorage.removeItem("guestID")
+                  }}
+                >
+                  {userData?.avatar ? (
+                    <Image
+                      src={userData.avatar}
+                      width={40}
+                      height={40}
+                      alt="User Avatar"
+                      className="rounded-full"
+                    />
+                  ) : (
+                    <IoPersonCircleSharp size={40} />
+                  )}
+                  <span className="text-xl font-bold">
+                    {userData?.first_name + " " + userData?.last_name}
+                  </span>
+                </a>
+              </div>
+              <MdLogout
+                onClick={handleLogout}
+                size={28}
+                className="cursor-pointer"
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex gap-3 ">
+                <Facebook size={24} />
+                <Instagram size={24} />
+                <Twitter size={24} />
+                <FaDiscord size={24} />
+              </div>
+              <ThemeToggle />
+            </div>
+          </div>
         </CardContent>
-      </Card>
-      <Card>
-        <div className="flex flex-col gap-3 px-4 py-3">
-          <div className="flex items-center justify-between gap-2">
-            <div className="rounded-lg bg-card py-2 font-semibold">
-              <a className="flex items-center gap-2">
-                {userData?.avatar ? (
-                  <Image
-                    src={userData.avatar}
-                    width={40}
-                    height={40}
-                    alt="User Avatar"
-                    className="rounded-full"
-                  />
-                ) : (
-                  <IoPersonCircleSharp size={40} />
-                )}
-                <span className="text-xl font-bold">
-                  {userData?.first_name + " " + userData?.last_name}
-                </span>
-              </a>
-            </div>
-            <MdLogout
-              onClick={handleLogout}
-              size={28}
-              className="cursor-pointer"
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex gap-3 ">
-              <Facebook size={24} />
-              <Instagram size={24} />
-              <Twitter size={24} />
-              <FaDiscord size={24} />
-            </div>
-            <ThemeToggle />
-          </div>
-        </div>
       </Card>
     </>
   )
