@@ -37,7 +37,7 @@ const ColorPicker: React.FC = () => {
               className="flex w-full min-w-0 justify-start"
               onClick={() => setOpen(!open)}
             >
-              <div className="mx-1 h-10 rounded-xl border-primary bg-card px-4 py-2 hover:bg-primary dark:bg-white">
+              <div className="mx-1 h-10 rounded-xl border-primary bg-card px-4 py-2 hover:bg-gradient-to-br from-sky-300 to-primary-700 to-60% dark:bg-white">
                 <div
                   className="h-[25px] w-[25px] rounded-lg border-2 border-primary-700"
                   style={{ backgroundColor: color }}

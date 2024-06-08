@@ -50,7 +50,7 @@ const BrushSizeInput = () => {
               className="flex w-full min-w-0 justify-start"
               onClick={() => setOpen(!open)}
             >
-              <div className="mx-1 h-10 rounded-xl bg-card px-4 py-2 hover:bg-primary dark:bg-white">
+              <div className="mx-1 h-10 rounded-xl bg-card px-4 py-2 hover:bg-gradient-to-br from-sky-300 to-primary-700 to-60% dark:bg-white">
                 <RxBorderWidth className="h-[25px] w-[27px] dark:text-black"></RxBorderWidth>
               </div>
             </TooltipTrigger>

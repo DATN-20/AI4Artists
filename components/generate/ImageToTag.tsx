@@ -213,8 +213,8 @@ const ImageToTag = () => {
           <Tooltip>
             <TooltipTrigger className="flex w-full min-w-0 justify-start">
               <Button
-                variant={"outline"}
-                className="my-3 w-fit select-none rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+                variant={"default"}
+                className="my-3 w-fit select-none rounded-xl border-[2px] px-6 py-2 font-bold bg-gradient-to-br from-sky-300 to-primary-700 to-60% border-black hover:text-white"
               >
                 Tags
               </Button>
@@ -236,16 +236,16 @@ const ImageToTag = () => {
             className="mx-10 flex h-full flex-col"
             onValueChange={handleTabChange}
           >
-            <TabsList className="mt-10 grid grid-cols-2">
+            <TabsList className="mt-10 grid grid-cols-2 bg-black">
               <TabsTrigger
                 value="local"
-                className={selectedTab == true ? "hover:text-primary-700" : ""}
+                className={selectedTab == true ? "hover:text-primary-700" : "font-bold"}
               >
                 Upload
               </TabsTrigger>
               <TabsTrigger
                 value="album"
-                className={selectedTab == false ? "hover:text-primary-700" : ""}
+                className={selectedTab == false ? "hover:text-primary-700" : "font-bold"}
               >
                 Album
               </TabsTrigger>
@@ -386,8 +386,8 @@ const ImageToTag = () => {
             </TabsContent>
             <div className="my-5 flex justify-end">
               <Button
-                variant={"outline"}
-                className="my-6 flex w-fit select-none rounded-xl border-[2px] px-6 font-bold text-primary-700"
+                variant={"default"}
+                className="my-6 flex w-fit select-none rounded-xl border-[2px] px-6 font-bold bg-gradient-to-br from-sky-300 to-primary-700 to-60% border-black hover:text-white"
                 onClick={handleGenerate}
                 disabled={isGeneratingTags}
               >
@@ -422,7 +422,7 @@ const ImageToTag = () => {
               <>
                 <div>
                   <h4>Select your tags for positive prompts:</h4>
-                  <div className="mt-4 flex items-center justify-center">
+                  <div className="mt-4 flex items-center justify-start">
                     {tags && <TagsDisplay />}
                   </div>
                 </div>

@@ -6,7 +6,7 @@ import { Button } from "../ui/button"
 import probe from "probe-image-size"
 
 export interface NotificationImageProps {
-  style: string
+  style: string | undefined
   prompt: string
   images: DashboardImage[]
 }
@@ -76,12 +76,14 @@ const NotificationImage = ({
                 {images[selectedImageIndex].type}
               </Button>
             </Label>
-            <div className="mt-[8px] flex w-full items-center">
-              <h1 className="w-1/3 text-lg font-semibold">Style</h1>
-              <div className="w-2/3 rounded-lg bg-card">
-                <p className="p-4">{style}</p>
+            {style && (
+              <div className="mt-[8px] flex w-full items-center">
+                <h1 className="w-1/3 text-lg font-semibold">Style</h1>
+                <div className="w-2/3 rounded-lg bg-card">
+                  <p className="p-4">{style}</p>
+                </div>
               </div>
-            </div>
+            )}
             <div className="mt-[8px] flex items-center">
               <h1 className="w-1/3 flex-shrink-0 text-lg font-semibold">
                 AI Name

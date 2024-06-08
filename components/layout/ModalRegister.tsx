@@ -74,7 +74,6 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true)
     const { email, firstName, lastName, password } = values
-    // Simulate registration API call (replace with your actual API)
     if (email && password && firstName && lastName) {
       const response = await registerUser({
         email: email,
@@ -86,7 +85,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
         toast.error((response as ErrorObject).error.data.message)
       }
     } else {
-      toast.error("Please fill all fields!")
+      toast.error("Please fill in all fields!")
     }
   }
 
@@ -124,25 +123,25 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
                   height={120}
                   src="/logo.png"
                 />
-                <span className="bg-gradient-default bg-clip-text text-5xl font-black text-transparent">
+                <span className="bg-gradient-default bg-clip-text text-5xl font-black text-transparent select-none">
                   AIArtist
                 </span>
               </div>
 
               <div className="ml-5 mr-5 mt-5 flex  h-full flex-col gap-8 text-2xl font-bold text-white">
-                <p className="flex">
+                <p className="flex select-none">
                   <p className="mr-5 flex	items-center">✨</p>{" "}
                   <p>20 Free Image Generation daily</p>
                 </p>
-                <p className="flex">
+                <p className="flex select-none">
                   <p className="mr-5 flex	items-center">✨</p>{" "}
                   <p>Generate Image in your own Style</p>
                 </p>
-                <p className="flex">
+                <p className="flex select-none">
                   <p className="mr-5 flex	items-center">✨</p>{" "}
                   <p>Generate Image with pose, depth, sketch,…</p>
                 </p>
-                <p className="mb-10 flex">
+                <p className="mb-10 flex select-none">
                   <p className="mr-5 flex	items-center">✨</p>{" "}
                   <p>Manage your own profile space</p>
                 </p>
@@ -169,7 +168,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
                         placeholder="Email"
                         {...field}
                         type="email"
-                        className="w-full border-slate-400"
+                        className="w-full border-slate-400 focus:border-transparent focus:ring-0"
                       />
                     </FormControl>
                     <FormMessage />
@@ -186,7 +185,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
                       <Input
                         placeholder="First Name"
                         {...field}
-                        className="w-full border-slate-400"
+                        className="w-full border-slate-400 focus:border-transparent focus:ring-0"
                       />
                     </FormControl>
                     <FormMessage />
@@ -203,7 +202,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
                       <Input
                         placeholder="Last Name"
                         {...field}
-                        className="w-full border-slate-400"
+                        className="w-full border-slate-400 focus:border-transparent focus:ring-0"
                       />
                     </FormControl>
                     <FormMessage />
@@ -221,7 +220,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
                         placeholder="Password"
                         {...field}
                         type="password"
-                        className="w-full border-slate-400"
+                        className="w-full border-slate-400 focus:border-transparent focus:ring-0"
                       />
                     </FormControl>
                     <FormMessage />
@@ -235,7 +234,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
 
               <p className="mb-10 text-center">
                 Already have an account?{" "}
-                <a href="#" className="text-secondary" onClick={onClose}>
+                <a href="#" className="text-secondary hover:text-primary-700" onClick={onClose}>
                   Sign in
                 </a>
               </p>

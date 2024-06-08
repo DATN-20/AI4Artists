@@ -182,7 +182,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
                         type="email"
                         placeholder="Email"
                         {...field}
-                        className="w-full border-slate-400"
+                        className="w-full border-slate-400 focus:border-transparent focus:ring-0"
                       />
                     </FormControl>
                     <FormMessage />
@@ -201,14 +201,14 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
                           placeholder="Password"
                           {...field}
                           type="password"
-                          className="w-full border-slate-400"
+                          className="w-full border-slate-400 focus:border-transparent focus:ring-0"
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}  
                 />
-                <a href="#" className="float-right hover:text-secondary">
+                <a href="#" className="float-right hover:text-primary-700">
                   Forgot Password?
                 </a>
               </div>
@@ -222,7 +222,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
 
               <div className="mb-10 text-center">
                 Don't you have an account?{" "}
-                <a href="#" className="text-secondary" onClick={onClose}>
+                <a href="#" className="text-secondary hover:text-primary-700" onClick={onClose}>
                   Sign up
                 </a>
               </div>
