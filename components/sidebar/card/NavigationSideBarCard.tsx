@@ -83,7 +83,7 @@ const NavigationSideBarCard = () => {
                   localStorage.removeItem("guestID")
                 }}
                 title="Personal Feed"
-                href="/profile"
+                href={`/profile/${userData.id}`}
                 isOpen={currentSection === "profile"}
                 icon={<IoPerson />}
               />

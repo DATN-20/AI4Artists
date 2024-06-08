@@ -76,9 +76,11 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
     email: "",
     password: "",
   })
+
   const handleChange = (event: any) => {
     setFormData({ ...formData, [event.target.name]: event.target.value })
   }
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const { email, password } = values
 
@@ -95,23 +97,27 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      await refetch()
-
       if (profileData) {
         localStorage.setItem("userID", profileData.id.toString())
         localStorage.setItem("userData", JSON.stringify(profileData))
       }
     }
-    if (isLoginSuccess) {
+
+    const handleLoginSuccess = async () => {
+      await refetch()
       toast.success("User login successfully")
       dispatch(setUser({ token: loginData.access_token, name: "Hao" }))
-      fetchUserData()
+      await fetchUserData()
       const promptValue = localStorage.getItem("prompt")
       if (promptValue) {
         router.push("/generate")
       } else {
         router.push("/dashboard")
       }
+    }
+
+    if (isLoginSuccess) {
+      handleLoginSuccess()
     }
   }, [isLoginSuccess])
 

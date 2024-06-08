@@ -259,7 +259,7 @@ const ImageDetail = ({
               <div className="flex items-center gap-2">
                 <div>
                   {image.created_user?.avatar ? (
-                    <a href="/profile">
+                    <a href={`/profile/${image.created_user?.id}`}>
                       <h1
                         onClick={() => {
                           localStorage.setItem(
