@@ -12,13 +12,6 @@ import {
 } from "../ui/dialog"
 import NotificationImage from "./NotificationDialog"
 import { ErrorObject } from "@/types"
-import { BsThreeDots } from "react-icons/bs"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu"
 
 const LogCard = ({
   title,
@@ -107,22 +100,6 @@ const LogCard = ({
             <span className={`text-xs ${!isRead ? "text-primary" : ""}`}>
               {notificationDisplayTime()}
             </span>
-            <div
-              className="absolute right-4 top-1/2 z-10 hidden group-hover:block"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <BsThreeDots className="flex items-center justify-center rounded-full bg-gray-500 p-1 text-2xl text-primary" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="center">
-                  <DropdownMenuItem onClick={changeToUnread}>
-                    Mark as unread
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>Remove this notification</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
           </div>
           <div
             className={`${!isRead ? "h-[10px] w-[15px] rounded-full bg-primary" : ""}`}

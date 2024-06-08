@@ -35,7 +35,8 @@ export default function Generate() {
   const [promptPos, setPromptPos] = useState("")
   const [promptNeg, setPromptNeg] = useState("")
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
-  const { data: historyData, refetch } = useGetGenerationHistoryQuery()
+
+  const { data: historyData } = useGetGenerationHistoryQuery()
   const authStates = useSelector(selectAuth)
   const { setGenerateTags, generateTags, setOpenStyleDrawer } =
     useContext(TagsContext)
@@ -171,7 +172,6 @@ export default function Generate() {
         "Image is being generated! Please check for our notification.",
       )
     } catch (error: any) {
-      console.log(error)
       toast.error(
         "Error generating image: " +
           (error as { data: { message: string } }).data.message,
@@ -226,13 +226,13 @@ export default function Generate() {
             promptPos={promptPos}
           />
           {generateTags.length > 0 && (
-            <span className="relative rounded-sm border-2 border-primary-700 bg-transparent p-2 text-sm font-bold text-primary-700">
+            <div className="relative w-full rounded-sm border-2 border-primary-700 bg-transparent p-2 my-4 text-sm font-bold text-primary-700 md:w-2/3">
               {generateTags}
               <IoIosClose
                 className="absolute right-[-5px] top-[-10px] size-4 cursor-pointer rounded-full bg-red-500 text-sm text-white hover:bg-red-300"
                 onClick={() => setGenerateTags("")}
               />
-            </span>
+            </div>
           )}
           <h1 className="mt-5 text-3xl font-bold">Generated Images</h1>
           {historyData &&

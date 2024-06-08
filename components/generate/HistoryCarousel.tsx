@@ -31,6 +31,8 @@ import {
 import { IoEyeOutline } from "react-icons/io5"
 import { FaRegEyeSlash } from "react-icons/fa"
 import { useChangePublicStatusMutation } from "@/services/generate/generateApi"
+import { toast } from "react-toastify"
+import { ErrorObject } from "@/types"
 interface HistoryCarouselProps {
   generateImgData: Image[] | null
   width?: number
@@ -77,9 +79,9 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
 
       document.body.removeChild(link)
 
-      console.log("Image saved successfully!")
+      toast.success("Image saved successfully!")
     } catch (error) {
-      console.error("Error saving image:", error)
+      toast.error("Error saving image:" + error)
     }
   }
 
@@ -96,6 +98,13 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
       imageId: imageIds,
       albumId: selectedAlbumId,
     })
+
+    if ((result as ErrorObject).error) {
+      toast.error((result as ErrorObject).error.data.message)
+    } else {
+      toast.success("Add to album successfully")
+    }
+
     setSelectedAlbumId(null)
   }
 
