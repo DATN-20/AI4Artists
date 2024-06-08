@@ -86,7 +86,7 @@ const NavigationSideBarCard = () => {
               <CardSection
                 onClick={() => {}}
                 title="Upscale Image"
-                href="#"
+                href="/upscale"
                 isOpen={false}
                 icon={<FaClipboardCheck />}
               />
@@ -95,7 +95,7 @@ const NavigationSideBarCard = () => {
               <CardSection
                 onClick={() => {}}
                 title="Remove Background"
-                href="/"
+                href="/remove-bg"
                 isOpen={false}
                 icon={<FaTag />}
               />

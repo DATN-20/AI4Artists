@@ -28,7 +28,26 @@ export const imageApi = createApi({
       },
       invalidatesTags: ["processImage"],
     }),
+    processLocalImage: builder.mutation<any, any>({
+      query: ({
+        processType,
+        image,
+      }: {
+        processType: ProcessType
+        image: any
+      }) => {
+        const formData = new FormData()
+        formData.append("processType", processType)
+        formData.append("image", image)
+        return {
+          url: `/api/v1/images/image-processing`,
+          method: "POST",
+          body: formData,
+        }
+      },
+    }),
   }),
 })
 
-export const { useProcessImageMutation } = imageApi
+export const { useProcessImageMutation, useProcessLocalImageMutation } =
+  imageApi
