@@ -81,7 +81,7 @@ const LogLayout = ({ children }: { children: React.ReactNode }) => {
         ) : (
           <Button
             onClick={toggleLogVisibility}
-            className="fixed bottom-0 right-0 h-10 w-10 rounded px-0"
+            className="fixed bottom-0 right-0 h-10 w-10 rounded-sm px-0 bg-gradient-to-br from-sky-300 to-primary-700 to-80%"
           >
             <IoIosNotifications className="h-8 w-8" />
             {unreadCount > 0 && (

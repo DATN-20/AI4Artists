@@ -70,7 +70,7 @@ const LogCard = ({
                 </span>
               </div>
               <div
-                className={`${!isRead ? "h-[10px] w-[15px] rounded-full bg-primary" : ""}`}
+                className={`${!isRead ? "h-[10px] w-[15px] rounded-full" : ""}`}
               ></div>
             </div>
           </DialogTrigger>

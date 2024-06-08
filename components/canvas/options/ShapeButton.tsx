@@ -16,7 +16,7 @@ const ShapeButton: React.FC<{
     <Tooltip>
       <TooltipTrigger className="flex w-full min-w-0 justify-start">
         <div
-          className={`mx-1 h-10 rounded-xl px-4 py-2 ${isActive ? "bg-primary" : "bg-card dark:bg-white"} hover:bg-primary`}
+          className={`mx-1 h-10 rounded-xl px-4 py-2 ${isActive ? "bg-gradient-to-br from-sky-300 to-primary-700 to-60%" : "bg-card dark:bg-white"} hover:bg-gradient-to-br from-sky-300 to-primary-700 to-60%`}
           onClick={onClick}
         >
           {icon}

@@ -17,7 +17,7 @@ export const SaveImageButton: React.FC = memo(() => {
 
   return (
     <div
-      className="my-1 rounded-xl bg-card p-3 font-bold dark:bg-white dark:text-black dark:hover:bg-primary"
+      className="my-1 rounded-xl bg-card p-3 font-bold dark:bg-white dark:text-black hover:bg-gradient-to-br from-sky-300 to-primary-700 to-60%"
       onClick={() => {
         const canvas = canvasRef.current
         if (!canvas) return
