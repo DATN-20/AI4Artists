@@ -15,7 +15,7 @@ import {
   useGetGuestImageMutation,
   useGetGuestProfileMutation,
   useGetProfileAlbumMutation,
-  useGetProfileQuery,
+  useGetProfileMutation,
   useGetTotalImageQuery,
 } from "@/services/profile/profileApi"
 import {
@@ -58,6 +58,7 @@ import { toast } from "react-toastify"
 import NavigationSideBarCard from "@/components/sidebar/card/NavigationSideBarCard"
 import ProfileHeaderGuest from "@/components/profile/profile/ProfileHeaderGuest"
 import { ErrorObject } from "@/types"
+import { usePathname } from "next/navigation"
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -70,7 +71,7 @@ const Profile = () => {
   const generateStates = useSelector(selectGenerate)
   const authStates = useSelector(selectAuth)
   const [selectedAlbum, setSelectedAlbum] = useState(-1)
-  const { data: userData } = useGetProfileQuery()
+  const [getUser, { data: userData }] = useGetProfileMutation()
   const [getOneAlbum, { data: oneAlbumData }] = useGetAlbumMutation()
   const [openDialogCarousel, setOpenDialogCarousel] = useState<boolean>(false)
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
@@ -83,6 +84,7 @@ const Profile = () => {
   const [deleteAlbum] = useDeleteAlbumMutation()
   const [guestData, setGuestData] = useState<any>(null)
   const [guestProfile, setGuestProfile] = useState<any>(null)
+  const pathname = usePathname()
 
   const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null)
   const form = useForm<z.infer<typeof formSchema>>({
@@ -109,8 +111,9 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      await getUser(undefined)
       await getAlbum(undefined)
-      const guestID = localStorage.getItem("guestID")
+      const guestID = pathname.split("/")[2]
       const userID = localStorage.getItem("userID")
 
       if (guestID && guestID !== userID) {
@@ -170,7 +173,7 @@ const Profile = () => {
     if (isLoading) {
       return <Loading />
     }
-    const guestID = localStorage.getItem("guestID")
+    const guestID = pathname.split("/")[2]
     const userID = localStorage.getItem("userID")
     if (guestData && guestID !== userID && guestProfile) {
       return (
