@@ -58,7 +58,7 @@ const Footer = () => {
               </a>
             </li>
           </ul>
-          <ul className="grid gap-3 px-0 md:px-4">
+          <ul className="flex flex-col gap-3 px-0 md:px-4">
             <li>
               <a href="#" className="text-lg hover:text-gray-300 ">
                 Docs
@@ -75,7 +75,7 @@ const Footer = () => {
               </a>
             </li>
           </ul>
-          <ul className="grid gap-3 px-0 md:px-4">
+          <ul className="flex flex-col gap-3 px-0 md:px-4">
             <li>
               <a href="#" className="text-lg hover:text-gray-300 ">
                 Legal

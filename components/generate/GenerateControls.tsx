@@ -1,8 +1,7 @@
 import React from "react"
 import { Switch } from "../ui/switch"
 import { Label } from "../ui/label"
-import StyleDrawer from "./StyleDrawer"
-import ImageToTag from "./input-component/ImageToTag"
+import ImageToTag from "./ImageToTag"
 
 interface GenerateControlsProps {
   handlePosPromptChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void

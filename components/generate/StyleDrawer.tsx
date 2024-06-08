@@ -11,14 +11,13 @@ import {
 } from "@/components/ui/drawer"
 import { Button } from "../ui/button"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
-import { useEffect, useState } from "react"
-import {
-  useAiStyleInformationMutation,
-  useGenerateStyleImageMutation,
-} from "../../services/generate/generateApi"
+import { useContext, useEffect, useState } from "react"
+import { useGenerateStyleImageMutation } from "@/services/generate/generateApi"
 import { renderInput } from "./renderInput"
-import { base64StringToFile } from "../../lib/base64StringToFile"
+import { base64StringToFile } from "@/lib/base64StringToFile"
 import { toast } from "react-toastify"
+import { TagsContext } from "../../store/tagsHooks"
+import { eraseStyleStep } from "../../features/generateSlice"
 
 const StyleDrawer = ({
   dispatch,
@@ -30,18 +29,9 @@ const StyleDrawer = ({
   inputData: any
 }) => {
   const [currentStep, setCurrentStep] = useState(1)
-
-  const [generateStyle, { data: generateStyleData }] =
+  const { openStyleDrawer, setOpenStyleDrawer } = useContext(TagsContext)
+  const [generateStyle, { data: generateStyleData, isLoading, isError }] =
     useGenerateStyleImageMutation()
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     await aiStyleInformation(undefined)
-  //   }
-  //   fetchData()
-  // }, [])
-
-  const [open, setOpen] = useState(false)
 
   const getMaxStep = () => {
     const maxIndex =
@@ -56,6 +46,16 @@ const StyleDrawer = ({
 
   const navigateToStep = (step: number) => {
     if (step >= 1) {
+      if (currentStep === step - 1) {
+        const currentStepData = generateStates.dataStyleInputs?.find(
+          (input: any) => input.ArrayIndex === currentStep - 1 && input.name === "imageForIpadapter"
+        )
+
+        if (!currentStepData || !currentStepData.value) {
+          toast.error("Please fill the imageForIpadapter field")
+          return
+        }
+      }
       setCurrentStep(step)
     }
   }
@@ -64,50 +64,52 @@ const StyleDrawer = ({
     navigateToStep(currentStep + 1)
   }
 
-  useEffect(() => {
-    if (!open) {
-      setCurrentStep(1)
+  const handleEraseStep = (ArrayIndex: number) => {
+    if (ArrayIndex !== 0) {
+      dispatch(eraseStyleStep({ ArrayIndex }))
+      if (currentStep > ArrayIndex) {
+        setCurrentStep(currentStep - 1)
+      }
+    } else {
+      toast.error("Cannot erase the initial step.")
     }
-  }, [open])
+  }
 
   useEffect(() => {
-    console.log(generateStates.dataStyleInputs)
-  }, [generateStates.dataStyleInputs])
+    if (!openStyleDrawer) {
+      setCurrentStep(getMaxStep())
+    }
+  }, [openStyleDrawer])
+
+  useEffect(() => {
+    if (isError) {
+      toast.error("Error generating image")
+    }
+  }, [isError])
 
   const submitData = async () => {
     const formData = new FormData()
 
-    if (generateStates.dataInputs && generateStates.dataStyleInputs) {
-      generateStates.dataInputs.forEach((input: any, index: any) => {
+    if (generateStates.dataStyleInputs) {
+      const positivePromptCheck = generateStates.dataStyleInputs?.find(
+        (input: any) => input.name === "positivePrompt",
+      )
+
+      if (!positivePromptCheck || positivePromptCheck.value.trim() === "") {
+        toast.error("Please fill all Input field")
+        return
+      }
+
+      formData.append("aiName", generateStates.ai_name || "")
+
+      generateStates.dataStyleInputs.forEach((input: any, index: any) => {
         const { name, value } = input
-
-        if (name === "image") {
-          if (generateStates.useImage) {
-            const imageInput = generateStates.dataInputs?.find(
-              (input: any) => input.name === "image",
-            )
-            if (imageInput) {
-              const base64String = (imageInput as any).value
-              if (base64String) {
-                const filename = "image.jpg"
-                const imageFile = base64StringToFile(base64String, filename)
-                formData.append("image", imageFile)
-                return
-              }
-            }
-          }
-        }
-
         if (name === "controlNetImages") {
           const imageFile = base64StringToFile(value as string, "image.jpg")
           formData.append("controlNetImages", imageFile)
           return
         }
-        formData.append(name, (value as any).toString())
-      })
-      formData.append("aiName", "comfyUI")
-      generateStates.dataStyleInputs.forEach((input: any, index: any) => {
-        const { name, value } = input
+
         if (name === "imageForIpadapter") {
           const imageInput = generateStates.dataStyleInputs?.find(
             (input: any) => input.name === "imageForIpadapter",
@@ -115,7 +117,7 @@ const StyleDrawer = ({
           if (imageInput) {
             const base64String = (imageInput as any).value
             if (base64String) {
-              const filename = "image.jpg"
+              const filename = "image.png"
               const imageFile = base64StringToFile(base64String, filename)
               formData.append("imageForIpadapter", imageFile)
               return
@@ -130,8 +132,7 @@ const StyleDrawer = ({
       })
 
       try {
-        let result = await generateStyle(formData)
-        console.log(result)
+        await generateStyle(formData)
       } catch (error) {
         console.error("Error generating image:", error)
         toast.error("Error generating image")
@@ -145,8 +146,8 @@ const StyleDrawer = ({
     <Drawer
       direction="right"
       dismissible={false}
-      open={open}
-      onOpenChange={setOpen}
+      open={openStyleDrawer}
+      onOpenChange={setOpenStyleDrawer}
     >
       <DrawerTrigger>
         <Button
@@ -192,15 +193,24 @@ const StyleDrawer = ({
               generateStates,
               currentStep - 1,
               true,
-              true
+              true,
             )}
           </div>
         )}
-        <DrawerFooter>
-          <Button variant={"outline"} onClick={addOrUpdateImageToData}>
-            {currentStep >= getMaxStep() ? "Add Image" : "Update Image"}
+        <DrawerFooter className="flex flex-col gap-3">
+          {currentStep === getMaxStep() && (
+            <Button variant={"outline"} onClick={addOrUpdateImageToData}>
+              Add Step
+            </Button>
+          )}
+          <Button
+            variant={"outline"}
+            onClick={() => handleEraseStep(currentStep - 1)}
+            disabled={currentStep === 1}
+          >
+            Erase Step
           </Button>
-          <Button onClick={submitData}>Submit</Button>
+          <Button onClick={submitData}>Generate With Style</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

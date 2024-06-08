@@ -14,6 +14,8 @@ export type TagsContextType = {
   initTagChosen: () => void
   generateTags: string
   setGenerateTags: Dispatch<SetStateAction<string>>
+  openStyleDrawer: boolean
+  setOpenStyleDrawer: Dispatch<SetStateAction<boolean>>
 }
 
 export const TagsContext = createContext<TagsContextType>({
@@ -24,6 +26,8 @@ export const TagsContext = createContext<TagsContextType>({
   initTagChosen: () => {},
   generateTags: "",
   setGenerateTags: () => {},
+  openStyleDrawer: false,
+  setOpenStyleDrawer: () => {},
 })
 
 export const TagsContextProvider: React.FC<{ children: ReactNode }> = ({
@@ -32,6 +36,7 @@ export const TagsContextProvider: React.FC<{ children: ReactNode }> = ({
   const [tags, setTags] = useState<string[]>([])
   const [isTagChosens, setTagChosens] = useState<boolean[]>([])
   const [generateTags, setGenerateTags] = useState("")
+  const [openStyleDrawer, setOpenStyleDrawer] = useState(false)
 
   const initTagChosen = () => {
     const arr = new Array(tags.length).fill(true)
@@ -40,7 +45,17 @@ export const TagsContextProvider: React.FC<{ children: ReactNode }> = ({
 
   return (
     <TagsContext.Provider
-      value={{ tags, setTags, isTagChosens, setTagChosens, initTagChosen, generateTags, setGenerateTags }}
+      value={{
+        tags,
+        setTags,
+        isTagChosens,
+        setTagChosens,
+        initTagChosen,
+        generateTags,
+        setGenerateTags,
+        openStyleDrawer,
+        setOpenStyleDrawer,
+      }}
     >
       {children}
     </TagsContext.Provider>

@@ -1,10 +1,7 @@
-import { useSelector } from "react-redux"
-import { useAppDispatch } from "../../store/hooks"
 import CollapsibleSection from "./CollapsibleSection"
 import InputSelect from "./input-component/InputSelect"
 import SliderInput from "./input-component/SliderInput"
 import {
-  selectGenerate,
   setField,
   setStyleField,
   setUseControlnet,
@@ -13,7 +10,7 @@ import {
 import { Label } from "../ui/label"
 import { Switch } from "../ui/switch"
 import DynamicImageInput from "./input-component/DynamicImageInput"
-import { ControlnetDialog } from "./ControlnetDialog"
+import ControlnetDialog from "./ControlnetDialog"
 import TrueFalseInput from "./input-component/TrueFalseInput"
 import { Card } from "../ui/card"
 import StyleDrawer from "./StyleDrawer"
@@ -48,7 +45,7 @@ export const renderInput = (
           <InputSelect
             data={info.choices}
             type={propertyName}
-            defaultValue={checkDefaultValue}
+            defaultValue={isStyleDrawer ? checkDefaultValue : defaultValue}
             arrayIndex={arrayIndex}
             isStyleGenerate={isStyleGenerate}
           />
@@ -62,7 +59,7 @@ export const renderInput = (
             min={info.min}
             max={info.max}
             step={info.step}
-            defaultValue={checkDefaultValue}
+            defaultValue={isStyleDrawer ? checkDefaultValue : defaultValue}
             type={propertyName}
             arrayIndex={arrayIndex}
             isStyleGenerate={isStyleGenerate}
@@ -86,6 +83,7 @@ export const renderInput = (
                 delete: true,
               }),
             )
+
             return (
               <div className="flex justify-between p-4 pb-0">
                 <Label htmlFor="image-mode" className="text-lg font-semibold">
@@ -133,7 +131,10 @@ export const renderInput = (
         case "controlNetImages":
           return (
             <CollapsibleSection title={name} key={propertyName}>
-              <ControlnetDialog type={propertyName} />
+              <ControlnetDialog
+                type={propertyName}
+                isStyleGenerate={isStyleGenerate}
+              />
             </CollapsibleSection>
           )
 

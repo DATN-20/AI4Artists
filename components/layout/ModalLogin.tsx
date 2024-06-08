@@ -29,7 +29,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { FaFacebook, FaGoogle } from "react-icons/fa"
 import { X } from "lucide-react"
-import { useGetProfileMutation } from "@/services/profile/profileApi"
+import { useGetProfileQuery } from "@/services/profile/profileApi"
 
 const formSchema = z.object({
   email: z.string().min(2, {
@@ -48,7 +48,11 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
   const dispatch = useAppDispatch()
   const router = useRouter()
 
-  const [getUser, { data: userData }] = useGetProfileMutation()
+  const {
+    data: profileData,
+    error: profileError,
+    refetch,
+  } = useGetProfileQuery()
 
   const [
     loginUser,
@@ -72,9 +76,11 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
     email: "",
     password: "",
   })
+
   const handleChange = (event: any) => {
     setFormData({ ...formData, [event.target.name]: event.target.value })
   }
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const { email, password } = values
 
@@ -91,22 +97,27 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const res = await getUser(undefined)
-      if ("data" in res) {
-        localStorage.setItem("userID", res.data?.id)
-        localStorage.setItem("userData", JSON.stringify(res.data))
+      if (profileData) {
+        localStorage.setItem("userID", profileData.id.toString())
+        localStorage.setItem("userData", JSON.stringify(profileData))
       }
     }
-    if (isLoginSuccess) {
+
+    const handleLoginSuccess = async () => {
+      await refetch()
       toast.success("User login successfully")
       dispatch(setUser({ token: loginData.access_token, name: "Hao" }))
-      fetchUserData()
+      await fetchUserData()
       const promptValue = localStorage.getItem("prompt")
       if (promptValue) {
         router.push("/generate")
       } else {
         router.push("/dashboard")
       }
+    }
+
+    if (isLoginSuccess) {
+      handleLoginSuccess()
     }
   }, [isLoginSuccess])
 

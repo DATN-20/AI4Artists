@@ -1,3 +1,4 @@
+import { ImageTotal, Person } from "@/types/profile"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 
 export const profileApi = createApi({
@@ -10,7 +11,7 @@ export const profileApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    getProfile: builder.mutation({
+    getProfile: builder.query<Person,void>({
       query: () => {
         return {
           url: "/api/v1/users/me",
@@ -26,7 +27,7 @@ export const profileApi = createApi({
         }
       },
     }),
-    getTotalImage: builder.mutation({
+    getTotalImage: builder.query<ImageTotal[], void>({
       query: () => {
         return {
           url: "/api/v1/images",
@@ -122,4 +123,4 @@ export const profileApi = createApi({
   }),
 })
 
-export const { useGetProfileMutation, useGetProfileAlbumMutation , useGetTotalImageMutation, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation, useGetGuestImageMutation, useGetGuestProfileMutation, useGetAlbumMutation} = profileApi
+export const { useGetProfileQuery, useGetProfileAlbumMutation , useGetTotalImageQuery, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation, useGetGuestImageMutation, useGetGuestProfileMutation, useGetAlbumMutation} = profileApi

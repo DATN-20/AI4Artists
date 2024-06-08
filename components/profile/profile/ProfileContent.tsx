@@ -14,7 +14,7 @@ const ProfileContent = ({ imagesData }: { imagesData: any }) => {
   return (
     <div className="flex flex-col gap-4 p-2">
       <div className="mt-3">
-        <span className="bg-gradient-default bg-clip-text text-4xl font-black text-transparent">
+        <span className=" bg-clip-text text-4xl font-black dark:text-white">
           Your Images
         </span>
       </div>{" "}
