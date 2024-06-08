@@ -43,6 +43,7 @@ export const imageApi = createApi({
           url: `/api/v1/images/image-processing`,
           method: "POST",
           body: formData,
+          responseHandler: "text"
         }
       },
     }),

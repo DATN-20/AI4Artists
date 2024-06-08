@@ -57,7 +57,7 @@ export default function DashboardContent() {
             <DropdownMenuGroup>
               {selectionList.map((selection, index) => (
                 <DropdownMenuItem
-                  className={`focus:text-primary-700 ${index === currentIndex && "text-primary-800 bg-slate-200"}`}
+                  className={`focus:text-primary-700 ${index === currentIndex && "text-primary-800 bg-slate-200 dark:bg-gray-800"}`}
                   key={index}
                   onClick={() => handleSelection(index)}
                 >

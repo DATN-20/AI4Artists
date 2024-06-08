@@ -58,12 +58,12 @@ const NavigationSideBarCard = () => {
     },
     {
       title: "Upscale Image",
-      href: "/",
+      href: "/upscale",
       icon: <FaClipboardCheck />,
     },
     {
       title: "Remove Background",
-      href: "/",
+      href: "/remove-bg",
       icon: <FaTag />,
     },
   ]
@@ -90,7 +90,7 @@ const NavigationSideBarCard = () => {
                 icon={page.icon}
                 onClick={() => {}}
                 classNames={`rounded-lg p-2 pl-3 font-semibold
-                  ${page.href === pathname ? "bg-primary-500 text-white" : "hover:bg-slate-300 dark:hover:bg-gray-800 hover:text-primary-700"}
+                  ${page.href === pathname ? "dark:bg-gray-800 bg-slate-300 text-primary-700" : "hover:bg-slate-300 dark:hover:bg-gray-800 hover:text-primary-700"}
                   `}
               />
             ))}
