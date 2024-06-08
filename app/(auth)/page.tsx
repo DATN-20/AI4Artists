@@ -8,7 +8,7 @@ export default function Home() {
     <div className="mt-6 flex flex-grow flex-col items-center gap-14 px-4 lg:px-6">
       <div className="absolute left-0 top-0 -z-10 h-full w-full">
         <Image src="/linear-gradient.png" alt="gradient" fill={true} />
-        <Image src="/star.png" alt="star" fill={true} objectFit="cover" />
+        <Image src="/star.png" alt="star" fill style={{ objectFit: "cover" }} />
       </div>
       <div className="flex flex-col justify-center gap-4 text-center text-white">
         <h1 className="text-5xl font-bold">Create your own AI Art Gallery</h1>
