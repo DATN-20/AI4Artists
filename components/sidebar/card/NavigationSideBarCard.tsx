@@ -3,7 +3,6 @@ import CardSection from "./card-section/CardSection"
 import Image from "next/image"
 import { IoPerson, IoPersonCircleSharp } from "react-icons/io5"
 import { MdLogout, MdModelTraining } from "react-icons/md"
-import { TbBoxModel2 } from "react-icons/tb"
 import { Palette } from "lucide-react"
 import {
   FaClipboardCheck,
@@ -46,9 +45,28 @@ const NavigationSideBarCard = () => {
     setCurrentSection(section)
   }, [pathname])
 
-  const handleToggleSection = (section: string) => {
-    setCurrentSection(section)
-  }
+  const pages = [
+    {
+      title: "Image Generation",
+      href: "/generate",
+      icon: <FaImages />,
+    },
+    {
+      title: "Canvas",
+      href: "/canvas",
+      icon: <Palette />,
+    },
+    {
+      title: "Upscale Image",
+      href: "/",
+      icon: <FaClipboardCheck />,
+    },
+    {
+      title: "Remove Background",
+      href: "/",
+      icon: <FaTag />,
+    },
+  ]
 
   return (
     <>
@@ -64,42 +82,18 @@ const NavigationSideBarCard = () => {
         </CardHeader>
         <CardContent className="flex h-full flex-col justify-end gap-4 px-4 py-3">
           <ul className=" flex flex-col gap-3">
-            <li>
+            {pages.map((page, index) => (
               <CardSection
+                key={index}
+                title={page.title}
+                href={page.href}
+                icon={page.icon}
                 onClick={() => {}}
-                title="Image Generation"
-                href="/generate"
-                isOpen={false}
-                icon={<FaImages />}
+                classNames={`rounded-lg p-2 pl-3 font-semibold
+                  ${page.href === pathname ? "bg-primary-500 text-white" : "hover:bg-slate-300 dark:hover:bg-gray-800 hover:text-primary-700"}
+                  `}
               />
-            </li>
-            <li>
-              <CardSection
-                onClick={() => {}}
-                title="Canvas"
-                href="/canvas"
-                isOpen={false}
-                icon={<Palette />}
-              />
-            </li>
-            <li>
-              <CardSection
-                onClick={() => {}}
-                title="Upscale Image"
-                href="#"
-                isOpen={false}
-                icon={<FaClipboardCheck />}
-              />
-            </li>
-            <li>
-              <CardSection
-                onClick={() => {}}
-                title="Remove Background"
-                href="/"
-                isOpen={false}
-                icon={<FaTag />}
-              />
-            </li>
+            ))}
           </ul>
           <div className="flex flex-col gap-3 border-t-2 border-white pt-2">
             <div className="flex items-center justify-between gap-2">
@@ -119,7 +113,7 @@ const NavigationSideBarCard = () => {
                   ) : (
                     <IoPersonCircleSharp size={40} />
                   )}
-                  <span className="text-xl font-bold">
+                  <span className="text-xl font-bold hover:text-primary-700">
                     {userData?.first_name + " " + userData?.last_name}
                   </span>
                 </a>
@@ -127,7 +121,7 @@ const NavigationSideBarCard = () => {
               <MdLogout
                 onClick={handleLogout}
                 size={28}
-                className="cursor-pointer"
+                className="cursor-pointer hover:text-primary-700"
               />
             </div>
             <div className="flex items-center justify-between">

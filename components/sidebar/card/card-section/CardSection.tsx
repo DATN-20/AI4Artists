@@ -4,15 +4,15 @@ import React from "react"
 const CardSection = ({
   title,
   href,
-  isOpen,
   icon,
   onClick,
+  classNames,
 }: {
   title: string
   href: string
-  isOpen: boolean
   icon: React.ReactElement
   onClick: () => void
+  classNames?: string
 }) => {
   const iconWithProps = React.cloneElement(icon, {
     size: 20,
@@ -20,10 +20,7 @@ const CardSection = ({
   return (
     <div
       onClick={onClick}
-      className={clsx("rounded-lg p-2 pl-3 font-semibold ", {
-        "bg-card-highlight": isOpen,
-        "bg-card": !isOpen,
-      })}
+      className={classNames}
     >
       <a href={href} className="flex items-center gap-4">
         {iconWithProps}

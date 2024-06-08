@@ -138,7 +138,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
                   src="/logo.png"
                 />
                 <span className="bg-gradient-default bg-clip-text text-5xl font-black text-transparent">
-                  AI Artist
+                  AIArtist
                 </span>
               </div>
 
@@ -206,7 +206,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
                       </FormControl>
                       <FormMessage />
                     </FormItem>
-                  )}
+                  )}  
                 />
                 <a href="#" className="float-right hover:text-secondary">
                   Forgot Password?
@@ -215,11 +215,10 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
               <Button
                 type="submit"
                 className="h-10 w-full bg-black text-white"
-                disabled={isLoading ? true : false}
+                disabled={isLoading}
               >
                 Sign In
               </Button>
-              {/* Divider and Social Media Buttons */}
 
               <div className="mb-10 text-center">
                 Don't you have an account?{" "}

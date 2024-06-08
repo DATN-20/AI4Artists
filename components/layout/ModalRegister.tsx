@@ -125,7 +125,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({ onClose }) => {
                   src="/logo.png"
                 />
                 <span className="bg-gradient-default bg-clip-text text-5xl font-black text-transparent">
-                  AI Artist
+                  AIArtist
                 </span>
               </div>
 

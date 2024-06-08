@@ -56,7 +56,7 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
       <button
         type="button"
         onClick={handleGenerate}
-        className="mt-4 flex items-center justify-center rounded-full bg-purple-500 px-4 py-3 font-bold text-white hover:bg-purple-700 lg:hidden "
+        className="mt-4 flex select-none items-center justify-center rounded-full bg-purple-500 px-4 py-3 font-bold text-white hover:bg-purple-700 lg:hidden "
       >
         <span className="mr-2">✨</span>
         Generate

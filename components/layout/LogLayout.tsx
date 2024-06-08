@@ -55,8 +55,8 @@ const LogLayout = ({ children }: { children: React.ReactNode }) => {
                 <ChevronRight className="h-8 w-8" />
               </Button>
               <div className="flex w-full flex-col">
-                <div className="sticky left-0 top-0 flex items-center justify-between p-4">
-                  <h2 className="text-2xl font-semibold">Notifications</h2>
+                <div className="sticky left-0 top-0 flex items-center justify-between select-none p-4 bg-primary-500 text-gray-800">
+                  <h3 className="text-xl font-semibold">Notifications</h3>
                   <div className="flex items-center gap-1">
                     <IoIosMailUnread className="text-2xl" />
                     <span>{unreadCount}</span>
