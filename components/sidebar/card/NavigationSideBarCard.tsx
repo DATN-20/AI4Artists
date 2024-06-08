@@ -107,9 +107,6 @@ const NavigationSideBarCard = () => {
                 <a
                   className="flex items-center gap-2"
                   href={`/profile/${userData.id}`}
-                  onClick={() => {
-                    localStorage.removeItem("guestID")
-                  }}
                 >
                   {userData?.avatar ? (
                     <Image

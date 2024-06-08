@@ -260,14 +260,7 @@ const ImageDetail = ({
                 <div>
                   {image.created_user?.avatar ? (
                     <a href={`/profile/${image.created_user?.id}`}>
-                      <h1
-                        onClick={() => {
-                          localStorage.setItem(
-                            "guestID",
-                            (image.created_user?.id).toString(),
-                          )
-                        }}
-                      >
+                      <h1>
                         <Image
                           src={image.created_user?.avatar}
                           alt=""
@@ -279,28 +272,14 @@ const ImageDetail = ({
                     </a>
                   ) : (
                     <a href={`/profile/${image.created_user?.id}`}>
-                      <h1
-                        onClick={() => {
-                          localStorage.setItem(
-                            "guestID",
-                            (image.created_user?.id).toString(),
-                          )
-                        }}
-                      >
+                      <h1>
                         <IoPersonCircleSharp size={40} />
                       </h1>
                     </a>
                   )}
                 </div>
                 <a href={`/profile/${image.created_user?.id}`}>
-                  <h1
-                    onClick={() => {
-                      localStorage.setItem(
-                        "guestID",
-                        (image.created_user?.id).toString(),
-                      )
-                    }}
-                  >
+                  <h1>
                     {image.created_user?.first_name}{" "}
                     {image.created_user?.last_name}
                   </h1>
