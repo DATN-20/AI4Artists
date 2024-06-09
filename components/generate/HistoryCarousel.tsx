@@ -121,11 +121,11 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
 
   return (
     <>
-      <div className="mt-10 flex w-full items-center justify-between gap-6">
-        <div className="flex items-center gap-4">
+      <div className="mt-10 flex w-full items-center justify-between gap-8">
+        <div className="flex w-full items-center gap-4 truncate ">
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger className="flex min-w-0 justify-start">
+              <TooltipTrigger className="flex justify-start truncate">
                 <p className="truncate text-lg font-semibold">{prompt}</p>
               </TooltipTrigger>
               <TooltipContent className="max-w-[200px] md:max-w-[400px]">
@@ -133,15 +133,17 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <FaRegCopy
-            className="hover:cursor-pointer hover:text-primary-700"
-            onClick={() => {
-              if (prompt) {
-                navigator.clipboard.writeText(prompt)
-                toast.success("Prompt copied to clipboard")
-              }
-            }}
-          />
+          <div className="">
+            <FaRegCopy
+              className="h-6 w-6 hover:cursor-pointer hover:text-primary-700"
+              onClick={() => {
+                if (prompt) {
+                  navigator.clipboard.writeText(prompt)
+                  toast.success("Prompt copied to clipboard")
+                }
+              }}
+            />
+          </div>
         </div>
         <div className="flex items-center gap-5">
           <div className="flex items-center gap-1">
