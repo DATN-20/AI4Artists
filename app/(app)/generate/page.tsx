@@ -27,6 +27,9 @@ import { selectAuth, setTotalAlbum } from "@/features/authSlice"
 import { toast } from "react-toastify"
 import { TagsContext } from "@/store/tagsHooks"
 import { IoIosClose } from "react-icons/io"
+import { Switch } from "../../../components/ui/switch"
+import { Label } from "../../../components/ui/label"
+import ImageToTag from "../../../components/generate/ImageToTag"
 
 export default function Generate() {
   const dispatch = useAppDispatch()
@@ -58,8 +61,10 @@ export default function Generate() {
     )
   }
 
-  const [textToImage] = useTextToImageMutation()
-  const [imageToImage] = useImageToImageMutation()
+  const [textToImage, { data: textToImgData, isLoading: textToImageLoading }] =
+    useTextToImageMutation()
+  const [imageToImage, { data: imgToImgData, isLoading: imgToImageLoading }] =
+    useImageToImageMutation()
   const [generateImgData, setGenerateImgData] = useState<string[] | null>(null)
 
   function base64StringToFile(base64String: string, filename: string): File {
@@ -217,16 +222,57 @@ export default function Generate() {
           </div>
         </div>
         <div className="h-full w-full lg:col-span-8">
-          <GenerateControls
+          {/* <GenerateControls
             handlePosPromptChange={handlePosPromptChange}
             handleNegPromptChange={handleNegPromptChange}
             handleGenerate={handleGenerate}
             setUseNegativePrompt={setUseNegativePrompt}
             useNegativePrompt={useNegativePrompt}
             promptPos={promptPos}
-          />
+          /> */}
+          <div className="flex items-center">
+            <textarea
+              placeholder="Type prompt here..."
+              value={promptPos}
+              onChange={handlePosPromptChange}
+              className="flex-grow resize-none rounded-2xl p-3 text-black placeholder-black outline-none dark:bg-[#2c2d31] dark:text-white dark:placeholder-white"
+            />
+            <button
+              type="button"
+              onClick={handleGenerate}
+              className="ml-4 hidden items-center justify-center rounded-full bg-gradient-to-br from-sky-300 to-primary-700 to-60% px-4 py-3 font-bold text-white hover:drop-shadow-2xl lg:flex"
+            >
+              <span className="mr-2">✨</span>
+              Generate
+            </button>
+          </div>
+          <div className="mt-5 flex items-center space-x-2">
+            <Switch
+              id="negative-mode"
+              className="bg-black"
+              onClick={() => setUseNegativePrompt(!useNegativePrompt)}
+            />
+            <Label htmlFor="negative-mode">Use Negative Prompt</Label>
+          </div>
+          {useNegativePrompt && (
+            <textarea
+              placeholder="Type what you don't want to see in a image ..."
+              onChange={handleNegPromptChange}
+              className="mt-5 w-full  flex-grow resize-none rounded-2xl p-3 text-black placeholder-black outline-none dark:bg-[#2c2d31] dark:text-white dark:placeholder-white"
+            />
+          )}
+          <button
+            type="button"
+            onClick={handleGenerate}
+            disabled ={textToImageLoading || imgToImageLoading}
+            className="mt-4 flex select-none items-center justify-center rounded-full bg-purple-500 px-4 py-3 font-bold text-white hover:bg-purple-700 lg:hidden "
+          >
+            <span className="mr-2">✨</span>
+            Generate
+          </button>
+          <ImageToTag />
           {generateTags.length > 0 && (
-            <div className="relative w-full rounded-sm border-2 border-primary-700 bg-transparent p-2 my-4 text-sm font-bold text-primary-700 md:w-2/3">
+            <div className="relative my-4 w-full rounded-sm border-2 border-primary-700 bg-transparent p-2 text-sm font-bold text-primary-700 md:w-2/3">
               {generateTags}
               <IoIosClose
                 className="absolute right-[-5px] top-[-10px] size-4 cursor-pointer rounded-full bg-red-500 text-sm text-white hover:bg-red-300"

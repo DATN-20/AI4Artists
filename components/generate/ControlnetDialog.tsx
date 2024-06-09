@@ -24,20 +24,23 @@ import Image from "next/image"
 import axios from "axios"
 import { AlbumWithImages, ImageAlbum } from "@/types/profile"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
+import { base64StringToFile } from "@/lib/base64StringToFile"
 
 const ControlnetDialog = ({
   type,
   isStyleGenerate,
+  defaultValue
 }: {
   type: string
   isStyleGenerate?: boolean
+  defaultValue?: string
 }) => {
   const canvasModeContext = useContext(CanvasModeContext)
   const { imageFile } = canvasModeContext!
   const dispatch = useAppDispatch()
   const [open, setOpen] = useState(false)
   const [selectedAlbum, setSelectedAlbum] = useState<any | null>(null)
-  const [selectedImage, setSelectedImage] = useState<File | null>(null)
+  const [selectedImage, setSelectedImage] = useState<File | null>(defaultValue ? base64StringToFile(defaultValue, "image.jpg") : null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
   const authStates = useAppSelector(selectAuth)

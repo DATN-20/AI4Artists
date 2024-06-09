@@ -48,7 +48,9 @@ const StyleDrawer = ({
     if (step >= 1) {
       if (currentStep === step - 1) {
         const currentStepData = generateStates.dataStyleInputs?.find(
-          (input: any) => input.ArrayIndex === currentStep - 1 && input.name === "imageForIpadapter"
+          (input: any) =>
+            input.ArrayIndex === currentStep - 1 &&
+            input.name === "imageForIpadapter",
         )
 
         if (!currentStepData || !currentStepData.value) {
@@ -127,16 +129,17 @@ const StyleDrawer = ({
 
         formData.append(name, (value as any).toString())
       })
-      formData.forEach((value, key) => {
-        console.log(key, value)
-      })
 
       try {
         await generateStyle(formData)
+        toast.success(
+          "Image is being generated! Please check for our notification.",
+        )
       } catch (error) {
         console.error("Error generating image:", error)
         toast.error("Error generating image")
       }
+      setOpenStyleDrawer(false)
     } else {
       toast.error("Please fill all Input field")
     }
@@ -210,7 +213,9 @@ const StyleDrawer = ({
           >
             Erase Step
           </Button>
-          <Button onClick={submitData}>Generate With Style</Button>
+          <Button onClick={submitData} disabled={isLoading}>
+            Generate With Style
+          </Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
