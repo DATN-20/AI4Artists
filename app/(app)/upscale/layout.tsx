@@ -1,6 +1,6 @@
 import DashboardNavbar from "@/components/layout/dashboard/DashboardNavbar"
 
-export default function RemoveBgLayout({
+export default function UpscaleLayout({
   children,
 }: {
   children: React.ReactNode

@@ -21,13 +21,6 @@ import { Label } from "@radix-ui/react-label"
 import { useLikeImageMutation } from "@/services/dashboard/dashboardApi"
 import { IoPersonCircleSharp } from "react-icons/io5"
 import probe from "probe-image-size"
-import { FaVectorSquare } from "react-icons/fa6"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip"
 
 const ImageDetail = ({
   image,
@@ -78,47 +71,66 @@ const ImageDetail = ({
     })
   }, [image])
 
-  const handleEditCanvas = () => {
-    localStorage.setItem("imageUrl", image.url)
-    router.push(`/canvas`)
+  const handleSelectValue = (processType: string) => {
+    setProcessType(processType)
+    switch (processType) {
+      case "original":
+        setSelectedImage(image.url)
+        break
+      case ProcessType.UPSCALE:
+        handleOnSelectUpscaleImage()
+        break
+      case ProcessType.REMOVE_BACKGROUND:
+        handleOnSelectRemoveBackground()
+        break
+      case "edit":
+        localStorage.setItem("imageUrl", image.url)
+        router.push(`/canvas`)
+        break
+      case "report":
+        // reportImage()
+        break
+      default:
+        break
+    }
   }
 
-  // const handleOnSelectUpscaleImage = async () => {
-  //   const isUpscale = image.upscale != null && image.upscale !== ""
+  const handleOnSelectUpscaleImage = async () => {
+    const isUpscale = image.upscale != null && image.upscale !== ""
 
-  //   if (isUpscale) {
-  //     setSelectedImage(image.upscale)
-  //   } else {
-  //     try {
-  //       const result = await processImage({
-  //         processType: ProcessType.UPSCALE,
-  //         imageId: image.id,
-  //       })
-  //       if ("data" in result) {
-  //         setSelectedImage(result?.data.upscale)
-  //       }
-  //     } catch (error) {
-  //       console.log("Error upscaling image:", error)
-  //     }
-  //   }
-  // }
+    if (isUpscale) {
+      setSelectedImage(image.upscale)
+    } else {
+      try {
+        const result = await processImage({
+          processType: ProcessType.UPSCALE,
+          imageId: image.id,
+        })
+        if ("data" in result) {
+          setSelectedImage(result?.data.upscale)
+        }
+      } catch (error) {
+        console.log("Error upscaling image:", error)
+      }
+    }
+  }
 
-  // const handleOnSelectRemoveBackground = async () => {
-  //   const isRemoveBackground =
-  //     image.remove_background != null && image.remove_background !== ""
+  const handleOnSelectRemoveBackground = async () => {
+    const isRemoveBackground =
+      image.remove_background != null && image.remove_background !== ""
 
-  //   if (isRemoveBackground) {
-  //     setSelectedImage(image.remove_background)
-  //   } else {
-  //     const result = await processImage({
-  //       processType: ProcessType.REMOVE_BACKGROUND,
-  //       imageId: image.id,
-  //     })
-  //     if ("data" in result) {
-  //       setSelectedImage(result?.data.remove_background)
-  //     }
-  //   }
-  // }
+    if (isRemoveBackground) {
+      setSelectedImage(image.remove_background)
+    } else {
+      const result = await processImage({
+        processType: ProcessType.REMOVE_BACKGROUND,
+        imageId: image.id,
+      })
+      if ("data" in result) {
+        setSelectedImage(result?.data.remove_background)
+      }
+    }
+  }
 
   const handleLikeToggle = async (
     event: React.MouseEvent<SVGElement, MouseEvent>,
@@ -179,13 +191,13 @@ const ImageDetail = ({
                 />
               </div>
             </div>
-            <div className="absolute bottom-0 left-0 right-0 rounded-lg bg-black bg-opacity-75 px-1 py-3 text-center text-white">
+            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white">
               <p className="line-clamp-3">Prompt: {image.prompt}</p>
             </div>
           </div>
         </Card>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[85vw] md:max-w-[70vw]">
+      <DialogContent className="max-h-[90vh] overflow-y-scroll sm:max-w-[80vw] md:max-w-[60vw]">
         <div className="flex w-full gap-2">
           <div className="flex w-1/2 flex-col gap-2">
             {isLoading ? (
@@ -199,26 +211,44 @@ const ImageDetail = ({
                 className="h-auto w-full rounded-lg"
               />
             )}
-            <div className="flex w-full justify-end">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger className="w-fit">
-                    <Button
-                      variant="default"
-                      className="w-fit border-2 border-black bg-gradient-to-br from-sky-300 to-primary-700 to-60% text-black hover:opacity-70"
-                      onClick={handleEditCanvas}
+            <div className="mt-[8px] flex gap-2">
+              <Select
+                onValueChange={(value) => {
+                  handleSelectValue(value)
+                }}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Original" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem
+                      key="original"
+                      value="original"
+                      onSelect={() => {
+                        setSelectedImage(image.url)
+                      }}
                     >
-                      <FaVectorSquare size="xl" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent
-                    className="max-w-[200px] md:max-w-[400px]"
-                    side="left"
-                  >
-                    Edit in canvas
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                      Original
+                    </SelectItem>
+                    <SelectItem
+                      key={ProcessType.UPSCALE}
+                      value={ProcessType.UPSCALE}
+                    >
+                      Upscale Image
+                    </SelectItem>
+                    <SelectItem
+                      key={ProcessType.REMOVE_BACKGROUND}
+                      value={ProcessType.REMOVE_BACKGROUND}
+                    >
+                      Remove Background
+                    </SelectItem>
+                    <SelectItem key="edit" value="edit">
+                      Edit In Canvas
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div className="ml-4 flex flex-1 flex-col">
