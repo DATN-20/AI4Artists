@@ -3,7 +3,8 @@ import { DashboardImage } from "@/types/dashboard"
 import ImageDetail from "./ImageDetail"
 
 const MansoryGrid = ({ data }: { data: DashboardImage[] | undefined }) => {
-  if (!data) {
+  console.log(data)
+  if (!data || data.length < 1) {
     return <div>No images found.</div>
   }
 

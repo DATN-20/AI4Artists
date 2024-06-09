@@ -59,6 +59,7 @@ import NavigationSideBarCard from "@/components/sidebar/card/NavigationSideBarCa
 import ProfileHeaderGuest from "@/components/profile/profile/ProfileHeaderGuest"
 import { ErrorObject } from "@/types"
 import { usePathname } from "next/navigation"
+import ProfileContentGuest from "@/components/profile/profile/ProfileContentGuest"
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -185,7 +186,7 @@ const Profile = () => {
           </div>
           <div className="mr-8 h-full flex-1">
             <ProfileHeaderGuest userData={guestProfile.data} />
-            <ProfileContent imagesData={guestData.data.data} />
+            <ProfileContentGuest imagesData={guestData.data.data} />
           </div>
         </div>
       )
