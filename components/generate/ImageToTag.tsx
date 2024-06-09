@@ -214,7 +214,7 @@ const ImageToTag = () => {
             <TooltipTrigger className="flex w-full min-w-0 justify-start">
               <Button
                 variant={"default"}
-                className="my-3 w-fit select-none rounded-xl border-[2px] px-6 py-2 font-bold bg-gradient-to-br from-sky-300 to-primary-700 to-60% border-black hover:text-white"
+                className="my-3 w-fit select-none rounded-xl border-[2px] px-6 py-2 font-bold bg-gradient-to-br from-sky-300 to-primary-700 to-60% border-black hover:text-white dark:hover:text-black"
               >
                 Tags
               </Button>
@@ -236,16 +236,16 @@ const ImageToTag = () => {
             className="mx-10 flex h-full flex-col"
             onValueChange={handleTabChange}
           >
-            <TabsList className="mt-10 grid grid-cols-2 bg-black">
+            <TabsList className="mt-10 grid grid-cols-2 bg-black dark:bg-white">
               <TabsTrigger
                 value="local"
-                className={selectedTab == true ? "hover:text-primary-700" : "font-bold"}
+                className={selectedTab == true ? "hover:text-primary-700" : "font-bold dark:text-white"}
               >
                 Upload
               </TabsTrigger>
               <TabsTrigger
                 value="album"
-                className={selectedTab == false ? "hover:text-primary-700" : "font-bold"}
+                className={selectedTab == false ? "hover:text-primary-700" : "font-bold dark:text-white"}
               >
                 Album
               </TabsTrigger>
@@ -403,7 +403,7 @@ const ImageToTag = () => {
                         cy="12"
                         r="10"
                         stroke="currentColor"
-                        stroke-width="4"
+                        strokeWidth={4}
                       ></circle>
                       <path
                         className="opacity-75"

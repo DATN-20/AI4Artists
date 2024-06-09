@@ -82,6 +82,13 @@ export const generateApi = createApi({
         method: "GET",
       }),
     }),
+    deleteAllNotifications: builder.mutation<string, void>({
+      query: () => ({
+        url: "/api/v1/notifications",
+        method: "DELETE",
+        responseHandler: "text",
+      }),
+    }),
     generateStyleImage: builder.mutation({
       query: (formData) => ({
         url: "/api/v1/generate-image/image-by-images-style",
@@ -104,4 +111,5 @@ export const {
   useGetNotificationImageQuery,
   useGenerateStyleImageMutation,
   useGenerateTagsMutation,
+  useDeleteAllNotificationsMutation,
 } = generateApi

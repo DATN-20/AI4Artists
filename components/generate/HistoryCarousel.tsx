@@ -121,29 +121,31 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
 
   return (
     <>
-      <div className="mt-10 flex w-full items-center justify-between gap-6">
-        <div className="flex items-center gap-4">
+      <div className="mt-10 flex w-full items-center justify-between gap-8">
+        <div className="flex w-1/2 items-center gap-4 truncate ">
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger className="flex min-w-0 justify-start">
+              <TooltipTrigger className="flex justify-start truncate">
                 <p className="truncate text-lg font-semibold">{prompt}</p>
               </TooltipTrigger>
-              <TooltipContent className="max-w-[200px] md:max-w-[400px]">
+              <TooltipContent className="inline-flex max-w-[200px] whitespace-pre-wrap md:max-w-[400px]">
                 {prompt}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <FaRegCopy
-            className="hover:cursor-pointer hover:text-primary-700"
-            onClick={() => {
-              if (prompt) {
-                navigator.clipboard.writeText(prompt)
-                toast.success("Prompt copied to clipboard")
-              }
-            }}
-          />
+          <div className="">
+            <FaRegCopy
+              className="h-6 w-6 hover:cursor-pointer hover:text-primary-700"
+              onClick={() => {
+                if (prompt) {
+                  navigator.clipboard.writeText(prompt)
+                  toast.success("Prompt copied to clipboard")
+                }
+              }}
+            />
+          </div>
         </div>
-        <div className="flex items-center gap-5">
+        <div className="flex w-2/5  items-center justify-between gap-5">
           <div className="flex items-center gap-1">
             {generateImgData?.length}
             <FaImages />
@@ -152,9 +154,11 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
             new Date(generateImgData[0].created_at).toLocaleDateString()}
           <Button
             variant={"outline"}
-            className="min-w-fit rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700 hover:cursor-default"
+            className="w-2/3 rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700 hover:cursor-default"
           >
-            {styleAlbum}
+            <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
+              {styleAlbum}
+            </span>
           </Button>
         </div>
       </div>

@@ -22,7 +22,7 @@ import { toast } from "react-toastify"
 import Loading from "../Loading"
 import { X } from "lucide-react"
 
-const RemoveBackgroundProcessing = () => {
+const UpscaleImageProcessing = () => {
   const { theme } = useTheme()
 
   const [logoSrc, setLogoSrc] = useState<string>(
@@ -59,7 +59,7 @@ const RemoveBackgroundProcessing = () => {
     if (!file) return
     try {
       await processLocalImage({
-        processType: ProcessType.REMOVE_BACKGROUND,
+        processType: ProcessType.UPSCALE,
         image: file,
       })
     } catch (error) {
@@ -107,9 +107,7 @@ const RemoveBackgroundProcessing = () => {
 
   useEffect(() => {
     if (processedLocalData || processedData) {
-      setResultImage(
-        processedLocalData || processedData?.remove_background,
-      )
+      setResultImage(processedLocalData || processedData?.upscale)
     }
   }, [processedLocalData, processedData])
 
@@ -120,14 +118,14 @@ const RemoveBackgroundProcessing = () => {
     setSelectedAlbumImageIndex(imageIndex)
     if (!image.id) return
 
-    if (image.remove_background) {
-      setResultImage(image.remove_background)
+    if (image.upscale) {
+      setResultImage(image.upscale)
       return
     }
 
     try {
       await processImage({
-        processType: ProcessType.REMOVE_BACKGROUND,
+        processType: ProcessType.UPSCALE,
         imageId: image.id,
       })
     } catch (error) {
@@ -181,7 +179,7 @@ const RemoveBackgroundProcessing = () => {
     <div className="flex h-full w-full flex-col items-center gap-12">
       <div className="mt-8 flex flex-col items-center justify-center gap-4">
         <span className="bg-gradient-default bg-clip-text text-5xl font-black leading-[72px] text-transparent">
-          Remove Image Background
+          Upscale Your Image 
         </span>
         <h3 className="text-3xl font-semibold">100% Automatically and Free</h3>
       </div>
@@ -342,4 +340,4 @@ const RemoveBackgroundProcessing = () => {
   )
 }
 
-export default RemoveBackgroundProcessing
+export default UpscaleImageProcessing

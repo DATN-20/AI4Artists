@@ -44,6 +44,8 @@ export interface ImageAlbum {
   storageId: string;
   generateId: any | null; // Điều chỉnh kiểu nếu có thông tin cụ thể
   like: number;
+  remove_background: string;
+  upscale: string;
 }
 
 export interface ImageTotal {

@@ -1,3 +1,4 @@
+import { ErrorObject } from "@/types";
 import { createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
 export const authApi = createApi({
@@ -42,18 +43,26 @@ export const authApi = createApi({
         };
       },
     }),
-    forgetPasswordUser: builder.mutation({
+    forgetPasswordUser: builder.mutation<string | ErrorObject, {email: string}>({
       query: (body: {
         email: string;
       }) => {
         return {
           url: "api/v1/auth/forget-password",
           method: "post",
-          body,
-          responseHandler: "text"
+          body
         };
       },
     }),
+    resetPasswordUser: builder.mutation<string | ErrorObject, {password: string, token: string}>({
+      query: ({ password, token }) => {
+        return {
+          url: `api/v1/auth/forget-password/change-password?token=${token}`,
+          method: 'post',
+          body: { password }
+        };
+      },
+    }),    
     logoutUser: builder.mutation({
       query: (user: {
           id: number
@@ -70,4 +79,4 @@ export const authApi = createApi({
   
 });
 
-export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation, useLogoutUserMutation, useForgetPasswordUserMutation } = authApi;
+export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation, useLogoutUserMutation, useForgetPasswordUserMutation, useResetPasswordUserMutation } = authApi;
