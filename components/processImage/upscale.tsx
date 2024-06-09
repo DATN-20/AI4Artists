@@ -107,10 +107,7 @@ const UpscaleImageProcessing = () => {
 
   useEffect(() => {
     if (processedLocalData || processedData) {
-      setResultImage(
-        processedLocalData?.remove_background ||
-          processedData?.remove_background,
-      )
+      setResultImage(processedLocalData || processedData?.upscale)
     }
   }, [processedLocalData, processedData])
 
@@ -119,6 +116,13 @@ const UpscaleImageProcessing = () => {
     imageIndex: number,
   ) => {
     setSelectedAlbumImageIndex(imageIndex)
+    if (!image.id) return
+
+    if (image.upscale) {
+      setResultImage(image.upscale)
+      return
+    }
+
     try {
       await processImage({
         processType: ProcessType.UPSCALE,
@@ -130,14 +134,37 @@ const UpscaleImageProcessing = () => {
     }
   }
 
+  async function saveImageToDisk(imageUrl: string) {
+    try {
+      const response = await fetch(imageUrl)
+      const blob = await response.blob()
+
+      // Get the extension from the image URL
+      const urlParts = imageUrl.split(".")
+      const extension = urlParts[urlParts.length - 1].split("?")[0]
+
+      const blobUrl = URL.createObjectURL(blob)
+
+      const link = document.createElement("a")
+      link.href = blobUrl
+      link.download = `image.${extension}`
+      document.body.appendChild(link)
+
+      link.click()
+
+      URL.revokeObjectURL(blobUrl)
+
+      document.body.removeChild(link)
+
+      toast.success("Image downloaded successfully!")
+    } catch (error) {
+      toast.error("Error downloading image: " + error)
+    }
+  }
+
   const handleDownloadImage = () => {
     if (resultImage) {
-      const link = document.createElement("a")
-      link.href = resultImage
-      link.download = "processed-image.png"
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+      saveImageToDisk(resultImage)
     }
   }
 
@@ -152,29 +179,27 @@ const UpscaleImageProcessing = () => {
     <div className="flex h-full w-full flex-col items-center gap-12">
       <div className="mt-8 flex flex-col items-center justify-center gap-4">
         <span className="bg-gradient-default bg-clip-text text-5xl font-black leading-[72px] text-transparent">
-          Upscale Your Image
+          Upscale Your Image 
         </span>
         <h3 className="text-3xl font-semibold">100% Automatically and Free</h3>
       </div>
       {isLoadingLocal || isLoading ? (
         <Loading />
       ) : resultImage ? (
-        <div className="flex flex-col items-center justify-center gap-8">
-          <Card className="relative flex h-[400px] w-[400px] flex-col items-center justify-center rounded-2xl">
-            <Image
+        <div className="flex flex-col items-center justify-center gap-8 caret-transparent">
+          <div className="relative h-full w-full">
+            <img
               src={resultImage}
-              width={400}
-              height={400}
               alt="processed"
-              className="rounded-2xl"
+              className="h-auto w-full rounded-2xl"
             />
             <X
               className="absolute right-2 top-2 cursor-pointer"
-              onClick={handleDownloadImage}
+              onClick={() => setResultImage(null)}
             />
-          </Card>
+          </div>
           <Button
-            className="rounded-2xl px-6 py-7 text-xl font-semibold bg-primary-500 hover:bg-primary-600"
+            className="rounded-2xl bg-primary-500 px-6 py-7 text-xl font-semibold hover:bg-primary-600"
             onClick={handleDownloadImage}
           >
             Download
@@ -182,7 +207,7 @@ const UpscaleImageProcessing = () => {
         </div>
       ) : (
         <Card
-          className="relative flex h-[400px] w-[400px] flex-col items-center justify-center rounded-2xl"
+          className="relative flex h-[400px] w-[400px] flex-col items-center justify-center rounded-2xl caret-transparent"
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
