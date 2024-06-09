@@ -6,8 +6,6 @@ import { useLoginUserMutation } from "@/services/auth/authApi"
 import { useAppDispatch } from "@/store/hooks"
 import { setUser } from "@/features/authSlice"
 import {
-  DialogClose,
-  DialogContent,
   DialogContentLoginModal,
 } from "../ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -30,6 +28,7 @@ import { z } from "zod"
 import { FaFacebook, FaGoogle } from "react-icons/fa"
 import { X } from "lucide-react"
 import { useGetProfileMutation } from "@/services/profile/profileApi"
+import { LoginModalPage, ModalProps } from "@/constants/loginModal"
 
 const formSchema = z.object({
   email: z.string().min(2, {
@@ -40,11 +39,7 @@ const formSchema = z.object({
   }),
 })
 
-interface ModalLoginProps {
-  onClose: () => void
-}
-
-const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
+const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
   const dispatch = useAppDispatch()
   const router = useRouter()
 
@@ -208,7 +203,9 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
                     </FormItem>
                   )}  
                 />
-                <a href="#" className="float-right hover:text-primary-700">
+                <a href="#" className="float-right hover:text-primary-700"
+                  onClick={() => onClose(LoginModalPage.FORGOT_PASSWORD_PAGE)}
+                >
                   Forgot Password?
                 </a>
               </div>
@@ -222,7 +219,9 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
 
               <div className="mb-10 text-center">
                 Don't you have an account?{" "}
-                <a href="#" className="text-secondary hover:text-primary-700" onClick={onClose}>
+                <a href="#" className="text-secondary hover:text-primary-700"
+                  onClick={() => onClose(LoginModalPage.REGISTER_PAGE)}
+                >
                   Sign up
                 </a>
               </div>

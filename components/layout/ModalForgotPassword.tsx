@@ -1,6 +1,9 @@
 "use client"
 import React, { useState, useEffect } from "react"
-import { useRegisterUserMutation } from "@/services/auth/authApi"
+import {
+  useForgetPasswordUserMutation,
+  useRegisterUserMutation,
+} from "@/services/auth/authApi"
 import { toast } from "react-toastify"
 // import { CheckCircleOutlined } from "@ant-design/icons"
 import NextImage from "next/image"
@@ -26,27 +29,18 @@ const formSchema = z.object({
   email: z.string().min(2, {
     message: "Email must be at least 2 characters.",
   }),
-  firstName: z.string().min(1, {
-    message: "First Name must be at least 1 characters.",
-  }),
-  lastName: z.string().min(1, {
-    message: "Last Name must be at least 1 characters.",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
-  }),
 })
 
-const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
+const ModalForgotPassword: React.FC<ModalProps> = ({ onClose }) => {
   const [
-    registerUser,
+    forgetPassword,
     {
-      data: registerData,
-      isSuccess: isRegisterSuccess,
-      isError: isRegisterError,
-      error: registerError,
+      data: forgetPassData,
+      isSuccess: isForgetPassSuccess,
+      isError: isForgetPassError,
+      error: forgetPassError,
     },
-  ] = useRegisterUserMutation()
+  ] = useForgetPasswordUserMutation()
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
@@ -58,9 +52,6 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
       email: "",
-      firstName: "",
-      lastName: "",
-      password: "",
     },
   })
 
@@ -69,35 +60,29 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setIsSubmitting(true)
-    const { email, firstName, lastName, password } = values
-    if (email && password && firstName && lastName) {
-      const response = await registerUser({
+    const { email } = values
+    if (email) {
+      setIsSubmitting(true)
+      const response = await forgetPassword({
         email: email,
-        firstName: firstName,
-        lastName: lastName,
-        password: password,
       })
-      if ((response as ErrorObject).error) {
+      if ((response as ErrorObject).error.data.message) {
         toast.error((response as ErrorObject).error.data.message)
+      } else {
+        toast.success((response as ErrorObject).error.data.toString())
       }
+      setIsSubmitting(false)
     } else {
-      toast.error("Please fill in all fields!")
+      toast.error("Please fill in your email!")
     }
   }
 
   useEffect(() => {
-    if (isRegisterSuccess) {
-      toast.success(registerData)
+    if (isForgetPassSuccess) {
+      toast.success(forgetPassData?.toString())
       onClose(LoginModalPage.LOGIN_PAGE)
     }
-  }, [isRegisterSuccess])
-
-  // useEffect(() => {
-  //   if (isRegisterError) {
-  //     toast.error((registerError as any).data.message)
-  //   }
-  // }, [isRegisterError])
+  }, [isForgetPassSuccess])
 
   return (
     <DialogContentLoginModal
@@ -149,7 +134,9 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
 
         <div className="mx-auto w-full px-8 py-5 md:w-1/2">
           <Form {...form}>
-            <h1 className="my-5 text-center text-3xl font-bold">Sign Up</h1>
+            <h1 className="my-5 text-center text-3xl font-bold">
+              Forgot Your Password
+            </h1>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col gap-6"
@@ -172,61 +159,13 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="firstName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>First Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="First Name"
-                        {...field}
-                        className="w-full border-slate-400 focus:border-transparent focus:ring-0"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Last Name"
-                        {...field}
-                        className="w-full border-slate-400 focus:border-transparent focus:ring-0"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Password"
-                        {...field}
-                        type="password"
-                        className="w-full border-slate-400 focus:border-transparent focus:ring-0"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
-              <Button type="submit" className="h-10 w-full bg-black text-white">
-                Sign Up
+              <Button
+                type="submit"
+                className="h-10 w-full bg-black text-white"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Loading..." : "Reset Password"}
               </Button>
 
               <p className="mb-10 text-center">
@@ -247,4 +186,4 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
   )
 }
 
-export default ModalRegister
+export default ModalForgotPassword

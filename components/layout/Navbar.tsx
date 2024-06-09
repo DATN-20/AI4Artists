@@ -5,17 +5,24 @@ import Link from "next/link"
 import Image from "next/image"
 import { ModalLogin, ModalRegister } from "@/components/layout"
 import { Dialog, DialogTrigger } from "../ui/dialog"
+import { LoginModalPage } from "@/constants/loginModal"
+import ModalForgotPassword from "./ModalForgotPassword"
 const NavBar: React.FC = () => {
-  const [showLoginModal, setShowLoginModal] = useState(true)
+  const [modalPage, setModalPage] = useState<LoginModalPage>(
+    LoginModalPage.LOGIN_PAGE,
+  )
 
-  const toggleModal = () => {
-    setShowLoginModal(!showLoginModal)
+  const toggleModal = (page: LoginModalPage) => {
+    setModalPage(page)
   }
   return (
     <header className="sticky z-10 w-full">
       <nav className=" mx-auto flex items-center justify-between bg-[#0e1217] px-4 py-4 md:px-6 md:py-6">
         <Dialog>
-          <Link href="/dashboard" className="flex items-center justify-center gap-4 cursor-pointer">
+          <Link
+            href="/"
+            className="flex cursor-pointer items-center justify-center gap-4"
+          >
             <Image src="/logo.png" alt="logo" width={60} height={60} />
             <h1 className="text-3xl font-bold text-white">AIArtist</h1>
           </Link>
@@ -23,17 +30,21 @@ const NavBar: React.FC = () => {
             <DialogTrigger asChild>
               <button
                 type="button"
-                className="flex min-w-[150px] items-center justify-center rounded-full border-[2px] border-white py-1 hover:border-primary-700 hover:text-primary-700 text-xl font-semibold text-white"
+                className="flex min-w-[150px] items-center justify-center rounded-full border-[2px] border-white py-1 text-xl font-semibold text-white hover:border-primary-700 hover:text-primary-700"
               >
                 Sign in
               </button>
             </DialogTrigger>
           </div>
 
-          {showLoginModal ? (
+          {modalPage === LoginModalPage.LOGIN_PAGE && (
             <ModalLogin onClose={toggleModal} />
-          ) : (
+          )}
+          {modalPage === LoginModalPage.REGISTER_PAGE && (
             <ModalRegister onClose={toggleModal} />
+          )}
+          {modalPage === LoginModalPage.FORGOT_PASSWORD_PAGE && (
+            <ModalForgotPassword onClose={toggleModal} />
           )}
         </Dialog>
       </nav>
