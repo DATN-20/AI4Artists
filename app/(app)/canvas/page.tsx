@@ -10,7 +10,7 @@ const CanvasPage: React.FC = () => {
   return (
     <>
       <Canvas />
-      <div className="flex w-screen lg:p-2">
+      <div className="flex w-screen">
         <div className="ml-40 mr-16 w-9/12">
           <div className="flex h-[650px] w-[1000px] items-center justify-center"></div>
           <OptionSelect />
@@ -20,7 +20,6 @@ const CanvasPage: React.FC = () => {
           <div className="mr-16 flex items-center justify-center rounded-lg bg-card px-4 dark:bg-white">
             <ToolSelect />
           </div>
-          <Button className="mr-16 mt-5">Generate image</Button>
         </div>
       </div>
     </>

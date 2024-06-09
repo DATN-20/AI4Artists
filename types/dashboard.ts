@@ -6,7 +6,7 @@ export type DashboardImage = {
   url: string
   userId: number
   ai_name: string
-  style: string
+  style: string | undefined
   created_at: string
   created_user: {
     id: number

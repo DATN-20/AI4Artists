@@ -14,11 +14,26 @@ import { AlbumWithImages, ImageAlbum } from "@/types/profile"
 import { toast } from "react-toastify"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { TagsContext } from "@/store/tagsHooks"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip"
+import Loading from "../Loading"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel"
 
 const TagsDisplay = () => {
   const { tags, isTagChosens, setTagChosens } = useContext(TagsContext)
@@ -38,7 +53,9 @@ const TagsDisplay = () => {
           onClick={toggleChecked(index)}
         >
           {tag}
-          {isTagChosens[index] && <TiTick className="size-5" />}
+          <TiTick
+            className={`size-5 ${isTagChosens[index] ? "visible" : "invisible"}`}
+          />
         </span>
       ))}
     </div>
@@ -60,7 +77,10 @@ const ImageToTag = () => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
   const authStates = useAppSelector(selectAuth)
-  const [generateTags] = useGenerateTagsMutation()
+  const [
+    generateTags,
+    { isLoading: isGeneratingTags, isSuccess: isTagsGenerated },
+  ] = useGenerateTagsMutation()
   const { tags, setTags, initTagChosen, setGenerateTags, isTagChosens } =
     useContext(TagsContext)
   const [divWidth, setDivWidth] = useState("300px")
@@ -151,17 +171,17 @@ const ImageToTag = () => {
   const handleGenerate = async () => {
     const formData = new FormData()
     if (
-      (selectedTab && !selectedInputImage) ||
-      (!selectedTab && !selectedAlbumImage)
+      (selectedTab && !selectedAlbumImage) ||
+      (!selectedTab && !selectedInputImage)
     ) {
       toast.error("Please select an image")
       return
     }
 
     if (selectedTab) {
-      formData.append("image", selectedInputImage!)
-    } else {
       formData.append("image", selectedAlbumImage!)
+    } else {
+      formData.append("image", selectedInputImage!)
     }
     let result = await generateTags(formData).unwrap()
     setTags(
@@ -180,36 +200,64 @@ const ImageToTag = () => {
     setSelectedTab((prev) => !prev)
   }
 
+  useEffect(() => {
+    if (open) {
+      setSelectedTab(false)
+    }
+  }, [open])
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogHeader className="hidden" />
       <DialogTrigger className="my-3 flex">
-        <Button
-          variant={"outline"}
-          className="w-fit rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
-        >
-          Tags
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger className="flex w-full min-w-0 justify-start">
+              <Button
+                variant={"default"}
+                className="my-3 w-fit select-none rounded-xl border-[2px] px-6 py-2 font-bold bg-gradient-to-br from-sky-300 to-primary-700 to-60% border-black hover:text-white"
+              >
+                Tags
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="bottom"
+              className="max-w-[200px] md:max-w-[300px]"
+            >
+              Use this option to generate tags from an image to use for positive
+              prompts
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </DialogTrigger>
       <DialogContent className="left-0 top-0 flex h-full max-w-none translate-x-0 translate-y-0 justify-center border-none p-0">
         <div className="mr-8 h-1/2 flex-1">
           <Tabs
             defaultValue="local"
             className="mx-10 flex h-full flex-col"
-            onChange={handleTabChange}
+            onValueChange={handleTabChange}
           >
-            <TabsList className="grid grid-cols-2">
-              <TabsTrigger value="local">Upload </TabsTrigger>
-              <TabsTrigger value="album">Album</TabsTrigger>
+            <TabsList className="mt-10 grid grid-cols-2 bg-black">
+              <TabsTrigger
+                value="local"
+                className={selectedTab == true ? "hover:text-primary-700" : "font-bold"}
+              >
+                Upload
+              </TabsTrigger>
+              <TabsTrigger
+                value="album"
+                className={selectedTab == false ? "hover:text-primary-700" : "font-bold"}
+              >
+                Album
+              </TabsTrigger>
             </TabsList>
-            <TabsContent value="local" className="mb-10 h-full">
+            <TabsContent value="local" className="h-[300px]">
               <div className="flex w-full justify-center">
                 <div
                   onClick={handleClick}
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
                   style={{ width: divWidth }}
-                  className={`mt-5 flex h-[300px] cursor-pointer items-center justify-center space-y-0 rounded-xl ${selectedInputImage ? "border-0" : "border-2"}  rounded-lg border-dashed border-black text-center dark:border-white`}
+                  className={`mt-5 flex h-[300px] cursor-pointer items-center justify-center space-y-0 rounded-xl hover:opacity-50 ${selectedInputImage ? "border-0" : "border-2"}  rounded-lg border-dashed border-black text-center dark:border-white`}
                 >
                   {selectedInputImage ? (
                     <img
@@ -233,97 +281,148 @@ const ImageToTag = () => {
                 </div>
               </div>
             </TabsContent>
-            <TabsContent value="album">
-              {selectedAlbum ? (
-                <>
-                  <div className="mt-3 grid h-[300px] grid-cols-4 gap-4 p-1">
-                    {selectedAlbum.images &&
-                      selectedAlbum.images.map(
-                        (image: ImageAlbum, imageIndex: number) => (
-                          <div
-                            key={imageIndex}
-                            className="relative h-40 cursor-pointer transition-opacity duration-300 hover:opacity-50"
-                            onClick={() =>
-                              handleImageSelectFromAlbum(image, imageIndex)
-                            }
-                          >
-                            <Image
-                              src={image.url}
-                              alt={`Image ${imageIndex + 1}`}
-                              layout="fill"
-                              objectFit="cover"
-                              className={`rounded-md ${selectedAlbumImageIndex === imageIndex ? "border-2 border-primary-500 opacity-50" : ""}`}
-                            />
-                          </div>
-                        ),
-                      )}
-                  </div>
-                  <Button
-                    variant={"outline"}
-                    className=" flex w-fit rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
-                    onClick={() => setSelectedAlbum(null)}
-                  >
-                    Back
-                  </Button>
-                </>
-              ) : (
-                <div className="mt-3 grid h-[300px] grid-cols-4 gap-4 p-1">
-                  {authStates?.totalAlbum?.map(
-                    (album: AlbumWithImages, index: number) => (
-                      <div
-                        key={index}
-                        className={`relative grid h-full w-full gap-1 ${
-                          album.images && album.images.length === 0
-                            ? "grid-cols-1 grid-rows-1"
-                            : "grid-cols-2 grid-rows-2"
-                        }`}
-                        onClick={() => handleAlbumClick(album)}
-                      >
-                        {album.images &&
-                          album.images.length > 0 &&
-                          album.images
-                            .slice(0, 4)
-                            .map((image: ImageAlbum, imageIndex: number) => (
-                              <div key={imageIndex} className="relative h-40">
+            <TabsContent value="album" className="h-[300px]">
+              {authStates?.totalAlbum && authStates.totalAlbum.length > 0 ? (
+                selectedAlbum ? (
+                  <>
+                    <Carousel className="relative mx-3 mt-5">
+                      <CarouselContent>
+                        {selectedAlbum.images &&
+                          selectedAlbum.images.map(
+                            (image: ImageAlbum, imageIndex: number) => (
+                              <CarouselItem
+                                key={imageIndex}
+                                className="relative me-2 ml-4 h-[300px] cursor-pointer p-0 transition-opacity duration-300 hover:opacity-50 lg:basis-[300px]"
+                                onClick={() =>
+                                  handleImageSelectFromAlbum(image, imageIndex)
+                                }
+                              >
                                 <Image
                                   src={image.url}
                                   alt={`Image ${imageIndex + 1}`}
-                                  layout="fill"
-                                  objectFit="cover"
-                                  className="rounded-md"
+                                  fill
+                                  sizes="25"
+                                  style={{ objectFit: "cover" }}
+                                  className={`rounded-md ${
+                                    selectedAlbumImageIndex === imageIndex
+                                      ? "border-2 border-primary-500 opacity-50"
+                                      : ""
+                                  }`}
                                 />
+                              </CarouselItem>
+                            ),
+                          )}
+                      </CarouselContent>
+                      {selectedAlbum.images.length > 3 && (
+                        <>
+                          <CarouselPrevious className="absolute left-0 top-1/2 z-20 h-12 w-12 -translate-y-1/2 transform rounded-xl" />
+                          <CarouselNext className="absolute right-0 top-1/2 z-20 h-12 w-12 -translate-y-1/2 transform rounded-xl" />
+                        </>
+                      )}
+                    </Carousel>
+                    <Button
+                      variant={"outline"}
+                      className="relative z-50 mt-6 flex w-fit rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+                      onClick={() => setSelectedAlbum(null)}
+                    >
+                      Back
+                    </Button>
+                  </>
+                ) : (
+                  <Carousel className="relative mt-5 w-full">
+                    <CarouselContent>
+                      {authStates.totalAlbum.map(
+                        (album: AlbumWithImages, index: number) => (
+                          <CarouselItem
+                            key={index}
+                            className="relative grid h-[300px] w-1/4 gap-1 lg:basis-[300px]"
+                            onClick={() => handleAlbumClick(album)}
+                          >
+                            {album.images && album.images.length > 0 && (
+                              <div className="grid grid-cols-2 grid-rows-2 gap-1">
+                                {album.images
+                                  .slice(0, 4)
+                                  .map(
+                                    (image: ImageAlbum, imageIndex: number) => (
+                                      <div
+                                        key={imageIndex}
+                                        className="relative"
+                                      >
+                                        <Image
+                                          src={image.url}
+                                          alt={`Image ${imageIndex + 1}`}
+                                          fill
+                                          sizes="25"
+                                          style={{ objectFit: "cover" }}
+                                          className="rounded-md"
+                                        />
+                                      </div>
+                                    ),
+                                  )}
                               </div>
-                            ))}
-                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">
-                          <p className="text-center text-white">
-                            Album: {album.album.name}
-                          </p>
-                        </div>
-                        {album.images && album.images.length === 0 && (
-                          <div className="mt-20 flex max-h-full max-w-full justify-center">
-                            No images available
-                          </div>
-                        )}
-                      </div>
-                    ),
-                  )}
+                            )}
+                            <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:cursor-pointer hover:opacity-100">
+                              <p className="text-center text-white">
+                                {album.album.name}
+                              </p>
+                            </div>
+                          </CarouselItem>
+                        ),
+                      )}
+                    </CarouselContent>
+                    {authStates.totalAlbum.length > 3 && (
+                      <>
+                        <CarouselPrevious className="absolute left-0 top-1/2 z-20 h-12 w-12 -translate-y-1/2 transform rounded-xl" />
+                        <CarouselNext className="absolute right-0 top-1/2 z-20 h-12 w-12 -translate-y-1/2 transform rounded-xl" />
+                      </>
+                    )}
+                  </Carousel>
+                )
+              ) : (
+                <div className="flex h-[300px] w-full items-center justify-center">
+                  No albums available
                 </div>
               )}
             </TabsContent>
             <div className="my-5 flex justify-end">
               <Button
-                variant={"outline"}
-                className=" flex w-fit rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+                variant={"default"}
+                className="my-6 flex w-fit select-none rounded-xl border-[2px] px-6 font-bold bg-gradient-to-br from-sky-300 to-primary-700 to-60% border-black hover:text-white"
                 onClick={handleGenerate}
+                disabled={isGeneratingTags}
               >
-                Generate tags
+                {isGeneratingTags ? (
+                  <>
+                    <svg
+                      className="mr-2  h-5 w-5 animate-spin text-primary-700"
+                      viewBox="0 0 25 25"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  <span>Generate tags</span>
+                )}
               </Button>
             </div>
             {tags.length > 0 && (
               <>
                 <div>
                   <h4>Select your tags for positive prompts:</h4>
-                  <div className="flex items-center justify-center">
+                  <div className="mt-4 flex items-center justify-start">
                     {tags && <TagsDisplay />}
                   </div>
                 </div>
@@ -340,7 +439,7 @@ const ImageToTag = () => {
                       setOpen(false)
                     }}
                   >
-                    OK
+                    Confirm tags
                   </Button>
                 </div>
               </>

@@ -125,7 +125,7 @@ const DynamicImageInput = ({
 
   const handleImageSelectFromAlbum = async (image: any, index: number) => {
     try {
-      const response = await axios.get(image.image.url, {
+      const response = await axios.get(image.url, {
         responseType: "blob",
       })
       const imageFile = new File([response.data], "image.jpg", {
@@ -244,8 +244,8 @@ const DynamicImageInput = ({
                               <Image
                                 src={image.url}
                                 alt={`Image ${imageIndex + 1}`}
-                                layout="fill"
-                                objectFit="cover"
+                                fill
+                                style={{ objectFit: "cover" }}
                                 className={`rounded-md ${selectedAlbumImageIndex === imageIndex ? "border-2 border-primary-500 opacity-50" : ""}`}
                               />
                             </div>
@@ -282,8 +282,8 @@ const DynamicImageInput = ({
                                   <Image
                                     src={image.url}
                                     alt={`Image ${imageIndex + 1}`}
-                                    layout="fill"
-                                    objectFit="cover"
+                                    fill
+                                    style={{ objectFit: "cover" }}
                                     className="rounded-md"
                                   />
                                 </div>

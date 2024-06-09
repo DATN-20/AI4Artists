@@ -424,7 +424,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
       >
         <img
           className="h-full w-full rounded-full object-cover"
-          src={croppedImageUrl || "default.jpg"}
+          src={croppedImageUrl || "/default.jpg"}
           alt=""
         />
         {isHovered && (

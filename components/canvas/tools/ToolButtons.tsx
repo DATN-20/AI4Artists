@@ -14,12 +14,7 @@ import {
 
 export const ToolButtons: React.FC = memo(() => {
   const canvasModeContext = useContext(CanvasModeContext)
-  const {
-    mode,
-    setState,
-    setMode,
-    setCursor,
-  } = canvasModeContext!
+  const { mode, setState, setMode, setCursor } = canvasModeContext!
 
   const tools = [
     {
@@ -67,7 +62,7 @@ export const ToolButtons: React.FC = memo(() => {
           <Tooltip>
             <TooltipTrigger className="flex w-full min-w-0 justify-start">
               <div
-                className={`rounded-xl dark:bg-current dark:bg-white dark:hover:bg-primary ${mode !== tool.mode ? "bg-card dark:bg-white" : "dark:bg-primary"} p-3 `}
+                className={`rounded-xl hover:bg-gradient-to-br from-sky-300 to-primary-700 to-60% dark:bg-current dark:bg-white mt-2 ${mode !== tool.mode ? "bg-card dark:bg-white" : "bg-gradient-to-br from-sky-300 to-primary-700 to-60%"} p-3 `}
                 onClick={() => {
                   setState(CanvasState.IDLE)
                   setMode(tool.mode)

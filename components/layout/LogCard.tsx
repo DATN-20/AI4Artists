@@ -1,6 +1,6 @@
 import {
   useChangeNotificationStatusMutation,
-  useGetNotificationImageQuery
+  useGetNotificationImageQuery,
 } from "@/services/generate/generateApi"
 import React, { useState } from "react"
 import { toast } from "react-toastify"
@@ -12,13 +12,6 @@ import {
 } from "../ui/dialog"
 import NotificationImage from "./NotificationDialog"
 import { ErrorObject } from "@/types"
-import { BsThreeDots } from "react-icons/bs"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu"
 
 const LogCard = ({
   title,
@@ -38,14 +31,9 @@ const LogCard = ({
   const [isRead, setIsRead] = useState<boolean>(is_read)
   const [open, setOpen] = useState(false)
   const [changeNotificationStatus] = useChangeNotificationStatusMutation()
-  const { data: notificationImage, refetch } =
-  useGetNotificationImageQuery(reference_data)
-  const changeToUnread = async () => {
-    if (isRead) {
-      setIsRead(false)
-      changeNotificationStatus(id)
-    }
-  }
+  const { data: notificationImage, refetch } = useGetNotificationImageQuery(
+    reference_data || "",
+  )
 
   const toggleRead = async () => {
     if (reference_data) {
@@ -71,7 +59,7 @@ const LogCard = ({
           <DialogHeader className="hidden" />
           <DialogTrigger className="my-3 flex w-full text-start">
             <div
-              className={`border-b p-4 ${isRead ? "text-gray-500" : "text-white"} flex items-center gap-4 hover:cursor-pointer hover:bg-gray-800`}
+              className={`border-b p-4 ${isRead ? "text-gray-500" : "text-gray-800 dark:text-white"} flex items-center gap-4 hover:cursor-pointer hover:bg-slate-300 dark:hover:bg-gray-800`}
               onClick={toggleRead}
             >
               <div>
@@ -82,7 +70,7 @@ const LogCard = ({
                 </span>
               </div>
               <div
-                className={`${!isRead ? "h-[10px] w-[15px] rounded-full bg-primary" : ""}`}
+                className={`${!isRead ? "h-[10px] w-[15px] rounded-full" : ""}`}
               ></div>
             </div>
           </DialogTrigger>
@@ -98,7 +86,7 @@ const LogCard = ({
         </Dialog>
       ) : (
         <div
-          className={`group border-b p-4 ${isRead ? "text-gray-500" : "text-white"} flex items-center gap-4 hover:cursor-pointer hover:bg-gray-800`}
+          className={`group border-b p-4 ${isRead ? "text-gray-500" : "text-gray-800 dark:text-white"} flex items-center gap-4 hover:cursor-pointer hover:bg-slate-300 dark:hover:bg-gray-800`}
           onClick={toggleRead}
         >
           <div className="relative">
@@ -107,22 +95,6 @@ const LogCard = ({
             <span className={`text-xs ${!isRead ? "text-primary" : ""}`}>
               {notificationDisplayTime()}
             </span>
-            <div
-              className="absolute right-4 top-1/2 z-10 hidden group-hover:block"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <BsThreeDots className="flex items-center justify-center rounded-full bg-gray-500 p-1 text-2xl text-primary" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="center">
-                  <DropdownMenuItem onClick={changeToUnread}>
-                    Mark as unread
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>Remove this notification</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
           </div>
           <div
             className={`${!isRead ? "h-[10px] w-[15px] rounded-full bg-primary" : ""}`}

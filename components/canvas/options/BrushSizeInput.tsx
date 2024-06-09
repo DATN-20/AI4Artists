@@ -15,26 +15,12 @@ import { Dialog, DialogTrigger, DialogContent } from "@radix-ui/react-dialog"
 const BrushSizeInput = () => {
   const brushContext = React.useContext(CanvasModeContext)
   const { brushSize, setBrushSize } = brushContext!
+  const [open, setOpen] = React.useState(false)
 
   return (
     <div className="relative inline-block">
       <div className="flex flex-col-reverse">
-        <Dialog>
-          <DialogHeader className="hidden" />
-          <DialogTrigger>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger className="flex w-full min-w-0 justify-start">
-                  <Button className="mx-1 rounded-xl bg-card dark:bg-white dark:hover:bg-primary">
-                    <RxBorderWidth className="h-[30px] w-[27px] dark:text-black"></RxBorderWidth>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-[200px] md:max-w-[400px]">
-                  Brush size
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </DialogTrigger>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent className="absolute translate-y-[-4.5rem] justify-center border-none p-0">
             <div className="absolute flex h-7 w-[200px] items-center rounded-lg bg-stone-600">
               <Slider.Root
@@ -58,6 +44,21 @@ const BrushSizeInput = () => {
             </div>
           </DialogContent>
         </Dialog>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger
+              className="flex w-full min-w-0 justify-start"
+              onClick={() => setOpen(!open)}
+            >
+              <div className="mx-1 h-10 rounded-xl bg-card px-4 py-2 hover:bg-gradient-to-br from-sky-300 to-primary-700 to-60% dark:bg-white">
+                <RxBorderWidth className="h-[25px] w-[27px] dark:text-black"></RxBorderWidth>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-[200px] md:max-w-[400px]">
+              Brush size
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   )

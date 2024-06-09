@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="mb-2 flex flex-col gap-3">
             <div className="flex items-center gap-3">
               <Image src="/logo.png" alt="logo" width={60} height={60} />
-              <h2 className="text-2xl font-bold">AI Artist</h2>
+              <h2 className="text-2xl font-bold">AIArtist</h2>
             </div>
             <p className="text-lg text-[#E0E0E1]">
               Making stunning AI generated art and manage your own gallery

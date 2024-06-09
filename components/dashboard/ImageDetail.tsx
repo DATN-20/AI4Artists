@@ -246,9 +246,6 @@ const ImageDetail = ({
                     <SelectItem key="edit" value="edit">
                       Edit In Canvas
                     </SelectItem>
-                    <SelectItem key="report" value="report">
-                      Report This Image
-                    </SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -259,15 +256,8 @@ const ImageDetail = ({
               <div className="flex items-center gap-2">
                 <div>
                   {image.created_user?.avatar ? (
-                    <a href="/profile">
-                      <h1
-                        onClick={() => {
-                          localStorage.setItem(
-                            "guestID",
-                            (image.created_user?.id).toString(),
-                          )
-                        }}
-                      >
+                    <a href={`/profile/${image.created_user?.id}`}>
+                      <h1>
                         <Image
                           src={image.created_user?.avatar}
                           alt=""
@@ -278,29 +268,15 @@ const ImageDetail = ({
                       </h1>
                     </a>
                   ) : (
-                    <a href="/profile">
-                      <h1
-                        onClick={() => {
-                          localStorage.setItem(
-                            "guestID",
-                            (image.created_user?.id).toString(),
-                          )
-                        }}
-                      >
+                    <a href={`/profile/${image.created_user?.id}`}>
+                      <h1>
                         <IoPersonCircleSharp size={40} />
                       </h1>
                     </a>
                   )}
                 </div>
-                <a href="/profile">
-                  <h1
-                    onClick={() => {
-                      localStorage.setItem(
-                        "guestID",
-                        (image.created_user?.id).toString(),
-                      )
-                    }}
-                  >
+                <a href={`/profile/${image.created_user?.id}`}>
+                  <h1>
                     {image.created_user?.first_name}{" "}
                     {image.created_user?.last_name}
                   </h1>
@@ -324,7 +300,7 @@ const ImageDetail = ({
             <div className="mt-[8px] w-full rounded-lg bg-card">
               <p className="p-4">{image.prompt}</p>
             </div>
-            <Label className="mt-[8px] flex w-full items-center text-lg font-semibold">
+            <Label className="flex w-full items-center py-3 text-lg font-semibold">
               <div className="w-1/3">Type</div>
               <Button
                 variant={"outline"}
@@ -333,13 +309,15 @@ const ImageDetail = ({
                 {image.type}
               </Button>
             </Label>
-            <div className="mt-[8px] flex w-full items-center">
-              <h1 className="w-1/3 text-lg font-semibold">Style</h1>
-              <div className="w-2/3 rounded-lg bg-card">
-                <p className="p-4">{image.style}</p>
+            {image.style && (
+              <div className="mt-[8px] flex w-full items-center pb-3">
+                <h1 className="w-1/3 text-lg font-semibold">Style</h1>
+                <div className="w-2/3 rounded-lg bg-card">
+                  <p className="p-4">{image.style}</p>
+                </div>
               </div>
-            </div>
-            <div className="mt-[8px] flex items-center">
+            )}
+            <div className="mt-[8px] flex items-center pb-3">
               <h1 className="w-1/3 flex-shrink-0 text-lg font-semibold">
                 AI Name
               </h1>
@@ -347,7 +325,7 @@ const ImageDetail = ({
                 <p className="p-4">{image.ai_name}</p>
               </div>
             </div>
-            <div className="mt-[8px] flex items-center">
+            <div className="mt-[8px] flex items-center pb-3">
               <h1 className="w-1/3 flex-shrink-0 text-lg font-semibold">
                 Created At
               </h1>
@@ -358,7 +336,7 @@ const ImageDetail = ({
               </div>
             </div>
 
-            <div className="mt-[8px] flex items-center">
+            <div className="mt-[8px] flex items-center pb-3">
               <h1 className="w-1/3 flex-shrink-0 text-lg font-semibold">
                 Width
               </h1>

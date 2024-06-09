@@ -26,7 +26,7 @@ const ShapeButtons: React.FC = () => {
         icon={<FaRegCircle className="text-black" size={25}/>}
         onClick={() => handleShapeChange(ShapeModeOptions.CIRCLE_SHAPE)}
         isActive={shapeMode === ShapeModeOptions.CIRCLE_SHAPE}
-        tooltip="Draw circle"
+        tooltip="Draw ellipse"
       />
     </div>
   )

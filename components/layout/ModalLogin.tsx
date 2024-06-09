@@ -29,7 +29,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { FaFacebook, FaGoogle } from "react-icons/fa"
 import { X } from "lucide-react"
-import { useGetProfileQuery } from "@/services/profile/profileApi"
+import { useGetProfileMutation } from "@/services/profile/profileApi"
 
 const formSchema = z.object({
   email: z.string().min(2, {
@@ -48,11 +48,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
   const dispatch = useAppDispatch()
   const router = useRouter()
 
-  const {
-    data: profileData,
-    error: profileError,
-    refetch,
-  } = useGetProfileQuery()
+  const [getUser, { data: userData }] = useGetProfileMutation()
 
   const [
     loginUser,
@@ -76,9 +72,11 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
     email: "",
     password: "",
   })
+
   const handleChange = (event: any) => {
     setFormData({ ...formData, [event.target.name]: event.target.value })
   }
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const { email, password } = values
 
@@ -95,14 +93,13 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      await refetch()
-
-      if (profileData) {
-        localStorage.setItem("userID", profileData.id.toString())
-        localStorage.setItem("userData", JSON.stringify(profileData))
+      const res = await getUser(undefined)
+      if ("data" in res) {
+        localStorage.setItem("userID", res.data?.id)
+        localStorage.setItem("userData", JSON.stringify(res.data))
       }
     }
-    if (isLoginSuccess) {
+    const handleLoginSuccess = () => {
       toast.success("User login successfully")
       dispatch(setUser({ token: loginData.access_token, name: "Hao" }))
       fetchUserData()
@@ -112,6 +109,10 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
       } else {
         router.push("/dashboard")
       }
+    }
+
+    if (isLoginSuccess) {
+      handleLoginSuccess()
     }
   }, [isLoginSuccess])
 
@@ -137,7 +138,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
                   src="/logo.png"
                 />
                 <span className="bg-gradient-default bg-clip-text text-5xl font-black text-transparent">
-                  AI Artist
+                  AIArtist
                 </span>
               </div>
 
@@ -181,7 +182,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
                         type="email"
                         placeholder="Email"
                         {...field}
-                        className="w-full border-slate-400"
+                        className="w-full border-slate-400 focus:border-transparent focus:ring-0"
                       />
                     </FormControl>
                     <FormMessage />
@@ -200,29 +201,28 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
                           placeholder="Password"
                           {...field}
                           type="password"
-                          className="w-full border-slate-400"
+                          className="w-full border-slate-400 focus:border-transparent focus:ring-0"
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
-                  )}
+                  )}  
                 />
-                <a href="#" className="float-right hover:text-secondary">
+                <a href="#" className="float-right hover:text-primary-700">
                   Forgot Password?
                 </a>
               </div>
               <Button
                 type="submit"
                 className="h-10 w-full bg-black text-white"
-                disabled={isLoading ? true : false}
+                disabled={isLoading}
               >
                 Sign In
               </Button>
-              {/* Divider and Social Media Buttons */}
 
               <div className="mb-10 text-center">
                 Don't you have an account?{" "}
-                <a href="#" className="text-secondary" onClick={onClose}>
+                <a href="#" className="text-secondary hover:text-primary-700" onClick={onClose}>
                   Sign up
                 </a>
               </div>

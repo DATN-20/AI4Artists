@@ -39,6 +39,7 @@ export const dashboardApi = createApi({
         return {
           url: `/api/v1/images/interact`,
           method: "POST",
+          responseHandler: "text",
           body: { imageId: imageId, type: type },
         }
       }

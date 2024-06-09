@@ -30,7 +30,10 @@ import {
 } from "@/components/ui/tooltip"
 import { IoEyeOutline } from "react-icons/io5"
 import { FaRegEyeSlash } from "react-icons/fa"
+import { FaRegCopy } from "react-icons/fa6"
 import { useChangePublicStatusMutation } from "@/services/generate/generateApi"
+import { toast } from "react-toastify"
+import { ErrorObject } from "@/types"
 interface HistoryCarouselProps {
   generateImgData: Image[] | null
   width?: number
@@ -39,6 +42,7 @@ interface HistoryCarouselProps {
   prompt?: string
   album?: AlbumWithImages[] | null
 }
+import { FaImages } from "react-icons/fa"
 
 const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
   generateImgData,
@@ -77,9 +81,9 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
 
       document.body.removeChild(link)
 
-      console.log("Image saved successfully!")
+      toast.success("Image saved successfully!")
     } catch (error) {
-      console.error("Error saving image:", error)
+      toast.error("Error saving image:" + error)
     }
   }
 
@@ -96,6 +100,13 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
       imageId: imageIds,
       albumId: selectedAlbumId,
     })
+
+    if ((result as ErrorObject).error) {
+      toast.error((result as ErrorObject).error.data.message)
+    } else {
+      toast.success("Add to album successfully")
+    }
+
     setSelectedAlbumId(null)
   }
 
@@ -110,23 +121,44 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
 
   return (
     <>
-      <div className="mt-10 flex w-full items-center justify-between gap-6">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger className="flex min-w-0 justify-start">
-              <p className="truncate text-lg font-semibold">{prompt}</p>
-            </TooltipTrigger>
-            <TooltipContent className="max-w-[200px] md:max-w-[400px]">
-              {prompt}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <Button
-          variant={"outline"}
-          className="mt-[8px] min-w-fit rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700 hover:cursor-default"
-        >
-          {styleAlbum}
-        </Button>
+      <div className="mt-10 flex w-full items-center justify-between gap-8">
+        <div className="flex w-full items-center gap-4 truncate ">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="flex justify-start truncate">
+                <p className="truncate text-lg font-semibold">{prompt}</p>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-[200px] md:max-w-[400px]">
+                {prompt}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <div className="">
+            <FaRegCopy
+              className="h-6 w-6 hover:cursor-pointer hover:text-primary-700"
+              onClick={() => {
+                if (prompt) {
+                  navigator.clipboard.writeText(prompt)
+                  toast.success("Prompt copied to clipboard")
+                }
+              }}
+            />
+          </div>
+        </div>
+        <div className="flex items-center gap-5">
+          <div className="flex items-center gap-1">
+            {generateImgData?.length}
+            <FaImages />
+          </div>
+          {generateImgData &&
+            new Date(generateImgData[0].created_at).toLocaleDateString()}
+          <Button
+            variant={"outline"}
+            className="min-w-fit rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700 hover:cursor-default"
+          >
+            {styleAlbum}
+          </Button>
+        </div>
       </div>
 
       <Dialog>

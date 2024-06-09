@@ -17,15 +17,15 @@ const NavBar: React.FC = () => {
         <Dialog>
           <Link href="/dashboard" className="flex items-center justify-center gap-4 cursor-pointer">
             <Image src="/logo.png" alt="logo" width={60} height={60} />
-            <h1 className="text-3xl font-bold text-white">AI Artist</h1>
+            <h1 className="text-3xl font-bold text-white">AIArtist</h1>
           </Link>
           <div className="flex">
             <DialogTrigger asChild>
               <button
                 type="button"
-                className="flex min-w-[150px] items-center justify-center rounded-full border-[2px] border-white py-1"
+                className="flex min-w-[150px] items-center justify-center rounded-full border-[2px] border-white py-1 hover:border-primary-700 hover:text-primary-700 text-xl font-semibold text-white"
               >
-                <h1 className="text-xl font-semibold text-white">Sign in </h1>
+                Sign in
               </button>
             </DialogTrigger>
           </div>

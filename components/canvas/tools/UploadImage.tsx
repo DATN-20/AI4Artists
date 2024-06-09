@@ -60,7 +60,7 @@ export const UploadButton: React.FC = memo(() => {
         className="hidden"
       />
       <div
-        className="my-1 p-3 rounded-xl bg-card font-bold dark:bg-white dark:text-black dark:hover:bg-primary"
+        className="my-1 p-3 rounded-xl bg-card font-bold dark:bg-white dark:text-black hover:bg-gradient-to-br from-sky-300 to-primary-700 to-60%"
         onClick={() => fileInputRef.current?.click()}
       >
         <RiImageAddFill size={25} />
