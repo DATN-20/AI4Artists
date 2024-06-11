@@ -46,6 +46,9 @@ export interface ImageAlbum {
   like: number;
   remove_background: string;
   upscale: string;
+  createdUser: any; // Kiểu dữ liệu của createdUser phụ thuộc vào dữ liệu thực tế
+  isLiked: boolean;
+  likeNumber: number | null;
 }
 
 export interface ImageTotal {

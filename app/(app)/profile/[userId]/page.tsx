@@ -247,6 +247,7 @@ const Profile = () => {
                         setSelectedAlbum={handleSelectAlbum}
                         selectedAlbum={album.album.id}
                         setOpenDialogCarousel={setOpenDialogCarousel}
+                        getTotalImage={getTotalImage}
                       />
                     ))
                   ) : (
