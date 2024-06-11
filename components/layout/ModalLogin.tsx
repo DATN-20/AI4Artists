@@ -5,9 +5,7 @@ import NextImage from "next/image"
 import { useLoginUserMutation } from "@/services/auth/authApi"
 import { useAppDispatch } from "@/store/hooks"
 import { setUser } from "@/features/authSlice"
-import {
-  DialogContentLoginModal,
-} from "../ui/dialog"
+import { DialogContentLoginModal } from "../ui/dialog"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { toast } from "react-toastify"
@@ -62,6 +60,7 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
       password: "",
     },
   })
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false)
 
   const [formData, setFormData] = useState({
     email: "",
@@ -74,6 +73,7 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const { email, password } = values
+    setIsButtonDisabled(true)
 
     if (email && password) {
       const response = await loginUser({ email, password })
@@ -84,6 +84,9 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
     } else {
       toast.error("Please fill all Input field")
     }
+    setTimeout(() => {
+      setIsButtonDisabled(false)
+    }, 1500)
   }
 
   useEffect(() => {
@@ -201,9 +204,11 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
                       </FormControl>
                       <FormMessage />
                     </FormItem>
-                  )}  
+                  )}
                 />
-                <a href="#" className="float-right hover:text-primary-700"
+                <a
+                  href="#"
+                  className="float-right hover:text-primary-700"
                   onClick={() => onClose(LoginModalPage.FORGOT_PASSWORD_PAGE)}
                 >
                   Forgot Password?
@@ -212,14 +217,16 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
               <Button
                 type="submit"
                 className="h-10 w-full bg-black text-white"
-                disabled={isLoading}
+                disabled={isLoading || isButtonDisabled}
               >
                 Sign In
               </Button>
 
               <div className="mb-10 text-center">
                 Don't you have an account?{" "}
-                <a href="#" className="text-secondary hover:text-primary-700"
+                <a
+                  href="#"
+                  className="text-secondary hover:text-primary-700"
                   onClick={() => onClose(LoginModalPage.REGISTER_PAGE)}
                 >
                   Sign up

@@ -54,6 +54,7 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
     password: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
@@ -70,6 +71,8 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true)
+    setIsButtonDisabled(true)
+
     const { email, firstName, lastName, password } = values
     if (email && password && firstName && lastName) {
       const response = await registerUser({
@@ -84,6 +87,9 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
     } else {
       toast.error("Please fill in all fields!")
     }
+    setTimeout(() => {
+      setIsButtonDisabled(false)
+    }, 1500)
   }
 
   useEffect(() => {
@@ -225,7 +231,11 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
                 )}
               />
 
-              <Button type="submit" className="h-10 w-full bg-black text-white">
+              <Button
+                type="submit"
+                className="h-10 w-full bg-black text-white"
+                disabled={isButtonDisabled}
+              >
                 Sign Up
               </Button>
 
