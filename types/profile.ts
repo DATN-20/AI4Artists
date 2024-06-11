@@ -60,6 +60,8 @@ export interface ImageTotal {
   createdUser: any; // Kiểu dữ liệu của createdUser phụ thuộc vào dữ liệu thực tế
   isLiked: boolean;
   likeNumber: number | null;
+  visibility: boolean;
+
 }
 
 interface Album {
