@@ -4,9 +4,11 @@ import { useState } from "react"
 const CollapsibleSection = ({
   title,
   children,
+  isHidden = false,
 }: {
   title: string
   children: React.ReactNode
+  isHidden?: boolean
 }) => {
   const [isOpen, setIsOpen] = useState(true)
 
@@ -16,7 +18,9 @@ const CollapsibleSection = ({
         className="flex cursor-pointer items-center justify-between"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <h2 className="text-lg font-semibold">{title}</h2>
+        <h2 className="text-lg font-semibold">
+          {!isHidden ? title : isOpen ? "" : title}
+        </h2>
         {isOpen ? (
           <ChevronUp className="h-5 w-5" />
         ) : (

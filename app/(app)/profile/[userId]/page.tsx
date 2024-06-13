@@ -16,7 +16,7 @@ import {
   useGetGuestProfileMutation,
   useGetProfileAlbumMutation,
   useGetProfileMutation,
-  useGetTotalImageQuery,
+  useGetTotalImageMutation,
 } from "@/services/profile/profileApi"
 import {
   selectAuth,
@@ -59,6 +59,7 @@ import NavigationSideBarCard from "@/components/sidebar/card/NavigationSideBarCa
 import ProfileHeaderGuest from "@/components/profile/profile/ProfileHeaderGuest"
 import { ErrorObject } from "@/types"
 import { usePathname } from "next/navigation"
+import ProfileContentGuest from "@/components/profile/profile/ProfileContentGuest"
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -75,7 +76,7 @@ const Profile = () => {
   const [getOneAlbum, { data: oneAlbumData }] = useGetAlbumMutation()
   const [openDialogCarousel, setOpenDialogCarousel] = useState<boolean>(false)
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
-  const { data: imagesData } = useGetTotalImageQuery()
+  const [getTotalImage, { data: imagesData }] = useGetTotalImageMutation()
   const [getGuest, { data: guestImages }] = useGetGuestImageMutation()
   const [getGuestProfile, { data: guestProfileData }] =
     useGetGuestProfileMutation()
@@ -113,6 +114,8 @@ const Profile = () => {
     const fetchData = async () => {
       await getUser(undefined)
       await getAlbum(undefined)
+      await getTotalImage(undefined)
+
       const guestID = pathname.split("/")[2]
       const userID = localStorage.getItem("userID")
 
@@ -185,7 +188,7 @@ const Profile = () => {
           </div>
           <div className="mr-8 h-full flex-1">
             <ProfileHeaderGuest userData={guestProfile.data} />
-            <ProfileContent imagesData={guestData.data.data} />
+            <ProfileContentGuest imagesData={guestData.data.data} />
           </div>
         </div>
       )
@@ -244,6 +247,7 @@ const Profile = () => {
                         setSelectedAlbum={handleSelectAlbum}
                         selectedAlbum={album.album.id}
                         setOpenDialogCarousel={setOpenDialogCarousel}
+                        getTotalImage={getTotalImage}
                       />
                     ))
                   ) : (
@@ -422,6 +426,7 @@ const Profile = () => {
                         setSelectedAlbum={setSelectedAlbum}
                         selectedAlbum={selectedAlbum}
                         setOpenDialogCarousel={setOpenDialogCarousel}
+                        getTotalImage={getTotalImage}
                       />
                     )}
                   </DialogContent>

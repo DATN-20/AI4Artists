@@ -18,6 +18,17 @@ import { logout } from "@/features/authSlice"
 import { toast } from "react-toastify"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { useEffect, useState } from "react"
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
 
 const NavigationSideBarCard = () => {
   const dispatch = useAppDispatch()
@@ -118,11 +129,27 @@ const NavigationSideBarCard = () => {
                   </span>
                 </a>
               </div>
-              <MdLogout
-                onClick={handleLogout}
-                size={28}
-                className="cursor-pointer hover:text-primary-700"
-              />
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <MdLogout
+                    size={28}
+                    className="cursor-pointer hover:text-primary-700"
+                  />
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader className="mb-5">
+                    <AlertDialogTitle>
+                      Are you sure to log out?
+                    </AlertDialogTitle>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter className="mt-5">
+                    <AlertDialogAction>
+                      <button onClick={handleLogout}>Yes</button>
+                    </AlertDialogAction>
+                    <AlertDialogCancel>No</AlertDialogCancel>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex gap-3 ">

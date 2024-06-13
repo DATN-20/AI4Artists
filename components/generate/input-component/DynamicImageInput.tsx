@@ -125,7 +125,7 @@ const DynamicImageInput = ({
 
   const handleImageSelectFromAlbum = async (image: any, index: number) => {
     try {
-      const response = await axios.get(image.image.url, {
+      const response = await axios.get(image.url, {
         responseType: "blob",
       })
       const imageFile = new File([response.data], "image.jpg", {

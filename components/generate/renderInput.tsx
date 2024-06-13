@@ -31,10 +31,15 @@ export const renderInput = (
     info,
   } = input
 
-  const existingValue = generateStates.dataStyleInputs?.find(
-    (field: any) =>
-      field.name === propertyName && field.ArrayIndex === arrayIndex,
-  )
+  const existingValue = isStyleGenerate
+    ? generateStates.dataStyleInputs?.find(
+        (field: any) =>
+          field.name === propertyName && field.ArrayIndex === arrayIndex,
+      )
+    : generateStates.dataInputs?.find(
+        (field: any) =>
+          field.name === propertyName,
+      )
 
   const checkDefaultValue = existingValue ? existingValue.value : defaultValue
 
@@ -45,7 +50,7 @@ export const renderInput = (
           <InputSelect
             data={info.choices}
             type={propertyName}
-            defaultValue={isStyleDrawer ? checkDefaultValue : defaultValue}
+            defaultValue={checkDefaultValue}
             arrayIndex={arrayIndex}
             isStyleGenerate={isStyleGenerate}
           />
@@ -59,7 +64,7 @@ export const renderInput = (
             min={info.min}
             max={info.max}
             step={info.step}
-            defaultValue={isStyleDrawer ? checkDefaultValue : defaultValue}
+            defaultValue={checkDefaultValue}
             type={propertyName}
             arrayIndex={arrayIndex}
             isStyleGenerate={isStyleGenerate}
@@ -87,11 +92,11 @@ export const renderInput = (
             return (
               <div className="flex justify-between p-4 pb-0">
                 <Label htmlFor="image-mode" className="text-lg font-semibold">
-                  {name}
+                  Apply Image to Image
                 </Label>
                 <Switch
                   id="image-mode"
-                  className="bg-black"
+                  className="rounded-lg data-[state=unchecked]:bg-slate-600 data-[state=checked]:bg-primary-700 dark:data-[state=unchecked]:bg-white"
                   onClick={() => {
                     dispatch(
                       setUseImage({
@@ -107,11 +112,11 @@ export const renderInput = (
             <>
               <div className="flex justify-between p-4 pb-0">
                 <Label htmlFor="image-mode" className="text-lg font-semibold">
-                  {name}
+                  Apply Image to Image
                 </Label>
                 <Switch
                   id="image-mode"
-                  className="bg-black"
+                  className="rounded-lg data-[state=unchecked]:bg-slate-600 data-[state=checked]:bg-primary-700 dark:data-[state=unchecked]:bg-white"
                   onClick={() => {
                     dispatch(
                       setUseImage({
@@ -121,9 +126,9 @@ export const renderInput = (
                   }}
                 />
               </div>
-              <div className="w-full p-4 pb-0">
-                <DynamicImageInput name={name} type={propertyName} />
-              </div>
+              <CollapsibleSection title={name} key={propertyName} isHidden={true}>
+                <DynamicImageInput name={name} type={propertyName} defaultValue={checkDefaultValue} />
+              </CollapsibleSection>
             </>
           )
         }
@@ -134,13 +139,14 @@ export const renderInput = (
               <ControlnetDialog
                 type={propertyName}
                 isStyleGenerate={isStyleGenerate}
+                defaultValue = {checkDefaultValue}
               />
             </CollapsibleSection>
           )
 
         case "imageForIpadapter": {
           return (
-            <div className="w-full p-4 pb-0">
+            <CollapsibleSection title={name} key={propertyName} isHidden={true}>
               <DynamicImageInput
                 name={name}
                 type={propertyName}
@@ -148,7 +154,7 @@ export const renderInput = (
                 isStyleGenerate={isStyleGenerate}
                 arrayIndex={arrayIndex}
               />
-            </div>
+            </CollapsibleSection>
           )
         }
         default:
@@ -217,7 +223,7 @@ export const renderInput = (
             </Label>
             <Switch
               id="array-mode"
-              className="bg-black"
+              className="rounded-lg data-[state=unchecked]:bg-slate-600 data-[state=checked]:bg-primary-700 dark:data-[state=unchecked]:bg-white"
               onClick={() => {
                 dispatch(
                   setUseControlnet({

@@ -214,7 +214,7 @@ const ImageToTag = () => {
             <TooltipTrigger className="flex w-full min-w-0 justify-start">
               <Button
                 variant={"default"}
-                className="my-3 w-fit select-none rounded-xl border-[2px] px-6 py-2 font-bold bg-gradient-to-br from-sky-300 to-primary-700 to-60% border-black hover:text-white dark:hover:text-black"
+                className="my-3 w-fit select-none rounded-lg border-[2px] px-6 py-2 font-bold bg-transparent border-black dark:border-white hover:bg-transparent hover:text-primary-700 hover:border-primary-700 dark:hover:border-primary-700"
               >
                 Tags
               </Button>
@@ -387,7 +387,7 @@ const ImageToTag = () => {
             <div className="my-5 flex justify-end">
               <Button
                 variant={"default"}
-                className="my-6 flex w-fit select-none rounded-xl border-[2px] px-6 font-bold bg-gradient-to-br from-sky-300 to-primary-700 to-60% border-black hover:text-white"
+                className="my-6 flex w-fit select-none rounded-xl border-[2px] px-6 font-bold bg-gradient-to-br from-sky-300 to-primary-700 to-60% border-black hover:text-white dark:hover:text-black"
                 onClick={handleGenerate}
                 disabled={isGeneratingTags}
               >

@@ -19,7 +19,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { IoCloseCircleOutline } from "react-icons/io5"
+import { IoCloseCircleOutline, IoEyeOutline } from "react-icons/io5"
 import { Button } from "@/components/ui/button"
 import {
   useDeleteFromAlbumMutation,
@@ -30,14 +30,17 @@ import { toast } from "react-toastify"
 import { setTotalAlbum } from "@/features/authSlice"
 import { useAppDispatch } from "@/store/hooks"
 import { ErrorObject } from "@/types"
+import { useChangePublicStatusMutation } from "@/services/generate/generateApi"
+import { FaRegEyeSlash } from "react-icons/fa"
 
 interface PopupCarouselProps {
-  generateImgData: any | null
+  generateImgData: ImageTotal[] | null
   width?: number
   height?: number
   setSelectedAlbum: (albumId: number) => void
   selectedAlbum: number
   setOpenDialogCarousel: (can: boolean) => void
+  getTotalImage: () => void
 }
 
 const PopupCarousel: React.FC<PopupCarouselProps> = ({
@@ -47,12 +50,31 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
   setSelectedAlbum,
   selectedAlbum,
   setOpenDialogCarousel,
+  getTotalImage,
 }) => {
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
   const [deleteFromAlbum] = useDeleteFromAlbumMutation()
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
 
+  const [changeVisibility] = useChangePublicStatusMutation()
+  const [isPublic, setIsPublic] = useState<boolean[]>(
+    generateImgData?.map((item) => item.visibility) || [],
+  )
   const dispatch = useAppDispatch()
+
+  const changePublicStatus = async (imageId: number, index: number) => {
+    setIsPublic((prev) => {
+      const newState = [...prev]
+      newState[index] = !newState[index]
+      return newState
+    })
+    changeVisibility(imageId)
+    const fetchData = async () => {
+      await getAlbum(undefined)
+      await getTotalImage()
+    }
+    fetchData()
+  }
 
   const handleDeleteFromAlbum = async () => {
     if (!selectedImageId || !selectedAlbum) {
@@ -89,7 +111,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
         <BaseCarousel className="relative mt-5 w-full ">
           <CarouselContent>
             {generateImgData &&
-              generateImgData.map((item: any) => (
+              generateImgData.map((item: any, index: number) => (
                 <CarouselItem
                   key={item.id}
                   className="lg:basis-1/3"
@@ -108,8 +130,21 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
                           className="rounded-lg"
                         />
                       </CardContent>
-                      <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
-                        <div className="flex max-w-full justify-end pr-5">
+                      <div className="absolute inset-0   bg-black bg-opacity-50 pt-5 opacity-0 transition-opacity duration-300 hover:opacity-100">
+                        <div className="flex max-w-full justify-end  gap-x-2 pr-5">
+                          {isPublic[index] ? (
+                            <IoEyeOutline
+                              size={32}
+                              className="cursor-pointer text-white hover:text-primary"
+                              onClick={() => changePublicStatus(item.id, index)}
+                            />
+                          ) : (
+                            <FaRegEyeSlash
+                              size={32}
+                              className="cursor-pointer text-white hover:text-primary"
+                              onClick={() => changePublicStatus(item.id, index)}
+                            />
+                          )}
                           <DialogTrigger asChild>
                             <IoCloseCircleOutline
                               size={32}

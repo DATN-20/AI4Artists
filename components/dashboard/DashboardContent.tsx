@@ -7,14 +7,19 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
 } from "../ui/dropdown-menu"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import MansoryGrid from "./MansoryGrid"
 import { useGetAllDashboardImageQuery } from "@/services/dashboard/dashboardApi"
-import Loading from "../Loading"
 import { DashboardImage } from "@/types/dashboard"
+import Loading from "../Loading"
 
-export default function DashboardContent() {
-  const selectionList = [
+interface Selection {
+  label: string
+  value: string
+}
+
+const DashboardContent: React.FC = () => {
+  const selectionList: Selection[] = [
     { label: "Random", value: "RANDOM" },
     { label: "Latest", value: "LATEST" },
     { label: "Top Liked", value: "TOPLIKED" },
@@ -22,29 +27,58 @@ export default function DashboardContent() {
   ]
 
   const [currentIndex, setCurrentIndex] = useState<number>(1)
-  const [images, setImages] = useState<DashboardImage[] | undefined>(undefined)
+  const [images, setImages] = useState<DashboardImage[]>([])
+  const [page, setPage] = useState<number>(1)
+  const limit = 20
+
+  const isFetchingRef = useRef<boolean>(false)
+  const containerRef = useRef<HTMLDivElement | null>(null)
 
   const handleSelection = (index: number) => {
     setCurrentIndex(index)
+    setPage(1)
+    setImages([])
     refetch()
   }
 
   const { data, error, isLoading, refetch } = useGetAllDashboardImageQuery({
     type: selectionList[currentIndex].value,
-    page: 1,
-    limit: 100,
+    page,
+    limit,
   })
 
   useEffect(() => {
     if (error) {
       console.error("Failed to fetch images:", error)
     } else if (data) {
-      setImages(data.data)
+      setImages((prevImages) => [...prevImages, ...data.data])
+      isFetchingRef.current = false
     }
   }, [error, data])
 
+  const handleScroll = useCallback(() => {
+    if (!containerRef.current || isLoading || isFetchingRef.current) return
+
+    const { scrollTop, scrollHeight, clientHeight } = containerRef.current
+    if (scrollTop + clientHeight >= scrollHeight - 50) {
+      isFetchingRef.current = true
+      setPage((prevPage) => prevPage + 1)
+    }
+  }, [isLoading])
+
+  useEffect(() => {
+    const currentContainer = containerRef.current
+    if (currentContainer) {
+      currentContainer.addEventListener("scroll", handleScroll)
+      return () => currentContainer.removeEventListener("scroll", handleScroll)
+    }
+  }, [handleScroll])
+
   return (
-    <div className="flex w-full flex-col lg:p-2">
+    <div
+      ref={containerRef}
+      className="scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-500 relative flex h-screen w-full flex-col overflow-y-scroll lg:p-2"
+    >
       <div className="flex w-full justify-between gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -57,7 +91,10 @@ export default function DashboardContent() {
             <DropdownMenuGroup>
               {selectionList.map((selection, index) => (
                 <DropdownMenuItem
-                  className={`focus:text-primary-700 ${index === currentIndex && "text-primary-800 bg-slate-200 dark:bg-gray-800"}`}
+                  className={`focus:text-primary-700 ${
+                    index === currentIndex &&
+                    "bg-slate-200 text-primary-800 dark:bg-gray-800"
+                  }`}
                   key={index}
                   onClick={() => handleSelection(index)}
                 >
@@ -76,7 +113,16 @@ export default function DashboardContent() {
           <Search />
         </div>
       </div>
-      {isLoading ? <Loading /> : <MansoryGrid data={images} />}
+
+      {isLoading ? (
+        <div className="mt-20">
+          <Loading />
+        </div>
+      ) : (
+        <MansoryGrid data={images} />
+      )}
     </div>
   )
 }
+
+export default DashboardContent
