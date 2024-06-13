@@ -28,8 +28,7 @@ const passwordSchema = z.object({
 
 export default function ModalResetPassword() {
   const [
-    resetPassword,
-    { data: resetData, isSuccess: isResetSuccess, isError: isResetError },
+    resetPassword
   ] = useResetPasswordUserMutation()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -54,8 +53,14 @@ export default function ModalResetPassword() {
         password: data.newPassword,
         token: urlToken,
       })
-      if ((response as ErrorObject).error) {
+      if ((response as ErrorObject).error.data.message) {
         toast.error((response as ErrorObject).error.data.message)
+      }
+      else {
+        toast.success("Password reset successfully")
+        setTimeout(() => {
+          window.location.href = "/"
+        }, 3000)
       }
     } else {
       if (newPassword !== confirmPassword) {
@@ -66,13 +71,6 @@ export default function ModalResetPassword() {
     }
     setIsSubmitting(false)
   }
-
-  useEffect(() => {
-    if (isResetSuccess) {
-      toast.success("Password reset successfully")
-      window.location.href = "/"
-    }
-  }, [isResetSuccess])
 
   return (
     <div className="mx-auto w-full px-8 py-5 md:w-1/2">
