@@ -88,6 +88,10 @@ const ImageDetail = ({
         localStorage.setItem("imageUrl", image.url)
         router.push(`/canvas`)
         break
+      case "similar":
+        localStorage.setItem("similarPrompt", image.prompt)
+
+        router.push("/generate")
       case "report":
         // reportImage()
         break
@@ -212,7 +216,7 @@ const ImageDetail = ({
                 className="h-auto w-full rounded-lg"
               />
             )}
-            <div className="mt-[8px] flex gap-2">
+            <div className="mt-[8px] flex gap-2 rounded-lg border-2 border-black dark:border-white">
               <Select
                 onValueChange={(value) => {
                   handleSelectValue(value)
@@ -223,10 +227,7 @@ const ImageDetail = ({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem
-                      key="original"
-                      value="original"
-                    >
+                    <SelectItem key="original" value="original">
                       Original
                     </SelectItem>
                     <SelectItem
@@ -243,6 +244,9 @@ const ImageDetail = ({
                     </SelectItem>
                     <SelectItem key="edit" value="edit">
                       Edit In Canvas
+                    </SelectItem>
+                    <SelectItem key="similar" value="similar">
+                      Generate With The Same Prompt
                     </SelectItem>
                   </SelectGroup>
                 </SelectContent>
