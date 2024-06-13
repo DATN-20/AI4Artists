@@ -106,7 +106,7 @@ const NavigationSideBarCard = () => {
               />
             ))}
           </ul>
-          <div className="flex flex-col gap-3 border-t-2 border-white pt-2">
+          <div className="border-dark flex flex-col gap-3 border-t-2 pt-2 dark:border-white">
             <div className="flex items-center justify-between gap-2">
               <div className="rounded-lg bg-card py-2 font-semibold">
                 <a
