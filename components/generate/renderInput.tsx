@@ -96,7 +96,7 @@ export const renderInput = (
                 </Label>
                 <Switch
                   id="image-mode"
-                  className="bg-black"
+                  className="rounded-lg data-[state=unchecked]:bg-slate-600 data-[state=checked]:bg-primary-700 dark:data-[state=unchecked]:bg-white"
                   onClick={() => {
                     dispatch(
                       setUseImage({
@@ -116,7 +116,7 @@ export const renderInput = (
                 </Label>
                 <Switch
                   id="image-mode"
-                  className="bg-black"
+                  className="rounded-lg data-[state=unchecked]:bg-slate-600 data-[state=checked]:bg-primary-700 dark:data-[state=unchecked]:bg-white"
                   onClick={() => {
                     dispatch(
                       setUseImage({
@@ -223,7 +223,7 @@ export const renderInput = (
             </Label>
             <Switch
               id="array-mode"
-              className="bg-black"
+              className="rounded-lg data-[state=unchecked]:bg-slate-600 data-[state=checked]:bg-primary-700 dark:data-[state=unchecked]:bg-white"
               onClick={() => {
                 dispatch(
                   setUseControlnet({
