@@ -19,7 +19,7 @@ import {
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import BgImage from "../../public/bg-left.png"
-import { ErrorObject } from "@/types"
+import { ErrorObject, ErrorObjectRegister } from "@/types"
 import { LoginModalPage, ModalProps } from "@/constants/loginModal"
 
 const formSchema = z.object({
@@ -81,8 +81,12 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
         lastName: lastName,
         password: password,
       })
-      if ((response as ErrorObject).error) {
-        toast.error((response as ErrorObject).error.data.message)
+      if ((response as ErrorObjectRegister).error) {
+        const errorData = JSON.parse(
+          (response as ErrorObjectRegister).error.data,
+        )
+        const errorMessage = errorData.message
+        toast.error(errorMessage)
       }
     } else {
       toast.error("Please fill in all fields!")
