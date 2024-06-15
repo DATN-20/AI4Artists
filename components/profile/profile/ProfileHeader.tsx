@@ -239,7 +239,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         )
 
         const croppedImageBase64 = canvas.toDataURL("image/jpeg")
-        setCroppedBgUrl(croppedImageBase64)
         if (croppedImageBase64) {
           let formData = new FormData()
 
@@ -250,6 +249,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
           if ((result as ErrorObject).error) {
             toast.error((result as ErrorObject).error.data.message)
           } else {
+            setCroppedBgUrl(croppedImageBase64)
             toast.success("Update background successfully")
           }
         }
@@ -280,7 +280,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         )
 
         const croppedImageBase64 = canvas.toDataURL("image/jpeg")
-        setCroppedImageUrl(croppedImageBase64)
         if (croppedImageBase64) {
           let formData = new FormData()
 
@@ -291,6 +290,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
           if ((result as ErrorObject).error) {
             toast.error((result as ErrorObject).error.data.message)
           } else {
+            setCroppedImageUrl(croppedImageBase64)
             toast.success("Update avatar successfully")
           }
         }
