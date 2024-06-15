@@ -152,14 +152,16 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
           </div>
           {generateImgData &&
             new Date(generateImgData[0].created_at).toLocaleDateString()}
-          <Button
-            variant={"outline"}
-            className="w-2/3 rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700 hover:cursor-default"
-          >
-            <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
-              {styleAlbum}
-            </span>
-          </Button>
+          {styleAlbum && (
+            <Button
+              variant={"outline"}
+              className="w-2/3 rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700 hover:cursor-default"
+            >
+              <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                {styleAlbum}
+              </span>
+            </Button>
+          )}
         </div>
       </div>
 

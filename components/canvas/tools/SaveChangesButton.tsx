@@ -22,19 +22,19 @@ export const SaveChangesButton = ({
     setImageFile,
     scale,
     currentShape,
-    setCurrentShape
+    setCurrentShape,
   } = canvasModeContext!
 
   return (
     <Button
-      className="w-full py-4 text-lg font-semibold"
+      className="absolute bottom-10 right-10 z-10 w-fit py-4 text-lg font-semibold hover:text-white dark:hover:text-black"
       onClick={() => {
         const canvas = canvasRef.current
         if (!canvas) return
         const context = canvas.getContext("2d")
         if (!context) return
 
-        if (currentShape !== null) {   
+        if (currentShape !== null) {
           currentShape.showBounding(false)
           adjustHistoryToIndex(
             canvas,
