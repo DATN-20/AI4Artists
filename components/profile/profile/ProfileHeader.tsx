@@ -1,6 +1,4 @@
 import React, { useState, useRef, useEffect } from "react"
-import { useSelector } from "react-redux"
-import { selectAuth } from "@/features/authSlice"
 import { Facebook, Instagram, Twitter } from "lucide-react"
 import { IoCloudUploadOutline, IoImages, IoPencilSharp } from "react-icons/io5"
 import { TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -14,7 +12,6 @@ import {
   DialogClose,
   DialogContent,
   DialogFooter,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import {
@@ -41,16 +38,14 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
-  const authStates = useSelector(selectAuth)
   const [isHovered, setIsHovered] = useState(false)
   const [isHoveredBg, setIsHoveredBg] = useState(false)
-  const [openBgChange, setOpenBgChange] = useState(false)
   const [crop, setCrop] = useState<Crop>({
-    unit: "%", // Can be 'px' or '%'
+    unit: "px", // Can be 'px' or '%'
     x: 0,
     y: 0,
-    width: 50,
-    height: 50,
+    width: 200,
+    height: 200,
   })
   const [croppedImageUrl, setCroppedImageUrl] = useState(userData?.avatar)
   const [croppedBgUrl, setCroppedBgUrl] = useState(userData?.background)
@@ -58,7 +53,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
     null,
   )
   const [originalBg, setOriginalBg] = useState<HTMLImageElement | null>(null)
-  const [bgUrl, setBgUrl] = useState<string | null>(null)
   const [showAvatarModal, setShowAvatarModal] = useState(false)
   const [showBgModal, setShowBgModal] = useState(false)
   const [editProfileToggle, setEditProfileToggle] = useState(false)
@@ -225,7 +219,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         const image = new Image()
         image.src = reader.result as string
         image.onload = () => {
-          setOriginalBg(image)
+          const resizedImage = resizeImage(image)
+          setOriginalBg(resizedImage)
           toggleBgModal()
         }
       }
