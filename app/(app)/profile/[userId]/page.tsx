@@ -58,7 +58,7 @@ import { toast } from "react-toastify"
 import NavigationSideBarCard from "@/components/sidebar/card/NavigationSideBarCard"
 import ProfileHeaderGuest from "@/components/profile/profile/ProfileHeaderGuest"
 import { ErrorObject } from "@/types"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import ProfileContentGuest from "@/components/profile/profile/ProfileContentGuest"
 
 const formSchema = z.object({
@@ -94,6 +94,7 @@ const Profile = () => {
     },
   })
   const [isLoading, setIsLoading] = useState(true)
+  const router = useRouter()
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const { name } = values
@@ -127,7 +128,11 @@ const Profile = () => {
         })
         setGuestData(guestDataResponse)
         const guestProfileRes = await getGuestProfile({ id: guestID })
-        setGuestProfile(guestProfileRes)
+        if ((guestProfileRes as ErrorObject).error) {
+          router.push("/profile/not-found")
+        } else {
+          setGuestProfile(guestProfileRes)
+        }
       }
       setIsLoading(false)
     }

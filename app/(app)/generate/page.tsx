@@ -188,8 +188,38 @@ export default function Generate() {
   useEffect(() => {
     const promptValue = localStorage.getItem("prompt")
     localStorage.removeItem("prompt")
+    const similarPrompt = localStorage.getItem("similarPrompt")
+    localStorage.removeItem("similarPrompt")
     if (promptValue) {
       setPromptPos(promptValue)
+      dispatch(
+        setField({
+          field: "positivePrompt",
+          value: `${promptValue}${generateTags.length > 0 ? `, ${generateTags}` : ""}`,
+        }),
+      )
+      dispatch(
+        setStyleField({
+          field: "positivePrompt",
+          value: `${promptValue}${generateTags.length > 0 ? `, ${generateTags}` : ""}`,
+        }),
+      )
+    }
+
+    if (similarPrompt) {
+      setPromptPos(similarPrompt)
+      dispatch(
+        setField({
+          field: "positivePrompt",
+          value: `${similarPrompt}${generateTags.length > 0 ? `, ${generateTags}` : ""}`,
+        }),
+      )
+      dispatch(
+        setStyleField({
+          field: "positivePrompt",
+          value: `${similarPrompt}${generateTags.length > 0 ? `, ${generateTags}` : ""}`,
+        }),
+      )
     }
     const fetchAlbumData = async () => {
       await getAlbum(undefined)
