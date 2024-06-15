@@ -265,6 +265,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         )
 
         const croppedImageBase64 = canvas.toDataURL("image/jpeg")
+
         if (croppedImageBase64) {
           let formData = new FormData()
 
@@ -531,6 +532,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
                 onChange={onImageCrop}
                 circularCrop={true}
                 aspect={1 / 1}
+                // onComplete={getCroppedImage}
               >
                 <img src={originalImage?.src} />
               </ReactCrop>
