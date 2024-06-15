@@ -178,12 +178,43 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         const image = new Image()
         image.src = reader.result as string
         image.onload = () => {
-          setOriginalImage(image)
+          const resizedImage = resizeImage(image)
+          setOriginalImage(resizedImage)
           toggleAvatarModal()
         }
       }
       reader.readAsDataURL(file)
     }
+  }
+
+  const resizeImage = (image: HTMLImageElement): HTMLImageElement => {
+    const deviceWidth = window.innerWidth
+    const deviceHeight = window.innerHeight
+
+    const canvas = document.createElement("canvas")
+    const ctx = canvas.getContext("2d")
+
+    let width = image.width
+    let height = image.height
+
+    if (width > deviceWidth || height > deviceHeight) {
+      if (width / deviceWidth > height / deviceHeight) {
+        height *= ((deviceWidth / width) * 2) / 3
+        width = (deviceWidth * 2) / 3
+      } else {
+        width *= ((deviceHeight / height) * 2) / 3
+        height = (deviceHeight * 2) / 3
+      }
+    }
+
+    canvas.width = width
+    canvas.height = height
+
+    ctx?.drawImage(image, 0, 0, width, height)
+
+    const resizedImage = new Image()
+    resizedImage.src = canvas.toDataURL("image/jpeg")
+    return resizedImage
   }
 
   const handleBgChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -194,7 +225,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         const image = new Image()
         image.src = reader.result as string
         image.onload = () => {
-          setOriginalBg(image)
+          const resizedImage = resizeImage(image)
+          setOriginalBg(resizedImage)
           toggleBgModal()
         }
       }
@@ -239,6 +271,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         )
 
         const croppedImageBase64 = canvas.toDataURL("image/jpeg")
+
         if (croppedImageBase64) {
           let formData = new FormData()
 
@@ -503,6 +536,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
               <ReactCrop
                 crop={crop}
                 onChange={onImageCrop}
+                circularCrop={true}
+                aspect={1 / 1}
                 // onComplete={getCroppedImage}
               >
                 <img src={originalImage?.src} />
