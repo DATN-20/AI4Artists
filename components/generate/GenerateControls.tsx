@@ -32,7 +32,7 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
         <button
           type="button"
           onClick={handleGenerate}
-          className="ml-4 hidden items-center justify-center rounded-full bg-gradient-to-br from-sky-300 to-primary-700 to-60% px-4 py-3 font-bold text-white hover:drop-shadow-2xl lg:flex"
+          className="ml-4 hidden items-center justify-center rounded-full bg-gradient-to-br from-sky-300 to-primary-700 to-60% px-4 py-3 font-bold text-white hover:bg-gradient-to-tr hover:to-80% hover:drop-shadow-2xl lg:flex"
         >
           <span className="mr-2">✨</span>
           Generate
@@ -41,7 +41,7 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
       <div className="mt-5 flex items-center space-x-2">
         <Switch
           id="negative-mode"
-          className="bg-black"
+          className="rounded-lg data-[state=unchecked]:bg-slate-600 data-[state=checked]:bg-primary-700 dark:data-[state=unchecked]:bg-white"
           onClick={() => setUseNegativePrompt(!useNegativePrompt)}
         />
         <Label htmlFor="negative-mode">Use Negative Prompt</Label>
@@ -50,7 +50,7 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
         <textarea
           placeholder="Type what you don't want to see in a image ..."
           onChange={handleNegPromptChange}
-          className="mt-5 w-full  flex-grow resize-none rounded-2xl dark:bg-[#2c2d31] p-3 text-black placeholder-black outline-none dark:text-white dark:placeholder-white"
+          className="mt-5 w-full  flex-grow resize-none rounded-lg p-3 text-black placeholder-black outline-none dark:bg-[#2c2d31] dark:text-white dark:placeholder-white"
         />
       )}
       <button

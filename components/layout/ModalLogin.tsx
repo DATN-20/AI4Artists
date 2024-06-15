@@ -5,11 +5,7 @@ import NextImage from "next/image"
 import { useLoginUserMutation } from "@/services/auth/authApi"
 import { useAppDispatch } from "@/store/hooks"
 import { setUser } from "@/features/authSlice"
-import {
-  DialogClose,
-  DialogContent,
-  DialogContentLoginModal,
-} from "../ui/dialog"
+import { DialogContentLoginModal } from "../ui/dialog"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { toast } from "react-toastify"
@@ -30,6 +26,7 @@ import { z } from "zod"
 import { FaFacebook, FaGoogle } from "react-icons/fa"
 import { X } from "lucide-react"
 import { useGetProfileMutation } from "@/services/profile/profileApi"
+import { LoginModalPage, ModalProps } from "@/constants/loginModal"
 
 const formSchema = z.object({
   email: z.string().min(2, {
@@ -40,11 +37,7 @@ const formSchema = z.object({
   }),
 })
 
-interface ModalLoginProps {
-  onClose: () => void
-}
-
-const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
+const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
   const dispatch = useAppDispatch()
   const router = useRouter()
 
@@ -67,6 +60,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
       password: "",
     },
   })
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false)
 
   const [formData, setFormData] = useState({
     email: "",
@@ -79,6 +73,7 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const { email, password } = values
+    setIsButtonDisabled(true)
 
     if (email && password) {
       const response = await loginUser({ email, password })
@@ -89,6 +84,9 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
     } else {
       toast.error("Please fill all Input field")
     }
+    setTimeout(() => {
+      setIsButtonDisabled(false)
+    }, 1500)
   }
 
   useEffect(() => {
@@ -206,23 +204,31 @@ const ModalLogin: React.FC<ModalLoginProps> = ({ onClose }) => {
                       </FormControl>
                       <FormMessage />
                     </FormItem>
-                  )}  
+                  )}
                 />
-                <a href="#" className="float-right hover:text-primary-700">
+                <a
+                  href="#"
+                  className="float-right hover:text-primary-700"
+                  onClick={() => onClose(LoginModalPage.FORGOT_PASSWORD_PAGE)}
+                >
                   Forgot Password?
                 </a>
               </div>
               <Button
                 type="submit"
                 className="h-10 w-full bg-black text-white"
-                disabled={isLoading}
+                disabled={isLoading || isButtonDisabled}
               >
                 Sign In
               </Button>
 
               <div className="mb-10 text-center">
                 Don't you have an account?{" "}
-                <a href="#" className="text-secondary hover:text-primary-700" onClick={onClose}>
+                <a
+                  href="#"
+                  className="text-secondary hover:text-primary-700"
+                  onClick={() => onClose(LoginModalPage.REGISTER_PAGE)}
+                >
                   Sign up
                 </a>
               </div>

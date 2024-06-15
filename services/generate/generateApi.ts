@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 export const generateApi = createApi({
   reducerPath: "generateApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001",
+    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
     prepareHeaders(headers) {
       headers.set("Authorization", `Bearer ${localStorage.getItem("token")}`)
       return headers
@@ -82,6 +82,13 @@ export const generateApi = createApi({
         method: "GET",
       }),
     }),
+    deleteAllNotifications: builder.mutation<string, void>({
+      query: () => ({
+        url: "/api/v1/notifications",
+        method: "DELETE",
+        responseHandler: "text",
+      }),
+    }),
     generateStyleImage: builder.mutation({
       query: (formData) => ({
         url: "/api/v1/generate-image/image-by-images-style",
@@ -104,4 +111,5 @@ export const {
   useGetNotificationImageQuery,
   useGenerateStyleImageMutation,
   useGenerateTagsMutation,
+  useDeleteAllNotificationsMutation,
 } = generateApi

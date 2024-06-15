@@ -1,9 +1,10 @@
+import { ErrorObject } from "@/types";
 import { createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/",
+    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/",
   }),
   endpoints: (builder) => ({
     loginUser: builder.mutation({
@@ -42,18 +43,26 @@ export const authApi = createApi({
         };
       },
     }),
-    forgetPasswordUser: builder.mutation({
+    forgetPasswordUser: builder.mutation<string | ErrorObject, {email: string}>({
       query: (body: {
         email: string;
       }) => {
         return {
           url: "api/v1/auth/forget-password",
           method: "post",
-          body,
-          responseHandler: "text"
+          body
         };
       },
     }),
+    resetPasswordUser: builder.mutation<string | ErrorObject, {password: string, token: string}>({
+      query: ({ password, token }) => {
+        return {
+          url: `api/v1/auth/forget-password/change-password`,
+          method: 'post',
+          body: { password, token },
+        };
+      },
+    }),    
     logoutUser: builder.mutation({
       query: (user: {
           id: number
@@ -70,4 +79,4 @@ export const authApi = createApi({
   
 });
 
-export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation, useLogoutUserMutation, useForgetPasswordUserMutation } = authApi;
+export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation, useLogoutUserMutation, useForgetPasswordUserMutation, useResetPasswordUserMutation } = authApi;

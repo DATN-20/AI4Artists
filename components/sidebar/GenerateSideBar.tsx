@@ -82,7 +82,7 @@ export default function GenerateSideBar() {
       </CardHeader>
 
       <CollapsibleSection title={"Choosing AI"} key="choosing-ai">
-        <ChooseAiInput/>
+        <ChooseAiInput />
       </CollapsibleSection>
 
       <div className="mt-4 flex items-center justify-between p-4">
@@ -91,7 +91,7 @@ export default function GenerateSideBar() {
         </Label>
         <Switch
           id="use-style-mode"
-          className="bg-black"
+          className="rounded-lg data-[state=unchecked]:bg-slate-600 data-[state=checked]:bg-primary-700 dark:data-[state=unchecked]:bg-white"
           onClick={() => {
             dispatch(
               setUseStyleImage({

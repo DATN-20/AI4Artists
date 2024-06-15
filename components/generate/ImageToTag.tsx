@@ -214,7 +214,7 @@ const ImageToTag = () => {
             <TooltipTrigger className="flex w-full min-w-0 justify-start">
               <Button
                 variant={"default"}
-                className="my-3 w-fit select-none rounded-xl border-[2px] px-6 py-2 font-bold bg-gradient-to-br from-sky-300 to-primary-700 to-60% border-black hover:text-white"
+                className="my-3 w-fit select-none rounded-lg border-[2px] border-black bg-transparent px-6 py-2 font-bold hover:border-primary-700 hover:bg-transparent hover:text-primary-700 dark:border-white dark:hover:border-primary-700"
               >
                 Tags
               </Button>
@@ -236,16 +236,24 @@ const ImageToTag = () => {
             className="mx-10 flex h-full flex-col"
             onValueChange={handleTabChange}
           >
-            <TabsList className="mt-10 grid grid-cols-2 bg-black">
+            <TabsList className="mt-10 grid grid-cols-2 bg-black dark:bg-white">
               <TabsTrigger
                 value="local"
-                className={selectedTab == true ? "hover:text-primary-700" : "font-bold"}
+                className={
+                  selectedTab == true
+                    ? "hover:text-primary-700"
+                    : "font-bold dark:text-white"
+                }
               >
                 Upload
               </TabsTrigger>
               <TabsTrigger
                 value="album"
-                className={selectedTab == false ? "hover:text-primary-700" : "font-bold"}
+                className={
+                  selectedTab == false
+                    ? "hover:text-primary-700"
+                    : "font-bold dark:text-white"
+                }
               >
                 Album
               </TabsTrigger>
@@ -332,14 +340,15 @@ const ImageToTag = () => {
                   <Carousel className="relative mt-5 w-full">
                     <CarouselContent>
                       {authStates.totalAlbum.map(
-                        (album: AlbumWithImages, index: number) => (
-                          <CarouselItem
-                            key={index}
-                            className="relative grid h-[300px] w-1/4 gap-1 lg:basis-[300px]"
-                            onClick={() => handleAlbumClick(album)}
-                          >
-                            {album.images && album.images.length > 0 && (
-                              <div className="grid grid-cols-2 grid-rows-2 gap-1">
+                        (album: AlbumWithImages, index: number) =>
+                          album.images &&
+                          album.images.length > 0 && (
+                            <CarouselItem
+                              key={index}
+                              className="relative grid h-[300px] w-1/4 gap-1 lg:basis-[300px]"
+                              onClick={() => handleAlbumClick(album)}
+                            >
+                              <div className="grid grid-cols-2 grid-rows-2 gap-1 border-2 border-white rounded-lg">
                                 {album.images
                                   .slice(0, 4)
                                   .map(
@@ -360,17 +369,18 @@ const ImageToTag = () => {
                                     ),
                                   )}
                               </div>
-                            )}
-                            <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:cursor-pointer hover:opacity-100">
-                              <p className="text-center text-white">
-                                {album.album.name}
-                              </p>
-                            </div>
-                          </CarouselItem>
-                        ),
+                              <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:cursor-pointer hover:opacity-100">
+                                <p className="text-center text-white">
+                                  {album.album.name}
+                                </p>
+                              </div>
+                            </CarouselItem>
+                          ),
                       )}
                     </CarouselContent>
-                    {authStates.totalAlbum.length > 3 && (
+                    {authStates.totalAlbum.filter(
+                      (album) => album.images.length > 0,
+                    ).length > 3 && (
                       <>
                         <CarouselPrevious className="absolute left-0 top-1/2 z-20 h-12 w-12 -translate-y-1/2 transform rounded-xl" />
                         <CarouselNext className="absolute right-0 top-1/2 z-20 h-12 w-12 -translate-y-1/2 transform rounded-xl" />
@@ -387,7 +397,7 @@ const ImageToTag = () => {
             <div className="my-5 flex justify-end">
               <Button
                 variant={"default"}
-                className="my-6 flex w-fit select-none rounded-xl border-[2px] px-6 font-bold bg-gradient-to-br from-sky-300 to-primary-700 to-60% border-black hover:text-white"
+                className="my-6 flex w-fit select-none rounded-xl border-[2px] border-black bg-gradient-to-br from-sky-300 to-primary-700 to-60% px-6 font-bold hover:text-white dark:hover:text-black"
                 onClick={handleGenerate}
                 disabled={isGeneratingTags}
               >
@@ -403,7 +413,7 @@ const ImageToTag = () => {
                         cy="12"
                         r="10"
                         stroke="currentColor"
-                        stroke-width="4"
+                        strokeWidth={4}
                       ></circle>
                       <path
                         className="opacity-75"

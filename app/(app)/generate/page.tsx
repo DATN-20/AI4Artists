@@ -11,16 +11,11 @@ import {
 import { useAppDispatch } from "@/store/hooks"
 import {
   selectGenerate,
-  setInputs,
   setHistory,
-  setAIName,
   setField,
-  setAIStyleInputs,
   setStyleField,
 } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
-import GenerateControls from "@/components/generate/GenerateControls"
-import Loading from "@/components/Loading"
 import HistoryCarousel from "@/components/generate/HistoryCarousel"
 import { useGetProfileAlbumMutation } from "@/services/profile/profileApi"
 import { selectAuth, setTotalAlbum } from "@/features/authSlice"
@@ -193,8 +188,38 @@ export default function Generate() {
   useEffect(() => {
     const promptValue = localStorage.getItem("prompt")
     localStorage.removeItem("prompt")
+    const similarPrompt = localStorage.getItem("similarPrompt")
+    localStorage.removeItem("similarPrompt")
     if (promptValue) {
       setPromptPos(promptValue)
+      dispatch(
+        setField({
+          field: "positivePrompt",
+          value: `${promptValue}${generateTags.length > 0 ? `, ${generateTags}` : ""}`,
+        }),
+      )
+      dispatch(
+        setStyleField({
+          field: "positivePrompt",
+          value: `${promptValue}${generateTags.length > 0 ? `, ${generateTags}` : ""}`,
+        }),
+      )
+    }
+
+    if (similarPrompt) {
+      setPromptPos(similarPrompt)
+      dispatch(
+        setField({
+          field: "positivePrompt",
+          value: `${similarPrompt}${generateTags.length > 0 ? `, ${generateTags}` : ""}`,
+        }),
+      )
+      dispatch(
+        setStyleField({
+          field: "positivePrompt",
+          value: `${similarPrompt}${generateTags.length > 0 ? `, ${generateTags}` : ""}`,
+        }),
+      )
     }
     const fetchAlbumData = async () => {
       await getAlbum(undefined)
@@ -215,32 +240,24 @@ export default function Generate() {
 
   return (
     <>
-      <div className="block gap-4 p-4 lg:grid lg:grid-cols-10">
+      <div className="block gap-4  p-4 lg:grid lg:grid-cols-10">
         <div className="hidden lg:col-span-2 lg:block">
           <div className="no-scrollbar fixed left-0 top-0 h-screen min-h-screen w-1/5 overflow-y-scroll p-4">
             <GenerateSideBar />
           </div>
         </div>
         <div className="h-full w-full lg:col-span-8">
-          {/* <GenerateControls
-            handlePosPromptChange={handlePosPromptChange}
-            handleNegPromptChange={handleNegPromptChange}
-            handleGenerate={handleGenerate}
-            setUseNegativePrompt={setUseNegativePrompt}
-            useNegativePrompt={useNegativePrompt}
-            promptPos={promptPos}
-          /> */}
           <div className="flex items-center">
             <textarea
               placeholder="Type prompt here..."
               value={promptPos}
               onChange={handlePosPromptChange}
-              className="flex-grow resize-none rounded-2xl p-3 text-black placeholder-black outline-none dark:bg-[#2c2d31] dark:text-white dark:placeholder-white"
+              className="flex-grow resize-none rounded-lg p-3 text-black placeholder-black outline-none dark:bg-[#2c2d31] dark:text-white dark:placeholder-white"
             />
             <button
               type="button"
               onClick={handleGenerate}
-              className="ml-4 hidden items-center justify-center rounded-full bg-gradient-to-br from-sky-300 to-primary-700 to-60% px-4 py-3 font-bold text-white hover:drop-shadow-2xl lg:flex"
+              className="ml-4 hidden items-center justify-center rounded-lg bg-gradient-to-br from-sky-300 to-primary-700 to-60% px-4 py-3 font-bold text-white hover:text-black hover:opacity-80 lg:flex"
             >
               <span className="mr-2">✨</span>
               Generate
@@ -249,7 +266,7 @@ export default function Generate() {
           <div className="mt-5 flex items-center space-x-2">
             <Switch
               id="negative-mode"
-              className="bg-black"
+              className="rounded-lg data-[state=checked]:bg-primary-700 data-[state=unchecked]:bg-slate-600 dark:data-[state=unchecked]:bg-white"
               onClick={() => setUseNegativePrompt(!useNegativePrompt)}
             />
             <Label htmlFor="negative-mode">Use Negative Prompt</Label>
@@ -258,13 +275,13 @@ export default function Generate() {
             <textarea
               placeholder="Type what you don't want to see in a image ..."
               onChange={handleNegPromptChange}
-              className="mt-5 w-full  flex-grow resize-none rounded-2xl p-3 text-black placeholder-black outline-none dark:bg-[#2c2d31] dark:text-white dark:placeholder-white"
+              className="mt-5 w-full  flex-grow resize-none rounded-lg p-3 text-black placeholder-black outline-none dark:bg-[#2c2d31] dark:text-white dark:placeholder-white"
             />
           )}
           <button
             type="button"
             onClick={handleGenerate}
-            disabled ={textToImageLoading || imgToImageLoading}
+            disabled={textToImageLoading || imgToImageLoading}
             className="mt-4 flex select-none items-center justify-center rounded-full bg-purple-500 px-4 py-3 font-bold text-white hover:bg-purple-700 lg:hidden "
           >
             <span className="mr-2">✨</span>

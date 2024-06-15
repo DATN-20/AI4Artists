@@ -1,6 +1,4 @@
 import React, { useState, useRef, useEffect } from "react"
-import { useSelector } from "react-redux"
-import { selectAuth } from "@/features/authSlice"
 import { Facebook, Instagram, Twitter } from "lucide-react"
 import { IoCloudUploadOutline, IoImages, IoPencilSharp } from "react-icons/io5"
 import { TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -14,7 +12,6 @@ import {
   DialogClose,
   DialogContent,
   DialogFooter,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import {
@@ -41,16 +38,14 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
-  const authStates = useSelector(selectAuth)
   const [isHovered, setIsHovered] = useState(false)
   const [isHoveredBg, setIsHoveredBg] = useState(false)
-  const [openBgChange, setOpenBgChange] = useState(false)
   const [crop, setCrop] = useState<Crop>({
-    unit: "%", // Can be 'px' or '%'
+    unit: "px", // Can be 'px' or '%'
     x: 0,
     y: 0,
-    width: 50,
-    height: 50,
+    width: 200,
+    height: 200,
   })
   const [croppedImageUrl, setCroppedImageUrl] = useState(userData?.avatar)
   const [croppedBgUrl, setCroppedBgUrl] = useState(userData?.background)
@@ -58,7 +53,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
     null,
   )
   const [originalBg, setOriginalBg] = useState<HTMLImageElement | null>(null)
-  const [bgUrl, setBgUrl] = useState<string | null>(null)
   const [showAvatarModal, setShowAvatarModal] = useState(false)
   const [showBgModal, setShowBgModal] = useState(false)
   const [editProfileToggle, setEditProfileToggle] = useState(false)
@@ -178,12 +172,43 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         const image = new Image()
         image.src = reader.result as string
         image.onload = () => {
-          setOriginalImage(image)
+          const resizedImage = resizeImage(image)
+          setOriginalImage(resizedImage)
           toggleAvatarModal()
         }
       }
       reader.readAsDataURL(file)
     }
+  }
+
+  const resizeImage = (image: HTMLImageElement): HTMLImageElement => {
+    const deviceWidth = window.innerWidth
+    const deviceHeight = window.innerHeight
+
+    const canvas = document.createElement("canvas")
+    const ctx = canvas.getContext("2d")
+
+    let width = image.width
+    let height = image.height
+
+    if (width > deviceWidth || height > deviceHeight) {
+      if (width / deviceWidth > height / deviceHeight) {
+        height *= ((deviceWidth / width) * 2) / 3
+        width = (deviceWidth * 2) / 3
+      } else {
+        width *= ((deviceHeight / height) * 2) / 3
+        height = (deviceHeight * 2) / 3
+      }
+    }
+
+    canvas.width = width
+    canvas.height = height
+
+    ctx?.drawImage(image, 0, 0, width, height)
+
+    const resizedImage = new Image()
+    resizedImage.src = canvas.toDataURL("image/jpeg")
+    return resizedImage
   }
 
   const handleBgChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -194,7 +219,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         const image = new Image()
         image.src = reader.result as string
         image.onload = () => {
-          setOriginalBg(image)
+          const resizedImage = resizeImage(image)
+          setOriginalBg(resizedImage)
           toggleBgModal()
         }
       }
@@ -239,7 +265,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         )
 
         const croppedImageBase64 = canvas.toDataURL("image/jpeg")
-        setCroppedBgUrl(croppedImageBase64)
+
         if (croppedImageBase64) {
           let formData = new FormData()
 
@@ -250,6 +276,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
           if ((result as ErrorObject).error) {
             toast.error((result as ErrorObject).error.data.message)
           } else {
+            setCroppedBgUrl(croppedImageBase64)
             toast.success("Update background successfully")
           }
         }
@@ -280,7 +307,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         )
 
         const croppedImageBase64 = canvas.toDataURL("image/jpeg")
-        setCroppedImageUrl(croppedImageBase64)
         if (croppedImageBase64) {
           let formData = new FormData()
 
@@ -291,6 +317,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
           if ((result as ErrorObject).error) {
             toast.error((result as ErrorObject).error.data.message)
           } else {
+            setCroppedImageUrl(croppedImageBase64)
             toast.success("Update avatar successfully")
           }
         }
@@ -503,6 +530,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
               <ReactCrop
                 crop={crop}
                 onChange={onImageCrop}
+                circularCrop={true}
+                aspect={1 / 1}
                 // onComplete={getCroppedImage}
               >
                 <img src={originalImage?.src} />

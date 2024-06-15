@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 export const profileApi = createApi({
   reducerPath: "profileApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/",
+    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/",
     prepareHeaders(headers) {
       headers.set("Authorization", `Bearer ${localStorage.getItem("token")}`)
       return headers
@@ -27,7 +27,7 @@ export const profileApi = createApi({
         }
       },
     }),
-    getTotalImage: builder.query<ImageTotal[], void>({
+    getTotalImage: builder.mutation<ImageTotal[], void>({
       query: () => {
         return {
           url: "/api/v1/images",
@@ -35,7 +35,7 @@ export const profileApi = createApi({
         }
       },
     }),
-    getAlbum: builder.mutation<number[], {  albumId: number }>({
+    getAlbum: builder.mutation<ImageTotal[], {  albumId: number }>({
       query: ({ albumId }) => ({
         url: `/api/v1/albums/${albumId}/images`,
         method: "GET",
@@ -123,4 +123,4 @@ export const profileApi = createApi({
   }),
 })
 
-export const { useGetProfileMutation, useGetProfileAlbumMutation , useGetTotalImageQuery, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation, useGetGuestImageMutation, useGetGuestProfileMutation, useGetAlbumMutation} = profileApi
+export const { useGetProfileMutation, useGetProfileAlbumMutation , useGetTotalImageMutation, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation, useGetGuestImageMutation, useGetGuestProfileMutation, useGetAlbumMutation} = profileApi

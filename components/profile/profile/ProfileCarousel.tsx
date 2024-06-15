@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import Image from "next/image"
-import { IoAddCircleOutline } from "react-icons/io5"
+import { IoAddCircleOutline, IoEyeOutline } from "react-icons/io5"
 import { AlbumWithImages, ImageTotal } from "@/types/profile"
 import {
   Dialog,
@@ -30,6 +30,8 @@ import "react-toastify/dist/ReactToastify.css"
 import { useAppDispatch } from "@/store/hooks"
 import { setTotalAlbum } from "@/features/authSlice"
 import { ErrorObject } from "@/types"
+import { useChangePublicStatusMutation } from "@/services/generate/generateApi"
+import { FaRegEyeSlash } from "react-icons/fa"
 
 interface CarouselProps {
   generateImgData: ImageTotal[] | null
@@ -47,7 +49,9 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
   const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null)
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
   const [closeDialog, setCloseDialog] = useState<boolean>(false)
-
+  const [isPublic, setIsPublic] = useState<boolean[]>(
+    generateImgData?.map((item) => item.visibility) || [],
+  )
   const [addToAlbum] = useAddToAlbumMutation()
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
   const dispatch = useAppDispatch()
@@ -55,6 +59,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
   const handleAlbumSelect = (albumId: number) => {
     setSelectedAlbumId(albumId === selectedAlbumId ? null : albumId)
   }
+  const [changeVisibility] = useChangePublicStatusMutation()
 
   const handleAddToAlbum = async () => {
     if (!selectedImageId || !selectedAlbumId) {
@@ -86,12 +91,25 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
     }
   }, [albumData])
 
+  const changePublicStatus = async (imageId: number, index: number) => {
+    setIsPublic((prev) => {
+      const newState = [...prev]
+      newState[index] = !newState[index]
+      return newState
+    })
+    changeVisibility(imageId)
+    const fetchAlbumData = async () => {
+      await getAlbum(undefined)
+    }
+    fetchAlbumData()
+  }
+
   return (
     <Dialog open={closeDialog} onOpenChange={setCloseDialog}>
       {generateImgData && generateImgData.length > 0 ? (
         <Carousel className="relative mt-3 w-full">
           <CarouselContent>
-            {generateImgData.map((item: any) => (
+            {generateImgData.map((item: any, index: number) => (
               <CarouselItem
                 key={item.id}
                 className="lg:basis-1/3"
@@ -111,16 +129,27 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
                       />
                     </CardContent>
                     <div className="absolute inset-0   bg-black bg-opacity-50 pt-5 opacity-0 transition-opacity duration-300 hover:opacity-100">
-                      <div
-                        className="flex max-w-full justify-end pr-5"
-                        onClick={() => {
-                          setCloseDialog(true)
-                        }}
-                      >
+                      <div className="flex max-w-full justify-end gap-x-2  pr-5">
+                        {isPublic[index] ? (
+                          <IoEyeOutline
+                            size={32}
+                            className="cursor-pointer text-white hover:text-primary"
+                            onClick={() => changePublicStatus(item.id, index)}
+                          />
+                        ) : (
+                          <FaRegEyeSlash
+                            size={32}
+                            className="cursor-pointer text-white hover:text-primary"
+                            onClick={() => changePublicStatus(item.id, index)}
+                          />
+                        )}
                         <IoAddCircleOutline
                           size={32}
                           className="cursor-pointer "
                           color="white"
+                          onClick={() => {
+                            setCloseDialog(true)
+                          }}
                         />
                       </div>
                       <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white">

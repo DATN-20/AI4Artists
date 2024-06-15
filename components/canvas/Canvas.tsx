@@ -112,7 +112,7 @@ const Canvas: React.FC = () => {
     const handleCtrlWheelFunction = (event: WheelEvent) => {
       setScale((prevState) => {
         let newScale =
-          Math.round((prevState - event.deltaY / 1000) / 0.25) * 0.25
+          Math.round((prevState - event.deltaY / 500) / 0.25) * 0.25
         if (newScale < 0.25) newScale = 0.25
         if (newScale > 3) newScale = 3
         return newScale

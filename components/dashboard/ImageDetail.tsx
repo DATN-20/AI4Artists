@@ -21,6 +21,7 @@ import { Label } from "@radix-ui/react-label"
 import { useLikeImageMutation } from "@/services/dashboard/dashboardApi"
 import { IoPersonCircleSharp } from "react-icons/io5"
 import probe from "probe-image-size"
+import { FaVectorSquare } from "react-icons/fa6"
 
 const ImageDetail = ({
   image,
@@ -87,6 +88,10 @@ const ImageDetail = ({
         localStorage.setItem("imageUrl", image.url)
         router.push(`/canvas`)
         break
+      case "similar":
+        localStorage.setItem("similarPrompt", image.prompt)
+
+        router.push("/generate")
       case "report":
         // reportImage()
         break
@@ -159,7 +164,7 @@ const ImageDetail = ({
               loading="lazy"
             />
           </CardContent>
-          <div className="absolute inset-0   bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
+          <div className="absolute inset-0 bg-black bg-opacity-50 pt-10 opacity-0 transition-opacity duration-300 hover:opacity-100">
             <div className="absolute top-0 flex w-full items-center justify-between p-3">
               <div className="flex content-center space-x-2">
                 <div>
@@ -173,7 +178,7 @@ const ImageDetail = ({
                       loading="lazy"
                     />
                   ) : (
-                    <IoPersonCircleSharp size={25} />
+                    <IoPersonCircleSharp size={25} className="text-white" />
                   )}
                 </div>
                 <p className="font-semibold text-white">
@@ -197,7 +202,7 @@ const ImageDetail = ({
           </div>
         </Card>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-scroll sm:max-w-[80vw] md:max-w-[60vw]">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[85vw] md:max-w-[70vw]">
         <div className="flex w-full gap-2">
           <div className="flex w-1/2 flex-col gap-2">
             {isLoading ? (
@@ -211,7 +216,7 @@ const ImageDetail = ({
                 className="h-auto w-full rounded-lg"
               />
             )}
-            <div className="mt-[8px] flex gap-2">
+            <div className="mt-[8px] flex gap-2 rounded-lg border-2 border-black dark:border-white">
               <Select
                 onValueChange={(value) => {
                   handleSelectValue(value)
@@ -222,13 +227,7 @@ const ImageDetail = ({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem
-                      key="original"
-                      value="original"
-                      onSelect={() => {
-                        setSelectedImage(image.url)
-                      }}
-                    >
+                    <SelectItem key="original" value="original">
                       Original
                     </SelectItem>
                     <SelectItem
@@ -245,6 +244,9 @@ const ImageDetail = ({
                     </SelectItem>
                     <SelectItem key="edit" value="edit">
                       Edit In Canvas
+                    </SelectItem>
+                    <SelectItem key="similar" value="similar">
+                      Generate With The Same Prompt
                     </SelectItem>
                   </SelectGroup>
                 </SelectContent>
