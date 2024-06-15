@@ -5,7 +5,7 @@ import Loading from "@/components/Loading"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { ThemeProvider } from "@/components/provider/ThemeProvider"
-import LogLayout from "../../components/layout/LogLayout"
+import { WebSocketProvider } from "../../store/socketContext"
 
 export default function AppLayout({
   children,
@@ -29,8 +29,10 @@ export default function AppLayout({
   }, [router])
 
   if (!isSuccess) {
-    return <Loading></Loading>
+    return <Loading />
   }
+
+  const userId = "1" // Replace with dynamic user ID
 
   return (
     <>
@@ -40,7 +42,12 @@ export default function AppLayout({
         enableSystem
         disableTransitionOnChange
       >
-        <LogLayout>{children}</LogLayout>
+        <WebSocketProvider
+          userId={userId}
+          token={localStorage?.getItem("token")!}
+        >
+          {children}
+        </WebSocketProvider>
       </ThemeProvider>
     </>
   )
