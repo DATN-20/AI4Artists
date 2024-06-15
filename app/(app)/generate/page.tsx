@@ -240,21 +240,13 @@ export default function Generate() {
 
   return (
     <>
-      <div className="block gap-4 p-4 lg:grid lg:grid-cols-10">
+      <div className="block gap-4  p-4 lg:grid lg:grid-cols-10">
         <div className="hidden lg:col-span-2 lg:block">
           <div className="no-scrollbar fixed left-0 top-0 h-screen min-h-screen w-1/5 overflow-y-scroll p-4">
             <GenerateSideBar />
           </div>
         </div>
         <div className="h-full w-full lg:col-span-8">
-          {/* <GenerateControls
-            handlePosPromptChange={handlePosPromptChange}
-            handleNegPromptChange={handleNegPromptChange}
-            handleGenerate={handleGenerate}
-            setUseNegativePrompt={setUseNegativePrompt}
-            useNegativePrompt={useNegativePrompt}
-            promptPos={promptPos}
-          /> */}
           <div className="flex items-center">
             <textarea
               placeholder="Type prompt here..."
@@ -274,7 +266,7 @@ export default function Generate() {
           <div className="mt-5 flex items-center space-x-2">
             <Switch
               id="negative-mode"
-              className="rounded-lg data-[state=unchecked]:bg-slate-600 data-[state=checked]:bg-primary-700 dark:data-[state=unchecked]:bg-white"
+              className="rounded-lg data-[state=checked]:bg-primary-700 data-[state=unchecked]:bg-slate-600 dark:data-[state=unchecked]:bg-white"
               onClick={() => setUseNegativePrompt(!useNegativePrompt)}
             />
             <Label htmlFor="negative-mode">Use Negative Prompt</Label>

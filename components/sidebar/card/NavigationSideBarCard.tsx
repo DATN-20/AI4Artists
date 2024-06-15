@@ -89,10 +89,12 @@ const NavigationSideBarCard = () => {
           }}
         >
           <Image src="/logo.png" alt="logo" width={90} height={90} />
-          <h1 className="text-4xl font-bold ">AIArtist</h1>
+          <span className="bg-gradient-default bg-clip-text text-5xl font-black text-transparent">
+            AIArtist
+          </span>
         </CardHeader>
-        <CardContent className="flex h-full flex-col justify-end gap-4 px-4 py-3">
-          <ul className=" flex flex-col gap-3">
+        <CardContent className="flex h-full flex-col justify-between gap-4 px-4 py-2">
+          <ul className=" flex flex-col gap-4">
             {pages.map((page, index) => (
               <CardSection
                 key={index}
@@ -100,7 +102,7 @@ const NavigationSideBarCard = () => {
                 href={page.href}
                 icon={page.icon}
                 onClick={() => {}}
-                classNames={`rounded-lg p-2 pl-3 font-semibold
+                classNames={`rounded-lg p-2 pl-3 font-semibold 
                   ${page.href === pathname ? "dark:bg-gray-800 bg-slate-300 text-primary-700" : "hover:bg-slate-300 dark:hover:bg-gray-800 hover:text-primary-700"}
                   `}
               />
