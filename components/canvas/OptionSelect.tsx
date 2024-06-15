@@ -51,10 +51,10 @@ const OptionSelect = () => {
     )
 
   return (
-    <div className="relative mt-10" onMouseUp={handleMouseUp}>
+    <div className="absolute bottom-5 left-1/4 z-10 w-1/2" onMouseUp={handleMouseUp}>
       {mode === CanvasMode.BRUSH_MODE && (
         <div className="z-10 mt-4 rounded-lg bg-gradient-to-r from-sky-300 to-primary-700 to-60% p-[0.15rem] ">
-          <div className="flex items-center rounded-lg bg-card p-4 dark:bg-white">
+          <div className="flex items-center rounded-lg bg-card p-3 dark:bg-white">
             <div className="flex ">
               <ColorPicker />
               <BrushSizeInput />

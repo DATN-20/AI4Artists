@@ -80,7 +80,7 @@ const ToolSelect = () => {
       setCursor,
       imageRef,
     )
-  
+
   const handleClick = () => {
     if (currentShape !== null) {
       const canvas = canvasRef.current
@@ -105,28 +105,32 @@ const ToolSelect = () => {
   }
 
   return (
-    <div
-      className="flex flex-col items-center py-4 dark:bg-white"
-      onMouseUp={handleMouseUp}
-      onClick={handleClick}
-    >
-      <ToolButtons />
-      <div>
-        {tools.map((tool) => (
-          <TooltipProvider key={tool.key}>
-            <Tooltip>
-              <TooltipTrigger className="flex w-full min-w-0 justify-start">
-                {tool.button}
-              </TooltipTrigger>
-              <TooltipContent
-                className="max-w-[200px] md:max-w-[400px]"
-                side="left"
-              >
-                {tool.tooltip}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        ))}
+    <div className="absolute right-10 top-10 rounded-lg bg-gradient-to-r from-sky-300 to-primary-700 to-60% p-[0.15rem] ">
+      <div className="flex items-center justify-center rounded-lg bg-card px-4 dark:bg-white">
+        <div
+          className="flex flex-col items-center py-2 dark:bg-white"
+          onMouseUp={handleMouseUp}
+          onClick={handleClick}
+        >
+          <ToolButtons />
+          <div>
+            {tools.map((tool) => (
+              <TooltipProvider key={tool.key}>
+                <Tooltip>
+                  <TooltipTrigger className="flex w-full min-w-0 justify-start">
+                    {tool.button}
+                  </TooltipTrigger>
+                  <TooltipContent
+                    className="max-w-[200px] md:max-w-[400px]"
+                    side="left"
+                  >
+                    {tool.tooltip}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )
