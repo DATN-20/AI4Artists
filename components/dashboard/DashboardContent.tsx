@@ -1,3 +1,4 @@
+"use client"
 import { ChevronDown, Search } from "lucide-react"
 import { Button } from "../ui/button"
 import {
@@ -7,7 +8,13 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
 } from "../ui/dropdown-menu"
-import { useEffect, useState, useRef, useCallback } from "react"
+import {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useDeferredValue,
+} from "react"
 import MansoryGrid from "./MansoryGrid"
 import {
   useGetAllDashboardImageQuery,
@@ -34,6 +41,7 @@ const DashboardContent: React.FC = () => {
   const [page, setPage] = useState<number>(1)
   const [showSmallLoading, setShowSmallLoading] = useState<boolean>(false)
   const [searchQuery, setSearchQuery] = useState<string>("")
+  const deferredSearchQuery = useDeferredValue(searchQuery)
   const [searchResults, setSearchResults] = useState<DashboardImage[]>([])
   const limit = 20
 
@@ -55,11 +63,11 @@ const DashboardContent: React.FC = () => {
 
   const { data: searchData, refetch: refetchSearch } = useGetSearchImageQuery(
     {
-      query: searchQuery,
+      query: deferredSearchQuery,
       page: 1,
       limit: limit,
     },
-    { skip: !searchQuery },
+    { skip: !deferredSearchQuery },
   )
 
   useEffect(() => {
@@ -100,10 +108,10 @@ const DashboardContent: React.FC = () => {
   }, [handleScroll])
 
   useEffect(() => {
-    if (searchQuery) {
+    if (deferredSearchQuery) {
       refetchSearch()
     }
-  }, [searchQuery, refetchSearch])
+  }, [deferredSearchQuery, refetchSearch])
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value)
