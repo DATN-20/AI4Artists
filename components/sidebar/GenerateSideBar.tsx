@@ -15,6 +15,7 @@ import { renderInput } from "../generate/renderInput"
 import { Switch } from "../ui/switch"
 import { Label } from "../ui/label"
 import ChooseAiInput from "../generate/input-component/ChooseAiInput"
+import { useTheme } from "next-themes"
 
 export default function GenerateSideBar() {
   const dispatch = useAppDispatch()
@@ -56,7 +57,14 @@ export default function GenerateSideBar() {
     { label: "1024 x 768", value: "5" },
     { label: "1024 x 1024", value: "6" },
   ]
+  const { theme } = useTheme()
 
+  const [logoSrc, setLogoSrc] = useState<string>(
+    theme === "dark" ? "/logo-white.png" : "/logo-black.png",
+  )
+  useEffect(() => {
+    setLogoSrc(theme === "dark" ? "/logo-white.png" : "/logo-black.png")
+  }, [theme])
   return (
     <Card className="flex w-full flex-col border-none lg:border">
       <CardHeader className="relative mt-2 flex flex-row items-center justify-center space-y-0 p-0">
@@ -70,10 +78,10 @@ export default function GenerateSideBar() {
           }}
         />
         <Image
-          src="/logo.png"
+          src={logoSrc}
           alt="logo"
-          width={70}
-          height={70}
+          width={90}
+          height={90}
           className="cursor-pointer"
           onClick={() => {
             router.push("/dashboard")
@@ -91,7 +99,7 @@ export default function GenerateSideBar() {
         </Label>
         <Switch
           id="use-style-mode"
-          className="rounded-lg data-[state=unchecked]:bg-slate-600 data-[state=checked]:bg-primary-700 dark:data-[state=unchecked]:bg-white"
+          className="rounded-lg data-[state=checked]:bg-primary-700 data-[state=unchecked]:bg-slate-600 dark:data-[state=unchecked]:bg-white"
           onClick={() => {
             dispatch(
               setUseStyleImage({

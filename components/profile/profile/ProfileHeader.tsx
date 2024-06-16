@@ -393,20 +393,19 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         toast.error((result as ErrorObject).error.data.message)
       } else {
         toast.success("Update profile successfully")
+        setProfileData({
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          alias_name: formData.alias_name,
+          phone: formData.phone,
+          address: formData.address,
+          description: formData.description,
+          instagram: formData.instagram,
+          facebook: formData.facebook,
+          twitter: formData.twitter,
+        })
         setEditProfileToggle(false)
       }
-
-      setProfileData({
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        alias_name: formData.alias_name,
-        phone: formData.phone,
-        address: formData.address,
-        description: formData.description,
-        instagram: formData.instagram,
-        facebook: formData.facebook,
-        twitter: formData.twitter,
-      })
     } catch (error) {
       console.error("Error:", error)
     }
