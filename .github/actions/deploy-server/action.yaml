@@ -32,6 +32,5 @@ runs:
         docker stop ai4artist || true
         docker rm ai4artist || true
         docker rmi nightcrawlers512/ai4artist:main || true
-
         docker compose up -d
         
