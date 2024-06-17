@@ -1,3 +1,4 @@
+"use client"
 import { ChevronDown, Search } from "lucide-react"
 import { Button } from "../ui/button"
 import {
@@ -7,9 +8,18 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
 } from "../ui/dropdown-menu"
-import { useEffect, useState, useRef, useCallback } from "react"
+import {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useDeferredValue,
+} from "react"
 import MansoryGrid from "./MansoryGrid"
-import { useGetAllDashboardImageQuery } from "@/services/dashboard/dashboardApi"
+import {
+  useGetAllDashboardImageQuery,
+  useGetSearchImageQuery,
+} from "@/services/dashboard/dashboardApi"
 import { DashboardImage } from "@/types/dashboard"
 import Loading from "../Loading"
 
@@ -30,6 +40,9 @@ const DashboardContent: React.FC = () => {
   const [images, setImages] = useState<DashboardImage[]>([])
   const [page, setPage] = useState<number>(1)
   const [showSmallLoading, setShowSmallLoading] = useState<boolean>(false)
+  const [searchQuery, setSearchQuery] = useState<string>("")
+  const deferredSearchQuery = useDeferredValue(searchQuery)
+  const [searchResults, setSearchResults] = useState<DashboardImage[]>([])
   const limit = 20
 
   const isFetchingRef = useRef<boolean>(false)
@@ -48,6 +61,15 @@ const DashboardContent: React.FC = () => {
     limit,
   })
 
+  const { data: searchData, refetch: refetchSearch } = useGetSearchImageQuery(
+    {
+      query: deferredSearchQuery,
+      page: 1,
+      limit: limit,
+    },
+    { skip: !deferredSearchQuery },
+  )
+
   useEffect(() => {
     if (error) {
       console.error("Failed to fetch images:", error)
@@ -56,6 +78,12 @@ const DashboardContent: React.FC = () => {
       isFetchingRef.current = false
     }
   }, [error, data])
+
+  useEffect(() => {
+    if (searchData) {
+      setSearchResults(searchData.data)
+    }
+  }, [searchData])
 
   const handleScroll = useCallback(() => {
     if (!containerRef.current || isLoading || isFetchingRef.current) return
@@ -78,6 +106,16 @@ const DashboardContent: React.FC = () => {
       return () => currentContainer.removeEventListener("scroll", handleScroll)
     }
   }, [handleScroll])
+
+  useEffect(() => {
+    if (deferredSearchQuery) {
+      refetchSearch()
+    }
+  }, [deferredSearchQuery, refetchSearch])
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
+  }
 
   return (
     <div
@@ -113,6 +151,8 @@ const DashboardContent: React.FC = () => {
           <input
             type="text"
             placeholder="Search"
+            value={searchQuery}
+            onChange={handleSearchChange}
             className="flex-grow bg-transparent outline-none dark:placeholder-white"
           />
           <Search />
@@ -124,7 +164,7 @@ const DashboardContent: React.FC = () => {
           <Loading />
         </div>
       ) : (
-        <MansoryGrid data={images} />
+        <MansoryGrid data={searchQuery ? searchResults : images} />
       )}
 
       {showSmallLoading && (

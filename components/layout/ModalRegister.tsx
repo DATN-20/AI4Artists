@@ -21,6 +21,7 @@ import { Button } from "../ui/button"
 import BgImage from "../../public/bg-left.png"
 import { ErrorObject, ErrorObjectRegister } from "@/types"
 import { LoginModalPage, ModalProps } from "@/constants/loginModal"
+import { useTheme } from "next-themes"
 
 const formSchema = z.object({
   email: z.string().min(2, {
@@ -55,7 +56,14 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isButtonDisabled, setIsButtonDisabled] = useState(false)
+  const { theme } = useTheme()
 
+  const [logoSrc, setLogoSrc] = useState<string>(
+    theme === "dark" ? "/logo-white.png" : "/logo-black.png",
+  )
+  useEffect(() => {
+    setLogoSrc(theme === "dark" ? "/logo-white.png" : "/logo-black.png")
+  }, [theme])
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
       email: "",
@@ -124,14 +132,10 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
             />
             <div className="z-20 mt-6 flex h-full w-full flex-col items-center">
               <div className="my-6 flex flex-col items-center gap-4">
-                <NextImage
-                  alt="logo"
-                  width={120}
-                  height={120}
-                  src="/logo.png"
-                />
+                <NextImage alt="logo" width={180} height={180} src={logoSrc} />
+
                 <span className="select-none bg-gradient-default bg-clip-text text-5xl font-black text-transparent">
-                  AIArtist
+                  AI4Artist
                 </span>
               </div>
 

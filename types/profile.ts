@@ -18,6 +18,25 @@ export interface Person {
   created_at: Date;
   updated_at: Date;
 }
+export interface PersonData {
+  data:{
+    id: number;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    address: string;
+    description: string;
+    socials: Social[];
+    alias_name: string;
+    role: string;
+    avatar: string;
+    background: string;
+    created_at: Date;
+    updated_at: Date;
+  }
+  
+}
+
 export interface requestData {
   firstName: string
   lastName: string

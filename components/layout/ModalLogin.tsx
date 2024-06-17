@@ -25,8 +25,9 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { FaFacebook, FaGoogle } from "react-icons/fa"
 import { X } from "lucide-react"
-import { useGetProfileMutation } from "@/services/profile/profileApi"
+import { useGetProfileQuery } from "@/services/profile/profileApi"
 import { LoginModalPage, ModalProps } from "@/constants/loginModal"
+import { useTheme } from "next-themes"
 
 const formSchema = z.object({
   email: z.string().min(2, {
@@ -40,8 +41,16 @@ const formSchema = z.object({
 const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
   const dispatch = useAppDispatch()
   const router = useRouter()
+  const { theme } = useTheme()
 
-  const [getUser, { data: userData }] = useGetProfileMutation()
+  const [logoSrc, setLogoSrc] = useState<string>(
+    theme === "dark" ? "/logo-white.png" : "/logo-black.png",
+  )
+  const {
+    data: userData,
+    refetch,
+    isSuccess: isGetProfileSuccess,
+  } = useGetProfileQuery()
 
   const [
     loginUser,
@@ -53,6 +62,10 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
       isLoading,
     },
   ] = useLoginUserMutation()
+
+  useEffect(() => {
+    setLogoSrc(theme === "dark" ? "/logo-white.png" : "/logo-black.png")
+  }, [theme])
 
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
@@ -91,11 +104,7 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const res = await getUser(undefined)
-      if ("data" in res) {
-        localStorage.setItem("userID", res.data?.id)
-        localStorage.setItem("userData", JSON.stringify(res.data))
-      }
+      await refetch()
     }
     const handleLoginSuccess = () => {
       toast.success("User login successfully")
@@ -114,6 +123,13 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
     }
   }, [isLoginSuccess])
 
+  useEffect(() => {
+    if (userData) {
+      localStorage.setItem("userID", (userData?.id).toString())
+      localStorage.setItem("userData", JSON.stringify(userData))
+    }
+  }, [userData])
+
   return (
     <DialogContentLoginModal
       className="border-none p-0 lg:min-w-[1020px] "
@@ -129,14 +145,9 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
             />
             <div className="z-20 mt-6 flex h-full w-full flex-col items-center">
               <div className="my-6 flex flex-col items-center gap-4">
-                <NextImage
-                  alt="logo"
-                  width={120}
-                  height={120}
-                  src="/logo.png"
-                />
+                <NextImage alt="logo" width={180} height={180} src={logoSrc} />
                 <span className="bg-gradient-default bg-clip-text text-5xl font-black text-transparent">
-                  AIArtist
+                  AI4Artist
                 </span>
               </div>
 
