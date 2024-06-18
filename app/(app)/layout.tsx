@@ -32,8 +32,6 @@ export default function AppLayout({
     return <Loading />
   }
 
-  const userId = "1" // Replace with dynamic user ID
-
   return (
     <>
       <ThemeProvider
@@ -43,7 +41,7 @@ export default function AppLayout({
         disableTransitionOnChange
       >
         <WebSocketProvider
-          userId={userId}
+          userId={localStorage?.getItem("userID")!}
           token={localStorage?.getItem("token")!}
         >
           {children}

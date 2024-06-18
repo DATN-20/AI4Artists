@@ -12,10 +12,10 @@ import {
   useAddNewAlbumMutation,
   useDeleteAlbumMutation,
   useGetAlbumMutation,
-  useGetGuestImageMutation,
-  useGetGuestProfileMutation,
+  useGetGuestImageQuery,
+  useGetGuestProfileQuery,
   useGetProfileAlbumMutation,
-  useGetProfileMutation,
+  useGetProfileQuery,
   useGetTotalImageMutation,
 } from "@/services/profile/profileApi"
 import {
@@ -72,14 +72,28 @@ const Profile = () => {
   const generateStates = useSelector(selectGenerate)
   const authStates = useSelector(selectAuth)
   const [selectedAlbum, setSelectedAlbum] = useState(-1)
-  const [getUser, { data: userData }] = useGetProfileMutation()
+  const [guestProfileId, setGuestProfileId] = useState("")
+  const [isGetGuest, setIsGetGuest] = useState(true)
+
+  const { data: userData } = useGetProfileQuery()
   const [getOneAlbum, { data: oneAlbumData }] = useGetAlbumMutation()
   const [openDialogCarousel, setOpenDialogCarousel] = useState<boolean>(false)
   const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
   const [getTotalImage, { data: imagesData }] = useGetTotalImageMutation()
-  const [getGuest, { data: guestImages }] = useGetGuestImageMutation()
-  const [getGuestProfile, { data: guestProfileData }] =
-    useGetGuestProfileMutation()
+  const { data: guestImages, isSuccess: isGuestImageSuccess } =
+    useGetGuestImageQuery(
+      {
+        id: guestProfileId,
+        page: 1,
+        limit: 100,
+      },
+      { skip: isGetGuest },
+    )
+  const {
+    data: guestProfileData,
+    isSuccess: isGuestProfileSuccess,
+    isError: isGuestProfileError,
+  } = useGetGuestProfileQuery({ id: guestProfileId }, { skip: isGetGuest })
   const [addNewAlbum, { isLoading: isAddingNewAlbum }] =
     useAddNewAlbumMutation()
   const [deleteAlbum] = useDeleteAlbumMutation()
@@ -112,8 +126,25 @@ const Profile = () => {
   }
 
   useEffect(() => {
+    if (isGuestProfileSuccess) {
+      setGuestProfile(guestProfileData)
+    }
+  }, [isGuestProfileSuccess])
+
+  useEffect(() => {
+    if (isGuestImageSuccess) {
+      setGuestData(guestImages)
+    }
+  }, [isGuestImageSuccess])
+
+  useEffect(() => {
+    if (isGuestProfileError) {
+      router.push("/profile/not-found")
+    }
+  }, [isGuestProfileError])
+
+  useEffect(() => {
     const fetchData = async () => {
-      await getUser(undefined)
       await getAlbum(undefined)
       await getTotalImage(undefined)
 
@@ -121,18 +152,8 @@ const Profile = () => {
       const userID = localStorage.getItem("userID")
 
       if (guestID && guestID !== userID) {
-        const guestDataResponse = await getGuest({
-          id: guestID,
-          page: 1,
-          limit: 100,
-        })
-        setGuestData(guestDataResponse)
-        const guestProfileRes = await getGuestProfile({ id: guestID })
-        if ((guestProfileRes as ErrorObject).error) {
-          router.push("/profile/not-found")
-        } else {
-          setGuestProfile(guestProfileRes)
-        }
+        setIsGetGuest(false)
+        setGuestProfileId(guestID)
       }
       setIsLoading(false)
     }
@@ -192,8 +213,8 @@ const Profile = () => {
             </div>
           </div>
           <div className="mr-8 h-full flex-1">
-            <ProfileHeaderGuest userData={guestProfile.data} />
-            <ProfileContentGuest imagesData={guestData.data.data} />
+            <ProfileHeaderGuest userData={guestProfile} />
+            <ProfileContentGuest imagesData={guestData.data} />
           </div>
         </div>
       )

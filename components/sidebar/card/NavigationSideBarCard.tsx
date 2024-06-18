@@ -29,6 +29,8 @@ import {
   AlertDialogContent,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
+import { useTheme } from "next-themes"
+import NextImage from "next/image"
 
 const NavigationSideBarCard = () => {
   const dispatch = useAppDispatch()
@@ -78,7 +80,14 @@ const NavigationSideBarCard = () => {
       icon: <FaTag />,
     },
   ]
+  const { theme } = useTheme()
 
+  const [logoSrc, setLogoSrc] = useState<string>(
+    theme === "dark" ? "/logo-white.png" : "/logo-black.png",
+  )
+  useEffect(() => {
+    setLogoSrc(theme === "dark" ? "/logo-white.png" : "/logo-black.png")
+  }, [theme])
   return (
     <>
       <Card className="flex h-full min-h-full flex-col">
@@ -88,9 +97,9 @@ const NavigationSideBarCard = () => {
             router.push("/dashboard")
           }}
         >
-          <Image src="/logo.png" alt="logo" width={90} height={90} />
+          <NextImage alt="logo" width={180} height={180} src={logoSrc} />
           <span className="bg-gradient-default bg-clip-text text-5xl font-black text-transparent">
-            AIArtist
+            AI4Artist
           </span>
         </CardHeader>
         <CardContent className="flex h-full flex-col justify-between gap-4 px-4 py-2">

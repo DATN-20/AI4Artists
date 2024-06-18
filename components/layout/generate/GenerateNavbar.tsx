@@ -9,9 +9,18 @@ import {
 import { AlignJustify, X } from "lucide-react"
 import GenerateSideBar from "../../sidebar/GenerateSideBar"
 import { useRouter } from "next/navigation"
-
+import { useTheme } from "next-themes"
+import { useEffect, useState } from "react"
 const GenerateNavbar = () => {
   const router = useRouter()
+  const { theme } = useTheme()
+
+  const [logoSrc, setLogoSrc] = useState<string>(
+    theme === "dark" ? "/logo-white.png" : "/logo-black.png",
+  )
+  useEffect(() => {
+    setLogoSrc(theme === "dark" ? "/logo-white.png" : "/logo-black.png")
+  }, [theme])
   return (
     <nav className="block md:hidden">
       <div className="flex w-full items-center justify-between px-6 pt-4">
@@ -34,7 +43,7 @@ const GenerateNavbar = () => {
           className="flex flex-grow cursor-pointer justify-center"
           onClick={() => router.push("/dashboard")}
         >
-          <NextImage src="/logo.png" alt="logo" width={50} height={50} />
+          <NextImage alt="logo" width={70} height={70} src={logoSrc} />
         </div>
         <div className="flex-grow-0"></div>
       </div>
