@@ -28,11 +28,9 @@ runs:
       key: ${{ inputs.ssh-private-key }}
       port: ${{ inputs.ssh-port }}
       script: |
-        cd /artist_project/AI4Artists
-        docker stop ai4artists || true
-        docker rm ai4artists || true
+        cd /artist_project/front_end
+        docker stop ai4artist || true
+        docker rm ai4artist || true
         docker rmi nightcrawlers512/ai4artist:main || true
         docker compose up -d
-        sleep 10
-        docker exec -i ai4artists bash << 'EOF'
         

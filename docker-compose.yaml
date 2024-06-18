@@ -7,8 +7,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      - NEXT_PUBLIC_API_URL=https://api.mangahay.top/
-      - NEXT_PUBLIC_SOCKET_URL=https://socket.mangahay.top/
+    env_file:
+      - .docker.env
     ports:
       - "8080:8080"
