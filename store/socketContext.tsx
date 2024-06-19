@@ -45,7 +45,7 @@ export const WebSocketProvider: React.FC<{
     return date.toLocaleString()
   }
 
-  const toggleRead = async (reference_data: any) => {
+  const toggleRead = async (reference_data: string) => {
     if (reference_data) {
       setReferenceData(reference_data)
       const result = await refetch()
@@ -60,7 +60,11 @@ export const WebSocketProvider: React.FC<{
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogHeader className="hidden" />
         <DialogTrigger className="my-3 flex w-full text-start">
-          <div onClick={toggleRead}>
+          <div
+            onClick={() => {
+              toggleRead(notification.reference_data)
+            }}
+          >
             <h4 className="font-bold">{notification.title}</h4>
             <p>{notification.content}</p>
             <span className={`text-xs text-primary`}>
