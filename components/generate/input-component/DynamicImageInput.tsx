@@ -12,11 +12,11 @@ import { Label } from "../../ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { setField, setStyleField } from "@/features/generateSlice"
-import { useGetProfileAlbumMutation } from "@/services/profile/profileApi"
+import { useGetProfileAlbumQuery } from "@/services/profile/profileApi"
 import { selectAuth, setTotalAlbum } from "@/features/authSlice"
-import Image from "next/image"
+import NextImage from "next/image"
 import axios from "axios"
-import { AlbumWithImages, ImageAlbum } from "@/types/profile"
+import { AlbumData, Image } from "@/types/profile"
 
 const DynamicImageInput = ({
   name,
@@ -36,7 +36,7 @@ const DynamicImageInput = ({
   const dispatch = useAppDispatch()
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
+  const { data: albumData } = useGetProfileAlbumQuery()
   const authStates = useAppSelector(selectAuth)
   const [selectedInputImage, setSelectedInputImage] = useState<File | null>(
     null,
@@ -89,13 +89,6 @@ const DynamicImageInput = ({
       reader.readAsDataURL(imageGen)
     }
   }
-
-  useEffect(() => {
-    const fetchAlbumData = async () => {
-      await getAlbum(undefined)
-    }
-    fetchAlbumData()
-  }, [])
 
   useEffect(() => {
     if (albumData) {
@@ -233,7 +226,7 @@ const DynamicImageInput = ({
                     <div className="mt-3 grid h-[300px] grid-cols-4 gap-4 p-1">
                       {selectedAlbum.images &&
                         selectedAlbum.images.map(
-                          (image: ImageAlbum, imageIndex: number) => (
+                          (image: Image, imageIndex: number) => (
                             <div
                               key={imageIndex}
                               className="relative h-40 cursor-pointer transition-opacity duration-300 hover:opacity-50"
@@ -241,7 +234,7 @@ const DynamicImageInput = ({
                                 handleImageSelectFromAlbum(image, imageIndex)
                               }
                             >
-                              <Image
+                              <NextImage
                                 src={image.url}
                                 alt={`Image ${imageIndex + 1}`}
                                 fill
@@ -263,7 +256,7 @@ const DynamicImageInput = ({
                 ) : (
                   <div className="mt-3 grid h-[300px] grid-cols-4 gap-4 p-1">
                     {authStates?.totalAlbum?.map(
-                      (album: AlbumWithImages, index: number) => (
+                      (album: AlbumData, index: number) => (
                         <div
                           key={index}
                           className={`relative grid h-full w-full gap-1 ${
@@ -277,9 +270,9 @@ const DynamicImageInput = ({
                             album.images.length > 0 &&
                             album.images
                               .slice(0, 4)
-                              .map((image: ImageAlbum, imageIndex: number) => (
+                              .map((image: Image, imageIndex: number) => (
                                 <div key={imageIndex} className="relative h-40">
-                                  <Image
+                                  <NextImage
                                     src={image.url}
                                     alt={`Image ${imageIndex + 1}`}
                                     fill
@@ -309,7 +302,7 @@ const DynamicImageInput = ({
         </Dialog>
       </div>
       {selectedImage && (
-        <Image
+        <NextImage
           src={selectedImage ? URL.createObjectURL(selectedImage) : ""}
           alt="Selected"
           className="w-full rounded-xl object-cover"

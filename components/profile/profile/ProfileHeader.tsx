@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import {
+  useGetProfileQuery,
   useUpdateAvatarMutation,
   useUpdateBackgroundMutation,
   useUpdateProfileMutation,
@@ -31,7 +32,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Person, requestData } from "@/types/profile"
-import { ErrorObject } from "@/types"
+import { ErrorObject, ErrorObjectRegister } from "@/types"
 
 interface ProfileHeaderProps {
   userData: Person | undefined
@@ -56,6 +57,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
   const [showAvatarModal, setShowAvatarModal] = useState(false)
   const [showBgModal, setShowBgModal] = useState(false)
   const [editProfileToggle, setEditProfileToggle] = useState(false)
+  const {
+    data: avatarData,
+    refetch: avatarRefetch,
+    isSuccess: isGetProfileSuccess,
+  } = useGetProfileQuery()
 
   const [updateAvatar] = useUpdateAvatarMutation()
   const [updateBackground] = useUpdateBackgroundMutation()
@@ -273,11 +279,16 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
           const imageFile = base64StringToFile(croppedImageBase64, filename)
           formData.append("file", imageFile)
           const result = await updateBackground(formData)
-          if ((result as ErrorObject).error) {
-            toast.error((result as ErrorObject).error.data.message)
+          if ((result as ErrorObjectRegister).error) {
+            const errorData = JSON.parse(
+              (result as ErrorObjectRegister).error.data,
+            )
+            const errorMessage = errorData.message
+            toast.error(errorMessage)
           } else {
             setCroppedBgUrl(croppedImageBase64)
             toast.success("Update background successfully")
+            await avatarRefetch()
           }
         }
       }
@@ -314,11 +325,16 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
           const imageFile = base64StringToFile(croppedImageBase64, filename)
           formData.append("file", imageFile)
           const result = await updateAvatar(formData)
-          if ((result as ErrorObject).error) {
-            toast.error((result as ErrorObject).error.data.message)
+          if ((result as ErrorObjectRegister).error) {
+            const errorData = JSON.parse(
+              (result as ErrorObjectRegister).error.data,
+            )
+            const errorMessage = errorData.message
+            toast.error(errorMessage)
           } else {
             setCroppedImageUrl(croppedImageBase64)
             toast.success("Update avatar successfully")
+            await avatarRefetch()
           }
         }
       }
@@ -410,6 +426,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
       console.error("Error:", error)
     }
   }
+
+  useEffect(() => {
+    if (avatarData) {
+      localStorage.setItem("userData", JSON.stringify(userData))
+    }
+  }, [avatarData])
 
   return (
     <div className="relative mb-4 flex flex-col">

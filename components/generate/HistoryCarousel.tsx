@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { IoAddCircleOutline, IoCloudDownloadOutline } from "react-icons/io5"
 
-import Image from "next/image"
+import NextImage from "next/image"
 import {
   Dialog,
   DialogContent,
@@ -21,7 +21,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useAddToAlbumMutation } from "@/services/profile/profileApi"
-import { AlbumWithImages } from "@/types/profile"
+import { AlbumData } from "@/types/profile"
 import {
   Tooltip,
   TooltipContent,
@@ -40,7 +40,7 @@ interface HistoryCarouselProps {
   height?: number
   styleAlbum?: string
   prompt?: string
-  album?: AlbumWithImages[] | null
+  album?: AlbumData[] | null
 }
 import { FaImages } from "react-icons/fa"
 
@@ -180,7 +180,7 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
                   <div className="relative p-1">
                     <Card className="transform transition-transform duration-300 hover:scale-105">
                       <CardContent className="flex items-center justify-center p-0">
-                        <Image
+                        <NextImage
                           alt="generated image"
                           width={width}
                           height={height}

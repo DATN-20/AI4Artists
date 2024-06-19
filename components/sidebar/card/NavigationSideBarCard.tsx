@@ -31,12 +31,12 @@ import {
 import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes"
 import NextImage from "next/image"
+import { useGetProfileQuery } from "@/services/profile/profileApi"
 
 const NavigationSideBarCard = () => {
   const dispatch = useAppDispatch()
   const router = useRouter()
   const pathname = usePathname()
-
   const handleLogout = async () => {
     dispatch(logout())
     router.push("/")
@@ -45,13 +45,16 @@ const NavigationSideBarCard = () => {
 
   const [currentSection, setCurrentSection] = useState("home")
 
-  // Sử dụng JSON.parse một cách an toàn
   const getUserDataFromLocalStorage = () => {
     const data = localStorage.getItem("userData")
     return data ? JSON.parse(data) : null
   }
 
   const [userData, setUserData] = useState(getUserDataFromLocalStorage())
+
+  useEffect(() => {
+    setUserData(getUserDataFromLocalStorage())
+  }, [localStorage.getItem("userData")])
 
   useEffect(() => {
     const section = pathname.split("/")[1]

@@ -11,10 +11,10 @@ import ProfileContent from "@/components/profile/profile/ProfileContent"
 import {
   useAddNewAlbumMutation,
   useDeleteAlbumMutation,
-  useGetAlbumMutation,
+  useGetAlbumQuery,
   useGetGuestImageQuery,
   useGetGuestProfileQuery,
-  useGetProfileAlbumMutation,
+  useGetProfileAlbumQuery,
   useGetProfileQuery,
   useGetTotalImageMutation,
 } from "@/services/profile/profileApi"
@@ -76,9 +76,12 @@ const Profile = () => {
   const [isGetGuest, setIsGetGuest] = useState(true)
 
   const { data: userData } = useGetProfileQuery()
-  const [getOneAlbum, { data: oneAlbumData }] = useGetAlbumMutation()
+  const { data: oneAlbumData, refetch: oneAlbumRefetch } = useGetAlbumQuery({
+    albumId: selectedAlbum,
+  })
   const [openDialogCarousel, setOpenDialogCarousel] = useState<boolean>(false)
-  const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
+  const { data: albumData, refetch: fullInfoRefetch } =
+    useGetProfileAlbumQuery()
   const [getTotalImage, { data: imagesData }] = useGetTotalImageMutation()
   const { data: guestImages, isSuccess: isGuestImageSuccess } =
     useGetGuestImageQuery(
@@ -119,7 +122,7 @@ const Profile = () => {
       } else {
         toast.success("Added new album successfully!")
       }
-      await getAlbum(undefined)
+      await fullInfoRefetch()
     } else {
       toast.error("Please enter album name!")
     }
@@ -145,7 +148,6 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await getAlbum(undefined)
       await getTotalImage(undefined)
 
       const guestID = pathname.split("/")[2]
@@ -190,12 +192,12 @@ const Profile = () => {
       toast.success("Deleted album successfully")
     }
     setSelectedAlbumId(null)
-    await getAlbum(undefined)
+    await fullInfoRefetch()
   }
 
   const handleSelectAlbum = async (albumId: number) => {
     setSelectedAlbum(albumId)
-    await getOneAlbum({ albumId })
+    await oneAlbumRefetch()
   }
 
   const renderContent = () => {

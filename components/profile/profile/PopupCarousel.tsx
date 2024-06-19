@@ -23,8 +23,7 @@ import { IoCloseCircleOutline, IoEyeOutline } from "react-icons/io5"
 import { Button } from "@/components/ui/button"
 import {
   useDeleteFromAlbumMutation,
-  useGetAlbumMutation,
-  useGetProfileAlbumMutation,
+  useGetProfileAlbumQuery,
 } from "@/services/profile/profileApi"
 import { toast } from "react-toastify"
 import { setTotalAlbum } from "@/features/authSlice"
@@ -54,7 +53,8 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
 }) => {
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
   const [deleteFromAlbum] = useDeleteFromAlbumMutation()
-  const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
+  const { data: albumData, refetch: fullInfoRefetch } =
+    useGetProfileAlbumQuery()
 
   const [changeVisibility] = useChangePublicStatusMutation()
   const [isPublic, setIsPublic] = useState<boolean[]>(
@@ -70,7 +70,6 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
     })
     changeVisibility(imageId)
     const fetchData = async () => {
-      await getAlbum(undefined)
       await getTotalImage()
     }
     fetchData()
@@ -90,7 +89,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
       albumId: selectedAlbum,
     })
     const fetchAlbumData = async () => {
-      await getAlbum(undefined)
+      await fullInfoRefetch()
     }
     if ((result as ErrorObject).error) {
       toast.error((result as ErrorObject).error.data.message)

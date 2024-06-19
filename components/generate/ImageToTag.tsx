@@ -2,15 +2,15 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useContext, useEffect, useRef, useState } from "react"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
-import Image from "next/image"
+import NextImage from "next/image"
 import { TiTick } from "react-icons/ti"
 import { Button } from "@/components/ui/button"
 
-import { useGetProfileAlbumMutation } from "@/services/profile/profileApi"
+import { useGetProfileAlbumQuery } from "@/services/profile/profileApi"
 import { selectAuth, setTotalAlbum } from "@/features/authSlice"
 import axios from "axios"
 import { useGenerateTagsMutation } from "@/services/generate/generateApi"
-import { AlbumWithImages, ImageAlbum } from "@/types/profile"
+import { AlbumData, Image } from "@/types/profile"
 import { toast } from "react-toastify"
 import {
   Dialog,
@@ -64,9 +64,7 @@ const TagsDisplay = () => {
 
 const ImageToTag = () => {
   const [open, setOpen] = useState(false)
-  const [selectedAlbum, setSelectedAlbum] = useState<AlbumWithImages | null>(
-    null,
-  )
+  const [selectedAlbum, setSelectedAlbum] = useState<AlbumData | null>(null)
   const dispatch = useAppDispatch()
   const [selectedInputImage, setSelectedInputImage] = useState<File | null>(
     null,
@@ -75,7 +73,7 @@ const ImageToTag = () => {
     null,
   )
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
+  const { data: albumData } = useGetProfileAlbumQuery()
   const authStates = useAppSelector(selectAuth)
   const [
     generateTags,
@@ -114,13 +112,6 @@ const ImageToTag = () => {
   }, [selectedInputImage])
 
   useEffect(() => {
-    const fetchAlbumData = async () => {
-      await getAlbum(undefined)
-    }
-    fetchAlbumData()
-  }, [])
-
-  useEffect(() => {
     initTagChosen()
   }, [tags])
 
@@ -146,14 +137,11 @@ const ImageToTag = () => {
     }
   }
 
-  const handleAlbumClick = (album: AlbumWithImages) => {
+  const handleAlbumClick = (album: AlbumData) => {
     setSelectedAlbum(album)
   }
 
-  const handleImageSelectFromAlbum = async (
-    image: ImageAlbum,
-    index: number,
-  ) => {
+  const handleImageSelectFromAlbum = async (image: Image, index: number) => {
     try {
       const response = await axios.get(image.url, {
         responseType: "blob",
@@ -297,7 +285,7 @@ const ImageToTag = () => {
                       <CarouselContent>
                         {selectedAlbum.images &&
                           selectedAlbum.images.map(
-                            (image: ImageAlbum, imageIndex: number) => (
+                            (image: Image, imageIndex: number) => (
                               <CarouselItem
                                 key={imageIndex}
                                 className="relative me-2 ml-4 h-[300px] cursor-pointer p-0 transition-opacity duration-300 hover:opacity-50 lg:basis-[300px]"
@@ -305,7 +293,7 @@ const ImageToTag = () => {
                                   handleImageSelectFromAlbum(image, imageIndex)
                                 }
                               >
-                                <Image
+                                <NextImage
                                   src={image.url}
                                   alt={`Image ${imageIndex + 1}`}
                                   fill
@@ -340,7 +328,7 @@ const ImageToTag = () => {
                   <Carousel className="relative mt-5 w-full">
                     <CarouselContent>
                       {authStates.totalAlbum.map(
-                        (album: AlbumWithImages, index: number) =>
+                        (album: AlbumData, index: number) =>
                           album.images &&
                           album.images.length > 0 && (
                             <CarouselItem
@@ -348,26 +336,21 @@ const ImageToTag = () => {
                               className="relative grid h-[300px] w-1/4 gap-1 lg:basis-[300px]"
                               onClick={() => handleAlbumClick(album)}
                             >
-                              <div className="grid grid-cols-2 grid-rows-2 gap-1 border-2 border-white rounded-lg">
+                              <div className="grid grid-cols-2 grid-rows-2 gap-1 rounded-lg border-2 border-white">
                                 {album.images
                                   .slice(0, 4)
-                                  .map(
-                                    (image: ImageAlbum, imageIndex: number) => (
-                                      <div
-                                        key={imageIndex}
-                                        className="relative"
-                                      >
-                                        <Image
-                                          src={image.url}
-                                          alt={`Image ${imageIndex + 1}`}
-                                          fill
-                                          sizes="25"
-                                          style={{ objectFit: "cover" }}
-                                          className="rounded-md"
-                                        />
-                                      </div>
-                                    ),
-                                  )}
+                                  .map((image: Image, imageIndex: number) => (
+                                    <div key={imageIndex} className="relative">
+                                      <NextImage
+                                        src={image.url}
+                                        alt={`Image ${imageIndex + 1}`}
+                                        fill
+                                        sizes="25"
+                                        style={{ objectFit: "cover" }}
+                                        className="rounded-md"
+                                      />
+                                    </div>
+                                  ))}
                               </div>
                               <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:cursor-pointer hover:opacity-100">
                                 <p className="text-center text-white">

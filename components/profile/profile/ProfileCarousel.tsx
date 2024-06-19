@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import Image from "next/image"
 import { IoAddCircleOutline, IoEyeOutline } from "react-icons/io5"
-import { AlbumWithImages, ImageTotal } from "@/types/profile"
+import { AlbumData, ImageTotal } from "@/types/profile"
 import {
   Dialog,
   DialogClose,
@@ -23,7 +23,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {
   useAddToAlbumMutation,
-  useGetProfileAlbumMutation,
+  useGetProfileAlbumQuery,
 } from "@/services/profile/profileApi"
 import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
@@ -37,7 +37,7 @@ interface CarouselProps {
   generateImgData: ImageTotal[] | null
   width?: number
   height?: number
-  album?: AlbumWithImages[] | null
+  album?: AlbumData[] | null
 }
 
 const ProfileCarousel: React.FC<CarouselProps> = ({
@@ -53,7 +53,8 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
     generateImgData?.map((item) => item.visibility) || [],
   )
   const [addToAlbum] = useAddToAlbumMutation()
-  const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
+  const { data: albumData, refetch: fullInfoRefetch } =
+    useGetProfileAlbumQuery()
   const dispatch = useAppDispatch()
 
   const handleAlbumSelect = (albumId: number) => {
@@ -74,7 +75,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
       albumId: selectedAlbumId,
     })
     const fetchAlbumData = async () => {
-      await getAlbum(undefined)
+      await fullInfoRefetch()
     }
     if ((result as ErrorObject).error) {
       toast.error((result as ErrorObject).error.data.message)
@@ -99,7 +100,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
     })
     changeVisibility(imageId)
     const fetchAlbumData = async () => {
-      await getAlbum(undefined)
+      await fullInfoRefetch()
     }
     fetchAlbumData()
   }
