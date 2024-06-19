@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction} from "@reduxjs/toolkit";
 import { RootState } from "@/store/store";
 import { Root } from "react-dom/client";
-import { AlbumData, ImageTotal, Person } from "@/types/profile";
+import { AlbumData, Image, Person } from "@/types/profile";
 
 export interface AuthState{
   token: string | null;
   userData: Person | null
   totalAlbum: AlbumData[] | null
-  totalImages: ImageTotal[] | null
+  totalImages: Image[] | null
 }
 
 const initialState:AuthState ={
@@ -48,7 +48,7 @@ setTotalAlbum:(
   
 },
 setTotalImage:(
-  state, action: PayloadAction<{totalImage: ImageTotal[]}>
+  state, action: PayloadAction<{totalImage: Image[]}>
 ) => {
   state.totalImages = action.payload.totalImage
 

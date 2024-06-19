@@ -26,7 +26,7 @@ import {
 } from "@/features/authSlice"
 import Loading from "@/components/Loading"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { AlbumWithImages } from "@/types/profile"
+import { AlbumData } from "@/types/profile"
 import PopupCarousel from "@/components/profile/profile/PopupCarousel"
 import ProfileHeader from "@/components/profile/profile/ProfileHeader"
 import AlbumCard from "@/components/profile/profile/Album/AlbumCard"

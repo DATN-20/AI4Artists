@@ -1,5 +1,5 @@
 import { AllDashboardImageResponse } from "@/types/dashboard"
-import { AlbumData, ImageTotal, Person } from "@/types/profile"
+import { AlbumData, Image, Person } from "@/types/profile"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 
 export const profileApi = createApi({
@@ -28,7 +28,7 @@ export const profileApi = createApi({
         }
       },
     }),
-    getTotalImage: builder.mutation<ImageTotal[], void>({
+    getTotalImage: builder.mutation<Image[], void>({
       query: () => {
         return {
           url: "/api/v1/images",
@@ -36,7 +36,7 @@ export const profileApi = createApi({
         }
       },
     }),
-    getAlbum: builder.query<ImageTotal[], {  albumId: number }>({
+    getAlbum: builder.query<Image[], {  albumId: number }>({
       query: ({ albumId }) => ({
         url: `/api/v1/albums/${albumId}/images`,
         method: "GET",

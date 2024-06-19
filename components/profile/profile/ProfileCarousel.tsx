@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
-import Image from "next/image"
+import NextImage from "next/image"
 import { IoAddCircleOutline, IoEyeOutline } from "react-icons/io5"
-import { AlbumData, ImageTotal } from "@/types/profile"
+import { AlbumData, Image } from "@/types/profile"
 import {
   Dialog,
   DialogClose,
@@ -34,7 +34,7 @@ import { useChangePublicStatusMutation } from "@/services/generate/generateApi"
 import { FaRegEyeSlash } from "react-icons/fa"
 
 interface CarouselProps {
-  generateImgData: ImageTotal[] | null
+  generateImgData: Image[] | null
   width?: number
   height?: number
   album?: AlbumData[] | null
@@ -121,7 +121,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
                 <div className="relative flex h-full items-center justify-center p-1 ">
                   <Card className="transform transition-transform duration-300 hover:scale-105 ">
                     <CardContent className=" p-0">
-                      <Image
+                      <NextImage
                         alt="generated image"
                         width={width}
                         height={height}

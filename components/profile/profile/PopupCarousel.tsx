@@ -6,9 +6,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
-import Image from "next/image"
+import NextImage from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
-import { ImageAlbum, ImageTotal } from "@/types/profile"
+import { Image } from "@/types/profile"
 import {
   Dialog,
   DialogClose,
@@ -33,7 +33,7 @@ import { useChangePublicStatusMutation } from "@/services/generate/generateApi"
 import { FaRegEyeSlash } from "react-icons/fa"
 
 interface PopupCarouselProps {
-  generateImgData: ImageTotal[] | null
+  generateImgData: Image[] | null
   width?: number
   height?: number
   setSelectedAlbum: (albumId: number) => void
@@ -110,7 +110,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
         <BaseCarousel className="relative mt-5 w-full ">
           <CarouselContent>
             {generateImgData &&
-              generateImgData.map((item: any, index: number) => (
+              generateImgData.map((item: Image, index: number) => (
                 <CarouselItem
                   key={item.id}
                   className="lg:basis-1/3"
@@ -121,7 +121,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
                   <div className="relative flex h-full items-center justify-center p-1">
                     <Card className="transform transition-transform duration-300 hover:scale-105">
                       <CardContent className=" p-0">
-                        <Image
+                        <NextImage
                           alt="generated image"
                           width={width}
                           height={height}
