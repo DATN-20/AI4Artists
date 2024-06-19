@@ -60,18 +60,13 @@ export const WebSocketProvider: React.FC<{
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogHeader className="hidden" />
         <DialogTrigger className="my-3 flex w-full text-start">
-          <div
-            className={`flex items-center gap-4 border-b p-4 text-gray-800 hover:cursor-pointer hover:bg-slate-300 dark:text-white dark:hover:bg-gray-800`}
-            onClick={toggleRead}
-          >
-            <div>
-              <h4 className="font-bold">{notification.title}</h4>
-              <p>{notification.content}</p>
-              <span className={`text-xs text-primary`}>
-                {notificationDisplayTime(notification.created_at)}
-              </span>
-              <div className={`h-[10px] w-[15px] rounded-full`}></div>
-            </div>
+          <div onClick={toggleRead}>
+            <h4 className="font-bold">{notification.title}</h4>
+            <p>{notification.content}</p>
+            <span className={`text-xs text-primary`}>
+              {notificationDisplayTime(notification.created_at)}
+            </span>
+            <div className={`h-[10px] w-[15px] rounded-full`}></div>
           </div>
         </DialogTrigger>
         <DialogContent className="max-h-[90vh] overflow-y-scroll sm:max-w-[80vw] md:max-w-[60vw]">
