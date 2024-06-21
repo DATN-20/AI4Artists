@@ -5,7 +5,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 export const profileApi = createApi({
   reducerPath: "profileApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://api.mangahay.top/",
+    baseUrl: process.env.NEXT_PUBLIC_API_URL,
     prepareHeaders(headers) {
       headers.set("Authorization", `Bearer ${localStorage.getItem("token")}`)
       return headers

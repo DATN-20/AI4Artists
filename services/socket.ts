@@ -1,7 +1,7 @@
 import { io, Socket } from "socket.io-client"
 
 const createSocket = (userId: string, token: string): Socket => {
-  return io("https://socket.mangahay.top/", {
+  return io(process.env.NEXT_PUBLIC_SOCKET_URL!, {
     query: {
       userId,
       token,

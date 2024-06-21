@@ -31,5 +31,5 @@ runs:
         cd /artist_project/front_end
         docker stop ai4artist || true
         docker rm ai4artist || true
-        docker rmi nightcrawlers512/ai4artist:main || true
+        docker rmi nightcrawlers512/ai4artist || true
         docker compose up -d
