@@ -17,7 +17,7 @@ import {
 } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
 import HistoryCarousel from "@/components/generate/HistoryCarousel"
-import { useGetProfileAlbumMutation } from "@/services/profile/profileApi"
+import { useGetProfileAlbumQuery } from "@/services/profile/profileApi"
 import { selectAuth, setTotalAlbum } from "@/features/authSlice"
 import { toast } from "react-toastify"
 import { TagsContext } from "@/store/tagsHooks"
@@ -32,7 +32,7 @@ export default function Generate() {
   const [useNegativePrompt, setUseNegativePrompt] = useState(false)
   const [promptPos, setPromptPos] = useState("")
   const [promptNeg, setPromptNeg] = useState("")
-  const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
+  const { data: albumData, refetch } = useGetProfileAlbumQuery()
 
   const { data: historyData } = useGetGenerationHistoryQuery()
   const authStates = useSelector(selectAuth)
@@ -221,10 +221,6 @@ export default function Generate() {
         }),
       )
     }
-    const fetchAlbumData = async () => {
-      await getAlbum(undefined)
-    }
-    fetchAlbumData()
   }, [])
 
   useEffect(() => {
@@ -298,8 +294,8 @@ export default function Generate() {
             </div>
           )}
           <h1 className="mt-5 text-3xl font-bold">Generated Images</h1>
-          {historyData &&
-            historyData.map((item: ImageGroup, index: number) => (
+          {historyData && historyData.length > 0 ? (
+            historyData.map((item, index) => (
               <HistoryCarousel
                 key={index}
                 generateImgData={item.images}
@@ -309,7 +305,10 @@ export default function Generate() {
                 prompt={item.prompt}
                 album={authStates?.totalAlbum}
               />
-            ))}
+            ))
+          ) : (
+            <p className="mt-5">No Images Found</p>
+          )}
         </div>
       </div>
     </>
