@@ -28,7 +28,7 @@ export const profileApi = createApi({
         }
       },
     }),
-    getTotalImage: builder.mutation<Image[], void>({
+    getTotalImage: builder.query<Image[], void>({
       query: () => {
         return {
           url: "/api/v1/images",
@@ -131,4 +131,4 @@ export const profileApi = createApi({
   }),
 })
 
-export const { useGetProfileQuery, useGetProfileAlbumQuery , useGetTotalImageMutation, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation, useGetGuestImageQuery, useGetGuestProfileQuery, useGetAlbumQuery} = profileApi
+export const { useGetProfileQuery, useGetProfileAlbumQuery , useGetTotalImageQuery, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation, useGetGuestImageQuery, useGetGuestProfileQuery, useGetAlbumQuery} = profileApi

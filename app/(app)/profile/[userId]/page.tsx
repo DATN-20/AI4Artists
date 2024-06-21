@@ -16,7 +16,7 @@ import {
   useGetGuestProfileQuery,
   useGetProfileAlbumQuery,
   useGetProfileQuery,
-  useGetTotalImageMutation,
+  useGetTotalImageQuery,
 } from "@/services/profile/profileApi"
 import {
   selectAuth,
@@ -82,7 +82,8 @@ const Profile = () => {
   const [openDialogCarousel, setOpenDialogCarousel] = useState<boolean>(false)
   const { data: albumData, refetch: fullInfoRefetch } =
     useGetProfileAlbumQuery()
-  const [getTotalImage, { data: imagesData }] = useGetTotalImageMutation()
+  const { data: imagesData, refetch: totalImageRefetch } =
+    useGetTotalImageQuery()
   const { data: guestImages, isSuccess: isGuestImageSuccess } =
     useGetGuestImageQuery(
       {
@@ -148,8 +149,6 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await getTotalImage(undefined)
-
       const guestID = pathname.split("/")[2]
       const userID = localStorage.getItem("userID")
 
@@ -252,6 +251,7 @@ const Profile = () => {
                       width={512}
                       height={512}
                       album={authStates.totalAlbum}
+                      getTotalImage={totalImageRefetch}
                     />
                   )}
                 </div>
@@ -275,7 +275,8 @@ const Profile = () => {
                         setSelectedAlbum={handleSelectAlbum}
                         selectedAlbum={album.album.id}
                         setOpenDialogCarousel={setOpenDialogCarousel}
-                        getTotalImage={getTotalImage}
+                        getTotalImage={totalImageRefetch}
+                        getOneAlbum={oneAlbumRefetch}
                       />
                     ))
                   ) : (
@@ -421,7 +422,7 @@ const Profile = () => {
                                 <div
                                   className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black bg-opacity-75 text-white"
                                   onClick={() => {
-                                    setSelectedAlbum(index)
+                                    setSelectedAlbum(item.album.id)
                                     setOpenDialogCarousel(true)
                                   }}
                                 >
@@ -454,7 +455,8 @@ const Profile = () => {
                         setSelectedAlbum={setSelectedAlbum}
                         selectedAlbum={selectedAlbum}
                         setOpenDialogCarousel={setOpenDialogCarousel}
-                        getTotalImage={getTotalImage}
+                        getTotalImage={totalImageRefetch}
+                        getOneAlbum={oneAlbumRefetch}
                       />
                     )}
                   </DialogContent>

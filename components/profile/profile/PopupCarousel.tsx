@@ -40,6 +40,7 @@ interface PopupCarouselProps {
   selectedAlbum: number
   setOpenDialogCarousel: (can: boolean) => void
   getTotalImage: () => void
+  getOneAlbum: () => void
 }
 
 const PopupCarousel: React.FC<PopupCarouselProps> = ({
@@ -50,6 +51,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
   selectedAlbum,
   setOpenDialogCarousel,
   getTotalImage,
+  getOneAlbum,
 }) => {
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
   const [deleteFromAlbum] = useDeleteFromAlbumMutation()
@@ -63,14 +65,15 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
   const dispatch = useAppDispatch()
 
   const changePublicStatus = async (imageId: number, index: number) => {
-    setIsPublic((prev) => {
-      const newState = [...prev]
-      newState[index] = !newState[index]
-      return newState
-    })
+    // setIsPublic((prev) => {
+    //   const newState = [...prev]
+    //   newState[index] = !newState[index]
+    //   return newState
+    // })
     changeVisibility(imageId)
     const fetchData = async () => {
       await getTotalImage()
+      await getOneAlbum()
     }
     fetchData()
   }
@@ -131,7 +134,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
                       </CardContent>
                       <div className="absolute inset-0   bg-black bg-opacity-50 pt-5 opacity-0 transition-opacity duration-300 hover:opacity-100">
                         <div className="flex max-w-full justify-end  gap-x-2 pr-5">
-                          {isPublic[index] ? (
+                          {item.visibility ? (
                             <IoEyeOutline
                               size={32}
                               className="cursor-pointer text-white hover:text-primary"

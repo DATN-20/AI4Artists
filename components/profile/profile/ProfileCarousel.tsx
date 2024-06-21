@@ -38,6 +38,7 @@ interface CarouselProps {
   width?: number
   height?: number
   album?: AlbumData[] | null
+  getTotalImage: () => void
 }
 
 const ProfileCarousel: React.FC<CarouselProps> = ({
@@ -45,6 +46,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
   width,
   height,
   album,
+  getTotalImage,
 }) => {
   const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null)
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
@@ -69,7 +71,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
     const imageIds = Array.isArray(selectedImageId)
       ? selectedImageId
       : [selectedImageId]
-    console.log(imageIds)
+
     const result = await addToAlbum({
       imageId: imageIds,
       albumId: selectedAlbumId,
@@ -93,14 +95,15 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
   }, [albumData])
 
   const changePublicStatus = async (imageId: number, index: number) => {
-    setIsPublic((prev) => {
-      const newState = [...prev]
-      newState[index] = !newState[index]
-      return newState
-    })
+    // setIsPublic((prev) => {
+    //   const newState = [...prev]
+    //   newState[index] = !newState[index]
+    //   return newState
+    // })
     changeVisibility(imageId)
     const fetchAlbumData = async () => {
       await fullInfoRefetch()
+      await getTotalImage()
     }
     fetchAlbumData()
   }
@@ -131,7 +134,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
                     </CardContent>
                     <div className="absolute inset-0   bg-black bg-opacity-50 pt-5 opacity-0 transition-opacity duration-300 hover:opacity-100">
                       <div className="flex max-w-full justify-end gap-x-2  pr-5">
-                        {isPublic[index] ? (
+                        {item.visibility ? (
                           <IoEyeOutline
                             size={32}
                             className="cursor-pointer text-white hover:text-primary"

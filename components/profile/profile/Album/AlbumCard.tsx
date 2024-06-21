@@ -16,6 +16,7 @@ interface AlbumCardProps {
   selectedAlbum: number
   setOpenDialogCarousel: (can: boolean) => void
   getTotalImage: () => void
+  getOneAlbum: () => void
 }
 
 const AlbumCard: React.FC<AlbumCardProps> = ({
@@ -26,6 +27,7 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
   selectedAlbum,
   setOpenDialogCarousel,
   getTotalImage,
+  getOneAlbum,
 }) => {
   const authStates = useSelector(selectAuth)
   const handleClick = () => {
@@ -89,6 +91,7 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
                   selectedAlbum={selectedAlbum}
                   setOpenDialogCarousel={setOpenDialogCarousel}
                   getTotalImage={getTotalImage}
+                  getOneAlbum={getOneAlbum}
                 />
               </TabsTrigger>
             </TabsList>
