@@ -125,7 +125,7 @@ const NavigationSideBarCard = () => {
               <div className="rounded-lg bg-card py-2 font-semibold">
                 <a
                   className="flex items-center gap-2"
-                  href={`/profile/${userData.id}`}
+                  href={`/profile/${userData?.id}`}
                 >
                   {userData?.avatar ? (
                     <Image
