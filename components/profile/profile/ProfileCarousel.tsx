@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
-import Image from "next/image"
+import NextImage from "next/image"
 import { IoAddCircleOutline, IoEyeOutline } from "react-icons/io5"
-import { AlbumWithImages, ImageTotal } from "@/types/profile"
+import { AlbumData, Image } from "@/types/profile"
 import {
   Dialog,
   DialogClose,
@@ -23,7 +23,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {
   useAddToAlbumMutation,
-  useGetProfileAlbumMutation,
+  useGetProfileAlbumQuery,
 } from "@/services/profile/profileApi"
 import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
@@ -34,10 +34,11 @@ import { useChangePublicStatusMutation } from "@/services/generate/generateApi"
 import { FaRegEyeSlash } from "react-icons/fa"
 
 interface CarouselProps {
-  generateImgData: ImageTotal[] | null
+  generateImgData: Image[] | null
   width?: number
   height?: number
-  album?: AlbumWithImages[] | null
+  album?: AlbumData[] | null
+  getTotalImage: () => void
 }
 
 const ProfileCarousel: React.FC<CarouselProps> = ({
@@ -45,6 +46,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
   width,
   height,
   album,
+  getTotalImage,
 }) => {
   const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null)
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
@@ -53,7 +55,8 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
     generateImgData?.map((item) => item.visibility) || [],
   )
   const [addToAlbum] = useAddToAlbumMutation()
-  const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
+  const { data: albumData, refetch: fullInfoRefetch } =
+    useGetProfileAlbumQuery()
   const dispatch = useAppDispatch()
 
   const handleAlbumSelect = (albumId: number) => {
@@ -68,13 +71,13 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
     const imageIds = Array.isArray(selectedImageId)
       ? selectedImageId
       : [selectedImageId]
-    console.log(imageIds)
+
     const result = await addToAlbum({
       imageId: imageIds,
       albumId: selectedAlbumId,
     })
     const fetchAlbumData = async () => {
-      await getAlbum(undefined)
+      await fullInfoRefetch()
     }
     if ((result as ErrorObject).error) {
       toast.error((result as ErrorObject).error.data.message)
@@ -92,14 +95,15 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
   }, [albumData])
 
   const changePublicStatus = async (imageId: number, index: number) => {
-    setIsPublic((prev) => {
-      const newState = [...prev]
-      newState[index] = !newState[index]
-      return newState
-    })
+    // setIsPublic((prev) => {
+    //   const newState = [...prev]
+    //   newState[index] = !newState[index]
+    //   return newState
+    // })
     changeVisibility(imageId)
     const fetchAlbumData = async () => {
-      await getAlbum(undefined)
+      await fullInfoRefetch()
+      await getTotalImage()
     }
     fetchAlbumData()
   }
@@ -120,7 +124,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
                 <div className="relative flex h-full items-center justify-center p-1 ">
                   <Card className="transform transition-transform duration-300 hover:scale-105 ">
                     <CardContent className=" p-0">
-                      <Image
+                      <NextImage
                         alt="generated image"
                         width={width}
                         height={height}
@@ -130,7 +134,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
                     </CardContent>
                     <div className="absolute inset-0   bg-black bg-opacity-50 pt-5 opacity-0 transition-opacity duration-300 hover:opacity-100">
                       <div className="flex max-w-full justify-end gap-x-2  pr-5">
-                        {isPublic[index] ? (
+                        {item.visibility ? (
                           <IoEyeOutline
                             size={32}
                             className="cursor-pointer text-white hover:text-primary"

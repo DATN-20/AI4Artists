@@ -1,4 +1,4 @@
-import Image from "next/image"
+import NextImage from "next/image"
 import { Button } from "../ui/button"
 import { Card } from "../ui/card"
 import { useTheme } from "next-themes"
@@ -9,10 +9,10 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "../ui/dialog"
-import { AlbumWithImages, ImageAlbum } from "../../types/profile"
+import { AlbumData, Image } from "../../types/profile"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import { selectAuth, setTotalAlbum } from "../../features/authSlice"
-import { useGetProfileAlbumMutation } from "../../services/profile/profileApi"
+import { useGetProfileAlbumQuery } from "../../services/profile/profileApi"
 import {
   useProcessImageMutation,
   useProcessLocalImageMutation,
@@ -30,15 +30,13 @@ const UpscaleImageProcessing = () => {
   )
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [resultImage, setResultImage] = useState<string | null>(null)
-  const [selectedAlbum, setSelectedAlbum] = useState<AlbumWithImages | null>(
-    null,
-  )
+  const [selectedAlbum, setSelectedAlbum] = useState<AlbumData | null>(null)
   const [selectedAlbumImageIndex, setSelectedAlbumImageIndex] =
     useState<number>(-1)
   const dispatch = useAppDispatch()
   const [open, setOpen] = useState(false)
   const authStates = useAppSelector(selectAuth)
-  const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
+  const { data: albumData } = useGetProfileAlbumQuery()
   const [
     processLocalImage,
     {
@@ -88,16 +86,9 @@ const UpscaleImageProcessing = () => {
     await handleLocalImageProcess({ file: file })
   }
 
-  const handleAlbumClick = (album: AlbumWithImages) => {
+  const handleAlbumClick = (album: AlbumData) => {
     setSelectedAlbum(album)
   }
-
-  useEffect(() => {
-    const fetchAlbumData = async () => {
-      await getAlbum(undefined)
-    }
-    fetchAlbumData()
-  }, [])
 
   useEffect(() => {
     if (albumData) {
@@ -112,7 +103,7 @@ const UpscaleImageProcessing = () => {
   }, [processedLocalData, processedData])
 
   const handleImageSelectFromAlbum = async (
-    image: ImageAlbum,
+    image: Image,
     imageIndex: number,
   ) => {
     setSelectedAlbumImageIndex(imageIndex)
@@ -179,7 +170,7 @@ const UpscaleImageProcessing = () => {
     <div className="flex h-full w-full flex-col items-center gap-12">
       <div className="mt-8 flex flex-col items-center justify-center gap-4">
         <span className="bg-gradient-default bg-clip-text text-5xl font-black leading-[72px] text-transparent">
-          Upscale Your Image 
+          Upscale Your Image
         </span>
         <h3 className="text-3xl font-semibold">100% Automatically and Free</h3>
       </div>
@@ -211,7 +202,7 @@ const UpscaleImageProcessing = () => {
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
-          <Image
+          <NextImage
             src={logoSrc}
             width={150}
             height={150}
@@ -261,7 +252,7 @@ const UpscaleImageProcessing = () => {
                     <div className="mt-3 grid h-[300px] grid-cols-4 gap-4 p-1">
                       {selectedAlbum.images &&
                         selectedAlbum.images.map(
-                          (image: ImageAlbum, imageIndex: number) => (
+                          (image: Image, imageIndex: number) => (
                             <div
                               key={imageIndex}
                               className="relative h-40 cursor-pointer transition-opacity duration-300 hover:opacity-50"
@@ -269,7 +260,7 @@ const UpscaleImageProcessing = () => {
                                 handleImageSelectFromAlbum(image, imageIndex)
                               }
                             >
-                              <Image
+                              <NextImage
                                 src={image.url}
                                 alt={`Image ${imageIndex + 1}`}
                                 layout="fill"
@@ -291,7 +282,7 @@ const UpscaleImageProcessing = () => {
                 ) : (
                   <div className="mt-3 grid h-[300px] grid-cols-4 gap-4 p-1">
                     {authStates?.totalAlbum?.map(
-                      (album: AlbumWithImages, index: number) => (
+                      (album: AlbumData, index: number) => (
                         <div
                           key={index}
                           className={`relative grid h-full w-full gap-1 ${
@@ -305,9 +296,9 @@ const UpscaleImageProcessing = () => {
                             album.images.length > 0 &&
                             album.images
                               .slice(0, 4)
-                              .map((image: ImageAlbum, imageIndex: number) => (
+                              .map((image: Image, imageIndex: number) => (
                                 <div key={imageIndex} className="relative h-40">
-                                  <Image
+                                  <NextImage
                                     src={image.url}
                                     alt={`Image ${imageIndex + 1}`}
                                     layout="fill"

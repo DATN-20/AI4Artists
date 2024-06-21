@@ -6,9 +6,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
-import Image from "next/image"
+import NextImage from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
-import { ImageAlbum, ImageTotal } from "@/types/profile"
+import { Image } from "@/types/profile"
 import {
   Dialog,
   DialogClose,
@@ -23,8 +23,7 @@ import { IoCloseCircleOutline, IoEyeOutline } from "react-icons/io5"
 import { Button } from "@/components/ui/button"
 import {
   useDeleteFromAlbumMutation,
-  useGetAlbumMutation,
-  useGetProfileAlbumMutation,
+  useGetProfileAlbumQuery,
 } from "@/services/profile/profileApi"
 import { toast } from "react-toastify"
 import { setTotalAlbum } from "@/features/authSlice"
@@ -34,13 +33,14 @@ import { useChangePublicStatusMutation } from "@/services/generate/generateApi"
 import { FaRegEyeSlash } from "react-icons/fa"
 
 interface PopupCarouselProps {
-  generateImgData: ImageTotal[] | null
+  generateImgData: Image[] | null
   width?: number
   height?: number
   setSelectedAlbum: (albumId: number) => void
   selectedAlbum: number
   setOpenDialogCarousel: (can: boolean) => void
   getTotalImage: () => void
+  getOneAlbum: () => void
 }
 
 const PopupCarousel: React.FC<PopupCarouselProps> = ({
@@ -51,10 +51,12 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
   selectedAlbum,
   setOpenDialogCarousel,
   getTotalImage,
+  getOneAlbum,
 }) => {
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
   const [deleteFromAlbum] = useDeleteFromAlbumMutation()
-  const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
+  const { data: albumData, refetch: fullInfoRefetch } =
+    useGetProfileAlbumQuery()
 
   const [changeVisibility] = useChangePublicStatusMutation()
   const [isPublic, setIsPublic] = useState<boolean[]>(
@@ -63,15 +65,15 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
   const dispatch = useAppDispatch()
 
   const changePublicStatus = async (imageId: number, index: number) => {
-    setIsPublic((prev) => {
-      const newState = [...prev]
-      newState[index] = !newState[index]
-      return newState
-    })
+    // setIsPublic((prev) => {
+    //   const newState = [...prev]
+    //   newState[index] = !newState[index]
+    //   return newState
+    // })
     changeVisibility(imageId)
     const fetchData = async () => {
-      await getAlbum(undefined)
       await getTotalImage()
+      await getOneAlbum()
     }
     fetchData()
   }
@@ -90,7 +92,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
       albumId: selectedAlbum,
     })
     const fetchAlbumData = async () => {
-      await getAlbum(undefined)
+      await fullInfoRefetch()
     }
     if ((result as ErrorObject).error) {
       toast.error((result as ErrorObject).error.data.message)
@@ -111,7 +113,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
         <BaseCarousel className="relative mt-5 w-full ">
           <CarouselContent>
             {generateImgData &&
-              generateImgData.map((item: any, index: number) => (
+              generateImgData.map((item: Image, index: number) => (
                 <CarouselItem
                   key={item.id}
                   className="lg:basis-1/3"
@@ -122,7 +124,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
                   <div className="relative flex h-full items-center justify-center p-1">
                     <Card className="transform transition-transform duration-300 hover:scale-105">
                       <CardContent className=" p-0">
-                        <Image
+                        <NextImage
                           alt="generated image"
                           width={width}
                           height={height}
@@ -132,7 +134,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
                       </CardContent>
                       <div className="absolute inset-0   bg-black bg-opacity-50 pt-5 opacity-0 transition-opacity duration-300 hover:opacity-100">
                         <div className="flex max-w-full justify-end  gap-x-2 pr-5">
-                          {isPublic[index] ? (
+                          {item.visibility ? (
                             <IoEyeOutline
                               size={32}
                               className="cursor-pointer text-white hover:text-primary"

@@ -11,12 +11,12 @@ import ProfileContent from "@/components/profile/profile/ProfileContent"
 import {
   useAddNewAlbumMutation,
   useDeleteAlbumMutation,
-  useGetAlbumMutation,
+  useGetAlbumQuery,
   useGetGuestImageQuery,
   useGetGuestProfileQuery,
-  useGetProfileAlbumMutation,
+  useGetProfileAlbumQuery,
   useGetProfileQuery,
-  useGetTotalImageMutation,
+  useGetTotalImageQuery,
 } from "@/services/profile/profileApi"
 import {
   selectAuth,
@@ -26,7 +26,7 @@ import {
 } from "@/features/authSlice"
 import Loading from "@/components/Loading"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { AlbumWithImages } from "@/types/profile"
+import { AlbumData } from "@/types/profile"
 import PopupCarousel from "@/components/profile/profile/PopupCarousel"
 import ProfileHeader from "@/components/profile/profile/ProfileHeader"
 import AlbumCard from "@/components/profile/profile/Album/AlbumCard"
@@ -76,10 +76,14 @@ const Profile = () => {
   const [isGetGuest, setIsGetGuest] = useState(true)
 
   const { data: userData } = useGetProfileQuery()
-  const [getOneAlbum, { data: oneAlbumData }] = useGetAlbumMutation()
+  const { data: oneAlbumData, refetch: oneAlbumRefetch } = useGetAlbumQuery({
+    albumId: selectedAlbum,
+  })
   const [openDialogCarousel, setOpenDialogCarousel] = useState<boolean>(false)
-  const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
-  const [getTotalImage, { data: imagesData }] = useGetTotalImageMutation()
+  const { data: albumData, refetch: fullInfoRefetch } =
+    useGetProfileAlbumQuery()
+  const { data: imagesData, refetch: totalImageRefetch } =
+    useGetTotalImageQuery()
   const { data: guestImages, isSuccess: isGuestImageSuccess } =
     useGetGuestImageQuery(
       {
@@ -119,7 +123,7 @@ const Profile = () => {
       } else {
         toast.success("Added new album successfully!")
       }
-      await getAlbum(undefined)
+      await fullInfoRefetch()
     } else {
       toast.error("Please enter album name!")
     }
@@ -145,9 +149,6 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await getAlbum(undefined)
-      await getTotalImage(undefined)
-
       const guestID = pathname.split("/")[2]
       const userID = localStorage.getItem("userID")
 
@@ -190,12 +191,12 @@ const Profile = () => {
       toast.success("Deleted album successfully")
     }
     setSelectedAlbumId(null)
-    await getAlbum(undefined)
+    await fullInfoRefetch()
   }
 
   const handleSelectAlbum = async (albumId: number) => {
     setSelectedAlbum(albumId)
-    await getOneAlbum({ albumId })
+    await oneAlbumRefetch()
   }
 
   const renderContent = () => {
@@ -250,6 +251,7 @@ const Profile = () => {
                       width={512}
                       height={512}
                       album={authStates.totalAlbum}
+                      getTotalImage={totalImageRefetch}
                     />
                   )}
                 </div>
@@ -273,7 +275,8 @@ const Profile = () => {
                         setSelectedAlbum={handleSelectAlbum}
                         selectedAlbum={album.album.id}
                         setOpenDialogCarousel={setOpenDialogCarousel}
-                        getTotalImage={getTotalImage}
+                        getTotalImage={totalImageRefetch}
+                        getOneAlbum={oneAlbumRefetch}
                       />
                     ))
                   ) : (
@@ -419,7 +422,7 @@ const Profile = () => {
                                 <div
                                   className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black bg-opacity-75 text-white"
                                   onClick={() => {
-                                    setSelectedAlbum(index)
+                                    setSelectedAlbum(item.album.id)
                                     setOpenDialogCarousel(true)
                                   }}
                                 >
@@ -452,7 +455,8 @@ const Profile = () => {
                         setSelectedAlbum={setSelectedAlbum}
                         selectedAlbum={selectedAlbum}
                         setOpenDialogCarousel={setOpenDialogCarousel}
-                        getTotalImage={getTotalImage}
+                        getTotalImage={totalImageRefetch}
+                        getOneAlbum={oneAlbumRefetch}
                       />
                     )}
                   </DialogContent>

@@ -18,11 +18,11 @@ import { CanvasModeContext } from "@/store/canvasHooks"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { useContext, useEffect, useState, useRef } from "react"
 import { SaveChangesButton } from "../canvas/tools/SaveChangesButton"
-import { useGetProfileAlbumMutation } from "@/services/profile/profileApi"
+import { useGetProfileAlbumQuery } from "@/services/profile/profileApi"
 import { selectAuth, setTotalAlbum } from "@/features/authSlice"
 import Image from "next/image"
 import axios from "axios"
-import { AlbumWithImages, ImageAlbum } from "@/types/profile"
+import { AlbumData, ImageAlbum } from "@/types/profile"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
 import { base64StringToFile } from "@/lib/base64StringToFile"
 
@@ -44,7 +44,7 @@ const ControlnetDialog = ({
     defaultValue ? base64StringToFile(defaultValue, "image.jpg") : null,
   )
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [getAlbum, { data: albumData }] = useGetProfileAlbumMutation()
+  const { data: albumData, refetch: fullInfoRetch } = useGetProfileAlbumQuery()
   const authStates = useAppSelector(selectAuth)
   const [selectedAlbumImageIndex, setSelectedAlbumImageIndex] =
     useState<number>(-1)
@@ -83,13 +83,6 @@ const ControlnetDialog = ({
       reader.readAsDataURL(imageGen)
     }
   }
-
-  useEffect(() => {
-    const fetchAlbumData = async () => {
-      await getAlbum(undefined)
-    }
-    fetchAlbumData()
-  }, [])
 
   useEffect(() => {
     if (albumData) {

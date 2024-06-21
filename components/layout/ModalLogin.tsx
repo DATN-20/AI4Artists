@@ -111,11 +111,13 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
       dispatch(setUser({ token: loginData.access_token, name: "Hao" }))
       fetchUserData()
       const promptValue = localStorage.getItem("prompt")
-      if (promptValue) {
-        router.push("/generate")
-      } else {
-        router.push("/dashboard")
-      }
+      setTimeout(() => {
+        if (promptValue) {
+          router.push("/generate")
+        } else {
+          router.push("/dashboard")
+        }
+      }, 1000)
     }
 
     if (isLoginSuccess) {

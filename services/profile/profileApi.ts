@@ -1,11 +1,11 @@
 import { AllDashboardImageResponse } from "@/types/dashboard"
-import { ImageTotal, Person } from "@/types/profile"
+import { AlbumData, Image, Person } from "@/types/profile"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 
 export const profileApi = createApi({
   reducerPath: "profileApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://api.mangahay.top/",
+    baseUrl: process.env.NEXT_PUBLIC_API_URL,
     prepareHeaders(headers) {
       headers.set("Authorization", `Bearer ${localStorage.getItem("token")}`)
       return headers
@@ -20,7 +20,7 @@ export const profileApi = createApi({
         }
       },
     }),
-    getProfileAlbum: builder.mutation({
+    getProfileAlbum: builder.query<AlbumData[], void>({
       query: () => {
         return {
           url: "/api/v1/albums/full-info",
@@ -28,7 +28,7 @@ export const profileApi = createApi({
         }
       },
     }),
-    getTotalImage: builder.mutation<ImageTotal[], void>({
+    getTotalImage: builder.query<Image[], void>({
       query: () => {
         return {
           url: "/api/v1/images",
@@ -36,7 +36,7 @@ export const profileApi = createApi({
         }
       },
     }),
-    getAlbum: builder.mutation<ImageTotal[], {  albumId: number }>({
+    getAlbum: builder.query<Image[], {  albumId: number }>({
       query: ({ albumId }) => ({
         url: `/api/v1/albums/${albumId}/images`,
         method: "GET",
@@ -79,6 +79,8 @@ export const profileApi = createApi({
         url: "/api/v1/users/me/avatar",
         method: "POST",
         body: formData,
+        responseHandler: "text"
+
       }),
     }),
     updateBackground: builder.mutation({
@@ -86,6 +88,8 @@ export const profileApi = createApi({
         url: "/api/v1/users/me/background",
         method: "POST",
         body: formData,
+        responseHandler: "text"
+
       }),
     }),
     updateProfile: builder.mutation({
@@ -127,4 +131,4 @@ export const profileApi = createApi({
   }),
 })
 
-export const { useGetProfileQuery, useGetProfileAlbumMutation , useGetTotalImageMutation, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation, useGetGuestImageQuery, useGetGuestProfileQuery, useGetAlbumMutation} = profileApi
+export const { useGetProfileQuery, useGetProfileAlbumQuery , useGetTotalImageQuery, useAddToAlbumMutation, useDeleteFromAlbumMutation, useAddNewAlbumMutation, useDeleteAlbumMutation, useUpdateAvatarMutation, useUpdateBackgroundMutation, useUpdateProfileMutation, useGetGuestImageQuery, useGetGuestProfileQuery, useGetAlbumQuery} = profileApi
