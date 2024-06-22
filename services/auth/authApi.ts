@@ -10,7 +10,7 @@ export const authApi = createApi({
     loginUser: builder.mutation({
       query: (body: { email: string; password: string }) => {
         return {
-          url: "api/v1/auth/signin",
+          url: "/api/v1/auth/signin",
           method: "post",
           body,
         };
@@ -24,7 +24,7 @@ export const authApi = createApi({
         password: string;
       }) => {
         return {
-          url: "api/v1/auth/signup",
+          url: "/api/v1/auth/signup",
           method: "post",
           body,
           responseHandler: "text"
@@ -36,7 +36,7 @@ export const authApi = createApi({
         token: string;
       }) => {
         return {
-          url: "api/v1/auth/signup/verify",
+          url: "/api/v1/auth/signup/verify",
           method: "get",
           responseHandler: "text",
           params:body
@@ -48,7 +48,7 @@ export const authApi = createApi({
         email: string;
       }) => {
         return {
-          url: "api/v1/auth/forget-password",
+          url: "/api/v1/auth/forget-password",
           method: "post",
           body
         };
@@ -57,7 +57,7 @@ export const authApi = createApi({
     resetPasswordUser: builder.mutation<string | ErrorObject, {password: string, token: string}>({
       query: ({ password, token }) => {
         return {
-          url: `api/v1/auth/forget-password/change-password`,
+          url: `/api/v1/auth/forget-password/change-password`,
           method: 'post',
           body: { password, token },
         };
@@ -68,7 +68,7 @@ export const authApi = createApi({
           id: number
       }) => {
         return {
-          url: "api/v1/auth/signout",
+          url: "/api/v1/auth/signout",
           method: "post",
           responseHandler: "text",
           params:user

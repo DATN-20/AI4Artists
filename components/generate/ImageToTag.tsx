@@ -202,7 +202,7 @@ const ImageToTag = () => {
             <TooltipTrigger className="flex w-full min-w-0 justify-start">
               <Button
                 variant={"default"}
-                className="my-3 w-fit select-none rounded-lg border-[2px] border-black bg-transparent px-6 py-2 font-bold hover:border-primary-700 hover:bg-transparent hover:text-primary-700 dark:border-white dark:hover:border-primary-700"
+                className="w-fit select-none rounded-lg border-[2px] border-black bg-transparent px-6 py-2 font-bold hover:border-primary-700 hover:bg-transparent hover:text-primary-700 dark:border-white dark:hover:border-primary-700"
               >
                 Tags
               </Button>
