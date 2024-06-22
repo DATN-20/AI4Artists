@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { ThemeProvider } from "@/components/provider/ThemeProvider"
 import { WebSocketProvider } from "../../store/socketContext"
+import LogLayout from "../../components/layout/LogLayout"
 
 export default function AppLayout({
   children,
@@ -44,7 +45,7 @@ export default function AppLayout({
           userId={localStorage?.getItem("userID")!}
           token={localStorage?.getItem("token")!}
         >
-          {children}
+          <LogLayout>{children}</LogLayout>
         </WebSocketProvider>
       </ThemeProvider>
     </>

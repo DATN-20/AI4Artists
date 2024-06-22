@@ -42,9 +42,6 @@ export default function Generate() {
   const [imageToImage, { data: imgToImgData, isLoading: imgToImageLoading }] =
     useImageToImageMutation()
   const { data: historyData } = useGetGenerationHistoryQuery()
-  // const { data: inputData, refetch: refetchData } = useAiInformationQuery()
-  // const { data: inputStyleData, refetch: refetchStyleData } =
-  //   useAiStyleInformationQuery()
   const { setGenerateTags, generateTags, setOpenStyleDrawer } =
     useContext(TagsContext)
 
