@@ -122,7 +122,7 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
   return (
     <>
       <div className="mt-10 flex w-full items-center justify-between gap-8">
-        <div className="flex w-1/2 items-center gap-4 truncate ">
+        <div className="flex items-center gap-4 truncate ">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger className="flex justify-start truncate">
@@ -145,7 +145,7 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
             />
           </div>
         </div>
-        <div className="flex w-2/5  items-center justify-between gap-5">
+        <div className="flex items-center justify-between gap-5">
           <div className="flex items-center gap-1">
             {generateImgData?.length}
             <FaImages />

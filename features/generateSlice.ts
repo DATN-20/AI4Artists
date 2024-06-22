@@ -231,6 +231,13 @@ export const generateSlice = createSlice({
         })
       }
     },
+    clearAll: (state) => {
+      state.useImage = false
+      state.useControlnet = false
+      state.useCustomDimension = false
+      state.dataInputs = []
+      state.dataStyleInputs = []
+    },
   },
 })
 
@@ -250,6 +257,7 @@ export const {
   setField,
   setStyleField,
   eraseStyleStep,
+  clearAll,
 } = generateSlice.actions
 
 export default generateSlice.reducer
