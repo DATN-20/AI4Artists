@@ -150,7 +150,7 @@ const DashboardContent: React.FC = () => {
         <div className="flex items-center justify-center rounded-full bg-card px-4 ">
           <input
             type="text"
-            placeholder="Search"
+            placeholder="Search prompt"
             value={searchQuery}
             onChange={handleSearchChange}
             className="flex-grow bg-transparent outline-none dark:placeholder-white"
