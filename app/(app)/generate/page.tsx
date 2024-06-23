@@ -4,6 +4,7 @@ import { ChangeEvent, useContext, useEffect, useState } from "react"
 import GenerateSideBar from "@/components/sidebar/GenerateSideBar"
 import {
   useAiInformationQuery,
+  useAiStyleInformationQuery,
   useGetGenerationHistoryQuery,
   useImageToImageMutation,
   useTextToImageMutation,
@@ -14,6 +15,7 @@ import {
   setHistory,
   setField,
   setStyleField,
+  clearAll,
 } from "@/features/generateSlice"
 import { useSelector } from "react-redux"
 import HistoryCarousel from "@/components/generate/HistoryCarousel"
@@ -22,22 +24,32 @@ import { selectAuth, setTotalAlbum } from "@/features/authSlice"
 import { toast } from "react-toastify"
 import { TagsContext } from "@/store/tagsHooks"
 import { IoIosClose } from "react-icons/io"
-import { Switch } from "../../../components/ui/switch"
-import { Label } from "../../../components/ui/label"
-import ImageToTag from "../../../components/generate/ImageToTag"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import ImageToTag from "@/components/generate/ImageToTag"
+import { Button } from "@/components/ui/button"
+import { Trash } from "lucide-react"
+import { base64StringToFile } from "@/lib/base64StringToFile"
+import { set } from "react-hook-form"
 
 export default function Generate() {
   const dispatch = useAppDispatch()
   const generateStates = useSelector(selectGenerate)
-  const [useNegativePrompt, setUseNegativePrompt] = useState(false)
-  const [promptPos, setPromptPos] = useState("")
-  const [promptNeg, setPromptNeg] = useState("")
+  const authStates = useSelector(selectAuth)
   const { data: albumData, refetch } = useGetProfileAlbumQuery()
 
+  const [textToImage, { data: textToImgData, isLoading: textToImageLoading }] =
+    useTextToImageMutation()
+  const [imageToImage, { data: imgToImgData, isLoading: imgToImageLoading }] =
+    useImageToImageMutation()
   const { data: historyData } = useGetGenerationHistoryQuery()
-  const authStates = useSelector(selectAuth)
   const { setGenerateTags, generateTags, setOpenStyleDrawer } =
     useContext(TagsContext)
+
+  const [useNegativePrompt, setUseNegativePrompt] = useState<boolean>(false)
+  const [promptPos, setPromptPos] = useState<string>("")
+  const [promptNeg, setPromptNeg] = useState<string>("")
+  const [sideBarKey, setSideBarKey] = useState<number>(0) // State to control rerendering
 
   const handlePosPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const prompt = event.target.value
@@ -56,55 +68,11 @@ export default function Generate() {
     )
   }
 
-  const [textToImage, { data: textToImgData, isLoading: textToImageLoading }] =
-    useTextToImageMutation()
-  const [imageToImage, { data: imgToImgData, isLoading: imgToImageLoading }] =
-    useImageToImageMutation()
-  const [generateImgData, setGenerateImgData] = useState<string[] | null>(null)
-
-  function base64StringToFile(base64String: string, filename: string): File {
-    const byteString = atob(base64String.split(",")[1])
-    const ab = new ArrayBuffer(byteString.length)
-    const ia = new Uint8Array(ab)
-    for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i)
-    }
-    const blob = new Blob([ab], { type: "image/jpeg" })
-    return new File([blob], filename)
-  }
-
-  async function saveImageToDisk(imageUrl: string) {
-    try {
-      const response = await fetch(imageUrl)
-      const blob = await response.blob()
-
-      const blobUrl = URL.createObjectURL(blob)
-
-      const link = document.createElement("a")
-      link.href = blobUrl
-      link.download = "image.jpg"
-      document.body.appendChild(link)
-      link.click()
-      URL.revokeObjectURL(blobUrl)
-      document.body.removeChild(link)
-      toast.success("Image saved successfully!")
-    } catch (error: any) {
-      toast.error("Error saving image")
-    }
-  }
-
-  const downloadAllImages = async () => {
-    if (historyData) {
-      for (let i = 0; i < historyData.length; i++) {
-        const item = historyData[i]
-        if (item.images) {
-          for (let j = 0; j < item.images.length; j++) {
-            const imageUrl = item.images[j].url
-            await saveImageToDisk(imageUrl)
-          }
-        }
-      }
-    }
+  const handleClearAllInput = () => {
+    dispatch(clearAll())
+    setPromptPos("")
+    setPromptNeg("")
+    setSideBarKey((prevKey) => prevKey + 1) // Update the state to force rerender
   }
 
   const handleGenerate = async () => {
@@ -167,10 +135,6 @@ export default function Generate() {
       } else {
         result = await textToImage(formData).unwrap()
       }
-      setGenerateImgData(result)
-      toast.success(
-        "Image is being generated! Please check for our notification.",
-      )
     } catch (error: any) {
       toast.error(
         "Error generating image: " +
@@ -239,7 +203,9 @@ export default function Generate() {
       <div className="block gap-4  p-4 lg:grid lg:grid-cols-10">
         <div className="hidden lg:col-span-2 lg:block">
           <div className="no-scrollbar fixed left-0 top-0 h-screen min-h-screen w-1/5 overflow-y-scroll p-4">
-            <GenerateSideBar />
+            <GenerateSideBar
+              key={sideBarKey} //force rerender
+            />
           </div>
         </div>
         <div className="h-full w-full lg:col-span-8">
@@ -283,6 +249,14 @@ export default function Generate() {
             <span className="mr-2">✨</span>
             Generate
           </button>
+          <Button
+            variant={"default"}
+            className="mt-3 flex w-fit select-none items-center gap-2 rounded-lg border-[2px] border-black bg-transparent px-4 py-2 font-bold hover:border-primary-700 hover:bg-transparent hover:text-primary-700 dark:border-white dark:hover:border-primary-700"
+            onClick={handleClearAllInput}
+          >
+            <Trash width={18} height={18} />
+            Clear All
+          </Button>
           <ImageToTag />
           {generateTags.length > 0 && (
             <div className="relative my-4 w-full rounded-sm border-2 border-primary-700 bg-transparent p-2 text-sm font-bold text-primary-700 md:w-2/3">

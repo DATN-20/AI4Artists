@@ -15,7 +15,10 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { useGetNotificationImageQuery } from "@/services/generate/generateApi"
+import {
+  useGetNotificationImageQuery,
+  useGetNotificationsQuery,
+} from "@/services/generate/generateApi"
 import { ErrorObject } from "@/types"
 import NotificationImage from "@/components/layout/NotificationDialog"
 
@@ -39,6 +42,8 @@ export const WebSocketProvider: React.FC<{
   const { data: notificationImage, refetch } = useGetNotificationImageQuery(
     referenceData || "",
   )
+  const { data: notifications, refetch: refetchNotifications } =
+    useGetNotificationsQuery()
 
   const notificationDisplayTime = (createdAt: string) => {
     const date = new Date(createdAt)
@@ -111,6 +116,7 @@ export const WebSocketProvider: React.FC<{
 
       socket.on("notification", (notification) => {
         toast.info(renderNotificationContent(notification))
+        refetchNotifications()
       })
 
       socketRef.current = socket
