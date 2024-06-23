@@ -89,10 +89,6 @@ export default function GenerateSideBar() {
         />
       </CardHeader>
 
-      <CollapsibleSection title={"Choosing AI"} key="choosing-ai">
-        <ChooseAiInput />
-      </CollapsibleSection>
-
       <div className="mt-4 flex items-center justify-between p-4">
         <Label htmlFor="use-style-mode" className="text-lg font-semibold">
           Use Style Generation
@@ -109,6 +105,12 @@ export default function GenerateSideBar() {
           }}
         />
       </div>
+      
+      <CollapsibleSection title={"Choosing AI"} key="choosing-ai">
+        <ChooseAiInput />
+      </CollapsibleSection>
+
+  
       {noiseElement}
       {generateStates.useStyleImage
         ? aiStyleInputs &&
