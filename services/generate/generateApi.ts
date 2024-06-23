@@ -1,15 +1,10 @@
 import { DashboardImageGroup } from "@/types/dashboard"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
+import customBaseQuery from "../customBaseQuery"
 
 export const generateApi = createApi({
   reducerPath: "generateApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL,
-    prepareHeaders(headers) {
-      headers.set("Authorization", `Bearer ${localStorage.getItem("token")}`)
-      return headers
-    },
-  }),
+  baseQuery: customBaseQuery,
   endpoints: (builder) => ({
     aiInformation: builder.query<AIConfig[], void>({
       query: () => {

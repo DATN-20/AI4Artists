@@ -1,16 +1,11 @@
 import { AllDashboardImageResponse } from "@/types/dashboard"
 import { AlbumData, Image, Person } from "@/types/profile"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
+import customBaseQuery from "../customBaseQuery"
 
 export const profileApi = createApi({
   reducerPath: "profileApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL,
-    prepareHeaders(headers) {
-      headers.set("Authorization", `Bearer ${localStorage.getItem("token")}`)
-      return headers
-    },
-  }),
+  baseQuery: customBaseQuery,
   endpoints: (builder) => ({
     getProfile: builder.query<Person,void>({
       query: () => {

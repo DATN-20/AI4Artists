@@ -409,6 +409,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
         toast.error((result as ErrorObject).error.data.message)
       } else {
         toast.success("Update profile successfully")
+        await avatarRefetch()
         setProfileData({
           first_name: formData.first_name,
           last_name: formData.last_name,
