@@ -29,6 +29,7 @@ export const renderInput = (
     default: defaultValue,
     input_property_name: propertyName,
     info,
+    desc,
   } = input
 
   const existingValue = isStyleGenerate
@@ -37,8 +38,7 @@ export const renderInput = (
           field.name === propertyName && field.ArrayIndex === arrayIndex,
       )
     : generateStates.dataInputs?.find(
-        (field: any) =>
-          field.name === propertyName,
+        (field: any) => field.name === propertyName,
       )
 
   const checkDefaultValue = existingValue ? existingValue.value : defaultValue
@@ -46,7 +46,7 @@ export const renderInput = (
   switch (type) {
     case "choice":
       return (
-        <CollapsibleSection title={name} key={propertyName}>
+        <CollapsibleSection title={name} key={propertyName} desc={desc}>
           <InputSelect
             data={info.choices}
             type={propertyName}
@@ -59,7 +59,7 @@ export const renderInput = (
 
     case "slider":
       return (
-        <CollapsibleSection title={name} key={propertyName}>
+        <CollapsibleSection title={name} key={propertyName} desc={desc}>
           <SliderInput
             min={info.min}
             max={info.max}
@@ -96,7 +96,7 @@ export const renderInput = (
                 </Label>
                 <Switch
                   id="image-mode"
-                  className="rounded-lg data-[state=unchecked]:bg-slate-600 data-[state=checked]:bg-primary-700 dark:data-[state=unchecked]:bg-white"
+                  className="rounded-lg data-[state=checked]:bg-primary-700 data-[state=unchecked]:bg-slate-600 dark:data-[state=unchecked]:bg-white"
                   onClick={() => {
                     dispatch(
                       setUseImage({
@@ -116,7 +116,7 @@ export const renderInput = (
                 </Label>
                 <Switch
                   id="image-mode"
-                  className="rounded-lg data-[state=unchecked]:bg-slate-600 data-[state=checked]:bg-primary-700 dark:data-[state=unchecked]:bg-white"
+                  className="rounded-lg data-[state=checked]:bg-primary-700 data-[state=unchecked]:bg-slate-600 dark:data-[state=unchecked]:bg-white"
                   onClick={() => {
                     dispatch(
                       setUseImage({
@@ -126,8 +126,17 @@ export const renderInput = (
                   }}
                 />
               </div>
-              <CollapsibleSection title={name} key={propertyName} isHidden={true}>
-                <DynamicImageInput name={name} type={propertyName} defaultValue={checkDefaultValue} />
+              <CollapsibleSection
+                title={name}
+                key={propertyName}
+                isHidden={true}
+                desc={desc}
+              >
+                <DynamicImageInput
+                  name={name}
+                  type={propertyName}
+                  defaultValue={checkDefaultValue}
+                />
               </CollapsibleSection>
             </>
           )
@@ -135,18 +144,23 @@ export const renderInput = (
 
         case "controlNetImages":
           return (
-            <CollapsibleSection title={name} key={propertyName}>
+            <CollapsibleSection title={name} key={propertyName} desc={desc}>
               <ControlnetDialog
                 type={propertyName}
                 isStyleGenerate={isStyleGenerate}
-                defaultValue = {checkDefaultValue}
+                defaultValue={checkDefaultValue}
               />
             </CollapsibleSection>
           )
 
         case "imageForIpadapter": {
           return (
-            <CollapsibleSection title={name} key={propertyName} isHidden={true}>
+            <CollapsibleSection
+              title={name}
+              key={propertyName}
+              isHidden={true}
+              desc={desc}
+            >
               <DynamicImageInput
                 name={name}
                 type={propertyName}
@@ -205,7 +219,7 @@ export const renderInput = (
         !isStyleDrawer
       ) {
         return (
-          <CollapsibleSection title={name} key={propertyName}>
+          <CollapsibleSection title={name} key={propertyName} desc={desc}>
             <StyleDrawer
               dispatch={dispatch}
               generateStates={generateStates}
@@ -223,7 +237,7 @@ export const renderInput = (
             </Label>
             <Switch
               id="array-mode"
-              className="rounded-lg data-[state=unchecked]:bg-slate-600 data-[state=checked]:bg-primary-700 dark:data-[state=unchecked]:bg-white"
+              className="rounded-lg data-[state=checked]:bg-primary-700 data-[state=unchecked]:bg-slate-600 dark:data-[state=unchecked]:bg-white"
               onClick={() => {
                 dispatch(
                   setUseControlnet({

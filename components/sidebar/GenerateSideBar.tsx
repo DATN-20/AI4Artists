@@ -105,7 +105,7 @@ export default function GenerateSideBar() {
           }}
         />
       </div>
-      
+
       <CollapsibleSection title={"Choosing AI"} key="choosing-ai">
         <ChooseAiInput />
       </CollapsibleSection>
@@ -128,6 +128,7 @@ export default function GenerateSideBar() {
                 <CollapsibleSection
                   title={"Image Dimensions"}
                   key="image-dimensions"
+                  desc="Choose the dimensions of the image you want to generate."
                 >
                   <ChooseInput
                     options={dimensionOptions}
@@ -161,6 +162,7 @@ export default function GenerateSideBar() {
                 <CollapsibleSection
                   title={"Image Dimensions"}
                   key="image-dimensions"
+                  desc="Choose the dimensions of the image you want to generate."
                 >
                   <ChooseInput options={dimensionOptions} type="dimension" />
                 </CollapsibleSection>
