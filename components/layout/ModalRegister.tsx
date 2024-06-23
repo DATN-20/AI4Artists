@@ -36,6 +36,9 @@ const formSchema = z.object({
   password: z.string().min(8, {
     message: "Password must be at least 8 characters.",
   }),
+  cfmPassword: z.string().min(8, {
+    message: "Password must be at least 8 characters.",
+  }),
 })
 
 const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
@@ -53,6 +56,7 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
     firstName: "",
     lastName: "",
     password: "",
+    cfmPassword: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isButtonDisabled, setIsButtonDisabled] = useState(false)
@@ -70,6 +74,7 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
       firstName: "",
       lastName: "",
       password: "",
+      cfmPassword: "",
     },
   })
 
@@ -81,20 +86,24 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
     setIsSubmitting(true)
     setIsButtonDisabled(true)
 
-    const { email, firstName, lastName, password } = values
-    if (email && password && firstName && lastName) {
-      const response = await registerUser({
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        password: password,
-      })
-      if ((response as ErrorObjectRegister).error) {
-        const errorData = JSON.parse(
-          (response as ErrorObjectRegister).error.data,
-        )
-        const errorMessage = errorData.message
-        toast.error(errorMessage)
+    const { email, firstName, lastName, password, cfmPassword } = values
+    if (email && password && firstName && lastName && cfmPassword) {
+      if (password === cfmPassword) {
+        const response = await registerUser({
+          email: email,
+          firstName: firstName,
+          lastName: lastName,
+          password: password,
+        })
+        if ((response as ErrorObjectRegister).error) {
+          const errorData = JSON.parse(
+            (response as ErrorObjectRegister).error.data,
+          )
+          const errorMessage = errorData.message
+          toast.error(errorMessage)
+        }
+      } else {
+        toast.error("Password and confirm Password is different!")
       }
     } else {
       toast.error("Please fill in all fields!")
@@ -139,7 +148,7 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
                 </span>
               </div>
 
-              <div className="ml-5 mr-5 mt-5 flex  h-full flex-col gap-8 text-2xl font-bold text-white">
+              <div className="ml-5 mr-5 mt-5 flex  h-full flex-col justify-center gap-8 text-2xl font-bold text-white">
                 <p className="flex select-none">
                   <p className="mr-5 flex	items-center">✨</p>{" "}
                   <p>20 Free Image Generation daily</p>
@@ -238,7 +247,24 @@ const ModalRegister: React.FC<ModalProps> = ({ onClose }) => {
                   </FormItem>
                 )}
               />
-
+              <FormField
+                control={form.control}
+                name="cfmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm password</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Confirm password"
+                        {...field}
+                        type="password"
+                        className="w-full border-slate-400 focus:border-transparent focus:ring-0"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <Button
                 type="submit"
                 className="h-10 w-full bg-black text-white"
