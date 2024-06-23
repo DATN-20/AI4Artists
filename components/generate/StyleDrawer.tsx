@@ -12,7 +12,7 @@ import {
 import { Button } from "../ui/button"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
 import { useContext, useEffect, useState } from "react"
-import { useGenerateStyleImageMutation } from "@/services/generate/generateApi"
+import { useGenerateStyleImageMutation, useGetGenerationHistoryQuery } from "@/services/generate/generateApi"
 import { renderInput } from "./renderInput"
 import { base64StringToFile } from "@/lib/base64StringToFile"
 import { toast } from "react-toastify"
@@ -33,6 +33,8 @@ const StyleDrawer = ({
   const [generateStyle, { data: generateStyleData, isLoading, isError }] =
     useGenerateStyleImageMutation()
 
+  const {  refetch: refetchHistory } =
+    useGetGenerationHistoryQuery()
   const getMaxStep = () => {
     const maxIndex =
       generateStates.dataStyleInputs?.reduce((max: any, item: any) => {
@@ -131,7 +133,8 @@ const StyleDrawer = ({
       })
 
       try {
-        await generateStyle(formData)
+        await generateStyle(formData).unwrap()
+        refetchHistory()
         toast.success(
           "Image is being generated! Please check for our notification.",
         )

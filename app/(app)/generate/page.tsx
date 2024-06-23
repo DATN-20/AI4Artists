@@ -42,7 +42,8 @@ export default function Generate() {
     useTextToImageMutation()
   const [imageToImage, { data: imgToImgData, isLoading: imgToImageLoading }] =
     useImageToImageMutation()
-  const { data: historyData } = useGetGenerationHistoryQuery()
+  const { data: historyData, refetch: refetchHistory } =
+    useGetGenerationHistoryQuery()
   const { setGenerateTags, generateTags, setOpenStyleDrawer } =
     useContext(TagsContext)
 
@@ -132,8 +133,10 @@ export default function Generate() {
       let result
       if (generateStates.useImage) {
         result = await imageToImage(formData).unwrap()
+        refetchHistory()
       } else {
         result = await textToImage(formData).unwrap()
+        refetchHistory()
       }
     } catch (error: any) {
       toast.error(
