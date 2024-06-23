@@ -20,7 +20,6 @@ import {
 
 const LogLayout = ({ children }: { children: React.ReactNode }) => {
   const [isLogVisible, setIsLogVisible] = useState(false)
-  const [pollingInterval, setPollingInterval] = useState(3000)
   const { data: notifications, refetch } = useGetNotificationsQuery()
   const [deleteAllNotifications] = useDeleteAllNotificationsMutation()
   const [unreadCount, setUnreadCount] = useState(0)
@@ -34,22 +33,6 @@ const LogLayout = ({ children }: { children: React.ReactNode }) => {
       )
     }
   }, [notifications])
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null
-
-    if (isLogVisible) {
-      interval = setInterval(() => {
-        refetch()
-      }, pollingInterval)
-    }
-
-    return () => {
-      if (interval) {
-        clearInterval(interval)
-      }
-    }
-  }, [isLogVisible, pollingInterval, refetch])
 
   const toggleLogVisibility = () => {
     setIsLogVisible(!isLogVisible)
