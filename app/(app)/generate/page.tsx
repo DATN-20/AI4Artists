@@ -30,6 +30,7 @@ import ImageToTag from "@/components/generate/ImageToTag"
 import { Button } from "@/components/ui/button"
 import { Trash } from "lucide-react"
 import { base64StringToFile } from "@/lib/base64StringToFile"
+import { set } from "react-hook-form"
 
 export default function Generate() {
   const dispatch = useAppDispatch()
@@ -48,7 +49,7 @@ export default function Generate() {
   const [useNegativePrompt, setUseNegativePrompt] = useState<boolean>(false)
   const [promptPos, setPromptPos] = useState<string>("")
   const [promptNeg, setPromptNeg] = useState<string>("")
-  const [sideBarKey, setSideBarKey] = useState<number>(0)  // State to control rerendering
+  const [sideBarKey, setSideBarKey] = useState<number>(0) // State to control rerendering
 
   const handlePosPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const prompt = event.target.value
@@ -69,7 +70,9 @@ export default function Generate() {
 
   const handleClearAllInput = () => {
     dispatch(clearAll())
-    setSideBarKey(prevKey => prevKey + 1)  // Update the state to force rerender
+    setPromptPos("")
+    setPromptNeg("")
+    setSideBarKey((prevKey) => prevKey + 1) // Update the state to force rerender
   }
 
   const handleGenerate = async () => {
@@ -200,7 +203,7 @@ export default function Generate() {
       <div className="block gap-4  p-4 lg:grid lg:grid-cols-10">
         <div className="hidden lg:col-span-2 lg:block">
           <div className="no-scrollbar fixed left-0 top-0 h-screen min-h-screen w-1/5 overflow-y-scroll p-4">
-            <GenerateSideBar 
+            <GenerateSideBar
               key={sideBarKey} //force rerender
             />
           </div>

@@ -8,6 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {
+  selectGenerate,
   setAIName,
   setAIStyleInputs,
   setInputs,
@@ -18,18 +19,24 @@ import {
   useAiInformationQuery,
   useAiStyleInformationQuery,
 } from "@/services/generate/generateApi"
+import { useSelector } from "react-redux"
 
 const ChooseAiInput = () => {
   const dispatch = useAppDispatch()
   const { data: inputData, refetch: refetchData } = useAiInformationQuery()
   const { data: inputStyleData, refetch: refetchStyleData } =
     useAiStyleInformationQuery()
+  const generateStates = useSelector(selectGenerate)
+
   const [selectedAI, setSelectedAI] = useState(inputData?.[0]?.ai_name || "")
   const initialAIName =
     inputData?.[0]?.ai_name.replace("comfy_ui", "comfyUI") || ""
+  const initialAIStyleName =
+    inputStyleData?.[0]?.ai_name.replace("comfy_ui", "comfyUI") || ""
+  const isUseStyleImage = generateStates.useStyleImage
 
   useEffect(() => {
-    if (inputData) {
+    if (inputData && !isUseStyleImage) {
       setSelectedAI(initialAIName)
       dispatch(
         setAIName({
@@ -38,15 +45,22 @@ const ChooseAiInput = () => {
       )
       dispatch(setInputs({ aiInputs: inputData[0]?.inputs || [] }))
     }
-  }, [inputData, dispatch])
+  }, [inputData, dispatch, isUseStyleImage])
 
   useEffect(() => {
-    if (inputStyleData) {
+    if (inputStyleData && isUseStyleImage) {
+      setSelectedAI(initialAIStyleName)
+      dispatch(
+        setAIName({
+          ai_name: initialAIStyleName,
+        }),
+      )
       dispatch(
         setAIStyleInputs({ aiStyleInputs: inputStyleData[0]?.inputs || [] }),
       )
     }
-  }, [inputStyleData, dispatch])
+  }, [inputStyleData, dispatch, isUseStyleImage])
+
 
   const handleSelect = (value: string) => {
     setSelectedAI(value)
@@ -73,11 +87,17 @@ const ChooseAiInput = () => {
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {inputData?.map((ai, index) => (
-            <SelectItem key={index} value={ai.ai_name}>
-              {ai.ai_name}
-            </SelectItem>
-          ))}
+          {isUseStyleImage
+            ? inputStyleData?.map((ai, index) => (
+                <SelectItem key={index} value={ai.ai_name}>
+                  {ai.ai_name}
+                </SelectItem>
+              ))
+            : inputData?.map((ai, index) => (
+                <SelectItem key={index} value={ai.ai_name}>
+                  {ai.ai_name}
+                </SelectItem>
+              ))}
         </SelectGroup>
       </SelectContent>
     </Select>
