@@ -26,6 +26,7 @@ import { z } from "zod"
 import { FaFacebook, FaGoogle } from "react-icons/fa"
 import { X } from "lucide-react"
 import { useGetProfileQuery } from "@/services/profile/profileApi"
+import { skipToken } from "@reduxjs/toolkit/query/react"
 import { LoginModalPage, ModalProps } from "@/constants/loginModal"
 import { useTheme } from "next-themes"
 
@@ -46,11 +47,6 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
   const [logoSrc, setLogoSrc] = useState<string>(
     theme === "dark" ? "/logo-white.png" : "/logo-black.png",
   )
-  const {
-    data: userData,
-    refetch,
-    isSuccess: isGetProfileSuccess,
-  } = useGetProfileQuery()
 
   const [
     loginUser,
@@ -62,6 +58,10 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
       isLoading,
     },
   ] = useLoginUserMutation()
+
+  const { data: userData, refetch } = useGetProfileQuery(
+    isLoginSuccess ? undefined : skipToken,
+  )
 
   useEffect(() => {
     setLogoSrc(theme === "dark" ? "/logo-white.png" : "/logo-black.png")
