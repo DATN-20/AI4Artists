@@ -1,15 +1,10 @@
 import { AllDashboardImageResponse } from "@/types/dashboard"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
+import customBaseQuery from "../customBaseQuery"
 
 export const dashboardApi = createApi({
   reducerPath: "dashboardApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL,
-    prepareHeaders(headers) {
-      headers.set("Authorization", `Bearer ${localStorage.getItem("token")}`)
-      return headers
-    },
-  }),
+  baseQuery: customBaseQuery,
   endpoints: (builder) => ({
     getAllDashboardImage: builder.query<AllDashboardImageResponse, {
       type: string
@@ -57,7 +52,16 @@ export const dashboardApi = createApi({
         }
       },
     }),
+    refreshUser: builder.mutation({
+      query: ({ token }: { token: string }) => {
+        return {
+          url: "api/v1/auth/refresh-token",
+          method: "POST",
+          body: { token },
+        };
+      },
+    }),
   }),
 })
 
-export const { useGetAllDashboardImageQuery, useGetSearchImageQuery, useLikeImageMutation } = dashboardApi
+export const { useGetAllDashboardImageQuery, useGetSearchImageQuery, useLikeImageMutation, useRefreshUserMutation } = dashboardApi
