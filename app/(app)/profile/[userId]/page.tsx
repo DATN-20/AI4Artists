@@ -111,6 +111,16 @@ const Profile = () => {
       name: "",
     },
   })
+  function getCookie(name: string) {
+    var nameEQ = name + "="
+    var ca = document.cookie.split(";")
+    for (var i = 0; i < ca.length; i++) {
+      var c = ca[i]
+      while (c.charAt(0) == " ") c = c.substring(1, c.length)
+      if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length)
+    }
+    return null
+  }
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
@@ -150,7 +160,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchData = async () => {
       const guestID = pathname.split("/")[2]
-      const userID = localStorage.getItem("userID")
+      const userID = getCookie("userID")
 
       if (guestID && guestID !== userID) {
         setIsGetGuest(false)
@@ -204,7 +214,7 @@ const Profile = () => {
       return <Loading />
     }
     const guestID = pathname.split("/")[2]
-    const userID = localStorage.getItem("userID")
+    const userID = getCookie("userID")
     if (guestData && guestID !== userID && guestProfile) {
       return (
         <div className="flex gap-4 py-4">

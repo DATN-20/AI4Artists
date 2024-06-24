@@ -16,22 +16,38 @@ const initialState:AuthState ={
   totalAlbum: null,
   totalImages: null,
 }
+
+// Hàm để thiết lập cookie
+function setCookie(name: string, value: string, days: number) {
+  let expires = "";
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+// Hàm để xóa tất cả cookie
+function eraseCookie(name: string) {
+  document.cookie = name + '=; Max-Age=-99999999;';
+}
+
 export const authSlice = createSlice({
   name:"auth",
   initialState,
   reducers: {
     setUser:(
-      state, action: PayloadAction<{name:string; token:string}>
+      state, action: PayloadAction<{token:string}>
     ) => {
-      localStorage.setItem(
-    "token",
-      action.payload.token,
-  );
+      setCookie("token", action.payload.token, 1);
   
     state.token = action.payload.token;
   },
   logout: (state) => {
     localStorage.clear();
+    eraseCookie("token");
+    eraseCookie("userID");
     state.token = null;
   },
   setUserData:(
