@@ -116,10 +116,10 @@ export default function ModalResetPassword() {
               </FormItem>
             )}
           />
-          <Button type="submit" className="h-10 w-full bg-black text-white" disabled={isSubmitting}>
+          <Button type="submit" className="h-10 w-full bg-black text-white dark:bg-white dark:text-black dark:hover:text-primary-700 font-bold" disabled={isSubmitting}>
             Reset Password
           </Button>
-        </form>
+        </form> 
       </Form>
     </div>
   )

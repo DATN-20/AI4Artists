@@ -112,7 +112,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
     <Dialog open={closeDialog} onOpenChange={setCloseDialog}>
       {generateImgData && generateImgData.length > 0 ? (
         <Carousel className="relative mt-3 w-full">
-          <CarouselContent>
+          <CarouselContent className="m-0 px-2">
             {generateImgData.map((item: any, index: number) => (
               <CarouselItem
                 key={item.id}
@@ -123,7 +123,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
               >
                 <div className="relative flex h-full items-center justify-center p-1 ">
                   <Card className="transform transition-transform duration-300 hover:scale-105 ">
-                    <CardContent className=" p-0">
+                    <CardContent className="rounded-lg p-0">
                       <NextImage
                         alt="generated image"
                         width={width}
@@ -132,8 +132,8 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
                         className="rounded-lg"
                       />
                     </CardContent>
-                    <div className="absolute inset-0   bg-black bg-opacity-50 pt-5 opacity-0 transition-opacity duration-300 hover:opacity-100">
-                      <div className="flex max-w-full justify-end gap-x-2  pr-5">
+                    <div className="absolute inset-0 rounded-lg bg-black bg-opacity-50 pt-5 opacity-0 transition-opacity duration-300 hover:opacity-100">
+                      <div className="flex max-w-full justify-end gap-x-2 pr-5">
                         {item.visibility ? (
                           <IoEyeOutline
                             size={32}
@@ -149,14 +149,13 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
                         )}
                         <IoAddCircleOutline
                           size={32}
-                          className="cursor-pointer "
-                          color="white"
+                          className="cursor-pointer text-white hover:text-primary"
                           onClick={() => {
                             setCloseDialog(true)
                           }}
                         />
                       </div>
-                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white">
+                      <div className="absolute bottom-0 left-0 right-0 rounded-lg bg-black bg-opacity-75 px-1 py-3 text-center text-white">
                         <p className="line-clamp-3">Prompt: {item.prompt}</p>
                       </div>
                     </div>
@@ -198,7 +197,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
                 {album && album.length > 0 ? (
                   <Button
                     type="submit"
-                    className="rounded-md px-4 py-2 text-white focus:outline-none"
+                    className="rounded-md px-4 py-2 font-bold text-white hover:text-black focus:outline-none"
                     onClick={() => {
                       handleAddToAlbum()
                       setCloseDialog(false)

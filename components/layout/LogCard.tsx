@@ -20,6 +20,7 @@ const LogCard = ({
   is_read,
   id,
   reference_data,
+  setUnreadCount,
 }: {
   title: string
   content: string
@@ -27,6 +28,7 @@ const LogCard = ({
   is_read: boolean
   id: number
   reference_data: string | null
+  setUnreadCount: React.Dispatch<React.SetStateAction<number>>
 }) => {
   const [isRead, setIsRead] = useState<boolean>(is_read)
   const [open, setOpen] = useState(false)
@@ -45,6 +47,7 @@ const LogCard = ({
     if (isRead) return
     setIsRead(true)
     changeNotificationStatus(id)
+    setUnreadCount((prev) => prev - 1)
   }
 
   const notificationDisplayTime = () => {
@@ -74,7 +77,7 @@ const LogCard = ({
               ></div>
             </div>
           </DialogTrigger>
-          <DialogContent className="max-h-[90vh] overflow-y-scroll sm:max-w-[80vw] md:max-w-[60vw]">
+          <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[80vw] md:max-w-[75vw]">
             {notificationImage && (
               <NotificationImage
                 style={notificationImage?.style || ""}

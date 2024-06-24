@@ -362,7 +362,7 @@ const ImageToTag = () => {
                       )}
                     </CarouselContent>
                     {authStates.totalAlbum.filter(
-                      (album) => album.images.length > 0,
+                      (album: AlbumData) => album.images.length > 0,
                     ).length > 3 && (
                       <>
                         <CarouselPrevious className="absolute left-0 top-1/2 z-20 h-12 w-12 -translate-y-1/2 transform rounded-xl" />

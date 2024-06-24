@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Label } from "../ui/label"
 import { Button } from "../ui/button"
 import probe from "probe-image-size"
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
 
 export interface NotificationImageProps {
   style: string | undefined
@@ -28,11 +29,27 @@ const NotificationImage = ({
     getSize()
   }, [])
 
+  const nextImage = () => {
+    if (selectedImageIndex === images.length - 1) {
+      setSelectedImageIndex(0)
+    } else {
+      setSelectedImageIndex(selectedImageIndex + 1)
+    }
+  }
+
+  const prevImage = () => {
+    if (selectedImageIndex === 0) {
+      setSelectedImageIndex(images.length - 1)
+    } else {
+      setSelectedImageIndex(selectedImageIndex - 1)
+    }
+  }
+
   return (
     <div className="flex h-fit flex-col gap-4">
       <div className="flex">
         <div className="w-1/2 p-4">
-          <div className="mb-5 flex w-full justify-center">
+          <div className="mb-5 flex w-full items-center justify-center gap-4">
             <Image
               src={images[selectedImageIndex].url}
               alt="image"
@@ -42,24 +59,36 @@ const NotificationImage = ({
               loading="lazy"
             />
           </div>
-          <div className="flex justify-around gap-4">
-            {images.map((image: DashboardImage, index: number) => (
-              <Image
-                key={image.id}
-                src={image.url}
-                alt="image"
-                className={`h-[80px] w-[80px] rounded-lg border-2 object-cover hover:cursor-pointer hover:border-primary hover:shadow-md
+          <div className="flex items-center justify-between">
+            <FaArrowLeft
+              size={20}
+              className="hover:cursor-pointer hover:text-primary-700"
+              onClick={prevImage}
+            />
+            <div className="flex justify-between gap-4">
+              {images.map((image: DashboardImage, index: number) => (
+                <Image
+                  key={image.id}
+                  src={image.url}
+                  alt="image"
+                  className={`h-[80px] w-[80px] rounded-lg border-2 object-cover hover:cursor-pointer hover:border-primary hover:shadow-md
                     ${selectedImageIndex === index ? "border-primary" : ""}
                 `}
-                width={80}
-                height={80}
-                loading="lazy"
-                onClick={() => setSelectedImageIndex(index)}
-              />
-            ))}
+                  width={80}
+                  height={80}
+                  loading="lazy"
+                  onClick={() => setSelectedImageIndex(index)}
+                />
+              ))}
+            </div>
+            <FaArrowRight
+              size={20}
+              className="hover:cursor-pointer hover:text-primary-700"
+              onClick={nextImage}
+            />
           </div>
         </div>
-        <div className="w-1/2 p-4">
+        <div className="fixed left-1/2 w-1/2 p-4">
           <div className="flex flex-col gap-4">
             <h1 className="mt-[8px] font-semibold text-primary-700">
               Prompt Detail

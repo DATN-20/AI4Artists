@@ -166,7 +166,7 @@ const ModalForgotPassword: React.FC<ModalProps> = ({ onClose }) => {
 
               <Button
                 type="submit"
-                className="h-10 w-full bg-black text-white"
+                className="h-10 w-full bg-black text-white dark:bg-white dark:text-black dark:hover:text-primary-700 font-bold"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Loading..." : "Reset Password"}

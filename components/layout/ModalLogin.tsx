@@ -229,7 +229,7 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
               </div>
               <Button
                 type="submit"
-                className="h-10 w-full bg-black text-white"
+                className="h-10 w-full bg-black text-white dark:bg-white dark:text-black dark:hover:text-primary-700 font-bold"
                 disabled={isLoading || isButtonDisabled}
               >
                 Sign In
