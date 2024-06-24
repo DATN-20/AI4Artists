@@ -134,13 +134,8 @@ const StyleDrawer = ({
 
       try {
         await generateStyle(formData).unwrap()
-        refetchHistory()
-        toast.success(
-          "Image is being generated! Please check for our notification.",
-        )
       } catch (error) {
-        console.error("Error generating image:", error)
-        toast.error("Error generating image")
+        toast.error("Error generating image:")
       }
       setOpenStyleDrawer(false)
     } else {

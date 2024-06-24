@@ -16,6 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import {
+  useGetGenerationHistoryQuery,
   useGetNotificationImageQuery,
   useGetNotificationsQuery,
 } from "@/services/generate/generateApi"
@@ -44,6 +45,8 @@ export const WebSocketProvider: React.FC<{
   )
   const { data: notifications, refetch: refetchNotifications } =
     useGetNotificationsQuery()
+  const { data: historyData, refetch: refetchHistory } =
+    useGetGenerationHistoryQuery()
 
   const notificationDisplayTime = (createdAt: string) => {
     const date = new Date(createdAt)
@@ -117,6 +120,9 @@ export const WebSocketProvider: React.FC<{
       socket.on("notification", (notification) => {
         toast.info(renderNotificationContent(notification))
         refetchNotifications()
+        if (notification.reference_data) {
+          refetchHistory()
+        }
       })
 
       socketRef.current = socket

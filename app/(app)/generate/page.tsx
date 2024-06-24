@@ -30,7 +30,6 @@ import ImageToTag from "@/components/generate/ImageToTag"
 import { Button } from "@/components/ui/button"
 import { Trash } from "lucide-react"
 import { base64StringToFile } from "@/lib/base64StringToFile"
-import { set } from "react-hook-form"
 
 export default function Generate() {
   const dispatch = useAppDispatch()
@@ -133,10 +132,8 @@ export default function Generate() {
       let result
       if (generateStates.useImage) {
         result = await imageToImage(formData).unwrap()
-        refetchHistory()
       } else {
         result = await textToImage(formData).unwrap()
-        refetchHistory()
       }
     } catch (error: any) {
       toast.error(
@@ -255,7 +252,9 @@ export default function Generate() {
           <Button
             variant={"default"}
             className="mt-3 flex w-fit select-none items-center gap-2 rounded-lg border-[2px] border-black bg-transparent px-4 py-2 font-bold hover:border-primary-700 hover:bg-transparent hover:text-primary-700 dark:border-white dark:hover:border-primary-700"
-            onClick={handleClearAllInput}
+            onClick={() => {
+              handleClearAllInput()
+            }}
           >
             <Trash width={18} height={18} />
             Clear All
