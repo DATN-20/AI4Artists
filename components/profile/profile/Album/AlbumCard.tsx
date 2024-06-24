@@ -66,16 +66,23 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
                   />
                 </div>
               ))}
-            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100 rounded-lg">
               <p className="text-center text-white">
                 Album: {albumData.album.name}
               </p>
             </div>
           </div>
         ) : (
-          <div className="mt-20 flex max-h-full max-w-full justify-center">
-            No images available
+          <>
+            <div className="flex max-h-full max-w-full justify-center items-center">
+              No images available
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100 rounded-lg">
+            <p className="text-center text-white">
+              Album: {albumData.album.name}
+            </p>
           </div>
+          </>
         )}
       </Card>
       {hasImages && (
@@ -92,6 +99,8 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
                   setOpenDialogCarousel={setOpenDialogCarousel}
                   getTotalImage={getTotalImage}
                   getOneAlbum={getOneAlbum}
+                  albumName={authStates.totalAlbum[selectedAlbum]?.album.name}
+                  albumCreatedDate={authStates.totalAlbum[selectedAlbum]?.album.created_at}
                 />
               </TabsTrigger>
             </TabsList>

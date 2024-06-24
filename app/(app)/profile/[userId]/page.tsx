@@ -297,7 +297,7 @@ const Profile = () => {
                           className="dark:text-white"
                         >
                           <h1 className=" text-2xl font-bold">
-                            <IoArrowBackOutline />
+                            <IoArrowBackOutline className="hover:text-primary-700" />
                           </h1>
                         </TabsTrigger>
                       </TabsList>
@@ -307,7 +307,11 @@ const Profile = () => {
                     </div>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button type="button" variant="default">
+                        <Button
+                          type="button"
+                          variant="default"
+                          className="hover:text-white dark:hover:text-black font-bold"
+                        >
                           <IoAddCircleOutline className="mr-2" size={24} />
                           Add album
                         </Button>
@@ -362,13 +366,13 @@ const Profile = () => {
                     <div key={index} className="mb-5 rounded-xl bg-card ">
                       <div className="flex justify-between">
                         <div className="my-5  ml-5 text-2xl font-semibold">
-                          Album name: {item.album.name}
+                         {item.album.name}
                         </div>
                         <div>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <IoTrashOutline
-                                className="mr-5 mt-5 cursor-pointer"
+                                className="mr-5 mt-5 cursor-pointer hover:text-primary-700"
                                 size={24}
                                 onClick={() => {
                                   setSelectedAlbumId(item.album.id)
@@ -387,12 +391,13 @@ const Profile = () => {
                                 <AlertDialogAction>
                                   <Button
                                     type="submit"
+                                    className="hover:text-white hover:bg-transparent font-bold"
                                     onClick={() => handleDeleteAlbum()}
                                   >
                                     Save
                                   </Button>
                                 </AlertDialogAction>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogCancel className="bg-gray-500 text-white border-0 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black">Cancel</AlertDialogCancel>
                               </AlertDialogFooter>
                             </AlertDialogContent>
                           </AlertDialog>
@@ -447,18 +452,27 @@ const Profile = () => {
                     </div>
                   ))}
                   <DialogContent className=" lg:min-w-[950px]">
-                    {oneAlbumData && selectedAlbum !== -1 && (
-                      <PopupCarousel
-                        generateImgData={oneAlbumData}
-                        width={512}
-                        height={512}
-                        setSelectedAlbum={setSelectedAlbum}
-                        selectedAlbum={selectedAlbum}
-                        setOpenDialogCarousel={setOpenDialogCarousel}
-                        getTotalImage={totalImageRefetch}
-                        getOneAlbum={oneAlbumRefetch}
-                      />
-                    )}
+                    {oneAlbumData &&
+                      selectedAlbum !== -1 &&
+                      authStates.totalAlbum &&
+                      authStates.totalAlbum[selectedAlbum - 1] && (
+                        <PopupCarousel
+                          generateImgData={oneAlbumData}
+                          width={512}
+                          height={512}
+                          setSelectedAlbum={setSelectedAlbum}
+                          selectedAlbum={selectedAlbum}
+                          setOpenDialogCarousel={setOpenDialogCarousel}
+                          getTotalImage={totalImageRefetch}
+                          getOneAlbum={oneAlbumRefetch}
+                          albumName={
+                            authStates.totalAlbum[selectedAlbum - 1].album.name
+                          }
+                          albumCreatedDate={
+                            authStates.totalAlbum[selectedAlbum - 1].album.created_at
+                          }
+                        />
+                      )}
                   </DialogContent>
                 </div>
               </TabsContent>

@@ -17,20 +17,29 @@ import {
   AlertDialogFooter,
   AlertDialogTrigger,
 } from "../ui/alert-dialog"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip"
 
 const LogLayout = ({ children }: { children: React.ReactNode }) => {
   const [isLogVisible, setIsLogVisible] = useState(false)
   const { data: notifications, refetch } = useGetNotificationsQuery()
+  const [filteredNotifications, setFilteredNotifications] = useState<
+    NotificationInfo[]
+  >([])
   const [deleteAllNotifications] = useDeleteAllNotificationsMutation()
   const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
     if (notifications) {
-      setUnreadCount(
-        notifications.filter(
-          (notification: NotificationInfo) => !notification.is_read,
-        ).length,
+      let unReadMessages = notifications.filter(
+        (notification: NotificationInfo) => !notification.is_read,
       )
+      setFilteredNotifications(notifications)
+      setUnreadCount(unReadMessages.length)
     }
   }, [notifications])
 
@@ -40,6 +49,8 @@ const LogLayout = ({ children }: { children: React.ReactNode }) => {
 
   const handleDeleteNotifications = async () => {
     await deleteAllNotifications()
+    setFilteredNotifications([])
+    setUnreadCount(0)
   }
 
   return (
@@ -50,7 +61,7 @@ const LogLayout = ({ children }: { children: React.ReactNode }) => {
             <div className="flex h-full w-full">
               <Button
                 onClick={toggleLogVisibility}
-                className="h-full rounded-bl-md rounded-br-none rounded-tl-md rounded-tr-none p-0"
+                className="h-full rounded-bl-md rounded-br-none rounded-tl-md rounded-tr-none p-0 hover:text-black"
               >
                 <ChevronRight className="h-8 w-8" />
               </Button>
@@ -85,41 +96,55 @@ const LogLayout = ({ children }: { children: React.ReactNode }) => {
                     <span>{unreadCount}</span>
                   </div>
                 </div>
-                <div className="no-scrollbar overflow-y-auto h-full">
-                  {notifications?.length === 0 && (
+                <div className="no-scrollbar h-full overflow-y-auto">
+                  {filteredNotifications.length === 0 && (
                     <div className="flex h-full items-center justify-center">
                       <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                         No notifications to show
                       </p>
                     </div>
                   )}
-                  {notifications?.map((notification: NotificationInfo) => (
-                    <LogCard
-                      key={notification.id}
-                      title={notification.title}
-                      content={notification.content}
-                      createdAt={notification.created_at}
-                      is_read={notification.is_read}
-                      id={notification.id}
-                      reference_data={notification.reference_data}
-                    />
-                  ))}
+                  {filteredNotifications.map(
+                    (notification: NotificationInfo) => (
+                      <LogCard
+                        key={notification.id}
+                        title={notification.title}
+                        content={notification.content}
+                        createdAt={notification.created_at}
+                        is_read={notification.is_read}
+                        id={notification.id}
+                        reference_data={notification.reference_data}
+                        setUnreadCount={setUnreadCount}
+                      />
+                    ),
+                  )}
                 </div>
               </div>
             </div>
           </div>
         ) : (
-          <Button
-            onClick={toggleLogVisibility}
-            className="fixed bottom-0 right-0 h-10 w-10 rounded-sm bg-gradient-to-br from-sky-300 to-primary-700 to-80% px-0"
-          >
-            <IoIosNotifications className="h-8 w-8" />
-            {unreadCount > 0 && (
-              <span className="absolute right-0 top-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs text-white">
-                {unreadCount}
-              </span>
-            )}
-          </Button>
+          <div className="fixed bottom-0 right-0">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger className="flex w-full min-w-0 justify-start">
+                  <Button
+                    onClick={toggleLogVisibility}
+                    className="h-10 w-10 rounded-sm bg-gradient-to-br from-sky-300 to-primary-700 to-80% px-0 hover:text-black"
+                  >
+                    <IoIosNotifications className="h-8 w-8" />
+                    {unreadCount > 0 && (
+                      <span className="absolute right-0 top-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs text-white">
+                        {unreadCount}
+                      </span>
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                  Notifications
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         )}
       </div>
       {children}

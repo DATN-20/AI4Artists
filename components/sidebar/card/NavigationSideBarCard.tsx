@@ -157,10 +157,16 @@ const NavigationSideBarCard = () => {
                     </AlertDialogTitle>
                   </AlertDialogHeader>
                   <AlertDialogFooter className="mt-5">
-                    <AlertDialogAction>
-                      <button onClick={handleLogout}>Yes</button>
+                    <AlertDialogAction className="font-bold hover:text-white dark:hover:text-black">
+                      <button
+                        onClick={handleLogout}
+                      >
+                        Yes
+                      </button>
                     </AlertDialogAction>
-                    <AlertDialogCancel>No</AlertDialogCancel>
+                    <AlertDialogCancel className="border-0 bg-gray-500 text-white hover:bg-gray-500 hover:text-black dark:text-black  dark:hover:text-white">
+                      No
+                    </AlertDialogCancel>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>

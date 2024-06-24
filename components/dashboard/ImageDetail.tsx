@@ -150,6 +150,16 @@ const ImageDetail = ({
     await likeImage({ imageId: image.id, type: "like" }).unwrap()
   }
 
+  const displayNumberOfLikes = (likeCount: number) => {
+    if (likeCount < 1000) {
+      return likeCount
+    } else if (likeCount < 1000000) {
+      return `${Math.floor(likeCount / 1000)}K`
+    } else {
+      return `${Math.floor(likeCount / 1000000)}M`
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen} key={index}>
       <DialogTrigger className="w-full">
@@ -181,14 +191,13 @@ const ImageDetail = ({
                     <IoPersonCircleSharp size={25} className="text-white" />
                   )}
                 </div>
-                <p className="font-semibold text-white">
-                  {image.created_user?.first_name}{" "}
-                  {image.created_user?.last_name}
+                <p className="font-semibold text-white line-clamp-1">
+                  {image.created_user?.first_name}{" "}{image.created_user?.last_name}
                 </p>
               </div>
 
-              <div className="flex w-1/3 items-center justify-between rounded-xl bg-white bg-opacity-20 px-3 py-1">
-                <p className="text-white">{likeInfo.likeNumber}</p>
+              <div className="flex items-center justify-between rounded-xl bg-white bg-opacity-20 px-3 py-1 gap-2">
+                <p className="text-white text-sm">{displayNumberOfLikes(likeInfo.likeNumber)}</p>
                 <FaHeart
                   className={`font-bold ${likeInfo.isLiked ? "text-red-500" : ""}  hover:scale-125 hover:transition-transform`}
                   size={20}
@@ -278,14 +287,14 @@ const ImageDetail = ({
                   )}
                 </div>
                 <a href={`/profile/${image.created_user?.id}`}>
-                  <h1>
+                  <h1 className="line-clamp-1 hover:text-primary-700">
                     {image.created_user?.first_name}{" "}
                     {image.created_user?.last_name}
                   </h1>
                 </a>
               </div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-semibold">{likeInfo.likeNumber}</h1>
+                <h1 className="text-lg font-semibold">{displayNumberOfLikes(likeInfo.likeNumber)}</h1>
                 <FaHeart
                   className={`font-bold ${likeInfo.isLiked ? "text-red-500" : "hover:scale-125"} cursor-pointer hover:transition-transform`}
                   size={20}

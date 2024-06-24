@@ -429,7 +429,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
   }
 
   useEffect(() => {
-    if (avatarData) {
+    if (avatarData && userData) {
       localStorage.setItem("userData", JSON.stringify(userData))
     }
   }, [avatarData])
@@ -842,10 +842,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userData }) => {
           </div>
           <TabsList className="flex justify-end gap-2 bg-inherit">
             <TabsTrigger value="introduction" className="px-0 py-0">
-              <IoImages size={24} />
+              <IoImages size={24} className="hover:text-primary-700" />
             </TabsTrigger>
             <TabsTrigger value="profile" className="ml-3 px-0 py-0">
-              <CiViewList size={26} />
+              <CiViewList size={26} className="hover:text-primary-700"/>
             </TabsTrigger>
           </TabsList>
         </div>

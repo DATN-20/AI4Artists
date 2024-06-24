@@ -125,7 +125,7 @@ const DashboardContent: React.FC = () => {
       <div className="flex w-full justify-between gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="rounded-xl bg-gradient-default px-4 py-3 text-lg font-bold text-white shadow-none hover:bg-primary-800 focus-visible:ring-0">
+            <Button className="bg-gradient-default-to-r hover:text-black rounded-xl px-4 py-3 text-lg font-bold text-white shadow-none hover:bg-primary-800 focus-visible:ring-0">
               {selectionList[currentIndex].label}
               <ChevronDown className="ml-2" />
             </Button>
@@ -134,9 +134,9 @@ const DashboardContent: React.FC = () => {
             <DropdownMenuGroup>
               {selectionList.map((selection, index) => (
                 <DropdownMenuItem
-                  className={`focus:text-primary-700 ${
+                  className={`focus:text-primary-700 hover:cursor-pointer ${
                     index === currentIndex &&
-                    "bg-slate-200 text-primary-800 dark:bg-gray-800"
+                    "bg-slate-200 font-bold text-primary-700 dark:bg-gray-800"
                   }`}
                   key={index}
                   onClick={() => handleSelection(index)}
