@@ -26,6 +26,7 @@ import { z } from "zod"
 import { FaFacebook, FaGoogle } from "react-icons/fa"
 import { X } from "lucide-react"
 import { useGetProfileQuery } from "@/services/profile/profileApi"
+import { skipToken } from "@reduxjs/toolkit/query/react"
 import { LoginModalPage, ModalProps } from "@/constants/loginModal"
 import { useTheme } from "next-themes"
 
@@ -46,12 +47,15 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
   const [logoSrc, setLogoSrc] = useState<string>(
     theme === "dark" ? "/logo-white.png" : "/logo-black.png",
   )
-  const {
-    data: userData,
-    refetch,
-    isSuccess: isGetProfileSuccess,
-  } = useGetProfileQuery()
-
+  function setCookie(name: string, value: string, days: number) {
+    let expires = ""
+    if (days) {
+      const date = new Date()
+      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000)
+      expires = "; expires=" + date.toUTCString()
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/"
+  }
   const [
     loginUser,
     {
@@ -62,6 +66,10 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
       isLoading,
     },
   ] = useLoginUserMutation()
+
+  const { data: userData, refetch } = useGetProfileQuery(
+    isLoginSuccess ? undefined : skipToken,
+  )
 
   useEffect(() => {
     setLogoSrc(theme === "dark" ? "/logo-white.png" : "/logo-black.png")
@@ -106,9 +114,16 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
     const fetchUserData = async () => {
       await refetch()
     }
-    const handleLoginSuccess = () => {
+    const handleLoginSuccess = async () => {
       toast.success("User login successfully")
-      dispatch(setUser({ token: loginData.access_token, name: "Hao" }))
+      const resultFromNextServer = await fetch("api/auth", {
+        method: "POST",
+        body: JSON.stringify(loginData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      dispatch(setUser({ token: loginData.access_token }))
       fetchUserData()
       const promptValue = localStorage.getItem("prompt")
       setTimeout(() => {
@@ -127,7 +142,7 @@ const ModalLogin: React.FC<ModalProps> = ({ onClose }) => {
 
   useEffect(() => {
     if (userData) {
-      localStorage.setItem("userID", (userData?.id).toString())
+      setCookie("userID", (userData?.id).toString(), 1)
       localStorage.setItem("userData", JSON.stringify(userData))
     }
   }, [userData])
