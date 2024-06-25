@@ -168,7 +168,7 @@ const DashboardContent: React.FC = () => {
       )}
 
       {showSmallLoading && (
-        <div className="fixed bottom-8 right-8 z-50">
+        <div className="fixed bottom-8 left-1/2 z-50 ml-[125px] -translate-x-1/2 transform">
           <div role="status">
             <svg
               aria-hidden="true"
