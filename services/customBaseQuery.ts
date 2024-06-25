@@ -15,7 +15,9 @@ function getCookie(name: string) {
   }
   return null;
 }
-
+function eraseCookie(name: string) {
+  document.cookie = name + '=; Max-Age=-99999999;';
+}
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL, // Replace with your API base URL
@@ -58,6 +60,8 @@ const customBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryEr
     if (errorCode === "00004") {
       // Token is invalid, logout user
       localStorage.clear();
+      eraseCookie("token");
+      eraseCookie("userID");
       window.location.href = "/";
     } else if (errorCode === "00003") {
       // Token expired, attempt to refresh it
@@ -74,6 +78,8 @@ const customBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryEr
         
       } else {
         localStorage.clear();
+        eraseCookie("token");
+        eraseCookie("userID");
         window.location.href = "/";
       }
     }
