@@ -111,7 +111,7 @@ export const WebSocketProvider: React.FC<{
       })
 
       socket.on("connect_error", (error) => {
-        toast.error(`WebSocket connection error: ${error.message}`)
+        console.error(`WebSocket connection error: ${error.message}`)
       })
 
       // Listen for notifications
