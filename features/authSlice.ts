@@ -29,9 +29,21 @@ function setCookie(name: string, value: string, days: number) {
 }
 
 // Hàm để xóa tất cả cookie
-function eraseCookie(name: string) {
-  document.cookie = name + '=; Max-Age=-99999999;';
+function eraseAllCookies() {
+  // Lấy tất cả các cookie hiện có
+  var cookies = document.cookie.split(";");
+
+  // Lặp qua từng cookie và xóa nó
+  for (var i = 0; i < cookies.length; i++) {
+      var cookie = cookies[i];
+      var eqPos = cookie.indexOf("=");
+      var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      // Thiết lập thời gian hết hạn của cookie về quá khứ để xóa nó
+      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+  }
 }
+
+
 
 export const authSlice = createSlice({
   name:"auth",
@@ -46,8 +58,7 @@ export const authSlice = createSlice({
   },
   logout: (state) => {
     localStorage.clear();
-    eraseCookie("token");
-    eraseCookie("userID");
+    eraseAllCookies()
     state.token = null;
   },
   setUserData:(
