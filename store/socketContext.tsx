@@ -40,6 +40,7 @@ export const WebSocketProvider: React.FC<{
   const [open, setOpen] = useState(false)
 
   const socketRef = useRef<Socket | null>(null)
+  const sound = new Audio("./sounds/notification.mp3")
   const { data: notificationImage, refetch } = useGetNotificationImageQuery(
     referenceData || "",
   )
@@ -120,6 +121,7 @@ export const WebSocketProvider: React.FC<{
       socket.on("notification", (notification) => {
         toast.info(renderNotificationContent(notification))
         refetchNotifications()
+        sound.play()
         if (notification.reference_data) {
           refetchHistory()
         }

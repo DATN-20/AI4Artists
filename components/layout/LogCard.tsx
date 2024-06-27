@@ -21,6 +21,7 @@ const LogCard = ({
   id,
   reference_data,
   setUnreadCount,
+  setFilteredNotifications,
 }: {
   title: string
   content: string
@@ -29,6 +30,7 @@ const LogCard = ({
   id: number
   reference_data: string | null
   setUnreadCount: React.Dispatch<React.SetStateAction<number>>
+  setFilteredNotifications: React.Dispatch<React.SetStateAction<NotificationInfo[]>>
 }) => {
   const [isRead, setIsRead] = useState<boolean>(is_read)
   const [open, setOpen] = useState(false)
@@ -48,6 +50,14 @@ const LogCard = ({
     setIsRead(true)
     changeNotificationStatus(id)
     setUnreadCount((prev) => prev - 1)
+    setFilteredNotifications((prev) =>
+      prev.map((notification) => {
+        if (notification.id === id) {
+          return { ...notification, is_read: true }
+        }
+        return notification
+      }),
+    )
   }
 
   const notificationDisplayTime = () => {

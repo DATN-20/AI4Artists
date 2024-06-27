@@ -115,6 +115,7 @@ const LogLayout = ({ children }: { children: React.ReactNode }) => {
                         id={notification.id}
                         reference_data={notification.reference_data}
                         setUnreadCount={setUnreadCount}
+                        setFilteredNotifications={setFilteredNotifications}
                       />
                     ),
                   )}
@@ -139,9 +140,7 @@ const LogLayout = ({ children }: { children: React.ReactNode }) => {
                     )}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="left">
-                  Notifications
-                </TooltipContent>
+                <TooltipContent side="left">Notifications</TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>
