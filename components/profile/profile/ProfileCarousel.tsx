@@ -39,6 +39,7 @@ interface CarouselProps {
   height?: number
   album?: AlbumData[] | null
   getTotalImage: () => void
+  getOneAlbum: () => void
 }
 
 const ProfileCarousel: React.FC<CarouselProps> = ({
@@ -47,6 +48,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
   height,
   album,
   getTotalImage,
+  getOneAlbum,
 }) => {
   const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null)
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
@@ -104,6 +106,7 @@ const ProfileCarousel: React.FC<CarouselProps> = ({
     const fetchAlbumData = async () => {
       await fullInfoRefetch()
       await getTotalImage()
+      await getOneAlbum()
     }
     fetchAlbumData()
   }

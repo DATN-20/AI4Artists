@@ -41,8 +41,8 @@ interface PopupCarouselProps {
   setOpenDialogCarousel: (can: boolean) => void
   getTotalImage: () => void
   getOneAlbum: () => void
-  albumName: string
-  albumCreatedDate: string
+  // albumName: string
+  // albumCreatedDate: string
 }
 
 const PopupCarousel: React.FC<PopupCarouselProps> = ({
@@ -54,9 +54,10 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
   setOpenDialogCarousel,
   getTotalImage,
   getOneAlbum,
-  albumName,
-  albumCreatedDate
+  // albumName,
+  // albumCreatedDate,
 }) => {
+
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
   const [deleteFromAlbum] = useDeleteFromAlbumMutation()
   const { data: albumData, refetch: fullInfoRefetch } =
@@ -115,18 +116,18 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
   return (
     <>
       <Dialog>
-        <DialogDescription>
+        {/* <DialogDescription>
           <DialogTitle className="text-black dark:text-white">
             <div className="flex justify-between pr-5">
               <div>{albumName}</div>
-              <div>{(new Date(albumCreatedDate)).toLocaleString()}</div>
+              <div>{new Date(albumCreatedDate).toLocaleString()}</div>
             </div>
           </DialogTitle>
-        </DialogDescription>
+        </DialogDescription> */}
         <BaseCarousel className="relative mt-5 w-full ">
           <CarouselContent>
             {generateImgData &&
-              generateImgData.map((item: Image, index: number) => (
+              generateImgData?.map((item: Image, index: number) => (
                 <CarouselItem
                   key={item.id}
                   className="lg:basis-1/3"
@@ -136,7 +137,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
                 >
                   <div className="relative flex h-full items-center justify-center p-1">
                     <Card className="transform transition-transform duration-300 hover:scale-105 ">
-                      <CardContent className="p-0 rounded-lg">
+                      <CardContent className="rounded-lg p-0">
                         <NextImage
                           alt="generated image"
                           width={width}
@@ -146,7 +147,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
                         />
                       </CardContent>
                       <div className="absolute inset-0 rounded-lg bg-black bg-opacity-50 pt-5 opacity-0 transition-opacity duration-300 hover:opacity-100">
-                        <div className="flex max-w-full justify-end rounded-lg gap-x-2 pr-5">
+                        <div className="flex max-w-full justify-end gap-x-2 rounded-lg pr-5">
                           {item.visibility ? (
                             <IoEyeOutline
                               size={32}
@@ -167,7 +168,7 @@ const PopupCarousel: React.FC<PopupCarouselProps> = ({
                             />
                           </DialogTrigger>
                         </div>
-                        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 px-1 py-3 text-center text-white rounded-lg">
+                        <div className="absolute bottom-0 left-0 right-0 rounded-lg bg-black bg-opacity-75 px-1 py-3 text-center text-white">
                           <p className="line-clamp-3">Prompt: {item.prompt}</p>
                         </div>
                       </div>
