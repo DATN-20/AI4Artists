@@ -57,13 +57,13 @@ export default function Generate() {
     dispatch(
       setField({
         field: "positivePrompt",
-        value: `${prompt}${generateTags.length > 0 ? `, ${generateTags}` : ""}`,
+        value: `${prompt}`,
       }),
     )
     dispatch(
       setStyleField({
         field: "positivePrompt",
-        value: `${prompt}${generateTags.length > 0 ? `, ${generateTags}` : ""}`,
+        value: `${prompt}`,
       }),
     )
   }
@@ -72,7 +72,8 @@ export default function Generate() {
     dispatch(clearAll())
     setPromptPos("")
     setPromptNeg("")
-    setSideBarKey((prevKey) => prevKey + 1) // Update the state to force rerender
+    setSideBarKey((prevKey) => prevKey + 1)
+    setGenerateTags("")
   }
 
   const handleGenerate = async () => {
@@ -122,6 +123,15 @@ export default function Generate() {
         if (name === "controlNetImages") {
           const imageFile = base64StringToFile(value as string, "image.jpg")
           formData.append("controlNetImages", imageFile)
+          return
+        }
+
+        if (name === "positivePrompt") {
+          if (generateTags.length > 0) {
+            formData.append(name, `${promptPos}, ${generateTags}`)
+          } else {
+            formData.append(name, promptPos)
+          }
           return
         }
         formData.append(name, (value as any).toString())
