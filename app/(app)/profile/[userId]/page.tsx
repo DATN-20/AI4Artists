@@ -77,14 +77,21 @@ const Profile = () => {
   const [isGetGuest, setIsGetGuest] = useState(true)
 
   const { data: userData } = useGetProfileQuery()
-  const { data: oneAlbumData, refetch: oneAlbumRefetch } = useGetAlbumQuery({
+  const {
+    data: oneAlbumData,
+    refetch: oneAlbumRefetch,
+    isFetching: isOneAlbumFetching,
+  } = useGetAlbumQuery({
     albumId: selectedAlbum,
   })
   const [openDialogCarousel, setOpenDialogCarousel] = useState<boolean>(false)
   const { data: albumData, refetch: fullInfoRefetch } =
     useGetProfileAlbumQuery()
-  const { data: imagesData, refetch: totalImageRefetch } =
-    useGetTotalImageQuery()
+  const {
+    data: imagesData,
+    refetch: totalImageRefetch,
+    isFetching: isTotalImageFetching,
+  } = useGetTotalImageQuery()
   const { data: guestImages, isSuccess: isGuestImageSuccess } =
     useGetGuestImageQuery(
       {
@@ -188,13 +195,13 @@ const Profile = () => {
     if (imagesData) {
       dispatch(setTotalImage({ totalImage: imagesData }))
     }
-  }, [imagesData])
+  }, [imagesData, isTotalImageFetching])
 
   useEffect(() => {
     if (oneAlbumData) {
       dispatch(setOneAlbum({ oneAlbum: oneAlbumData }))
     }
-  }, [oneAlbumData])
+  }, [oneAlbumData, isOneAlbumFetching])
 
   const handleDeleteAlbum = async () => {
     if (!selectedAlbumId) return
