@@ -153,7 +153,17 @@ const ControlnetDialog = ({
       reader.onloadend = () => {
         const base64String = reader.result?.toString()
         if (base64String) {
-          dispatch(setField({ field: "controlNetImages", value: base64String }))
+          if (isStyleGenerate) {
+            dispatch(
+              setStyleField({
+                field: "controlNetImages",
+                value: base64String,
+                ArrayIndex: 0,
+              }),
+            )
+          } else {
+            dispatch(setField({ field: "controlNetImages", value: base64String }))
+          }
         }
       }
       reader.readAsDataURL(imageFile)
