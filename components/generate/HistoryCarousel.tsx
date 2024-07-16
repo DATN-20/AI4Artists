@@ -4,6 +4,7 @@ import { IoAddCircleOutline, IoCloudDownloadOutline } from "react-icons/io5"
 import NextImage from "next/image"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -59,6 +60,7 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
   )
   const [changeVisibility] = useChangePublicStatusMutation()
   const [addToAlbum] = useAddToAlbumMutation()
+  const [closeDialog, setCloseDialog] = useState<boolean>(false)
 
   const handleAlbumSelect = (albumId: number) => {
     setSelectedAlbumId(albumId === selectedAlbumId ? null : albumId)
@@ -165,7 +167,7 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
         </div>
       </div>
 
-      <Dialog>
+      <Dialog open={closeDialog} onOpenChange={setCloseDialog}>
         <Carousel className="relative mt-5 w-full">
           <CarouselContent>
             {generateImgData &&
@@ -248,15 +250,33 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
                   </button>
                 ))}
               </div>
-              <DialogFooter>
-                <Button
-                  type="submit"
-                  onClick={() => {
-                    handleAddToAlbum()
-                  }}
-                >
-                  Save changes
-                </Button>
+              <DialogFooter className="mt-12">
+                {album && album.length > 0 ? (
+                  <Button
+                    type="submit"
+                    className="rounded-md px-4 py-2 font-bold text-white hover:text-black focus:outline-none"
+                    onClick={() => {
+                      handleAddToAlbum()
+                      setCloseDialog(false)
+                    }}
+                  >
+                    Save changes
+                  </Button>
+                ) : (
+                  <></>
+                )}
+
+                <DialogClose>
+                  <Button
+                    onClick={() => {
+                      setCloseDialog(false)
+                    }}
+                    type="button"
+                    className="rounded-md bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400 focus:outline-none"
+                  >
+                    Cancel
+                  </Button>
+                </DialogClose>
               </DialogFooter>
             </DialogContent>
           </CarouselContent>
