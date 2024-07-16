@@ -131,7 +131,6 @@ const StyleDrawer = ({
 
         formData.append(name, (value as any).toString())
       })
-
       try {
         await generateStyle(formData).unwrap()
       } catch (error) {
