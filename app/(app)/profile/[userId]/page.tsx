@@ -237,7 +237,7 @@ const Profile = () => {
               <NavigationSideBarCard />
             </div>
           </div>
-          <div className="mr-8 h-full w-3/4 flex-1">
+          <div className="mr-8 h-full flex-1">
             <ProfileHeaderGuest userData={guestProfile} />
             <ProfileContentGuest imagesData={guestData.data} />
           </div>
@@ -253,7 +253,7 @@ const Profile = () => {
               <NavigationSideBarCard />
             </div>
           </div>
-          <div className="mr-8 h-full flex-1">
+          <div className="mr-8 h-full w-3/4 flex-1">
             <Tabs
               defaultValue="introduction"
               onValueChange={() => {
