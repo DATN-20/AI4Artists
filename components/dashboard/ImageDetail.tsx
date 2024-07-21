@@ -22,7 +22,6 @@ import { IoPersonCircleSharp } from "react-icons/io5"
 import probe from "probe-image-size"
 import { ErrorObject } from "@/types"
 import { toast } from "react-toastify"
-import useLineClamp from "use-line-clamp"
 import Clamp from "react-multiline-clamp"
 
 const ImageDetail = ({
@@ -51,9 +50,6 @@ const ImageDetail = ({
     string | null
   >(image.remove_background)
   const ref = useRef<HTMLParagraphElement>(null)
-  const clamps = useLineClamp(ref, { lines: 3 })
-  const [visible, setVisible] = useState(false)
-  const [showMoreVisible, setShowMoreVisible] = useState(false)
 
   useEffect(() => {
     if (ref.current) {
