@@ -93,7 +93,7 @@ export const renderInput = (
             return (
               <div className="flex justify-between p-4 pb-0">
                 <Label htmlFor="image-mode" className="text-lg font-semibold">
-                  Apply Image to Image
+                  Use Image Input
                 </Label>
                 <Switch
                   id="image-mode"
@@ -113,7 +113,7 @@ export const renderInput = (
             <>
               <div className="flex justify-between p-4 pb-0">
                 <Label htmlFor="image-mode" className="text-lg font-semibold">
-                  Apply Image to Image
+                  Use Image Input
                 </Label>
                 <Switch
                   id="image-mode"
@@ -127,18 +127,13 @@ export const renderInput = (
                   }}
                 />
               </div>
-              <CollapsibleSection
-                title={name}
-                key={propertyName}
-                isHidden={true}
-                desc={desc}
-              >
+              <div className="mt-4 px-4">
                 <DynamicImageInput
                   name={name}
                   type={propertyName}
                   defaultValue={checkDefaultValue}
                 />
-              </CollapsibleSection>
+              </div>
             </>
           )
         }

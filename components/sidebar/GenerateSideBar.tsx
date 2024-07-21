@@ -16,6 +16,7 @@ import { Switch } from "../ui/switch"
 import { Label } from "../ui/label"
 import ChooseAiInput from "../generate/input-component/ChooseAiInput"
 import { useTheme } from "next-themes"
+import { ThemeToggle } from "../ThemeToggle"
 
 export default function GenerateSideBar() {
   const dispatch = useAppDispatch()
@@ -165,7 +166,7 @@ export default function GenerateSideBar() {
             if (aiInput.input_property_name === "width") {
               return (
                 <CollapsibleSection
-                  title={"Image Dimensions"}
+                  title={"Dimensions"}
                   key="image-dimensions"
                   desc="Choose the dimensions of the image you want to generate."
                 >
@@ -189,6 +190,7 @@ export default function GenerateSideBar() {
               </Card>
             )
           })}
+          <div className="w-full pb-2 flex justify-end px-4"><ThemeToggle /></div>
     </Card>
   )
 }

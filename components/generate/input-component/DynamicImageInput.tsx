@@ -4,7 +4,6 @@ import { Button } from "../../ui/button"
 import {
   Dialog,
   DialogContentLoginModal,
-  DialogFooter,
   DialogHeader,
   DialogTrigger,
 } from "../../ui/dialog"
@@ -17,6 +16,7 @@ import { selectAuth, setTotalAlbum } from "@/features/authSlice"
 import NextImage from "next/image"
 import axios from "axios"
 import { AlbumData, Image } from "@/types/profile"
+import { LuImagePlus } from "react-icons/lu";
 
 const DynamicImageInput = ({
   name,
@@ -166,9 +166,10 @@ const DynamicImageInput = ({
             {!selectedImage && (
               <Button
                 variant={"outline"}
-                className="w-fit rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700"
+                className="w-fit rounded-xl border-[2px] px-2 py-2 font-bold text-primary-700"
               >
-                Add Image
+                <LuImagePlus className="mr-2" />
+                Add
               </Button>
             )}
           </DialogTrigger>

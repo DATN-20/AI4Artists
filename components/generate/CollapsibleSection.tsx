@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip"
 import { FaInfoCircle } from "react-icons/fa"
-import { IoIosInformationCircleOutline } from "react-icons/io";
+import { IoIosInformationCircleOutline } from "react-icons/io"
 
 const CollapsibleSection = ({
   title,
@@ -32,25 +32,28 @@ const CollapsibleSection = ({
         className="flex cursor-pointer items-center justify-between"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="flex gap-3">
-          <h2 className=" text-lg font-semibold ">
-            {!isHidden ? title : isOpen ? "" : title}
-          </h2>
+        <h2 className=" text-lg font-semibold ">
+          {!isHidden ? title : isOpen ? "" : title}
+        </h2>
+        <div className="flex gap-1">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger className="">
-                <FaInfoCircle fontSize={20} />
+                <FaInfoCircle fontSize={15} className="hover:text-primary-700" />
               </TooltipTrigger>
-              {desc && <TooltipContent>{desc}</TooltipContent>}
+              {desc && (
+                <TooltipContent className="max-w-[200px]" align="end">
+                  {desc}
+                </TooltipContent>
+              )}
             </Tooltip>
           </TooltipProvider>
+          {isOpen ? (
+            <ChevronUp className="h-5 w-5 hover:text-primary" />
+          ) : (
+            <ChevronDown className="h-5 w-5 hover:text-primary" />
+          )}
         </div>
-
-        {isOpen ? (
-          <ChevronUp className="h-5 w-5" />
-        ) : (
-          <ChevronDown className="h-5 w-5" />
-        )}
       </div>
       {isOpen && <div className={`mt-2 ${childrenStyle}`}>{children}</div>}
     </div>
