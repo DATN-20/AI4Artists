@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useProcessImageMutation } from "@/services/image/imageApi"
 import { ProcessType } from "../../types/Image"
 import { useRouter } from "next/navigation"
@@ -22,6 +22,7 @@ import { IoPersonCircleSharp } from "react-icons/io5"
 import probe from "probe-image-size"
 import { ErrorObject } from "@/types"
 import { toast } from "react-toastify"
+import Clamp from "react-multiline-clamp"
 
 const ImageDetail = ({
   image,
@@ -222,7 +223,7 @@ const ImageDetail = ({
           </div>
         </Card>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[85vw] md:max-w-[70vw]">
+      <DialogContent className="no-scrollbar max-h-[90vh] overflow-y-auto sm:max-w-[85vw] md:max-w-[70vw]">
         <div className="flex w-full gap-2">
           <div className="flex w-1/2 flex-col gap-2">
             {isLoading ? (
@@ -347,9 +348,46 @@ const ImageDetail = ({
             <h1 className="mt-[8px] font-semibold text-primary-700">
               Prompt Detail
             </h1>
-            <div className="mt-[8px] w-full rounded-lg bg-card">
-              <p className="p-4">{image.prompt}</p>
-            </div>
+            {/* <div className="mt-[8px] w-full rounded-lg bg-card p-4">
+              <p ref={ref} className={visible ? "" : "line-clamp-3"}>
+                {image.prompt}
+              </p>
+              {clamps && (
+                <button
+                  onClick={() => setVisible(!visible)}
+                  className="flex w-full justify-end text-purple-500"
+                >
+                  Show {visible ? "less" : "more"}
+                </button>
+              )}
+            </div> */}
+            <Clamp
+              lines={3}
+              maxLines={99}
+              withToggle
+              showMoreElement={({ toggle }: { toggle: () => void }) => (
+                <button
+                  type="button"
+                  onClick={toggle}
+                  className="flex w-full justify-end text-purple-500"
+                >
+                  Show more
+                </button>
+              )}
+              showLessElement={({ toggle }: { toggle: () => void }) => (
+                <button
+                  type="button"
+                  onClick={toggle}
+                  className="flex w-full justify-end text-purple-500"
+                >
+                  Show less
+                </button>
+              )}
+            >
+              <div className="mt-[8px] w-full rounded-lg bg-card pb-1">
+                <p className="mx-4 my-2">{image.prompt}</p>
+              </div>
+            </Clamp>
             <Label className="flex w-full items-center py-3 text-lg font-semibold">
               <div className="w-1/3">Type</div>
               <Button
