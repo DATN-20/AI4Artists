@@ -49,13 +49,6 @@ const ImageDetail = ({
   const [backgroundRemovedImage, setBackgroundRemovedImage] = useState<
     string | null
   >(image.remove_background)
-  const ref = useRef<HTMLParagraphElement>(null)
-
-  useEffect(() => {
-    if (ref.current) {
-      setShowMoreVisible(ref.current.scrollHeight > ref.current.clientHeight)
-    }
-  }, [image.prompt])
 
   useEffect(() => {
     const fetchImageSize = async () => {
@@ -370,7 +363,7 @@ const ImageDetail = ({
             </div> */}
             <Clamp
               lines={3}
-              maxLines={6}
+              maxLines={99}
               withToggle
               showMoreElement={({ toggle }: { toggle: () => void }) => (
                 <button
