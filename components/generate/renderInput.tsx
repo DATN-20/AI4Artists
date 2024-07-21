@@ -14,6 +14,7 @@ import ControlnetDialog from "./ControlnetDialog"
 import TrueFalseInput from "./input-component/TrueFalseInput"
 import { Card } from "../ui/card"
 import StyleDrawer from "./StyleDrawer"
+import DynamicImageInputSpecial from "./input-component/DynamicImageInputSpecial"
 
 export const renderInput = (
   input: any,
@@ -155,20 +156,13 @@ export const renderInput = (
 
         case "imageForIpadapter": {
           return (
-            <CollapsibleSection
-              title={name}
-              key={propertyName}
-              isHidden={true}
-              desc={desc}
-            >
-              <DynamicImageInput
-                name={name}
-                type={propertyName}
-                defaultValue={checkDefaultValue}
-                isStyleGenerate={isStyleGenerate}
-                arrayIndex={arrayIndex}
-              />
-            </CollapsibleSection>
+            <DynamicImageInputSpecial
+              name={name}
+              type={propertyName}
+              defaultValue={checkDefaultValue}
+              isStyleGenerate={isStyleGenerate}
+              arrayIndex={arrayIndex}
+            />
           )
         }
         default:
@@ -190,43 +184,88 @@ export const renderInput = (
     }
 
     case "array": {
+      // if (isStyleDrawer) {
+      //   return (
+      //     <>
+      //       {info.element.info.inputs.map((nestedInput: any) => {
+      //         return (
+      //           <Card
+      //             key={nestedInput.input_property_name}
+      //             className="border-none bg-transparent px-0 lg:border"
+      //           >
+      //             {renderInput(
+      //               nestedInput,
+      //               dispatch,
+      //               generateStates,
+      //               arrayIndex,
+      //               true,
+      //               false,
+      //             )}
+      //           </Card>
+      //         )
+      //       })}
+      //     </>
+      //   )
       if (isStyleDrawer) {
         return (
           <>
-            {info.element.info.inputs.map((nestedInput: any) => {
-              return (
-                <Card
-                  key={nestedInput.input_property_name}
-                  className="border-none bg-transparent px-0 lg:border"
-                >
-                  {renderInput(
-                    nestedInput,
-                    dispatch,
-                    generateStates,
-                    arrayIndex,
-                    true,
-                    false,
-                  )}
-                </Card>
-              )
-            })}
+            <div className="flex h-[256px] w-full gap-2">
+              <div className="h-full w-1/3">
+                {info.element.info.inputs.map((nestedInput: any) => {
+                  if (nestedInput.input_property_name === "imageForIpadapter") {
+                    return (
+                      <Card
+                        key={nestedInput.input_property_name}
+                        className="h-full border-none bg-transparent px-0 lg:border"
+                      >
+                        {renderInput(
+                          nestedInput,
+                          dispatch,
+                          generateStates,
+                          arrayIndex,
+                          true,
+                          false,
+                        )}
+                      </Card>
+                    )
+                  }
+                  return null
+                })}
+              </div>
+
+              <div className="no-scrollbar flex w-2/3 flex-col overflow-y-scroll">
+                {info.element.info.inputs.map((nestedInput: any) => {
+                  if (nestedInput.input_property_name !== "imageForIpadapter") {
+                    return (
+                      <Card
+                        key={nestedInput.input_property_name}
+                        className="border-none bg-transparent px-0 lg:border"
+                      >
+                        {renderInput(
+                          nestedInput,
+                          dispatch,
+                          generateStates,
+                          arrayIndex,
+                          true,
+                          false,
+                        )}
+                      </Card>
+                    )
+                  }
+                  return null
+                })}
+              </div>
+            </div>
           </>
         )
       }
+
       if (
         propertyName === "ipadapterStyleTranferInputs" &&
         isStyleGenerate &&
         !isStyleDrawer
       ) {
-        return (
-          <CollapsibleSection title={name} key={propertyName} desc={desc}>
-            <StyleDrawer
-              dispatch={dispatch}
-              generateStates={generateStates}
-              inputData={input}
-            />
-          </CollapsibleSection>
-        )
+        return null
       }
 
       return (

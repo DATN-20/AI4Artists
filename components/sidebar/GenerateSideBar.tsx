@@ -106,11 +106,15 @@ export default function GenerateSideBar() {
         />
       </div>
 
-      <CollapsibleSection title={"Choosing AI"} key="choosing-ai">
+      <CollapsibleSection
+        title={"Choosing AI"}
+        key="choosing-ai"
+        containerStyle="pb-4"
+        desc="Choosing Your AI"
+      >
         <ChooseAiInput />
       </CollapsibleSection>
 
-  
       {noiseElement}
       {generateStates.useStyleImage
         ? aiStyleInputs &&
@@ -119,7 +123,8 @@ export default function GenerateSideBar() {
               aiInput.input_property_name === "noise" ||
               aiInput.input_property_name === "positivePrompt" ||
               aiInput.input_property_name === "negativePrompt" ||
-              aiInput.input_property_name === "height"
+              aiInput.input_property_name === "height" || 
+              aiInput.input_property_name === "ipadapterStyleTranferInputs"
             ) {
               return null
             }

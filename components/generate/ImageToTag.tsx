@@ -196,7 +196,7 @@ const ImageToTag = () => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="my-3 flex">
+      <DialogTrigger className=" flex">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger className="flex w-full min-w-0 justify-start">
