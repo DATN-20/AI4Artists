@@ -3,8 +3,7 @@
 import { ChangeEvent, useContext, useEffect, useState } from "react"
 import GenerateSideBar from "@/components/sidebar/GenerateSideBar"
 import {
-  useAiInformationQuery,
-  useAiStyleInformationQuery,
+  useGenerateStyleImageMutation,
   useGetGenerationHistoryQuery,
   useImageToImageMutation,
   useTextToImageMutation,
@@ -42,6 +41,9 @@ export default function Generate() {
     useTextToImageMutation()
   const [imageToImage, { data: imgToImgData, isLoading: imgToImageLoading }] =
     useImageToImageMutation()
+
+  const [generateStyle, { data: generateStyleData, isLoading, isError }] =
+    useGenerateStyleImageMutation()
   const { data: historyData, refetch: refetchHistory } =
     useGetGenerationHistoryQuery()
   const { setGenerateTags, generateTags, setOpenStyleDrawer } =
@@ -77,11 +79,54 @@ export default function Generate() {
     setGenerateTags("")
   }
 
-  const handleGenerate = async () => {
-    if (generateStates.useStyleImage) {
-      setOpenStyleDrawer(true)
-      return
+  const handleGenerateStyle = async () => {
+    const formData = new FormData()
+    if (generateStates.dataStyleInputs) {
+      const positivePromptCheck = generateStates.dataStyleInputs?.find(
+        (input: any) => input.name === "positivePrompt",
+      )
+
+      if (!positivePromptCheck || positivePromptCheck.value.trim() === "") {
+        toast.error("Please fill all Input field")
+        return
+      }
+
+      formData.append("aiName", generateStates.ai_name || "")
+
+      generateStates.dataStyleInputs.forEach((input: any, index: any) => {
+        const { name, value } = input
+        if (name === "controlNetImages") {
+          const imageFile = base64StringToFile(value as string, "image.jpg")
+          formData.append("controlNetImages", imageFile)
+          return
+        }
+
+        if (name === "imageForIpadapter") {
+          const base64String = value
+          if (base64String) {
+            const filename = "image.png"
+            const imageFile = base64StringToFile(base64String, filename)
+            formData.append("imageForIpadapter", imageFile)
+            return
+          }
+        }
+
+        formData.append(name, (value as any).toString())
+      })
+      try {
+        await generateStyle(formData).unwrap()
+        return
+      } catch (error) {
+        toast.error("Error generating image:")
+        return
+      }
+    } else {
+      toast.error("Please fill all Input field")
     }
+  }
+
+  const handleNormalGenerate = async () => {
+    const formData = new FormData()
 
     if (promptPos === "" && generateTags === "") {
       toast.error("Please enter a prompt or select tags")
@@ -97,9 +142,8 @@ export default function Generate() {
         return
       }
     }
-
-    const formData = new FormData()
     formData.append("aiName", generateStates.ai_name || "")
+
     if (generateStates.dataInputs) {
       generateStates.dataInputs.forEach((input, index) => {
         const { name, value } = input
@@ -140,17 +184,24 @@ export default function Generate() {
     }
 
     try {
-      let result
       if (generateStates.useImage) {
-        result = await imageToImage(formData).unwrap()
+        await imageToImage(formData).unwrap()
       } else {
-        result = await textToImage(formData).unwrap()
+        await textToImage(formData).unwrap()
       }
     } catch (error: any) {
       toast.error(
         "Error generating image: " +
           (error as { data: { message: string } }).data.message,
       )
+    }
+  }
+
+  const handleGenerate = async () => {
+    if (generateStates.useStyleImage) {
+      await handleGenerateStyle()
+    } else {
+      await handleNormalGenerate()
     }
   }
 
@@ -260,7 +311,7 @@ export default function Generate() {
             />
           )}
 
-          <div className="flex items-center mt-3 gap-4">
+          <div className="mt-3 flex items-center gap-4">
             <Button
               variant={"default"}
               className="flex w-fit select-none items-center gap-2 rounded-lg border-[2px] border-black bg-transparent px-4 py-2 font-bold hover:border-primary-700 hover:bg-transparent hover:text-primary-700 dark:border-white dark:hover:border-primary-700"

@@ -99,24 +99,30 @@ const ChooseInput = ({
           </Button>
           {generateStates.useCustomDimension && (
             <>
-              <CollapsibleSection title={"Width"} key={"width"}>
-                <SliderInput
-                  min={64}
-                  max={1280}
-                  step={1}
-                  defaultValue={512}
-                  type="width"
-                />
-              </CollapsibleSection>
-              <CollapsibleSection title={"Height"} key={"height"}>
-                <SliderInput
-                  min={64}
-                  max={1280}
-                  step={1}
-                  defaultValue={512}
-                  type="height"
-                />
-              </CollapsibleSection>
+              <div className="flex w-full flex-col">
+                <CollapsibleSection title={"Width"} key={"width"}>
+                  <SliderInput
+                    min={64}
+                    max={1280}
+                    step={1}
+                    defaultValue={512}
+                    type="width"
+                    arrayIndex={0}
+                    isStyleGenerate={isStyle}
+                  />
+                </CollapsibleSection>
+                <CollapsibleSection title={"Height"} key={"height"}>
+                  <SliderInput
+                    min={64}
+                    max={1280}
+                    step={1}
+                    defaultValue={512}
+                    type="height"
+                    arrayIndex={0}
+                    isStyleGenerate={isStyle}
+                  />
+                </CollapsibleSection>
+              </div>
             </>
           )}
         </>

@@ -156,13 +156,13 @@ const DynamicImageInputSpecial = ({
   return (
     <div className="flex h-full w-full items-center justify-center gap-4">
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger className="h-full w-full">
-          {!selectedImage && (
+        {!selectedImage && (
+          <DialogTrigger className="h-full w-full">
             <div className="flex h-full w-full items-center justify-center rounded-xl border-2 border-dashed border-black dark:border-white">
               Add Image
             </div>
-          )}
-        </DialogTrigger>
+          </DialogTrigger>
+        )}
         <DialogContentLoginModal
           className="flex h-[80vh] max-h-[80vh] w-[80vw] min-w-[80vw] flex-col border-none p-0"
           style={{ borderRadius: 30 }}
