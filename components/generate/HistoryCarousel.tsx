@@ -42,8 +42,11 @@ interface HistoryCarouselProps {
   styleAlbum?: string
   prompt?: string
   album?: AlbumData[] | null
+  generateType?: string
+  aiName?: string | null
 }
 import { FaImages } from "react-icons/fa"
+import { convertModelNameToStyleName, formatAIName } from "@/constants/utilities"
 
 const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
   generateImgData,
@@ -52,6 +55,8 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
   styleAlbum,
   prompt,
   album,
+  generateType,
+  aiName,
 }) => {
   const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null)
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null)
@@ -154,13 +159,33 @@ const HistoryCarousel: React.FC<HistoryCarouselProps> = ({
           </div>
           {generateImgData &&
             new Date(generateImgData[0].created_at).toLocaleDateString()}
+            {aiName && (
+            <Button
+              variant={"outline"}
+              className="w-2/3 rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700 hover:cursor-default"
+            >
+              <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                {formatAIName[aiName]}
+              </span>
+            </Button>
+          )}
+          {generateType && (
+            <Button
+              variant={"outline"}
+              className="w-2/3 rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700 hover:cursor-default"
+            >
+              <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                {generateType}
+              </span>
+            </Button>
+          )}
           {styleAlbum && (
             <Button
               variant={"outline"}
               className="w-2/3 rounded-xl border-[2px] px-6 py-2 font-bold text-primary-700 hover:cursor-default"
             >
               <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
-                {styleAlbum}
+                {convertModelNameToStyleName[styleAlbum]}
               </span>
             </Button>
           )}

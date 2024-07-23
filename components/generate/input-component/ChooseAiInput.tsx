@@ -20,6 +20,7 @@ import {
   useAiStyleInformationQuery,
 } from "@/services/generate/generateApi"
 import { useSelector } from "react-redux"
+import { formatAIName } from "@/constants/utilities"
 
 const ChooseAiInput = () => {
   const dispatch = useAppDispatch()
@@ -61,7 +62,6 @@ const ChooseAiInput = () => {
     }
   }, [inputStyleData, dispatch, isUseStyleImage])
 
-
   const handleSelect = (value: string) => {
     setSelectedAI(value)
     const selectedAIData = inputData?.find((ai) => ai.ai_name === value)
@@ -83,19 +83,19 @@ const ChooseAiInput = () => {
       }}
     >
       <SelectTrigger className="bg-card-highlight">
-        <SelectValue placeholder={"comfy_ui"} />
+        <SelectValue placeholder={"ComfyUI"} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           {isUseStyleImage
             ? inputStyleData?.map((ai, index) => (
                 <SelectItem key={index} value={ai.ai_name}>
-                  {ai.ai_name}
+                  {formatAIName[ai.ai_name]}
                 </SelectItem>
               ))
             : inputData?.map((ai, index) => (
                 <SelectItem key={index} value={ai.ai_name}>
-                  {ai.ai_name}
+                  {formatAIName[ai.ai_name]}
                 </SelectItem>
               ))}
         </SelectGroup>

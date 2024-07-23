@@ -92,7 +92,7 @@ export default function GenerateSideBar() {
 
       <div className="mt-4 flex items-center justify-between p-4">
         <Label htmlFor="use-style-mode" className="text-lg font-semibold">
-          Use Style Generation
+          Use Own Style
         </Label>
         <Switch
           id="use-style-mode"
@@ -124,7 +124,7 @@ export default function GenerateSideBar() {
               aiInput.input_property_name === "noise" ||
               aiInput.input_property_name === "positivePrompt" ||
               aiInput.input_property_name === "negativePrompt" ||
-              aiInput.input_property_name === "height" || 
+              aiInput.input_property_name === "height" ||
               aiInput.input_property_name === "ipadapterStyleTranferInputs"
             ) {
               return null
@@ -149,7 +149,15 @@ export default function GenerateSideBar() {
                 key={aiInput.input_property_name}
                 className="border-none pb-4 lg:border"
               >
-                {renderInput(aiInput, dispatch, generateStates, 0, true, false, false)}
+                {renderInput(
+                  aiInput,
+                  dispatch,
+                  generateStates,
+                  0,
+                  true,
+                  false,
+                  false,
+                )}
               </Card>
             )
           })
@@ -186,12 +194,14 @@ export default function GenerateSideBar() {
                   0,
                   false,
                   false,
-                  false
+                  false,
                 )}
               </Card>
             )
           })}
-          <div className="w-full pb-2 flex justify-end px-4"><ThemeToggle /></div>
+      <div className="flex w-full justify-end px-4 pb-2">
+        <ThemeToggle />
+      </div>
     </Card>
   )
 }

@@ -11,8 +11,10 @@ import {
   handleMouseUpCanvas,
   setNewHistory,
 } from "./HistoryUtilities"
+import { useTheme } from "next-themes"
 
 const OptionSelect = () => {
+  const { theme } = useTheme()
   const canvasModeContext = useContext(CanvasModeContext)
   const {
     mode,
@@ -48,6 +50,7 @@ const OptionSelect = () => {
       setBrushCoordinates,
       setCursor,
       imageRef,
+      theme
     )
 
   return (

@@ -23,6 +23,8 @@ export const SaveChangesButton = ({
     scale,
     currentShape,
     setCurrentShape,
+    setCurrentHistoryIndex,
+    setHistory,
   } = canvasModeContext!
 
   return (
@@ -88,16 +90,8 @@ export const SaveChangesButton = ({
         }
         var blob = new Blob([new Uint8Array(array)], { type: "image/png" })
         setImageFile(new File([blob], "image.png", { type: "image/png" }))
-        adjustHistoryToIndex(
-          canvas,
-          context,
-          initialRectPosition,
-          _history,
-          currentHistoryIndex,
-          panOffset,
-          true,
-          imageRef.current!,
-        )
+        setCurrentHistoryIndex(-1)
+        setHistory([])
         setOpen(!open)
       }}
     >

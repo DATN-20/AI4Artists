@@ -10,11 +10,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { LuShapes, LuBrush  } from "react-icons/lu";
+import { LuShapes, LuBrush } from "react-icons/lu"
+import { useTheme } from "next-themes"
 
 export const ToolButtons: React.FC = memo(() => {
   const canvasModeContext = useContext(CanvasModeContext)
   const { mode, setState, setMode, setCursor } = canvasModeContext!
+  const { theme } = useTheme()
 
   const tools = [
     {
@@ -32,7 +34,7 @@ export const ToolButtons: React.FC = memo(() => {
     {
       icon: <FaRegHandPaper className="dark:text-black" size={25} />,
       mode: CanvasMode.DRAG_MODE,
-      cursor: "grab_release.png",
+      cursor: theme === "dark" ? "grab_release_white.png" : "grab_release.png",
       tooltip: "Drag canvas",
     },
     {
@@ -44,7 +46,7 @@ export const ToolButtons: React.FC = memo(() => {
     {
       icon: <LuEraser className="dark:text-black" size={25} />,
       mode: CanvasMode.ERASE_MODE,
-      cursor: "erase.cur",
+      cursor: theme === "dark" ? "erase_white.cur" : "erase.cur",
       tooltip: "Erase object/image",
     },
     {
@@ -62,7 +64,7 @@ export const ToolButtons: React.FC = memo(() => {
           <Tooltip>
             <TooltipTrigger className="flex w-full min-w-0 justify-start">
               <div
-                className={`rounded-xl hover:bg-gradient-to-br from-sky-300 to-primary-700 to-60% dark:bg-current dark:bg-white mt-2 ${mode !== tool.mode ? "bg-card dark:bg-white" : "bg-gradient-to-br from-sky-300 to-primary-700 to-60%"} p-3 `}
+                className={`mt-2 rounded-xl from-sky-300 to-primary-700 to-60% hover:bg-gradient-to-br dark:bg-current dark:bg-white ${mode !== tool.mode ? "bg-card dark:bg-white" : "bg-gradient-to-br from-sky-300 to-primary-700 to-60%"} p-3 `}
                 onClick={() => {
                   setState(CanvasState.IDLE)
                   setMode(tool.mode)

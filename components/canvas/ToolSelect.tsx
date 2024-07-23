@@ -13,8 +13,10 @@ import {
 import { adjustHistoryToIndex, handleMouseUpCanvas } from "./HistoryUtilities"
 import { CanvasModeContext } from "@/store/canvasHooks"
 import { useContext } from "react"
+import { useTheme } from "next-themes"
 
 const ToolSelect = () => {
+  const {theme} = useTheme()
   const canvasModeContext = useContext(CanvasModeContext)
   const {
     mode,
@@ -79,6 +81,7 @@ const ToolSelect = () => {
       setBrushCoordinates,
       setCursor,
       imageRef,
+      theme
     )
 
   const handleClick = () => {
