@@ -7,7 +7,7 @@ const MansoryGrid = ({ data }: { data: DashboardImage[] | undefined }) => {
     return <div>No images found.</div>
   }
 
-  const numberOfColumns = 5
+  const numberOfColumns = 4
   const imageColumns: DashboardImage[][] = Array.from(
     { length: numberOfColumns },
     () => [],
@@ -19,7 +19,7 @@ const MansoryGrid = ({ data }: { data: DashboardImage[] | undefined }) => {
   })
 
   return (
-    <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-5">
+    <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
       {imageColumns.map((column, index) => (
         <div className="flex flex-col gap-4" key={index}>
           {column.map((item, index) => (
