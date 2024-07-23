@@ -17,8 +17,10 @@ import {
   getShapesFromHistory,
   handleMouseUpCanvas,
 } from "./HistoryUtilities"
+import { useTheme } from "next-themes"
 
 const Canvas: React.FC = () => {
+  const {theme} = useTheme()
   const canvasContext = useContext(CanvasModeContext)
   const {
     canvasRef,
@@ -257,7 +259,7 @@ const Canvas: React.FC = () => {
         break
 
       case CanvasMode.DRAG_MODE:
-        setCursor("grab_hold.png")
+        theme === "dark" ? setCursor("grab_hold_white.png") : setCursor("grab_hold.png")
         updateShapeCoordinates({ startX: x, startY: y })
         setState(CanvasState.DRAGGING)
         break
@@ -376,7 +378,7 @@ const Canvas: React.FC = () => {
         if (!currentShape || state.valueOf() === CanvasState.IDLE.valueOf())
           return
         if (currentShape.isPointInside(x, y)) {
-          setCursor("move.cur")
+          theme === "dark" ? setCursor("move_white.cur") : setCursor("move.cur")
         } else {
           setCursor("pointer.cur")
         }
@@ -447,6 +449,7 @@ const Canvas: React.FC = () => {
       setBrushCoordinates,
       setCursor,
       imageRef,
+      theme
     )
 
   return (

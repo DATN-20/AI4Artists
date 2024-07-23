@@ -92,6 +92,26 @@ export default function Generate() {
         return
       }
 
+      if (
+        !generateStates.controlNetInputs?.hasOwnProperty("imageForIpadapter") ||
+        generateStates.controlNetInputs?.find(
+          (input: any) => input.name === "imageForIpadapter",
+        )?.value === ""
+      ) {
+        toast.error("Missing style images")
+        return
+      }
+
+      if (generateStates.useControlnet) {
+        let controlNetImages = generateStates.controlNetInputs?.find(
+          (item: any) => item.name === "controlNetImages",
+        )
+        if (!controlNetImages || controlNetImages.value === "") {
+          toast.error("Missing controlnet image")
+          return
+        }
+      }
+
       formData.append("aiName", generateStates.ai_name || "")
 
       generateStates.dataStyleInputs.forEach((input: any, index: any) => {
@@ -138,6 +158,16 @@ export default function Generate() {
     if (promptPos === "" && generateTags === "") {
       toast.error("Please enter a prompt or select tags")
       return
+    }
+
+    if (generateStates.useControlnet) {
+      let controlNetImages = generateStates.controlNetInputs?.find(
+        (item: any) => item.name === "controlNetImages",
+      )
+      if (!controlNetImages || controlNetImages.value === "") {
+        toast.error("Missing controlnet image")
+        return
+      }
     }
 
     formData.append("aiName", generateStates.ai_name || "")
@@ -284,19 +314,6 @@ export default function Generate() {
             />
           </div>
           <div className="mt-3 flex items-center gap-6">
-            {/* <div className="flex gap-4">
-              <Button
-                variant={"default"}
-                className="mt-3 flex w-fit select-none items-center gap-2 rounded-lg border-[2px] border-black bg-transparent px-4 py-2 font-bold hover:border-primary-700 hover:bg-transparent hover:text-primary-700 dark:border-white dark:hover:border-primary-700"
-                onClick={() => {
-                  handleClearAllInput()
-                }}
-              >
-                <Trash width={18} height={18} />
-                Clear All
-              </Button>
-              <ImageToTag />
-            </div> */}
             <div className=" flex items-center space-x-2">
               <Switch
                 id="negative-mode"
@@ -416,6 +433,8 @@ export default function Generate() {
                 styleAlbum={item.style || undefined}
                 prompt={item.prompt}
                 album={authStates?.totalAlbum}
+                generateType={item.images[0].type}
+                aiName={item.images[0].ai_name}
               />
             ))
           ) : (

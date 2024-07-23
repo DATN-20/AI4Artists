@@ -23,6 +23,7 @@ import probe from "probe-image-size"
 import { ErrorObject } from "@/types"
 import { toast } from "react-toastify"
 import Clamp from "react-multiline-clamp"
+import { convertModelNameToStyleName, formatAIName } from "@/constants/utilities"
 
 const ImageDetail = ({
   image,
@@ -394,7 +395,7 @@ const ImageDetail = ({
               <div className="mt-[8px] flex w-full items-center pb-3">
                 <h1 className="w-1/3 text-lg font-semibold">Style</h1>
                 <div className="w-2/3 rounded-lg bg-card">
-                  <p className="p-4">{image.style}</p>
+                  <p className="p-4">{convertModelNameToStyleName[image.style]}</p>
                 </div>
               </div>
             )}
@@ -403,7 +404,7 @@ const ImageDetail = ({
                 AI Name
               </h1>
               <div className="flex-grow rounded-lg bg-card">
-                <p className="p-4">{image.ai_name}</p>
+                <p className="p-4">{formatAIName[image.ai_name]}</p>
               </div>
             </div>
             <div className="mt-[8px] flex items-center pb-3">

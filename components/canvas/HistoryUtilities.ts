@@ -227,7 +227,8 @@ export const handleMouseUpCanvas = (
   },
   setBrushCoordinates: Dispatch<SetStateAction<Point[]>>,
   setCursor: Dispatch<SetStateAction<string>>,
-  imageRef: React.MutableRefObject<HTMLImageElement | null>
+  imageRef: React.MutableRefObject<HTMLImageElement | null>,
+  theme: string | undefined
 ) => {
   const canvas = canvasRef.current
   if (!canvas || state === CanvasState.IDLE) return
@@ -279,7 +280,7 @@ export const handleMouseUpCanvas = (
       )
       break
     case CanvasMode.DRAG_MODE:
-      setCursor("grab_release.png")
+      theme === "dark" ? setCursor("grab_release_white.png") : setCursor("grab_release.png")
       setState(CanvasState.IDLE)
       break
 

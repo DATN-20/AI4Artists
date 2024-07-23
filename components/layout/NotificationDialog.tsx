@@ -5,6 +5,7 @@ import { Label } from "../ui/label"
 import { Button } from "../ui/button"
 import probe from "probe-image-size"
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
+import { convertModelNameToStyleName, formatAIName } from "@/constants/utilities"
 
 export interface NotificationImageProps {
   style: string | undefined
@@ -109,7 +110,7 @@ const NotificationImage = ({
               <div className="mt-[8px] flex w-full items-center">
                 <h1 className="w-1/3 text-lg font-semibold">Style</h1>
                 <div className="w-2/3 rounded-lg bg-card">
-                  <p className="p-4">{style}</p>
+                  <p className="p-4">{convertModelNameToStyleName[style]}</p>
                 </div>
               </div>
             )}
@@ -118,7 +119,7 @@ const NotificationImage = ({
                 AI Name
               </h1>
               <div className="flex-grow rounded-lg bg-card">
-                <p className="p-4">{images[selectedImageIndex].ai_name}</p>
+                <p className="p-4">{formatAIName[images[selectedImageIndex].ai_name]}</p>
               </div>
             </div>
             <div className="mt-[8px] flex items-center">
