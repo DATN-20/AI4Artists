@@ -338,9 +338,6 @@ const ImageDetail = ({
                 />
               </div>
             </div>
-            <h1 className="mt-[16px] text-lg font-semibold">
-              This is the Image I created with the new AI
-            </h1>
             <h1 className="mt-[8px] font-semibold text-primary-700">
               Prompt Detail
             </h1>
