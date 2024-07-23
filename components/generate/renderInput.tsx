@@ -113,6 +113,7 @@ export const renderInput = (
                       }),
                     )
                   }}
+                  checked={generateStates.useImage}
                 />
               </div>
             )
@@ -133,6 +134,7 @@ export const renderInput = (
                       }),
                     )
                   }}
+                  checked={generateStates.useImage}
                 />
               </div>
               <div className="mt-4 px-4">
@@ -346,6 +348,7 @@ export const renderInput = (
                     }),
                   )
                 }}
+                checked={generateStates.useControlnet}
               />
             </div>
           </>

@@ -104,6 +104,7 @@ export default function GenerateSideBar() {
               }),
             )
           }}
+          checked={generateStates.useStyleImage}
         />
       </div>
 

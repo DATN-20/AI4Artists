@@ -43,6 +43,7 @@ const GenerateControls: React.FC<GenerateControlsProps> = ({
           id="negative-mode"
           className="rounded-lg data-[state=unchecked]:bg-slate-600 data-[state=checked]:bg-primary-700 dark:data-[state=unchecked]:bg-white"
           onClick={() => setUseNegativePrompt(!useNegativePrompt)}
+          checked={useNegativePrompt}
         />
         <Label htmlFor="negative-mode">Use Negative Prompt</Label>
       </div>
