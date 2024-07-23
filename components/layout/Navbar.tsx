@@ -33,7 +33,7 @@ const NavBar: React.FC = () => {
             className="flex cursor-pointer items-center justify-center gap-4"
           >
             <Image alt="logo" width={80} height={80} src={logoSrc} />
-            <h1 className="text-3xl font-bold text-white">AIArtist</h1>
+            <h1 className="text-3xl font-bold text-white">AI4Artist</h1>
           </Link>
           <div className="flex">
             <DialogTrigger asChild>

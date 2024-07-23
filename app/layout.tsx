@@ -13,7 +13,7 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: "AIArtist",
+  title: "AI4Artist",
   description: "An AI-powered platform for artists to generate art",
 }
 
