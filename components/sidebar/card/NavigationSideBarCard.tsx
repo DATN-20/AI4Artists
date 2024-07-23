@@ -1,16 +1,15 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import CardSection from "./card-section/CardSection"
 import Image from "next/image"
-import { IoPerson, IoPersonCircleSharp } from "react-icons/io5"
+import { IoPersonCircleSharp } from "react-icons/io5"
 import { MdLogout, MdModelTraining } from "react-icons/md"
 import { Palette } from "lucide-react"
 import {
-  FaClipboardCheck,
-  FaTag,
+  FaChessBoard,
   FaImages,
-  FaHome,
   FaDiscord,
 } from "react-icons/fa"
+import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import { usePathname, useRouter } from "next/navigation"
 import { Facebook, Instagram, Twitter } from "lucide-react"
 import { useAppDispatch } from "@/store/hooks"
@@ -28,10 +27,8 @@ import {
   AlertDialogCancel,
   AlertDialogContent,
 } from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes"
 import NextImage from "next/image"
-import { useGetProfileQuery } from "@/services/profile/profileApi"
 
 const NavigationSideBarCard = () => {
   const dispatch = useAppDispatch()
@@ -63,7 +60,7 @@ const NavigationSideBarCard = () => {
 
   const pages = [
     {
-      title: "Image Generation",
+      title: "Generate Images",
       href: "/generate",
       icon: <FaImages />,
     },
@@ -73,14 +70,14 @@ const NavigationSideBarCard = () => {
       icon: <Palette />,
     },
     {
-      title: "Upscale Image",
+      title: "Upscale",
       href: "/upscale",
-      icon: <FaClipboardCheck />,
+      icon: <FaArrowUpRightFromSquare />,
     },
     {
       title: "Remove Background",
       href: "/remove-bg",
-      icon: <FaTag />,
+      icon: <FaChessBoard />,
     },
   ]
   const { theme } = useTheme()
@@ -158,11 +155,7 @@ const NavigationSideBarCard = () => {
                   </AlertDialogHeader>
                   <AlertDialogFooter className="mt-5">
                     <AlertDialogAction className="font-bold hover:text-white dark:hover:text-black">
-                      <button
-                        onClick={handleLogout}
-                      >
-                        Yes
-                      </button>
+                      <button onClick={handleLogout}>Yes</button>
                     </AlertDialogAction>
                     <AlertDialogCancel className="border-0 bg-gray-500 text-white hover:bg-gray-500 hover:text-black dark:text-black  dark:hover:text-white">
                       No

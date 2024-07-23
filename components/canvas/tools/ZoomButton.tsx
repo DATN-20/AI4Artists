@@ -2,7 +2,7 @@ import { CanvasModeContext } from "@/store/canvasHooks"
 import { useContext, useState, memo } from "react"
 import { Button } from "@/components/ui/button"
 import * as Slider from "@radix-ui/react-slider"
-import { FaMagnifyingGlass } from "react-icons/fa6"
+import { FiZoomIn } from "react-icons/fi"
 
 export const ZoomButton: React.FC = memo(() => {
   const canvasModeContext = useContext(CanvasModeContext)
@@ -16,10 +16,10 @@ export const ZoomButton: React.FC = memo(() => {
   return (
     <div className="relative">
       <div
-        className="my-1 rounded-xl bg-card p-3 font-bold dark:bg-white dark:text-black hover:bg-gradient-to-br from-sky-300 to-primary-700 to-60%"
+        className="my-1 rounded-xl bg-card from-sky-300 to-primary-700 to-60% p-3 font-bold hover:bg-gradient-to-br dark:bg-white dark:text-black"
         onClick={toggleSlider}
       >
-        <FaMagnifyingGlass size={25} />
+        <FiZoomIn size={25} />
       </div>
       {isSliderVisible && (
         <div className="absolute top-1/2 z-10 ms-[-220px] flex h-[25px] w-[200px] -translate-y-1/2 transform items-center rounded bg-stone-600">

@@ -17,6 +17,7 @@ interface AlbumCardProps {
   setOpenDialogCarousel: (can: boolean) => void
   getTotalImage: () => void
   getOneAlbum: () => void
+  // oneAlbumData: Image[] | undefined
 }
 
 const AlbumCard: React.FC<AlbumCardProps> = ({
@@ -28,6 +29,7 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
   setOpenDialogCarousel,
   getTotalImage,
   getOneAlbum,
+  // oneAlbumData,
 }) => {
   const authStates = useSelector(selectAuth)
   const handleClick = () => {
@@ -66,7 +68,7 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
                   />
                 </div>
               ))}
-            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100 rounded-lg">
+            <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">
               <p className="text-center text-white">
                 Album: {albumData.album.name}
               </p>
@@ -74,24 +76,24 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
           </div>
         ) : (
           <>
-            <div className="flex max-h-full max-w-full justify-center items-center">
+            <div className="flex max-h-full max-w-full items-center justify-center">
               No images available
             </div>
-            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100 rounded-lg">
-            <p className="text-center text-white">
-              Album: {albumData.album.name}
-            </p>
-          </div>
+            <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 hover:opacity-100">
+              <p className="text-center text-white">
+                Album: {albumData.album.name}
+              </p>
+            </div>
           </>
         )}
       </Card>
       {hasImages && (
         <DialogContent className="lg:min-w-[950px]">
-          {authStates.totalAlbum && selectedAlbum !== -1 && (
+          {authStates.oneAlbum && selectedAlbum !== -1 && (
             <TabsList>
               <TabsTrigger value="album">
                 <PopupCarousel
-                  generateImgData={authStates.totalAlbum[selectedAlbum]?.images}
+                  generateImgData={authStates.oneAlbum}
                   width={width}
                   height={height}
                   setSelectedAlbum={setSelectedAlbum}
@@ -99,8 +101,11 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
                   setOpenDialogCarousel={setOpenDialogCarousel}
                   getTotalImage={getTotalImage}
                   getOneAlbum={getOneAlbum}
-                  albumName={authStates.totalAlbum[selectedAlbum]?.album.name}
-                  albumCreatedDate={authStates.totalAlbum[selectedAlbum]?.album.created_at}
+                  // albumName={authStates.totalAlbum[selectedAlbum]?.album.name}
+                  // albumCreatedDate={
+                  //   authStates.totalAlbum[selectedAlbum]?.album.created_at
+                  // }
+                  // oneAlbumData={oneAlbumData}
                 />
               </TabsTrigger>
             </TabsList>

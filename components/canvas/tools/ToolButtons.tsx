@@ -1,8 +1,7 @@
 import { CanvasModeContext } from "@/store/canvasHooks"
 import { useContext, memo } from "react"
 import CanvasMode, { CanvasState } from "@/constants/canvas"
-import { FaRegHandPaper, FaShapes } from "react-icons/fa"
-import { IoIosBrush } from "react-icons/io"
+import { FaRegHandPaper } from "react-icons/fa"
 import { LuMousePointer2, LuEraser } from "react-icons/lu"
 import { MdEmojiPeople } from "react-icons/md"
 import {
@@ -11,6 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { LuShapes, LuBrush  } from "react-icons/lu";
 
 export const ToolButtons: React.FC = memo(() => {
   const canvasModeContext = useContext(CanvasModeContext)
@@ -18,7 +18,7 @@ export const ToolButtons: React.FC = memo(() => {
 
   const tools = [
     {
-      icon: <IoIosBrush className="dark:text-black" size={25} />,
+      icon: <LuBrush className="dark:text-black" size={25} />,
       mode: CanvasMode.BRUSH_MODE,
       cursor: "handwriting.cur",
       tooltip: "Draw brush",
@@ -36,7 +36,7 @@ export const ToolButtons: React.FC = memo(() => {
       tooltip: "Drag canvas",
     },
     {
-      icon: <FaShapes className="dark:text-black" size={25} />,
+      icon: <LuShapes className="dark:text-black" size={25} />,
       mode: CanvasMode.SHAPE_MODE,
       cursor: "precision.cur",
       tooltip: "Draw shape",

@@ -26,7 +26,7 @@ const CanvasPage: React.FC = () => {
         >
           <Image alt="logo" width={50} height={50} src={logoSrc} />
           <h1 className="text-lg font-bold text-black hover:text-white dark:text-white dark:hover:text-black">
-            AIArtist
+            AI4Artist
           </h1>
         </Link>
       </div>

@@ -16,6 +16,7 @@ import { Switch } from "../ui/switch"
 import { Label } from "../ui/label"
 import ChooseAiInput from "../generate/input-component/ChooseAiInput"
 import { useTheme } from "next-themes"
+import { ThemeToggle } from "../ThemeToggle"
 
 export default function GenerateSideBar() {
   const dispatch = useAppDispatch()
@@ -106,11 +107,15 @@ export default function GenerateSideBar() {
         />
       </div>
 
-      <CollapsibleSection title={"Choosing AI"} key="choosing-ai">
+      <CollapsibleSection
+        title={"Choosing AI"}
+        key="choosing-ai"
+        containerStyle="pb-4"
+        desc="Choosing Your AI"
+      >
         <ChooseAiInput />
       </CollapsibleSection>
 
-  
       {noiseElement}
       {generateStates.useStyleImage
         ? aiStyleInputs &&
@@ -119,7 +124,8 @@ export default function GenerateSideBar() {
               aiInput.input_property_name === "noise" ||
               aiInput.input_property_name === "positivePrompt" ||
               aiInput.input_property_name === "negativePrompt" ||
-              aiInput.input_property_name === "height"
+              aiInput.input_property_name === "height" || 
+              aiInput.input_property_name === "ipadapterStyleTranferInputs"
             ) {
               return null
             }
@@ -160,7 +166,7 @@ export default function GenerateSideBar() {
             if (aiInput.input_property_name === "width") {
               return (
                 <CollapsibleSection
-                  title={"Image Dimensions"}
+                  title={"Dimensions"}
                   key="image-dimensions"
                   desc="Choose the dimensions of the image you want to generate."
                 >
@@ -184,6 +190,7 @@ export default function GenerateSideBar() {
               </Card>
             )
           })}
+          <div className="w-full pb-2 flex justify-end px-4"><ThemeToggle /></div>
     </Card>
   )
 }

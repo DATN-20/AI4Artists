@@ -8,6 +8,7 @@ export interface AuthState{
   userData: Person | null
   totalAlbum: AlbumData[] | null
   totalImages: Image[] | null
+  oneAlbum: Image[] | null
 }
 
 const initialState:AuthState ={
@@ -15,6 +16,7 @@ const initialState:AuthState ={
   userData: null,
   totalAlbum: null,
   totalImages: null,
+  oneAlbum:null
 }
 
 // Hàm để thiết lập cookie
@@ -80,11 +82,17 @@ setTotalImage:(
   state.totalImages = action.payload.totalImage
 
 },
+setOneAlbum:(
+  state, action: PayloadAction<{oneAlbum: Image[]}>
+) => {
+  state.oneAlbum = action.payload.oneAlbum
+
+},
   }
 })
 
 export const selectAuth = (state: RootState) => state.auth;
 
-export const {setUser, logout, setUserData, setTotalAlbum, setTotalImage} = authSlice.actions;
+export const {setUser, logout, setUserData, setTotalAlbum, setTotalImage, setOneAlbum} = authSlice.actions;
 
 export default authSlice.reducer

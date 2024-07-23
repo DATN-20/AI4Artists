@@ -3,8 +3,7 @@
 import { ChangeEvent, useContext, useEffect, useState } from "react"
 import GenerateSideBar from "@/components/sidebar/GenerateSideBar"
 import {
-  useAiInformationQuery,
-  useAiStyleInformationQuery,
+  useGenerateStyleImageMutation,
   useGetGenerationHistoryQuery,
   useImageToImageMutation,
   useTextToImageMutation,
@@ -30,6 +29,7 @@ import ImageToTag from "@/components/generate/ImageToTag"
 import { Button } from "@/components/ui/button"
 import { Trash } from "lucide-react"
 import { base64StringToFile } from "@/lib/base64StringToFile"
+import StyleComponent from "../../../components/generate/StyleComponent"
 
 export default function Generate() {
   const dispatch = useAppDispatch()
@@ -41,6 +41,9 @@ export default function Generate() {
     useTextToImageMutation()
   const [imageToImage, { data: imgToImgData, isLoading: imgToImageLoading }] =
     useImageToImageMutation()
+
+  const [generateStyle, { data: generateStyleData, isLoading, isError }] =
+    useGenerateStyleImageMutation()
   const { data: historyData, refetch: refetchHistory } =
     useGetGenerationHistoryQuery()
   const { setGenerateTags, generateTags, setOpenStyleDrawer } =
@@ -57,13 +60,13 @@ export default function Generate() {
     dispatch(
       setField({
         field: "positivePrompt",
-        value: `${prompt}${generateTags.length > 0 ? `, ${generateTags}` : ""}`,
+        value: `${prompt}`,
       }),
     )
     dispatch(
       setStyleField({
         field: "positivePrompt",
-        value: `${prompt}${generateTags.length > 0 ? `, ${generateTags}` : ""}`,
+        value: `${prompt}`,
       }),
     )
   }
@@ -72,14 +75,58 @@ export default function Generate() {
     dispatch(clearAll())
     setPromptPos("")
     setPromptNeg("")
-    setSideBarKey((prevKey) => prevKey + 1) // Update the state to force rerender
+    setSideBarKey((prevKey) => prevKey + 1)
+    setGenerateTags("")
   }
 
-  const handleGenerate = async () => {
-    if (generateStates.useStyleImage) {
-      setOpenStyleDrawer(true)
-      return
+  const handleGenerateStyle = async () => {
+    const formData = new FormData()
+    if (generateStates.dataStyleInputs) {
+      const positivePromptCheck = generateStates.dataStyleInputs?.find(
+        (input: any) => input.name === "positivePrompt",
+      )
+
+      if (!positivePromptCheck || positivePromptCheck.value.trim() === "") {
+        toast.error("Please fill all Input field")
+        return
+      }
+
+      formData.append("aiName", generateStates.ai_name || "")
+
+      generateStates.dataStyleInputs.forEach((input: any, index: any) => {
+        const { name, value } = input
+        if (name === "controlNetImages") {
+          const imageFile = base64StringToFile(value as string, "image.jpg")
+          formData.append("controlNetImages", imageFile)
+          return
+        }
+
+        if (name === "imageForIpadapter") {
+          const base64String = value
+          if (base64String) {
+            const filename = "image.png"
+            const imageFile = base64StringToFile(base64String, filename)
+            formData.append("imageForIpadapter", imageFile)
+            return
+          }
+        }
+
+        formData.append(name, (value as any).toString())
+      })
+      try {
+        await generateStyle(formData).unwrap()
+        return
+      } catch (error) {
+        toast.error("Error generating image:")
+        return
+      }
+    } else {
+      toast.error("Please fill all Input field")
     }
+  }
+
+  const handleNormalGenerate = async () => {
+    const formData = new FormData()
 
     if (promptPos === "" && generateTags === "") {
       toast.error("Please enter a prompt or select tags")
@@ -95,9 +142,8 @@ export default function Generate() {
         return
       }
     }
-
-    const formData = new FormData()
     formData.append("aiName", generateStates.ai_name || "")
+
     if (generateStates.dataInputs) {
       generateStates.dataInputs.forEach((input, index) => {
         const { name, value } = input
@@ -124,22 +170,38 @@ export default function Generate() {
           formData.append("controlNetImages", imageFile)
           return
         }
+
+        if (name === "positivePrompt") {
+          if (generateTags.length > 0) {
+            formData.append(name, `${promptPos}, ${generateTags}`)
+          } else {
+            formData.append(name, promptPos)
+          }
+          return
+        }
         formData.append(name, (value as any).toString())
       })
     }
 
     try {
-      let result
       if (generateStates.useImage) {
-        result = await imageToImage(formData).unwrap()
+        await imageToImage(formData).unwrap()
       } else {
-        result = await textToImage(formData).unwrap()
+        await textToImage(formData).unwrap()
       }
     } catch (error: any) {
       toast.error(
         "Error generating image: " +
           (error as { data: { message: string } }).data.message,
       )
+    }
+  }
+
+  const handleGenerate = async () => {
+    if (generateStates.useStyleImage) {
+      await handleGenerateStyle()
+    } else {
+      await handleNormalGenerate()
     }
   }
 
@@ -216,23 +278,31 @@ export default function Generate() {
               onChange={handlePosPromptChange}
               className="flex-grow resize-none rounded-lg p-3 text-black placeholder-black outline-none dark:bg-[#2c2d31] dark:text-white dark:placeholder-white"
             />
-            <button
-              type="button"
-              onClick={handleGenerate}
-              className="ml-4 hidden items-center justify-center rounded-lg bg-gradient-to-br from-sky-300 to-primary-700 to-60% px-4 py-3 font-bold text-white hover:text-black hover:opacity-80 lg:flex"
-            >
-              <span className="mr-2">✨</span>
-              Generate
-            </button>
           </div>
-          <div className="mt-5 flex items-center space-x-2">
-            <Switch
-              id="negative-mode"
-              className="rounded-lg data-[state=checked]:bg-primary-700 data-[state=unchecked]:bg-slate-600 dark:data-[state=unchecked]:bg-white"
-              onClick={() => setUseNegativePrompt(!useNegativePrompt)}
-            />
-            <Label htmlFor="negative-mode">Use Negative Prompt</Label>
+          <div className="mt-3 flex items-center gap-6">
+            {/* <div className="flex gap-4">
+              <Button
+                variant={"default"}
+                className="mt-3 flex w-fit select-none items-center gap-2 rounded-lg border-[2px] border-black bg-transparent px-4 py-2 font-bold hover:border-primary-700 hover:bg-transparent hover:text-primary-700 dark:border-white dark:hover:border-primary-700"
+                onClick={() => {
+                  handleClearAllInput()
+                }}
+              >
+                <Trash width={18} height={18} />
+                Clear All
+              </Button>
+              <ImageToTag />
+            </div> */}
+            <div className=" flex items-center space-x-2">
+              <Switch
+                id="negative-mode"
+                className="rounded-lg data-[state=checked]:bg-primary-700 data-[state=unchecked]:bg-slate-600 dark:data-[state=unchecked]:bg-white"
+                onClick={() => setUseNegativePrompt(!useNegativePrompt)}
+              />
+              <Label htmlFor="negative-mode">Use Negative Prompt</Label>
+            </div>
           </div>
+
           {useNegativePrompt && (
             <textarea
               placeholder="Type what you don't want to see in a image ..."
@@ -240,26 +310,21 @@ export default function Generate() {
               className="mt-5 w-full  flex-grow resize-none rounded-lg p-3 text-black placeholder-black outline-none dark:bg-[#2c2d31] dark:text-white dark:placeholder-white"
             />
           )}
-          <button
-            type="button"
-            onClick={handleGenerate}
-            disabled={textToImageLoading || imgToImageLoading}
-            className="mt-4 flex select-none items-center justify-center rounded-full bg-purple-500 px-4 py-3 font-bold text-white hover:bg-purple-700 lg:hidden "
-          >
-            <span className="mr-2">✨</span>
-            Generate
-          </button>
-          <Button
-            variant={"default"}
-            className="mt-3 flex w-fit select-none items-center gap-2 rounded-lg border-[2px] border-black bg-transparent px-4 py-2 font-bold hover:border-primary-700 hover:bg-transparent hover:text-primary-700 dark:border-white dark:hover:border-primary-700"
-            onClick={() => {
-              handleClearAllInput()
-            }}
-          >
-            <Trash width={18} height={18} />
-            Clear All
-          </Button>
-          <ImageToTag />
+
+          <div className="mt-3 flex items-center gap-4">
+            <Button
+              variant={"default"}
+              className="flex w-fit select-none items-center gap-2 rounded-lg border-[2px] border-black bg-transparent px-4 py-2 font-bold hover:border-primary-700 hover:bg-transparent hover:text-primary-700 dark:border-white dark:hover:border-primary-700"
+              onClick={() => {
+                handleClearAllInput()
+              }}
+            >
+              <Trash width={18} height={18} />
+              Clear All
+            </Button>
+            <ImageToTag />
+          </div>
+
           {generateTags.length > 0 && (
             <div className="relative my-4 w-full rounded-sm border-2 border-primary-700 bg-transparent p-2 text-sm font-bold text-primary-700 md:w-2/3">
               {generateTags}
@@ -269,6 +334,41 @@ export default function Generate() {
               />
             </div>
           )}
+          {generateStates.useStyleImage &&
+            generateStates?.aiStyleInputs?.map((aiStyleInput: any) => {
+              if (
+                aiStyleInput.input_property_name ===
+                "ipadapterStyleTranferInputs"
+              ) {
+                return (
+                  <StyleComponent
+                    dispatch={dispatch}
+                    generateStates={generateStates}
+                    inputData={aiStyleInput}
+                  />
+                )
+              }
+            })}
+          <button
+            type="button"
+            onClick={handleGenerate}
+            disabled={textToImageLoading || imgToImageLoading}
+            className="mt-4 flex select-none items-center justify-center rounded-full bg-purple-500 px-4 py-3 font-bold text-white hover:bg-purple-700 lg:hidden "
+          >
+            <span className="mr-2">✨</span>
+            Generate
+          </button>
+          <div className="mt-3 flex w-full items-end justify-end">
+            <button
+              type="button"
+              onClick={handleGenerate}
+              className=" hidden items-center justify-center rounded-lg bg-gradient-to-br from-sky-300 to-primary-700 to-60% px-4 py-3 font-bold text-white hover:text-black hover:opacity-80 lg:flex"
+            >
+              <span className="mr-2">✨</span>
+              Generate
+            </button>
+          </div>
+
           <h1 className="mt-5 text-3xl font-bold">Generated Images</h1>
           {historyData && historyData.length > 0 ? (
             historyData.map((item, index) => (

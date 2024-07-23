@@ -55,6 +55,15 @@ const InputSelect = ({
     }
   }, [arrayIndex, isStyleGenerate, type, defaultValue])
 
+  const findDefaultValue = (data: any, defaultValue: string | undefined) => {
+    for (const [key, value] of Object.entries(data)) {
+      if (value === defaultValue) {
+        return key
+      }
+    }
+    return null // Return null if the defaultValue is not found
+  }
+
   return (
     <Select
       onValueChange={(value) => {
@@ -62,7 +71,7 @@ const InputSelect = ({
       }}
     >
       <SelectTrigger className="bg-card-highlight">
-        <SelectValue placeholder={type === "style" ? "anime" : defaultValue} />
+        <SelectValue placeholder={findDefaultValue(data, defaultValue)} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>

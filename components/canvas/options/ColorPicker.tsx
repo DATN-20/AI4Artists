@@ -8,8 +8,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { DialogHeader } from "@/components/ui/dialog"
 import { Dialog, DialogTrigger, DialogContent } from "@radix-ui/react-dialog"
+import { IoIosColorPalette } from "react-icons/io"
 
 const ColorPicker: React.FC = () => {
   const colorContext = useContext(CanvasModeContext)
@@ -37,11 +37,15 @@ const ColorPicker: React.FC = () => {
               className="flex w-full min-w-0 justify-start"
               onClick={() => setOpen(!open)}
             >
-              <div className="mx-1 h-10 rounded-xl border-primary bg-card px-4 py-2 hover:bg-gradient-to-br from-sky-300 to-primary-700 to-60% dark:bg-white">
-                <div
-                  className="h-[25px] w-[25px] rounded-lg border-2 border-primary-700"
-                  style={{ backgroundColor: color }}
-                ></div>
+              <div className="mx-1 h-10 rounded-xl bg-card from-sky-300 to-primary-700 to-60% px-4 py-2 hover:bg-gradient-to-br dark:bg-white">
+                <div className="flex items-center gap-1">
+                  <IoIosColorPalette className="h-[25px] w-[27px] dark:text-black"></IoIosColorPalette>
+
+                    <div
+                      className="h-4 w-4 rounded-full border-2 border-black"
+                      style={{ backgroundColor: color }}
+                    ></div>
+                </div>
               </div>
             </TooltipTrigger>
             <TooltipContent className="max-w-[200px] md:max-w-[400px]">
