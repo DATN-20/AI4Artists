@@ -149,7 +149,7 @@ export default function GenerateSideBar() {
                 key={aiInput.input_property_name}
                 className="border-none pb-4 lg:border"
               >
-                {renderInput(aiInput, dispatch, generateStates, 0, true, false)}
+                {renderInput(aiInput, dispatch, generateStates, 0, true, false, false)}
               </Card>
             )
           })
@@ -186,6 +186,7 @@ export default function GenerateSideBar() {
                   0,
                   false,
                   false,
+                  false
                 )}
               </Card>
             )

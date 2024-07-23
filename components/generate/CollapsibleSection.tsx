@@ -38,8 +38,16 @@ const CollapsibleSection = ({
         <div className="flex gap-1">
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger className="">
-                <FaInfoCircle fontSize={15} className="hover:text-primary-700" />
+              <TooltipTrigger
+                className=""
+                onClick={(e) => {
+                  e.stopPropagation()
+                }}
+              >
+                <FaInfoCircle
+                  fontSize={15}
+                  className="hover:text-primary-700"
+                />
               </TooltipTrigger>
               {desc && (
                 <TooltipContent className="max-w-[200px]" align="end">

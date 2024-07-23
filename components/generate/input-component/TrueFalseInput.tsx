@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react"
-import { setField, setStyleField } from "../../../features/generateSlice"
+import {
+  setControlNetField,
+  setField,
+  setStyleField,
+} from "../../../features/generateSlice"
 import { useAppDispatch } from "../../../store/hooks"
 import { Label } from "../../ui/label"
 import { Switch } from "../../ui/switch"
@@ -10,12 +14,14 @@ const TrueFalseInput = ({
   defaultValue,
   arrayIndex,
   isStyleGenerate,
+  isControlNets,
 }: {
   name: string
   type: string
   defaultValue: boolean
   arrayIndex?: number
   isStyleGenerate?: boolean
+  isControlNets?: boolean
 }) => {
   const dispatch = useAppDispatch()
   const [value, setValue] = useState(defaultValue)
@@ -31,6 +37,14 @@ const TrueFalseInput = ({
           ArrayIndex: arrayIndex,
         }),
       )
+    } else if (isControlNets) {
+      dispatch(
+        setControlNetField({
+          field: type,
+          value: newValue,
+          ArrayIndex: arrayIndex,
+        }),
+      )
     } else {
       dispatch(setField({ field: type, value: value }))
     }
@@ -40,6 +54,14 @@ const TrueFalseInput = ({
     if (isStyleGenerate) {
       dispatch(
         setStyleField({
+          field: type,
+          value: value,
+          ArrayIndex: arrayIndex,
+        }),
+      )
+    } else if (isControlNets) {
+      dispatch(
+        setControlNetField({
           field: type,
           value: value,
           ArrayIndex: arrayIndex,

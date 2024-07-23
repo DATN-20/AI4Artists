@@ -7,7 +7,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { setField, setStyleField } from "@/features/generateSlice"
+import {
+  setControlNetField,
+  setField,
+  setStyleField,
+} from "@/features/generateSlice"
 import { useAppDispatch } from "@/store/hooks"
 import { useEffect } from "react"
 
@@ -17,6 +21,7 @@ type InputSelectProps = {
   defaultValue?: string
   arrayIndex?: number
   isStyleGenerate?: boolean
+  isControlNets?: boolean
 }
 
 const InputSelect = ({
@@ -25,12 +30,21 @@ const InputSelect = ({
   defaultValue,
   arrayIndex,
   isStyleGenerate,
+  isControlNets,
 }: InputSelectProps) => {
   const dispatch = useAppDispatch()
   const handleSelect = (value: string) => {
     if (isStyleGenerate) {
       dispatch(
         setStyleField({
+          field: type,
+          value: value,
+          ArrayIndex: arrayIndex,
+        }),
+      )
+    } else if (isControlNets) {
+      dispatch(
+        setControlNetField({
           field: type,
           value: value,
           ArrayIndex: arrayIndex,
@@ -45,6 +59,14 @@ const InputSelect = ({
     if (isStyleGenerate) {
       dispatch(
         setStyleField({
+          field: type,
+          value: defaultValue,
+          ArrayIndex: arrayIndex,
+        }),
+      )
+    } else if (isControlNets) {
+      dispatch(
+        setControlNetField({
           field: type,
           value: defaultValue,
           ArrayIndex: arrayIndex,

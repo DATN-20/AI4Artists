@@ -13,6 +13,7 @@ export interface GenerateState {
   history: ImageGroup[] | null
   aiStyleInputs: GenerateInput[] | null
   dataStyleInputs: { name: string; value: any; ArrayIndex?: number }[] | null
+  controlNetInputs: { name: string; value: any; ArrayIndex?: number }[] | null
 }
 
 const initialState: GenerateState = {
@@ -26,6 +27,7 @@ const initialState: GenerateState = {
   history: [],
   aiStyleInputs: [],
   dataStyleInputs: [],
+  controlNetInputs: [],
 }
 
 export const generateSlice = createSlice({
@@ -231,12 +233,86 @@ export const generateSlice = createSlice({
         })
       }
     },
+    setControlNetField: (
+      state,
+      action: PayloadAction<{
+        field: string
+        value?: any
+        delete?: boolean
+        ArrayIndex?: number
+      }>,
+    ) => {
+      const { field, value, delete: deleteField, ArrayIndex } = action.payload
+      const controlNetInputs = state.controlNetInputs as {
+        name: string
+        value: any
+        ArrayIndex?: number
+      }[]
+
+      if (controlNetInputs) {
+        const existingFieldIndex = controlNetInputs.findIndex(
+          (item) =>
+            item.name === field &&
+            (ArrayIndex === undefined || item.ArrayIndex === ArrayIndex),
+        )
+
+        if (deleteField) {
+          if (ArrayIndex !== undefined) {
+            for (let i = controlNetInputs.length - 1; i >= 0; i--) {
+              if (controlNetInputs[i].ArrayIndex === ArrayIndex) {
+                controlNetInputs.splice(i, 1)
+              }
+            }
+          } else if (existingFieldIndex !== -1) {
+            controlNetInputs.splice(existingFieldIndex, 1)
+          }
+        } else {
+          if (existingFieldIndex !== -1) {
+            controlNetInputs[existingFieldIndex].value = value
+          } else {
+            controlNetInputs.push({ name: field, value, ArrayIndex })
+          }
+        }
+      }
+    },
+    eraseControlNetStep: (
+      state,
+      action: PayloadAction<{ ArrayIndex: number }>,
+    ) => {
+      const { ArrayIndex } = action.payload
+
+      // Prevent erasing the step with ArrayIndex 0
+      if (ArrayIndex === 0) return
+
+      const controlNetInputs = state.controlNetInputs as {
+        name: string
+        value: any
+        ArrayIndex?: number
+      }[]
+
+      if (controlNetInputs) {
+        for (let i = controlNetInputs.length - 1; i >= 0; i--) {
+          if (controlNetInputs[i].ArrayIndex === ArrayIndex) {
+            controlNetInputs.splice(i, 1)
+          }
+        }
+
+        // Update subsequent ArrayIndex values
+        controlNetInputs.forEach((input) => {
+          if (input.ArrayIndex && input.ArrayIndex > ArrayIndex) {
+            input.ArrayIndex = input.ArrayIndex - 1
+          }
+        })
+      }
+    },
+
     clearAll: (state) => {
       state.useImage = false
       state.useControlnet = false
       state.useCustomDimension = false
       state.dataInputs = []
       state.dataStyleInputs = []
+      state.controlNetInputs = []
     },
   },
 })
@@ -257,6 +333,8 @@ export const {
   setField,
   setStyleField,
   eraseStyleStep,
+  setControlNetField,
+  eraseControlNetStep,
   clearAll,
 } = generateSlice.actions
 

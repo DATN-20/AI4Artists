@@ -64,10 +64,6 @@ const ImageDetail = ({
   }, [])
 
   useEffect(() => {
-    console.log("Upscale Image:", upscaleImage)
-  }, [upscaleImage])
-
-  useEffect(() => {
     if (!open) {
       setSelectedImage(image.url)
       setProcessType("original")

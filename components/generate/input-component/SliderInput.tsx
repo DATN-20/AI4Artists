@@ -3,6 +3,7 @@ import { Slider } from "../../ui/slider"
 import { useAppDispatch } from "@/store/hooks"
 import {
   selectGenerate,
+  setControlNetField,
   setField,
   setStyleField,
 } from "@/features/generateSlice"
@@ -16,6 +17,7 @@ const SliderInput = ({
   type,
   arrayIndex,
   isStyleGenerate,
+  isControlNets,
 }: {
   min: number
   max: number
@@ -24,6 +26,7 @@ const SliderInput = ({
   type: string
   arrayIndex?: number
   isStyleGenerate?: boolean
+  isControlNets?: boolean
 }) => {
   const dispatch = useAppDispatch()
 
@@ -42,6 +45,14 @@ const SliderInput = ({
           ArrayIndex: arrayIndex,
         }),
       )
+    } else if (isControlNets) {
+      dispatch(
+        setControlNetField({
+          field: type,
+          value: valueArray[0],
+          ArrayIndex: arrayIndex,
+        }),
+      )
     } else {
       dispatch(setField({ field: type, value: valueArray[0] }))
     }
@@ -50,6 +61,14 @@ const SliderInput = ({
     if (isStyleGenerate) {
       dispatch(
         setStyleField({
+          field: type,
+          value: value,
+          ArrayIndex: arrayIndex,
+        }),
+      )
+    } else if (isControlNets) {
+      dispatch(
+        setControlNetField({
           field: type,
           value: value,
           ArrayIndex: arrayIndex,

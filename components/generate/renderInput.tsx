@@ -23,6 +23,7 @@ export const renderInput = (
   arrayIndex?: number,
   isStyleGenerate?: boolean,
   isStyleDrawer?: boolean,
+  isControlnets?: boolean,
 ) => {
   const {
     name,
@@ -33,14 +34,19 @@ export const renderInput = (
     desc,
   } = input
 
-  const existingValue = isStyleGenerate
-    ? generateStates.dataStyleInputs?.find(
+  const existingValue = isControlnets
+    ? generateStates.controlNetInputs?.find(
         (field: any) =>
           field.name === propertyName && field.ArrayIndex === arrayIndex,
       )
-    : generateStates.dataInputs?.find(
-        (field: any) => field.name === propertyName,
-      )
+    : isStyleGenerate
+      ? generateStates.dataStyleInputs?.find(
+          (field: any) =>
+            field.name === propertyName && field.ArrayIndex === arrayIndex,
+        )
+      : generateStates.dataInputs?.find(
+          (field: any) => field.name === propertyName,
+        )
 
   const checkDefaultValue = existingValue ? existingValue.value : defaultValue
 
@@ -54,6 +60,7 @@ export const renderInput = (
             defaultValue={checkDefaultValue}
             arrayIndex={arrayIndex}
             isStyleGenerate={isStyleGenerate}
+            isControlNets={isControlnets}
           />
         </CollapsibleSection>
       )
@@ -69,6 +76,7 @@ export const renderInput = (
             type={propertyName}
             arrayIndex={arrayIndex}
             isStyleGenerate={isStyleGenerate}
+            isControlNets={isControlnets}
           />
         </CollapsibleSection>
       )
@@ -145,6 +153,7 @@ export const renderInput = (
                 type={propertyName}
                 isStyleGenerate={isStyleGenerate}
                 defaultValue={checkDefaultValue}
+                arrayIndex={arrayIndex}
               />
             </CollapsibleSection>
           )
@@ -173,34 +182,13 @@ export const renderInput = (
             defaultValue={defaultValue}
             arrayIndex={arrayIndex}
             isStyleGenerate={isStyleGenerate}
+            isControlNets={isControlnets}
           />
         </div>
       )
     }
 
     case "array": {
-      // if (isStyleDrawer) {
-      //   return (
-      //     <>
-      //       {info.element.info.inputs.map((nestedInput: any) => {
-      //         return (
-      //           <Card
-      //             key={nestedInput.input_property_name}
-      //             className="border-none bg-transparent px-0 lg:border"
-      //           >
-      //             {renderInput(
-      //               nestedInput,
-      //               dispatch,
-      //               generateStates,
-      //               arrayIndex,
-      //               true,
-      //               false,
-      //             )}
-      //           </Card>
-      //         )
-      //       })}
-      //     </>
-      //   )
       if (isStyleDrawer) {
         return (
           <>
@@ -219,6 +207,7 @@ export const renderInput = (
                           generateStates,
                           arrayIndex,
                           true,
+                          false,
                           false,
                         )}
                       </Card>
@@ -243,7 +232,84 @@ export const renderInput = (
                           arrayIndex,
                           true,
                           false,
+                          false,
                         )}
+                      </Card>
+                    )
+                  }
+                  return null
+                })}
+              </div>
+            </div>
+          </>
+        )
+      }
+
+      if (isControlnets) {
+        return (
+          <>
+            <div className="flex h-[256px] w-full gap-2">
+              <div className="h-full w-1/3">
+                {info.element.info.inputs.map((nestedInput: any) => {
+                  if (nestedInput.input_property_name === "controlNetImages") {
+                    return (
+                      <Card
+                        key={nestedInput.input_property_name}
+                        className="h-full border-none bg-transparent px-0 lg:border"
+                      >
+                        {generateStates.useuseStyleImage
+                          ? renderInput(
+                              nestedInput,
+                              dispatch,
+                              generateStates,
+                              arrayIndex,
+                              true,
+                              false,
+                              true,
+                            )
+                          : renderInput(
+                              nestedInput,
+                              dispatch,
+                              generateStates,
+                              arrayIndex,
+                              false,
+                              false,
+                              true,
+                            )}
+                      </Card>
+                    )
+                  }
+                  return null
+                })}
+              </div>
+
+              <div className="no-scrollbar flex w-2/3 flex-col overflow-y-scroll">
+                {info.element.info.inputs.map((nestedInput: any) => {
+                  if (nestedInput.input_property_name !== "controlNetImages") {
+                    return (
+                      <Card
+                        key={nestedInput.input_property_name}
+                        className="border-none bg-transparent px-0 lg:border"
+                      >
+                        {generateStates.useuseStyleImage
+                          ? renderInput(
+                              nestedInput,
+                              dispatch,
+                              generateStates,
+                              arrayIndex,
+                              true,
+                              false,
+                              true,
+                            )
+                          : renderInput(
+                              nestedInput,
+                              dispatch,
+                              generateStates,
+                              arrayIndex,
+                              false,
+                              false,
+                              true,
+                            )}
                       </Card>
                     )
                   }
@@ -263,63 +329,30 @@ export const renderInput = (
         return null
       }
 
-      return (
-        <>
-          <div className="flex justify-between p-4 pb-0">
-            <Label htmlFor="array-mode" className="text-lg font-semibold">
-              {info.element.name}
-            </Label>
-            <Switch
-              id="array-mode"
-              className="rounded-lg data-[state=checked]:bg-primary-700 data-[state=unchecked]:bg-slate-600 dark:data-[state=unchecked]:bg-white"
-              onClick={() => {
-                dispatch(
-                  setUseControlnet({
-                    useControlnet: !generateStates.useControlnet,
-                  }),
-                )
-              }}
-            />
-          </div>
+      if (propertyName === "controlNets") {
+        return (
+          <>
+            <div className="flex justify-between p-4 pb-0">
+              <Label htmlFor="array-mode" className="text-lg font-semibold">
+                {info.element.name}
+              </Label>
+              <Switch
+                id="array-mode"
+                className="rounded-lg data-[state=checked]:bg-primary-700 data-[state=unchecked]:bg-slate-600 dark:data-[state=unchecked]:bg-white"
+                onClick={() => {
+                  dispatch(
+                    setUseControlnet({
+                      useControlnet: !generateStates.useControlnet,
+                    }),
+                  )
+                }}
+              />
+            </div>
+          </>
+        )
+      }
 
-          {info.element.info.inputs.map((nestedInput: any) => {
-            if (!generateStates.useControlnet) {
-              if (isStyleGenerate) {
-                dispatch(
-                  setStyleField({
-                    field: nestedInput.input_property_name,
-                    delete: true,
-                  }),
-                )
-              } else {
-                dispatch(
-                  setField({
-                    field: nestedInput.input_property_name,
-                    delete: true,
-                  }),
-                )
-              }
-              return null
-            } else {
-              return (
-                <Card
-                  key={nestedInput.input_property_name}
-                  className="border-none px-0 lg:border"
-                >
-                  {renderInput(
-                    nestedInput,
-                    dispatch,
-                    generateStates,
-                    arrayIndex,
-                    isStyleGenerate,
-                    false,
-                  )}
-                </Card>
-              )
-            }
-          })}
-        </>
-      )
+      return null
     }
 
     default:

@@ -11,6 +11,7 @@ import OptionSelect from "../canvas/OptionSelect"
 import ToolSelect from "../canvas/ToolSelect"
 import {
   selectGenerate,
+  setControlNetField,
   setField,
   setStyleField,
 } from "@/features/generateSlice"
@@ -30,13 +31,15 @@ const ControlnetDialog = ({
   type,
   isStyleGenerate,
   defaultValue,
+  arrayIndex,
 }: {
   type: string
   isStyleGenerate?: boolean
   defaultValue?: string
+  arrayIndex?: number
 }) => {
   const canvasModeContext = useContext(CanvasModeContext)
-  const { imageFile } = canvasModeContext!
+  const { imageFile, setImageFile } = canvasModeContext!
   const dispatch = useAppDispatch()
   const [open, setOpen] = useState(false)
   const [selectedAlbum, setSelectedAlbum] = useState<any | null>(null)
@@ -78,6 +81,13 @@ const ControlnetDialog = ({
           } else {
             dispatch(setField({ field: type, value: base64String }))
           }
+          dispatch(
+            setControlNetField({
+              field: type,
+              value: base64String,
+              ArrayIndex: 0,
+            }),
+          )
         }
       }
       reader.readAsDataURL(imageGen)
@@ -153,23 +163,21 @@ const ControlnetDialog = ({
       reader.onloadend = () => {
         const base64String = reader.result?.toString()
         if (base64String) {
-          if (isStyleGenerate) {
-            dispatch(
-              setStyleField({
-                field: "controlNetImages",
-                value: base64String,
-                ArrayIndex: 0,
-              }),
-            )
-          } else {
-            dispatch(setField({ field: "controlNetImages", value: base64String }))
-          }
+          dispatch(
+            setControlNetField({
+              field: type,
+              value: base64String,
+              ArrayIndex: arrayIndex,
+            }),
+          )
         }
       }
       reader.readAsDataURL(imageFile)
       setSelectedImage(imageFile)
+      setImageFile(null)
     }
   }, [imageFile])
+
 
   return (
     <div className="flex flex-col gap-4">

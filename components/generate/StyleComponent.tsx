@@ -1,29 +1,17 @@
 "use client"
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer"
+
 import { Button } from "../ui/button"
-import { X, ChevronLeft, ChevronRight } from "lucide-react"
+import {  ChevronLeft, ChevronRight } from "lucide-react"
 import { useContext, useEffect, useState } from "react"
 import {
   useGenerateStyleImageMutation,
-  useGetGenerationHistoryQuery,
 } from "@/services/generate/generateApi"
 import { renderInput } from "./renderInput"
 import { base64StringToFile } from "@/lib/base64StringToFile"
 import { toast } from "react-toastify"
 import { TagsContext } from "../../store/tagsHooks"
 import { eraseStyleStep } from "../../features/generateSlice"
-import { Collapsible } from "@radix-ui/react-collapsible"
 import CollapsibleSection from "./CollapsibleSection"
-import { Carousel, CarouselContent } from "../ui/carousel"
 
 const StyleComponent = ({
   dispatch,
@@ -95,56 +83,6 @@ const StyleComponent = ({
     }
   }, [isError])
 
-  const submitData = async () => {
-    const formData = new FormData()
-
-    if (generateStates.dataStyleInputs) {
-      const positivePromptCheck = generateStates.dataStyleInputs?.find(
-        (input: any) => input.name === "positivePrompt",
-      )
-
-      if (!positivePromptCheck || positivePromptCheck.value.trim() === "") {
-        toast.error("Please fill all Input field")
-        return
-      }
-
-      formData.append("aiName", generateStates.ai_name || "")
-
-      generateStates.dataStyleInputs.forEach((input: any, index: any) => {
-        const { name, value } = input
-        if (name === "controlNetImages") {
-          const imageFile = base64StringToFile(value as string, "image.jpg")
-          formData.append("controlNetImages", imageFile)
-          return
-        }
-
-        if (name === "imageForIpadapter") {
-          const imageInput = generateStates.dataStyleInputs?.find(
-            (input: any) => input.name === "imageForIpadapter",
-          )
-          if (imageInput) {
-            const base64String = (imageInput as any).value
-            if (base64String) {
-              const filename = "image.png"
-              const imageFile = base64StringToFile(base64String, filename)
-              formData.append("imageForIpadapter", imageFile)
-              return
-            }
-          }
-        }
-
-        formData.append(name, (value as any).toString())
-      })
-      try {
-        await generateStyle(formData).unwrap()
-      } catch (error) {
-        toast.error("Error generating image:")
-      }
-      setOpenStyleDrawer(false)
-    } else {
-      toast.error("Please fill all Input field")
-    }
-  }
 
   return (
     <>
@@ -173,6 +111,7 @@ const StyleComponent = ({
                     currentStep - 1,
                     true,
                     true,
+                    false
                   )}
                 </div>
               )}

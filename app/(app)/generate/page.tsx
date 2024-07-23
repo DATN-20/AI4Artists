@@ -30,6 +30,7 @@ import { Button } from "@/components/ui/button"
 import { Trash } from "lucide-react"
 import { base64StringToFile } from "@/lib/base64StringToFile"
 import StyleComponent from "../../../components/generate/StyleComponent"
+import ControlnetComponent from "../../../components/generate/ControlnetComponent"
 
 export default function Generate() {
   const dispatch = useAppDispatch()
@@ -95,12 +96,6 @@ export default function Generate() {
 
       generateStates.dataStyleInputs.forEach((input: any, index: any) => {
         const { name, value } = input
-        if (name === "controlNetImages") {
-          const imageFile = base64StringToFile(value as string, "image.jpg")
-          formData.append("controlNetImages", imageFile)
-          return
-        }
-
         if (name === "imageForIpadapter") {
           const base64String = value
           if (base64String) {
@@ -113,6 +108,18 @@ export default function Generate() {
 
         formData.append(name, (value as any).toString())
       })
+      if (generateStates.useControlnet) {
+        generateStates.controlNetInputs?.forEach((input, index) => {
+          const { name, value } = input
+          if (name === "controlNetImages") {
+            const imageFile = base64StringToFile(value as string, "image.jpg")
+            formData.append("controlNetImages", imageFile)
+            return
+          }
+          formData.append(name, (value as any).toString())
+        })
+      }
+
       try {
         await generateStyle(formData).unwrap()
         return
@@ -133,15 +140,6 @@ export default function Generate() {
       return
     }
 
-    if (generateStates.useControlnet) {
-      const controlNetImagesInput = generateStates.dataInputs?.find(
-        (input: any) => input.name === "controlNetImages",
-      )
-      if (!controlNetImagesInput) {
-        toast.error("Please upload control net images")
-        return
-      }
-    }
     formData.append("aiName", generateStates.ai_name || "")
 
     if (generateStates.dataInputs) {
@@ -165,12 +163,6 @@ export default function Generate() {
           }
         }
 
-        if (name === "controlNetImages") {
-          const imageFile = base64StringToFile(value as string, "image.jpg")
-          formData.append("controlNetImages", imageFile)
-          return
-        }
-
         if (name === "positivePrompt") {
           if (generateTags.length > 0) {
             formData.append(name, `${promptPos}, ${generateTags}`)
@@ -181,6 +173,18 @@ export default function Generate() {
         }
         formData.append(name, (value as any).toString())
       })
+
+      if (generateStates.useControlnet) {
+        generateStates.controlNetInputs?.forEach((input, index) => {
+          const { name, value } = input
+          if (name === "controlNetImages") {
+            const imageFile = base64StringToFile(value as string, "image.jpg")
+            formData.append("controlNetImages", imageFile)
+            return
+          }
+          formData.append(name, (value as any).toString())
+        })
+      }
     }
 
     try {
@@ -334,6 +338,37 @@ export default function Generate() {
               />
             </div>
           )}
+
+          {generateStates.useControlnet
+            ? generateStates.useStyleImage
+              ? generateStates?.aiStyleInputs?.map((aiStyleInput: any) => {
+                  if (aiStyleInput.input_property_name === "controlNets") {
+                    return (
+                      <ControlnetComponent
+                        dispatch={dispatch}
+                        generateStates={generateStates}
+                        inputData={aiStyleInput}
+                        title={aiStyleInput.name}
+                        desc={aiStyleInput.desc}
+                      />
+                    )
+                  }
+                })
+              : generateStates?.aiInputs?.map((inputData: any) => {
+                  if (inputData.input_property_name === "controlNets") {
+                    return (
+                      <ControlnetComponent
+                        dispatch={dispatch}
+                        generateStates={generateStates}
+                        inputData={inputData}
+                        title={inputData.name}
+                        desc={inputData.desc}
+                      />
+                    )
+                  }
+                })
+            : null}
+
           {generateStates.useStyleImage &&
             generateStates?.aiStyleInputs?.map((aiStyleInput: any) => {
               if (
