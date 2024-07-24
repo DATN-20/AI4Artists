@@ -34,8 +34,6 @@ const CollapsibleSection = ({
       >
         <h2 className=" text-lg font-semibold ">
           {!isHidden ? title : isOpen ? "" : title}
-        </h2>
-        <div className="flex gap-1">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger
@@ -46,7 +44,7 @@ const CollapsibleSection = ({
               >
                 <FaInfoCircle
                   fontSize={15}
-                  className="hover:text-primary-700"
+                  className="ml-2 hover:text-primary-700"
                 />
               </TooltipTrigger>
               {desc && (
@@ -56,6 +54,8 @@ const CollapsibleSection = ({
               )}
             </Tooltip>
           </TooltipProvider>
+        </h2>
+        <div className="flex gap-1">
           {isOpen ? (
             <ChevronUp className="h-5 w-5 hover:text-primary" />
           ) : (
