@@ -92,26 +92,6 @@ export default function Generate() {
         return
       }
 
-      if (
-        !generateStates.controlNetInputs?.hasOwnProperty("imageForIpadapter") ||
-        generateStates.controlNetInputs?.find(
-          (input: any) => input.name === "imageForIpadapter",
-        )?.value === ""
-      ) {
-        toast.error("Missing style images")
-        return
-      }
-
-      if (generateStates.useControlnet) {
-        let controlNetImages = generateStates.controlNetInputs?.find(
-          (item: any) => item.name === "controlNetImages",
-        )
-        if (!controlNetImages || controlNetImages.value === "") {
-          toast.error("Missing controlnet image")
-          return
-        }
-      }
-
       formData.append("aiName", generateStates.ai_name || "")
 
       generateStates.dataStyleInputs.forEach((input: any, index: any) => {
