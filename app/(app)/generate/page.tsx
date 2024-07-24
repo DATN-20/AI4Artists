@@ -92,9 +92,43 @@ export default function Generate() {
         return
       }
 
+      //validate for imageForIpadapter
+      const lastestArrayIndex = Math.max(
+        ...generateStates.dataStyleInputs.map((input: any) => input.arrayIndex),
+      )
+
+      const hasImageForIpadapter = generateStates.dataStyleInputs.find(
+        (input: any) =>
+          input.arrayIndex === lastestArrayIndex &&
+          input.name === "imageForIpadapter",
+      )
+
+      if (!hasImageForIpadapter) {
+        toast.error("Please upload Image for Style Transfer")
+        return
+      }
+
+      //validate for controlNetImages
+      if (generateStates.useControlnet && generateStates.controlNetInputs) {
+        const latestControlNetArrayIndex = Math.max(
+          ...generateStates.controlNetInputs.map(
+            (input: any) => input.arrayIndex,
+          ),
+        )
+        const hasControlNetImages = generateStates.controlNetInputs.find(
+          (input: any) =>
+            input.arrayIndex === latestControlNetArrayIndex &&
+            input.name === "controlNetImages",
+        )
+        if (!hasControlNetImages) {
+          toast.error("Please upload Controlnet Image")
+          return
+        }
+      }
+
       formData.append("aiName", generateStates.ai_name || "")
 
-      generateStates.dataStyleInputs.forEach((input: any, index: any) => {
+      generateStates.dataStyleInputs.forEach((input, index) => {
         const { name, value } = input
         if (name === "imageForIpadapter") {
           const base64String = value
@@ -140,12 +174,17 @@ export default function Generate() {
       return
     }
 
-    if (generateStates.useControlnet) {
-      let controlNetImages = generateStates.controlNetInputs?.find(
-        (item: any) => item.name === "controlNetImages",
+    if (generateStates.useControlnet && generateStates.controlNetInputs) {
+      const latestControlNetArrayIndex = Math.max(
+        ...generateStates.controlNetInputs.map((input: any) => input.arrayIndex),
       )
-      if (!controlNetImages || controlNetImages.value === "") {
-        toast.error("Missing controlnet image")
+      const hasControlNetImages = generateStates.controlNetInputs.find(
+        (input: any) =>
+          input.arrayIndex === latestControlNetArrayIndex &&
+          input.name === "controlNetImages",
+      )
+      if (!hasControlNetImages) {
+        toast.error("Please upload Controlnet Image")
         return
       }
     }

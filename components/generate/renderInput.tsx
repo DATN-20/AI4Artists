@@ -181,7 +181,7 @@ export const renderInput = (
           <TrueFalseInput
             name={name}
             type={propertyName}
-            defaultValue={defaultValue}
+            defaultValue={checkDefaultValue}
             arrayIndex={arrayIndex}
             isStyleGenerate={isStyleGenerate}
             isControlNets={isControlnets}
@@ -347,6 +347,9 @@ export const renderInput = (
                       useControlnet: !generateStates.useControlnet,
                     }),
                   )
+                  if (!generateStates.useControlnet) {
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }
                 }}
                 checked={generateStates.useControlnet}
               />

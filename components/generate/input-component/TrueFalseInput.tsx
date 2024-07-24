@@ -55,7 +55,7 @@ const TrueFalseInput = ({
       dispatch(
         setStyleField({
           field: type,
-          value: value,
+          value: defaultValue,
           ArrayIndex: arrayIndex,
         }),
       )
@@ -63,12 +63,12 @@ const TrueFalseInput = ({
       dispatch(
         setControlNetField({
           field: type,
-          value: value,
+          value: defaultValue,
           ArrayIndex: arrayIndex,
         }),
       )
     } else {
-      dispatch(setField({ field: type, value: value }))
+      dispatch(setField({ field: type, value: defaultValue }))
     }
   }, [])
 
