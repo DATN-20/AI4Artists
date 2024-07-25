@@ -1,7 +1,8 @@
 export function base64StringToFile(
   base64String: string,
   filename: string,
-): File {
+): File | null {
+  if (!base64String) return null
   const byteString = atob(base64String.split(",")[1])
   const ab = new ArrayBuffer(byteString.length)
   const ia = new Uint8Array(ab)

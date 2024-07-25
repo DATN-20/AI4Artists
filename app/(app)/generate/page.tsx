@@ -111,17 +111,21 @@ export default function Generate() {
       //validate for controlNetImages
       if (generateStates.useControlnet && generateStates.controlNetInputs) {
         const latestControlNetArrayIndex = Math.max(
-          ...generateStates.controlNetInputs.map(
-            (input: any) => input.arrayIndex,
-          ),
+          ...generateStates.controlNetInputs.map((input: any) => input.ArrayIndex),
         )
         const hasControlNetImages = generateStates.controlNetInputs.find(
           (input: any) =>
-            input.arrayIndex === latestControlNetArrayIndex &&
+            input.ArrayIndex === latestControlNetArrayIndex &&
             input.name === "controlNetImages",
         )
-        if (!hasControlNetImages) {
-          toast.error("Please upload Controlnet Image")
+  
+        const hasNullControlNetImages = generateStates.controlNetInputs.find(
+          (input: any) =>
+            input.name === "controlNetImages" && (input.value === null || typeof input.value === 'undefined')
+        );      
+  
+        if (!hasControlNetImages || hasNullControlNetImages) {
+          toast.error("Please upload enough Controlnet Images")
           return
         }
       }
@@ -135,6 +139,7 @@ export default function Generate() {
           if (base64String) {
             const filename = "image.png"
             const imageFile = base64StringToFile(base64String, filename)
+            if (imageFile)
             formData.append("imageForIpadapter", imageFile)
             return
           }
@@ -147,6 +152,7 @@ export default function Generate() {
           const { name, value } = input
           if (name === "controlNetImages") {
             const imageFile = base64StringToFile(value as string, "image.jpg")
+            if (imageFile)
             formData.append("controlNetImages", imageFile)
             return
           }
@@ -183,8 +189,14 @@ export default function Generate() {
           input.ArrayIndex === latestControlNetArrayIndex &&
           input.name === "controlNetImages",
       )
-      if (!hasControlNetImages) {
-        toast.error("Please upload Controlnet Image")
+
+      const hasNullControlNetImages = generateStates.controlNetInputs.find(
+        (input: any) =>
+          input.name === "controlNetImages" && (input.value === null || typeof input.value === 'undefined')
+      );      
+
+      if (!hasControlNetImages || hasNullControlNetImages) {
+        toast.error("Please upload enough Controlnet Images")
         return
       }
     }
@@ -205,6 +217,7 @@ export default function Generate() {
               if (base64String) {
                 const filename = "image.jpg"
                 const imageFile = base64StringToFile(base64String, filename)
+                if (imageFile)
                 formData.append("image", imageFile)
                 return
               }
@@ -228,6 +241,7 @@ export default function Generate() {
           const { name, value } = input
           if (name === "controlNetImages") {
             const imageFile = base64StringToFile(value as string, "image.jpg")
+            if (imageFile)
             formData.append("controlNetImages", imageFile)
             return
           }
