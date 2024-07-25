@@ -143,8 +143,15 @@ const ControlnetDialog = ({
               }),
             )
           } else {
-            dispatch(setField({ field: "image", value: base64String }))
+            dispatch(setField({ field: type, value: base64String }))
           }
+          dispatch(
+            setControlNetField({
+              field: type,
+              value: base64String,
+              ArrayIndex: arrayIndex,
+            }),
+          )
         }
       }
       reader.readAsDataURL(imageFile)
@@ -183,7 +190,7 @@ const ControlnetDialog = ({
       setControlNetField({
         field: type,
         value: "",
-        ArrayIndex: 0,
+        ArrayIndex: arrayIndex,
       }),
     )
   }
@@ -362,10 +369,9 @@ const ControlnetDialog = ({
             <Image
               src={selectedImage ? URL.createObjectURL(selectedImage) : ""}
               alt="Selected"
-              className="rounded-xl object-cover"
+              className="rounded-xl object-cover max-h-full"
               width={200}
               height={200}
-              style={{ width: 200, height: 200 }}
             />
             <IoIosClose
               className="absolute right-[-5px] top-[-10px] size-4 cursor-pointer rounded-full bg-red-500 text-sm text-white hover:bg-red-300"

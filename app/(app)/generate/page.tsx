@@ -94,12 +94,12 @@ export default function Generate() {
 
       //validate for imageForIpadapter
       const lastestArrayIndex = Math.max(
-        ...generateStates.dataStyleInputs.map((input: any) => input.arrayIndex),
+        ...generateStates.dataStyleInputs.map((input: any) => input.ArrayIndex),
       )
 
       const hasImageForIpadapter = generateStates.dataStyleInputs.find(
         (input: any) =>
-          input.arrayIndex === lastestArrayIndex &&
+          input.ArrayIndex === lastestArrayIndex &&
           input.name === "imageForIpadapter",
       )
 
@@ -176,11 +176,11 @@ export default function Generate() {
 
     if (generateStates.useControlnet && generateStates.controlNetInputs) {
       const latestControlNetArrayIndex = Math.max(
-        ...generateStates.controlNetInputs.map((input: any) => input.arrayIndex),
+        ...generateStates.controlNetInputs.map((input: any) => input.ArrayIndex),
       )
       const hasControlNetImages = generateStates.controlNetInputs.find(
         (input: any) =>
-          input.arrayIndex === latestControlNetArrayIndex &&
+          input.ArrayIndex === latestControlNetArrayIndex &&
           input.name === "controlNetImages",
       )
       if (!hasControlNetImages) {
