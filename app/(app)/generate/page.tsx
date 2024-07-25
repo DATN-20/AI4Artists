@@ -92,29 +92,43 @@ export default function Generate() {
         return
       }
 
-      if (
-        !generateStates.controlNetInputs?.hasOwnProperty("imageForIpadapter") ||
-        generateStates.controlNetInputs?.find(
-          (input: any) => input.name === "imageForIpadapter",
-        )?.value === ""
-      ) {
-        toast.error("Missing style images")
+      //validate for imageForIpadapter
+      const lastestArrayIndex = Math.max(
+        ...generateStates.dataStyleInputs.map((input: any) => input.ArrayIndex),
+      )
+
+      const hasImageForIpadapter = generateStates.dataStyleInputs.find(
+        (input: any) =>
+          input.ArrayIndex === lastestArrayIndex &&
+          input.name === "imageForIpadapter",
+      )
+
+      if (!hasImageForIpadapter) {
+        toast.error("Please upload Image for Style Transfer")
         return
       }
 
-      if (generateStates.useControlnet) {
-        let controlNetImages = generateStates.controlNetInputs?.find(
-          (item: any) => item.name === "controlNetImages",
+      //validate for controlNetImages
+      if (generateStates.useControlnet && generateStates.controlNetInputs) {
+        const latestControlNetArrayIndex = Math.max(
+          ...generateStates.controlNetInputs.map(
+            (input: any) => input.arrayIndex,
+          ),
         )
-        if (!controlNetImages || controlNetImages.value === "") {
-          toast.error("Missing controlnet image")
+        const hasControlNetImages = generateStates.controlNetInputs.find(
+          (input: any) =>
+            input.arrayIndex === latestControlNetArrayIndex &&
+            input.name === "controlNetImages",
+        )
+        if (!hasControlNetImages) {
+          toast.error("Please upload Controlnet Image")
           return
         }
       }
 
       formData.append("aiName", generateStates.ai_name || "")
 
-      generateStates.dataStyleInputs.forEach((input: any, index: any) => {
+      generateStates.dataStyleInputs.forEach((input, index) => {
         const { name, value } = input
         if (name === "imageForIpadapter") {
           const base64String = value
@@ -160,12 +174,17 @@ export default function Generate() {
       return
     }
 
-    if (generateStates.useControlnet) {
-      let controlNetImages = generateStates.controlNetInputs?.find(
-        (item: any) => item.name === "controlNetImages",
+    if (generateStates.useControlnet && generateStates.controlNetInputs) {
+      const latestControlNetArrayIndex = Math.max(
+        ...generateStates.controlNetInputs.map((input: any) => input.ArrayIndex),
       )
-      if (!controlNetImages || controlNetImages.value === "") {
-        toast.error("Missing controlnet image")
+      const hasControlNetImages = generateStates.controlNetInputs.find(
+        (input: any) =>
+          input.ArrayIndex === latestControlNetArrayIndex &&
+          input.name === "controlNetImages",
+      )
+      if (!hasControlNetImages) {
+        toast.error("Please upload Controlnet Image")
         return
       }
     }
@@ -319,6 +338,7 @@ export default function Generate() {
                 id="negative-mode"
                 className="rounded-lg data-[state=checked]:bg-primary-700 data-[state=unchecked]:bg-slate-600 dark:data-[state=unchecked]:bg-white"
                 onClick={() => setUseNegativePrompt(!useNegativePrompt)}
+                checked={useNegativePrompt}
               />
               <Label htmlFor="negative-mode">Use Negative Prompt</Label>
             </div>

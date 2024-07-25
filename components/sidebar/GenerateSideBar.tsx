@@ -103,7 +103,11 @@ export default function GenerateSideBar() {
                 useStyleImage: !generateStates.useStyleImage,
               }),
             )
+            if (!generateStates.useStyleImage) {
+              window.scrollTo({ top: 0, behavior: "smooth" })
+            }
           }}
+          checked={generateStates.useStyleImage}
         />
       </div>
 

@@ -113,6 +113,7 @@ export const renderInput = (
                       }),
                     )
                   }}
+                  checked={generateStates.useImage}
                 />
               </div>
             )
@@ -133,6 +134,7 @@ export const renderInput = (
                       }),
                     )
                   }}
+                  checked={generateStates.useImage}
                 />
               </div>
               <div className="mt-4 px-4">
@@ -179,7 +181,7 @@ export const renderInput = (
           <TrueFalseInput
             name={name}
             type={propertyName}
-            defaultValue={defaultValue}
+            defaultValue={checkDefaultValue}
             arrayIndex={arrayIndex}
             isStyleGenerate={isStyleGenerate}
             isControlNets={isControlnets}
@@ -345,7 +347,11 @@ export const renderInput = (
                       useControlnet: !generateStates.useControlnet,
                     }),
                   )
+                  if (!generateStates.useControlnet) {
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }
                 }}
+                checked={generateStates.useControlnet}
               />
             </div>
           </>
