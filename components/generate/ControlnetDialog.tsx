@@ -189,7 +189,7 @@ const ControlnetDialog = ({
     dispatch(
       setControlNetField({
         field: type,
-        value: "",
+        value: null,
         ArrayIndex: arrayIndex,
       }),
     )

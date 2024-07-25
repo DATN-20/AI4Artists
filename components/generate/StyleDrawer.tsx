@@ -110,6 +110,7 @@ const StyleDrawer = ({
         const { name, value } = input
         if (name === "controlNetImages") {
           const imageFile = base64StringToFile(value as string, "image.jpg")
+          if (imageFile)
           formData.append("controlNetImages", imageFile)
           return
         }
@@ -123,6 +124,7 @@ const StyleDrawer = ({
             if (base64String) {
               const filename = "image.png"
               const imageFile = base64StringToFile(base64String, filename)
+              if (imageFile)
               formData.append("imageForIpadapter", imageFile)
               return
             }
