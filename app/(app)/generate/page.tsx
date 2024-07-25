@@ -93,9 +93,12 @@ export default function Generate() {
       }
 
       //validate for imageForIpadapter
-      const lastestArrayIndex = Math.max(
-        ...generateStates.dataStyleInputs.map((input: any) => input.ArrayIndex),
-      )
+      const lastestArrayIndex = generateStates.dataStyleInputs
+        .filter((item) => item.name === "imageForIpadapter")
+        .reduce((max, item) => {
+          const index = item.ArrayIndex !== undefined ? item.ArrayIndex : -1
+          return index > max ? index : max
+        }, -Infinity)
 
       const hasImageForIpadapter = generateStates.dataStyleInputs.find(
         (input: any) =>
@@ -111,19 +114,22 @@ export default function Generate() {
       //validate for controlNetImages
       if (generateStates.useControlnet && generateStates.controlNetInputs) {
         const latestControlNetArrayIndex = Math.max(
-          ...generateStates.controlNetInputs.map((input: any) => input.ArrayIndex),
+          ...generateStates.controlNetInputs.map(
+            (input: any) => input.ArrayIndex,
+          ),
         )
         const hasControlNetImages = generateStates.controlNetInputs.find(
           (input: any) =>
             input.ArrayIndex === latestControlNetArrayIndex &&
             input.name === "controlNetImages",
         )
-  
+
         const hasNullControlNetImages = generateStates.controlNetInputs.find(
           (input: any) =>
-            input.name === "controlNetImages" && (input.value === null || typeof input.value === 'undefined')
-        );      
-  
+            input.name === "controlNetImages" &&
+            (input.value === null || typeof input.value === "undefined"),
+        )
+
         if (!hasControlNetImages || hasNullControlNetImages) {
           toast.error("Please upload enough Controlnet Images")
           return
@@ -139,8 +145,7 @@ export default function Generate() {
           if (base64String) {
             const filename = "image.png"
             const imageFile = base64StringToFile(base64String, filename)
-            if (imageFile)
-            formData.append("imageForIpadapter", imageFile)
+            if (imageFile) formData.append("imageForIpadapter", imageFile)
             return
           }
         }
@@ -152,8 +157,7 @@ export default function Generate() {
           const { name, value } = input
           if (name === "controlNetImages") {
             const imageFile = base64StringToFile(value as string, "image.jpg")
-            if (imageFile)
-            formData.append("controlNetImages", imageFile)
+            if (imageFile) formData.append("controlNetImages", imageFile)
             return
           }
           formData.append(name, (value as any).toString())
@@ -182,7 +186,9 @@ export default function Generate() {
 
     if (generateStates.useControlnet && generateStates.controlNetInputs) {
       const latestControlNetArrayIndex = Math.max(
-        ...generateStates.controlNetInputs.map((input: any) => input.ArrayIndex),
+        ...generateStates.controlNetInputs.map(
+          (input: any) => input.ArrayIndex,
+        ),
       )
       const hasControlNetImages = generateStates.controlNetInputs.find(
         (input: any) =>
@@ -192,8 +198,9 @@ export default function Generate() {
 
       const hasNullControlNetImages = generateStates.controlNetInputs.find(
         (input: any) =>
-          input.name === "controlNetImages" && (input.value === null || typeof input.value === 'undefined')
-      );      
+          input.name === "controlNetImages" &&
+          (input.value === null || typeof input.value === "undefined"),
+      )
 
       if (!hasControlNetImages || hasNullControlNetImages) {
         toast.error("Please upload enough Controlnet Images")
@@ -217,8 +224,7 @@ export default function Generate() {
               if (base64String) {
                 const filename = "image.jpg"
                 const imageFile = base64StringToFile(base64String, filename)
-                if (imageFile)
-                formData.append("image", imageFile)
+                if (imageFile) formData.append("image", imageFile)
                 return
               }
             }
@@ -241,8 +247,7 @@ export default function Generate() {
           const { name, value } = input
           if (name === "controlNetImages") {
             const imageFile = base64StringToFile(value as string, "image.jpg")
-            if (imageFile)
-            formData.append("controlNetImages", imageFile)
+            if (imageFile) formData.append("controlNetImages", imageFile)
             return
           }
           formData.append(name, (value as any).toString())
